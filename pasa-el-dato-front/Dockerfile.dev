@@ -1,0 +1,21 @@
+FROM node:22-slim
+
+RUN corepack enable && corepack prepare pnpm@11.5.1 --activate
+
+WORKDIR /app
+
+# Evita que pnpm pida confirmación interactiva (sin TTY en contenedor)
+ENV CI=true
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+COPY package.json pnpm-lock.yaml* ./
+# --ignore-scripts: evita que pnpm 10+ falle por build scripts ignorados (unrs-resolver).
+# En dev no los necesitamos; en prod se usa approve-builds.
+RUN pnpm install --frozen-lockfile --ignore-scripts 2>/dev/null || pnpm install --ignore-scripts
+
+COPY . .
+
+EXPOSE 3000
+
+# --hostname 0.0.0.0 es clave para que Podman exponga el front a la LAN
+CMD ["pnpm", "dev", "--hostname", "0.0.0.0"]
