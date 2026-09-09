@@ -4,11 +4,11 @@
 - podman-compose
 
 ## Día a día
-- `odman-compose up -d --build`   _# levantar todo (reconstruyendo imágenes)_
-- `odman-compose up -d `          _# levantar sin reconstruir_
-- `odman-compose ps   `           _# ver estado de los 4 servicios_
-- `odman-compose down`            _# bajar (conserva datos)_
-- `odman-compose restart back`   _# reiniciar solo el back (front, postgres, mongo igual)_
+- `podman-compose up -d --build`   _# levantar todo (reconstruyendo imágenes)_
+- `podman-compose up -d `          _# levantar sin reconstruir_
+- `podman-compose ps   `           _# ver estado de los 4 servicios_
+- `podman-compose down`            _# bajar (conserva datos)_
+- `podman-compose restart back`   _# reiniciar solo el back (front, postgres, mongo igual)_
 ## Ver qué pasa (logs)
 - `podman-compose logs -f back `   _# logs del back en vivo (Ctrl+C para salir)_
 - `podman-compose logs front   `  _# últimas líneas del front_
