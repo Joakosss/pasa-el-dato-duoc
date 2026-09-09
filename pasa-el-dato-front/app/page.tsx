@@ -1,69 +1,82 @@
-import Image from "next/image";
+import { Suspense } from "react";
+import { SearchBar } from "@/components/layout/SearchBar";
+import { Container } from "@/components/layout/Container";
+import { NotificationDuoc, NotificationDuocSkeleton } from "@/components/layout/NotificationDuoc";
+import {
+  FeaturedProducts,
+  Pagination,
+  ProductGridSkeleton,
+} from "@/components/product";
+import {
+  FEATURED_PER_PAGE,
+  SPONSORED_PER_PAGE,
+  TOTAL_PAGES,
+} from "@/lib/products";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
-export default function Home() {
+const SKELETON_COUNT = FEATURED_PER_PAGE + SPONSORED_PER_PAGE;
+
+type HomeProps = {
+  searchParams?: Promise<{ page?: string }>;
+};
+
+export default async function Home(props: HomeProps) {
+  const searchParams = props.searchParams ? await props.searchParams : undefined;
+  const parsed = Number.parseInt(searchParams?.page ?? "1", 10);
+  const page = Number.isFinite(parsed)
+    ? Math.min(Math.max(1, parsed), TOTAL_PAGES)
+    : 1;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <SearchBar />
+      <Container className="py-6">
+        <Suspense fallback={<NotificationDuocSkeleton />}>
+          {/* <NotificationDuocSkeleton /> */}
+          <NotificationDuoc
+            titulo="Anuncios Duoc"
+            mensaje="Revisa las novedades de la comunidad"
+            msj_btn="Ver más"
+            link="#"
+          />
+        </Suspense>
+
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-navy">Destacados para ti</h2>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        <Suspense key={page} fallback={<ProductGridSkeleton count={SKELETON_COUNT} />}>
+          <FeaturedProducts page={page} />
+        </Suspense>
+
+        {/* <div className="mb-6 mt-8 flex flex-col items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-6 py-4 sm:flex-row">
+          <div className="flex items-center gap-3">
+            <Badge variant="category">INFO</Badge>
+            <div className="h-4 w-48 rounded bg-gray-100 sm:w-64" aria-hidden="true" />
+          </div>
+          <Button variant="secondary" size="md" className="shrink-0 !bg-navy !text-white hover:!bg-navy/90">
+            Explorar servicios
+          </Button>
+        </div> */}
+
+        <Pagination page={page} totalPages={TOTAL_PAGES} />
+      </Container>
+
+      <button
+        type="button"
+        aria-label="Chat"
+        className="cursor-pointer fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-navy text-gold shadow-lg transition hover:bg-navy/90"
+      >
+        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          />
+        </svg>
+      </button>
+    </>
   );
 }

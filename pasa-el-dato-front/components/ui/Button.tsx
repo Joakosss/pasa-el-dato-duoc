@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils/cn";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "destructive" | "text" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -10,16 +10,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-foreground text-background hover:bg-[#383838] dark:hover:bg-[#ccc]",
+  primary: "bg-gold text-navy hover:bg-gold-hover shadow-sm",
   secondary:
-    "border border-solid border-black/[.08] hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]",
-  ghost: "hover:bg-black/[.04] dark:hover:bg-white/[.08]",
+    "bg-white text-navy border border-gray-200 hover:border-gold hover:bg-gold/10",
+  destructive: "bg-red-600 text-white hover:bg-red-700",
+  text: "bg-transparent text-navy hover:text-gold",
+  ghost: "bg-transparent text-navy hover:text-gold",
 };
 
 const SIZES: Record<ButtonSize, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-12 px-5 text-base",
-  lg: "h-14 px-8 text-lg",
+  sm: "px-3 py-2 text-sm",
+  md: "px-4 py-2 text-sm",
+  lg: "px-8 py-3 text-sm",
 };
 
 export function Button({
@@ -33,7 +35,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors disabled:opacity-50",
+        "cursor-pointer inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gold",
         VARIANTS[variant],
         SIZES[size],
         className,
