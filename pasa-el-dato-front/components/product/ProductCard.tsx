@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils/cn";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
+import Link from "next/link";
 
 export type CardSize = "1x1" | "2x2";
 
@@ -19,7 +20,8 @@ export interface ProductCardData {
 export function ProductCard({ item }: { item: ProductCardData }) {
   const large = item.size === "2x2" || (!item.size && item.featured);
   return (
-    <article
+    <Link
+      href={`/product/${item.id}`}
       className={cn(
         "card-hover relative cursor-pointer overflow-hidden rounded-xl border bg-card",
         item.sponsored ? "border-gold/30" : "border-gray-200",
@@ -35,10 +37,7 @@ export function ProductCard({ item }: { item: ProductCardData }) {
         <div
           role="img"
           aria-label="Imagen placeholder"
-          className={cn(
-            "w-full bg-gray-200",
-            large ? "aspect-[2/1] md:aspect-square" : "aspect-video",
-          )}
+          className={cn("w-full bg-gray-200", item.featured ? "h-full min-h-44" : "h-44")}
         />
         {item.category ? (
           <span className="absolute left-2 top-2">
@@ -75,6 +74,6 @@ export function ProductCard({ item }: { item: ProductCardData }) {
           </div>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

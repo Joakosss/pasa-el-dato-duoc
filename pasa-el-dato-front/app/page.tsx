@@ -12,8 +12,6 @@ import {
   SPONSORED_PER_PAGE,
   TOTAL_PAGES,
 } from "@/lib/products";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 
 const SKELETON_COUNT = FEATURED_PER_PAGE + SPONSORED_PER_PAGE;
 
@@ -43,7 +41,7 @@ export default async function Home(props: HomeProps) {
         </Suspense>
 
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-navy">Destacados para ti</h2>
+          <h2 className="text-lg font-bold text-navy">Productos para ti</h2>
         </div>
 
         <Suspense key={page} fallback={<ProductGridSkeleton count={SKELETON_COUNT} />}>
