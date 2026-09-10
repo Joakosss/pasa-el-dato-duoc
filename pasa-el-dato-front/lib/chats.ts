@@ -10,7 +10,11 @@ export interface ChatListItemTemporal {
   sold?: boolean;
 }
 
+<<<<<<< HEAD
 const MOCK_CHATS_TEMPORAL: ChatListItemTemporal[] = [
+=======
+const MOCK_CHATS: ChatListItem[] = [
+>>>>>>> 1f809d53 (Add(chats) se crea lógica y se arreglan detalles de direccionamiento y de layout.)
   {
     id: "chat-1",
     otherUserName: "Camila Rojas",
@@ -142,11 +146,19 @@ interface GetActiveChatsOptions {
   empty?: boolean;
 }
 
+<<<<<<< HEAD
 export async function getActiveChatsTemporal(
   options: GetActiveChatsOptions = {},
 ): Promise<ChatListItemTemporal[]> {
   if (options.empty) return [];
   return [...MOCK_CHATS_TEMPORAL].sort((a, b) =>
+=======
+export async function getActiveChats(
+  options: GetActiveChatsOptions = {},
+): Promise<ChatListItem[]> {
+  if (options.empty) return [];
+  return [...MOCK_CHATS].sort((a, b) =>
+>>>>>>> 1f809d53 (Add(chats) se crea lógica y se arreglan detalles de direccionamiento y de layout.)
     b.lastMessageAt.localeCompare(a.lastMessageAt),
   );
 }

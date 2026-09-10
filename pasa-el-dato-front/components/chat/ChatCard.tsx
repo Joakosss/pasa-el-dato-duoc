@@ -24,7 +24,11 @@ const STATE_STYLES: Record<ChatState, string> = {
   waiting: "border-gray-200 bg-card",
 };
 
+<<<<<<< HEAD
 export function ChatCard({ chat }: { chat: ChatListItemTemporal }) {
+=======
+export function ChatCard({ chat }: { chat: ChatListItem }) {
+>>>>>>> 1f809d53 (Add(chats) se crea lógica y se arreglan detalles de direccionamiento y de layout.)
   const state = getChatState(chat);
   const isSeller = chat.otherUserName === "Tú";
 
