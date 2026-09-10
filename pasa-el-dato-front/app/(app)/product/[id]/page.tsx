@@ -3,6 +3,7 @@ import { Container } from "@/components/layout/Container";
 import { ProductCard, ProductGallery, SellerCard } from "@/components/product";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 const RELATED = Array.from({ length: 4 }, (_, i) => ({ id: `related-${i + 1}` }));
 
@@ -52,9 +53,12 @@ export default function ProductDetailPage() {
 
             <SellerCard />
 
-            <Button variant="primary" size="lg" className="w-full py-3.5">
-              Contactar vendedor
-            </Button>
+            <Link href={"/chats/chat-1"}>
+              <Button variant="primary" size="lg" className="w-full py-3.5">
+                Contactar vendedor
+              </Button>
+            </Link>
+
             <p className="mt-2 text-center text-xs text-gray-400">
               Te redirigiremos al chat para coordinar el intercambio
             </p>

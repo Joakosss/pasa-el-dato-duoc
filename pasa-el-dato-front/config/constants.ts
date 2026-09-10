@@ -6,4 +6,5 @@ export const ROUTES = {
   register: "/register",
   dashboard: "/dashboard",
   product: "/product/placeholder",
+  chats: "/chats",
 } as const;
