@@ -1,4 +1,6 @@
 allowBuilds:
-  esbuild: set this to true or false
+  '@prisma/engines': true
+  esbuild: false
   msgpackr-extract: set this to true or false
+  prisma: false
   workerd: set this to true or false
