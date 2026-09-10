@@ -19,4 +19,7 @@ EXPOSE 3001
 
 # nest start --watch escucha en process.env.PORT (main.ts).
 # compose.yaml inyecta PORT=${API_PORT}, así el host y el contenedor usan el mismo puerto.
-CMD ["pnpm", "start:dev"]
+# Se invoca nest directo con node para saltar el chequeo auto de pnpm 11
+# (verify-deps-before-run corre `pnpm install` sin --ignore-scripts y falla
+# con ERR_PNPM_IGNORED_BUILDS -> loop de reinicios).
+CMD ["node", "node_modules/@nestjs/cli/bin/nest.js", "start", "--watch"]

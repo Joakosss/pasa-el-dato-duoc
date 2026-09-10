@@ -4,23 +4,50 @@
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  avatar_url TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+CREATE TYPE estado_cuenta AS ENUM (
+  'PENDIENTE',
+  'ACTIVA'
 );
 
-CREATE TABLE IF NOT EXISTS datos (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
-  content TEXT NOT NULL,
-  author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  tags TEXT[] NOT NULL DEFAULT '{}',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+CREATE TABLE IF NOT EXISTS cuenta (
+  id_cuenta UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  correo TEXT UNIQUE NOT NULL,
+  clave_hash TEXT NOT NULL,
+  telefono TEXT NOT NULL,
+  estado estado_cuenta NOT NULL DEFAULT 'PENDIENTE'
 );
 
-CREATE INDEX IF NOT EXISTS idx_datos_author ON datos(author_id);
+CREATE TABLE IF NOT EXISTS rol_usuario (
+  id SERIAL PRIMARY KEY,
+  descripcion TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sede (
+  id SERIAL PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  activa BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS usuario (
+  id_cuenta UUID PRIMARY KEY
+    REFERENCES cuenta(id_cuenta) ON DELETE CASCADE,
+
+  run TEXT UNIQUE NOT NULL,
+
+  p_nombre TEXT NOT NULL,
+  s_nombre TEXT,
+  p_apellido TEXT NOT NULL,
+  s_apellido TEXT NOT NULL,
+
+  fk_rol_usuario INTEGER NOT NULL
+    REFERENCES rol_usuario(id),
+
+  fk_sede INTEGER NOT NULL
+    REFERENCES sede(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_usuario_rol
+  ON usuario(fk_rol_usuario);
+
+CREATE INDEX IF NOT EXISTS idx_usuario_sede
+  ON usuario(fk_sede);
