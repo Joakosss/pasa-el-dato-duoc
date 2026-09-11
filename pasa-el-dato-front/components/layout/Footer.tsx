@@ -1,4 +1,5 @@
-import { APP_NAME } from "@/config/constants";
+import Link from "next/link";
+import { APP_NAME, ROUTES } from "@/config/constants";
 
 export function Footer() {
   return (
@@ -38,7 +39,14 @@ export function Footer() {
           <div>
             <h4 className="mb-3 text-sm font-semibold text-navy">Legal</h4>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li>Términos de uso</li>
+              <li>
+                <Link
+                  href={ROUTES.terms}
+                  className="transition-colors hover:text-navy"
+                >
+                  Términos de uso
+                </Link>
+              </li>
               <li>Privacidad</li>
               <li>Cookies</li>
             </ul>

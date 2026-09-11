@@ -36,7 +36,7 @@ export default async function Home(props: HomeProps) {
             titulo="Anuncios Duoc"
             mensaje="Revisa las novedades de la comunidad"
             msj_btn="Ver más"
-            link="#"
+            link="https://www.duoc.cl/noticias/"
           />
         </Suspense>
 

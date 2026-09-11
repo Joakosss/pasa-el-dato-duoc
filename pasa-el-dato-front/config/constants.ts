@@ -7,4 +7,5 @@ export const ROUTES = {
   dashboard: "/dashboard",
   product: "/product/placeholder",
   chats: "/chats",
+  terms: "/terminos-y-condiciones",
 } as const;
