@@ -1,8 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  
   const app = await NestFactory.create(AppModule);
+  //Cuando una ruta recibe un DTO, el ValidationPipe ejecuta las validaciones
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // Entrega al controlador los valores normalizados.
+    }),
+  );
   // El front apunta a NEXT_PUBLIC_API_URL=http://...:<API_PORT>/api
   app.setGlobalPrefix('api');
   // Dev con front en otro origen/puerto (y mobile en LAN): CORS abierto.
