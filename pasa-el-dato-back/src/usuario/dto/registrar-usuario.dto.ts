@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString, Matches, MinLength, ValidateBy } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Matches, MinLength, ValidateBy, IsOptional, IsInt } from 'class-validator';
 import { EsCorreoInstitucional } from '../../common/validators/correo-institucional.validator.js';
 import { EsRunValido } from '../../common/validators/run.validator.js';
 
@@ -97,7 +97,7 @@ export class RegistrarUsuarioDto {
     telefono: string;
     
     // Contraseña recibida durante el registro.
-// Todavía no se guarda: más adelante se convertirá en clave_hash.
+    // Todavía no se guarda: más adelante se convertirá en clave_hash.
     @IsString({ 
         message: 'La contraseña debe ser texto' 
     })
@@ -108,4 +108,23 @@ export class RegistrarUsuarioDto {
         message: 'La contraseña debe tener al menos 8 caracteres',
     })
     contrasena: string;
+
+    @IsString()
+    @IsNotEmpty()
+    pNombre: string;
+
+    @IsOptional()
+    @IsString()
+    sNombre?: string;
+
+    @IsString()
+    @IsNotEmpty()
+    pApellido: string;
+
+    @IsString()
+    @IsNotEmpty()
+    sApellido: string;
+
+    @IsInt()
+    sedeId: number;
 }

@@ -2,9 +2,18 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { RegistrarUsuarioDto } from './registrar-usuario.dto.js';
 
+// Datos válidos comunes a todas las pruebas del DTO.
+const datosUsuarioValidos = {
+  pNombre: 'Ana',
+  pApellido: 'Pérez',
+  sApellido: 'Gómez',
+  sedeId: 1,
+};
+
 describe('RegistrarUsuarioDto: RUN', () => {
   it('normaliza el RUN antes de validarlo', async () => {
     const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
       correo: 'alumno@duocuc.cl',
       run: ' 12.345.678-k ',
       telefono: '12345678',
@@ -20,6 +29,7 @@ describe('RegistrarUsuarioDto: RUN', () => {
 
   it('acepta un RUN sin guion y lo normaliza', async () => {
     const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
       correo: 'alumno@duocuc.cl',
       run: '123456785',
       telefono: '12345678',
@@ -39,6 +49,7 @@ describe('RegistrarUsuarioDto: correo', () => {
     // Convierte el objeto recibido en una instancia del DTO.
     // Esto ejecuta @Transform antes de validar.
     const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
       correo: '  ALUMNO@DUOCUC.CL  ',
       run: '12345678-5',
       telefono: '12345678',
@@ -54,6 +65,7 @@ describe('RegistrarUsuarioDto: correo', () => {
 
   it('rechaza un correo de otro dominio', async () => {
     const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
       correo: 'alumno@gmail.com',
       run: '12345678-5',
       telefono: '12345678',
@@ -67,6 +79,7 @@ describe('RegistrarUsuarioDto: correo', () => {
 
   it('rechaza un correo institucional mal formado', async () => {
     const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
       correo: 'alumno@@duocuc.cl',
       run: '12345678-5',
       telefono: '12345678',
@@ -83,6 +96,7 @@ describe('RegistrarUsuarioDto: correo', () => {
 describe('RegistrarUsuarioDto: teléfono', () => {
     it('quita el prefijo 9 y conserva ocho dígitos', async () => {
       const dto = plainToInstance(RegistrarUsuarioDto, {
+        ...datosUsuarioValidos,
         correo: 'alumno@duocuc.cl',
         run: '12345678-5',
         telefono: '912345678',
@@ -98,6 +112,7 @@ describe('RegistrarUsuarioDto: teléfono', () => {
 
     it('quita el prefijo +569 y conserva ocho dígitos', async () => {
       const dto = plainToInstance(RegistrarUsuarioDto, {
+        ...datosUsuarioValidos,
         correo: 'alumno@duocuc.cl',
         run: '12345678-5',
         telefono: '+56912345678',
@@ -115,6 +130,7 @@ describe('RegistrarUsuarioDto: teléfono', () => {
 describe('RegistrarUsuarioDto: contraseña', () => {
   it('rechaza una contraseña de menos de 8 caracteres', async () => {
     const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
       correo: 'alumno@duocuc.cl',
       run: '12345678-5',
       telefono: '12345678',
