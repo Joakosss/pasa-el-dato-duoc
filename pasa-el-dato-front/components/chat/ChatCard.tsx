@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils/cn";
-import type { ChatListItem } from "@/lib/chats";
+import type { ChatListItemTemporal } from "@/lib/chats";
 
 type ChatState = "pending" | "sold" | "waiting";
 
-function getChatState(chat: ChatListItem): ChatState {
+function getChatState(chat: ChatListItemTemporal): ChatState {
   if (chat.sold) return "sold";
   if (chat.unreadCount > 0) return "pending";
   return "waiting";
@@ -24,7 +24,7 @@ const STATE_STYLES: Record<ChatState, string> = {
   waiting: "border-gray-200 bg-card",
 };
 
-export function ChatCard({ chat }: { chat: ChatListItem }) {
+export function ChatCard({ chat }: { chat: ChatListItemTemporal }) {
   const state = getChatState(chat);
   const isSeller = chat.otherUserName === "Tú";
 

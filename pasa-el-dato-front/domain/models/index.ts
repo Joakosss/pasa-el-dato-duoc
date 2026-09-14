@@ -1,2 +1,10 @@
-export { User } from "./User";
-export { Dato } from "./Dato";
+export { Base } from "./Base";
+export type { BaseProps } from "./Base";
+export { BaseExtra } from "./BaseExtra";
+export type { BaseExtraProps } from "./BaseExtra";
+export { Cuenta } from "./Cuenta";
+export type { CuentaProps } from "./Cuenta";
+export { Usuario } from "./Usuario";
+export type { UsuarioProps } from "./Usuario";
+export { Marca } from "./Marca";
+export type { MarcaProps } from "./Marca";

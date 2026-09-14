@@ -1,0 +1,65 @@
+import type {
+  ID,
+  RolIdTemporal,
+  SedeIdTemporal,
+} from "@/domain/types/common";
+
+// Forma del cable (JSON con fechas string). Sin clave_hash por decisión aprobada.
+export interface CuentaBaseDTO {
+  id: ID;
+  correo: string;
+  telefono?: string | null;
+  fechaCreacion: string;
+  fechaModificacion: string;
+  eliminado: boolean;
+  owner?: string | null;
+  bloqueado: boolean;
+  fechaBloqueo?: string | null;
+  motivoBloqueo?: string | null;
+}
+
+export interface UsuarioDTO extends CuentaBaseDTO {
+  tipo: "usuario";
+  run: string;
+  pNombre: string;
+  sNombre?: string | null;
+  pApellido: string;
+  sApellido?: string | null;
+  rolId: RolIdTemporal;
+  sedeId: SedeIdTemporal;
+  correoVerificado: boolean;
+}
+
+export interface MarcaDTO extends CuentaBaseDTO {
+  tipo: "marca";
+  nombreMarca: string;
+}
+
+export type CuentaDTO = UsuarioDTO | MarcaDTO;
+
+export interface CreateUsuarioDTO {
+  correo: string;
+  // Clave en texto plano, solo para crear. Nunca es clave_hash ni se guarda en el model.
+  clave: string;
+  telefono?: string | null;
+  run: string;
+  pNombre: string;
+  sNombre?: string | null;
+  pApellido: string;
+  sApellido?: string | null;
+  rolId: RolIdTemporal;
+  sedeId: SedeIdTemporal;
+}
+
+export interface CreateMarcaDTO {
+  correo: string;
+  // Clave en texto plano, solo para crear. Nunca es clave_hash ni se guarda en el model.
+  clave: string;
+  telefono?: string | null;
+  nombreMarca: string;
+}
+
+export interface UpdateCuentaDTO {
+  correo?: string;
+  telefono?: string | null;
+}

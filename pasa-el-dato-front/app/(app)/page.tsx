@@ -8,12 +8,12 @@ import {
   ProductGridSkeleton,
 } from "@/components/product";
 import {
-  FEATURED_PER_PAGE,
-  SPONSORED_PER_PAGE,
-  TOTAL_PAGES,
+  FEATURED_PER_PAGE_TEMPORAL,
+  SPONSORED_PER_PAGE_TEMPORAL,
+  TOTAL_PAGES_TEMPORAL,
 } from "@/lib/products";
 
-const SKELETON_COUNT = FEATURED_PER_PAGE + SPONSORED_PER_PAGE;
+const SKELETON_COUNT = FEATURED_PER_PAGE_TEMPORAL + SPONSORED_PER_PAGE_TEMPORAL;
 
 type HomeProps = {
   searchParams?: Promise<{ page?: string }>;
@@ -23,7 +23,7 @@ export default async function Home(props: HomeProps) {
   const searchParams = props.searchParams ? await props.searchParams : undefined;
   const parsed = Number.parseInt(searchParams?.page ?? "1", 10);
   const page = Number.isFinite(parsed)
-    ? Math.min(Math.max(1, parsed), TOTAL_PAGES)
+    ? Math.min(Math.max(1, parsed), TOTAL_PAGES_TEMPORAL)
     : 1;
 
   return (
@@ -58,7 +58,7 @@ export default async function Home(props: HomeProps) {
           </Button>
         </div> */}
 
-        <Pagination page={page} totalPages={TOTAL_PAGES} />
+        <Pagination page={page} totalPages={TOTAL_PAGES_TEMPORAL} />
       </Container>
     </>
   );

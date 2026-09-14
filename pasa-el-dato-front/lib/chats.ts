@@ -1,6 +1,6 @@
-// TODO: reemplazar por fetch real al backend cuando exista contrato de chats.
+// TODO[TEMPORAL]: mock sin contrato back. Reemplazar por fetch real cuando exista contrato de chats.
 // Por ahora datos mock deterministas para habilitar lista + empty sin inventar API.
-export interface ChatListItem {
+export interface ChatListItemTemporal {
   id: string;
   otherUserName: string;
   productTitle: string;
@@ -10,7 +10,7 @@ export interface ChatListItem {
   sold?: boolean;
 }
 
-const MOCK_CHATS: ChatListItem[] = [
+const MOCK_CHATS_TEMPORAL: ChatListItemTemporal[] = [
   {
     id: "chat-1",
     otherUserName: "Camila Rojas",
@@ -142,11 +142,11 @@ interface GetActiveChatsOptions {
   empty?: boolean;
 }
 
-export async function getActiveChats(
+export async function getActiveChatsTemporal(
   options: GetActiveChatsOptions = {},
-): Promise<ChatListItem[]> {
+): Promise<ChatListItemTemporal[]> {
   if (options.empty) return [];
-  return [...MOCK_CHATS].sort((a, b) =>
+  return [...MOCK_CHATS_TEMPORAL].sort((a, b) =>
     b.lastMessageAt.localeCompare(a.lastMessageAt),
   );
 }

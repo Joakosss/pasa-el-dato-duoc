@@ -1,2 +1,1 @@
-export { UserMapper } from "./user.mapper";
-export { DatoMapper } from "./dato.mapper";
+export { CuentaMapper } from "./cuenta.mapper";

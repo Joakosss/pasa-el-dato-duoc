@@ -8,7 +8,7 @@ import {
   ChatEmptyState,
   ChatListSkeleton,
 } from "@/components/chat";
-import { getActiveChats } from "@/lib/chats";
+import { getActiveChatsTemporal } from "@/lib/chats";
 import { cn } from "@/lib/utils/cn";
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ function isSellerChat(otherUserName: string): boolean {
 }
 
 async function ChatsContent({ tab }: { tab: ChatTab }) {
-  const chats = await getActiveChats();
+  const chats = await getActiveChatsTemporal();
   const buying = chats.filter((c) => !isSellerChat(c.otherUserName));
   const selling = chats.filter((c) => isSellerChat(c.otherUserName));
   const visible = tab === "vendiendo" ? selling : buying;
