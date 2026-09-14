@@ -1,5 +1,4 @@
 import { Cuenta, type CuentaProps } from "./Cuenta";
-import type { CuentaTipo } from "@/domain/types/common";
 import type { MarcaDTO } from "@/domain/dtos/cuenta.dto";
 
 export interface MarcaProps extends CuentaProps {
@@ -8,7 +7,8 @@ export interface MarcaProps extends CuentaProps {
 
 // Espejo de MARCA (id_cuenta FK + nombre).
 export class Marca extends Cuenta {
-  readonly tipo: CuentaTipo = "marca";
+  // Constante solo-front para narrowing (no viene del back, no se envía).
+  readonly tipo = "marca" as const;
   nombreMarca: string;
 
   constructor(props: MarcaProps) {
@@ -34,7 +34,6 @@ export class Marca extends Cuenta {
 
   toJSON(): MarcaDTO {
     return {
-      tipo: "marca",
       id: this.id,
       correo: this.correo,
       telefono: this.telefono,

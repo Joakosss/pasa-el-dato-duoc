@@ -1,9 +1,5 @@
 import { Cuenta, type CuentaProps } from "./Cuenta";
-import type {
-  CuentaTipo,
-  RolIdTemporal,
-  SedeIdTemporal,
-} from "@/domain/types/common";
+import type { RolIdTemporal, SedeIdTemporal } from "@/domain/types/common";
 import type { UsuarioDTO } from "@/domain/dtos/cuenta.dto";
 
 export interface UsuarioProps extends CuentaProps {
@@ -19,7 +15,8 @@ export interface UsuarioProps extends CuentaProps {
 
 // Espejo de USUARIO (id_cuenta FK + run UNIQUE + nombres + fk_rol + fk_sede).
 export class Usuario extends Cuenta {
-  readonly tipo: CuentaTipo = "usuario";
+  // Constante solo-front para narrowing (no viene del back, no se envía).
+  readonly tipo = "usuario" as const;
   run: string;
   pNombre: string;
   sNombre: string | null;

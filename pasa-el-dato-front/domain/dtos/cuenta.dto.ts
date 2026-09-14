@@ -19,7 +19,6 @@ export interface CuentaBaseDTO {
 }
 
 export interface UsuarioDTO extends CuentaBaseDTO {
-  tipo: "usuario";
   run: string;
   pNombre: string;
   sNombre?: string | null;
@@ -31,9 +30,11 @@ export interface UsuarioDTO extends CuentaBaseDTO {
 }
 
 export interface MarcaDTO extends CuentaBaseDTO {
-  tipo: "marca";
   nombreMarca: string;
 }
+
+// Unión solo-front discriminada por forma ('run' in dto).
+// El back nunca envía un campo tipo: son dos endpoints separados.
 
 export type CuentaDTO = UsuarioDTO | MarcaDTO;
 

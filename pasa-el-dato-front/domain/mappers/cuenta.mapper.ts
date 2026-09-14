@@ -9,18 +9,27 @@ import type { Cuenta } from "@/domain/models/Cuenta";
 import { Usuario } from "@/domain/models/Usuario";
 import { Marca } from "@/domain/models/Marca";
 
-function isUsuarioDTO(dto: CuentaDTO): dto is UsuarioDTO {
-  return dto.tipo === "usuario";
+// Discriminación por forma: el back no envía campo tipo.
+// GET /usuarios -> UsuarioDTO (tiene run), GET /marcas -> MarcaDTO (tiene nombreMarca).
+export function isUsuarioDTO(dto: CuentaDTO): dto is UsuarioDTO {
+  return "run" in dto;
 }
 
 export const CuentaMapper = {
-  toDomain(dto: CuentaDTO): Usuario | Marca {
-    if (isUsuarioDTO(dto)) return Usuario.fromJSON(dto);
-    return Marca.fromJSON(dto as MarcaDTO);
+  toUsuario(dto: UsuarioDTO): Usuario {
+    return Usuario.fromJSON(dto);
   },
 
-  toListDomain(dtos: CuentaDTO[]): (Usuario | Marca)[] {
-    return dtos.map((dto) => CuentaMapper.toDomain(dto));
+  toListUsuario(dtos: UsuarioDTO[]): Usuario[] {
+    return dtos.map((dto) => Usuario.fromJSON(dto));
+  },
+
+  toMarca(dto: MarcaDTO): Marca {
+    return Marca.fromJSON(dto);
+  },
+
+  toListMarca(dtos: MarcaDTO[]): Marca[] {
+    return dtos.map((dto) => Marca.fromJSON(dto));
   },
 
   toCreateUsuarioPayload(input: {
