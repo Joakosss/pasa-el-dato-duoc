@@ -143,3 +143,33 @@ describe('RegistrarUsuarioDto: contraseña', () => {
     expect(errores.map((error) => error.property)).toEqual(['contrasena']);
   });
 });
+
+describe('RegistrarUsuarioDto: datos personales y sede', () => {
+  const entradaValida = {
+    ...datosUsuarioValidos,
+    correo: 'alumno@duocuc.cl',
+    run: '12345678-5',
+    telefono: '12345678',
+    contrasena: 'abcdefgh',
+  };
+
+  it('rechaza un primer nombre vacío', async () => {
+    const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...entradaValida,
+      pNombre: '', // Cambiamos solo el campo que queremos probar.
+    });
+
+    const errores = await validate(dto);
+    expect(errores.map((error) => error.property)).toContain('pNombre');
+  });
+
+  it('exige que sedeId sea un número entero', async () => {
+    const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...entradaValida,
+      sedeId: '1', // Un texto no equivale al número JSON 1.
+    });
+
+    const errores = await validate(dto);
+    expect(errores.map((error) => error.property)).toContain('sedeId');
+  });
+});
