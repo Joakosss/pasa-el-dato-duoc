@@ -1,10 +1,12 @@
 import {
   BadRequestException,
+  ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { generarHashContrasena } from '../common/security/contrasena-hash.js';
+import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RegistroService } from './registro.service.js';
 
@@ -208,5 +210,58 @@ describe('RegistroService: consultas previas al registro', () => {
         sede: { connect: { id: 3 } },
       },
     });
+  });
+
+  it('convierte una colisión UNIQUE de Prisma en un conflicto HTTP', async () => {
+    const datos = {
+      correo: 'nuevo@duocuc.cl',
+      run: '12345678-5',
+      telefono: '12345678',
+      contrasena: 'abcdefgh',
+      pNombre: 'Ana',
+      pApellido: 'Pérez',
+      sApellido: 'Gómez',
+      sedeId: 3,
+    };
+
+    // Este test se concentra en el catch, por eso simula los pasos anteriores.
+    vi.spyOn(service, 'verificarUnicidad').mockResolvedValueOnce();
+    vi.spyOn(service, 'validarReferenciasRegistro').mockResolvedValueOnce(7);
+    vi.mocked(generarHashContrasena).mockResolvedValueOnce('hash-simulado');
+
+    const errorUnicidad = new Prisma.PrismaClientKnownRequestError(
+      'Unique constraint failed',
+      { code: 'P2002', clientVersion: '7.10.0' },
+    );
+    prismaFalso.$transaction.mockRejectedValueOnce(errorUnicidad);
+
+    const registro = service.registrar(datos);
+
+    await expect(registro).rejects.toBeInstanceOf(ConflictException);
+    await expect(registro).rejects.toThrow(
+      'El correo o el RUN ya están registrados',
+    );
+  });
+
+  it('propaga un error de transacción que no sea P2002', async () => {
+    const datos = {
+      correo: 'nuevo@duocuc.cl',
+      run: '12345678-5',
+      telefono: '12345678',
+      contrasena: 'abcdefgh',
+      pNombre: 'Ana',
+      pApellido: 'Pérez',
+      sApellido: 'Gómez',
+      sedeId: 3,
+    };
+
+    vi.spyOn(service, 'verificarUnicidad').mockResolvedValueOnce();
+    vi.spyOn(service, 'validarReferenciasRegistro').mockResolvedValueOnce(7);
+    vi.mocked(generarHashContrasena).mockResolvedValueOnce('hash-simulado');
+
+    const errorOriginal = new Error('Fallo inesperado de PostgreSQL');
+    prismaFalso.$transaction.mockRejectedValueOnce(errorOriginal);
+
+    await expect(service.registrar(datos)).rejects.toBe(errorOriginal);
   });
 });

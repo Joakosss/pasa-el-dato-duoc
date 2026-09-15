@@ -2,6 +2,7 @@ import { BadRequestException, ConflictException, Injectable, InternalServerError
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RegistrarUsuarioDto } from './dto/registrar-usuario.dto.js';
 import { generarHashContrasena } from '../common/security/contrasena-hash.js';
+import { Prisma } from '../generated/prisma/client.js';
 
 @Injectable()
 export class RegistroService {
@@ -67,7 +68,7 @@ export class RegistroService {
     
     return rolId;
   }
-
+  
   async registrar(datos: RegistrarUsuarioDto): Promise<void> {
     // Verifica que el correo y el RUN no estén registrados.
     await this.verificarUnicidad(datos.correo, datos.run);
@@ -78,30 +79,41 @@ export class RegistroService {
     // Genera el hash de la contraseña.
     const claveHash = await generarHashContrasena(datos.contrasena);
 
-    await this.prisma.$transaction(async (tx) => {
-      // Primero se crea CUENTA y PostgreSQL genera su UUID.
-      const cuenta = await tx.cuenta.create({
-        data: {
-          correo: datos.correo,
-          claveHash,
-          telefono: datos.telefono,
-          estado: 'PENDIENTE',
-        },
-      });
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        // Primero se crea CUENTA y PostgreSQL genera su UUID.
+        const cuenta = await tx.cuenta.create({
+          data: {
+            correo: datos.correo,
+            claveHash,
+            telefono: datos.telefono,
+            estado: 'PENDIENTE',
+          },
+        });
 
-      // USUARIO se crea dentro de la misma transacción y utiliza ese UUID.
-      await tx.usuario.create({
-        data: {
-          run: datos.run,
-          pNombre: datos.pNombre,
-          sNombre: datos.sNombre ?? null,
-          pApellido: datos.pApellido,
-          sApellido: datos.sApellido,
-          cuenta: { connect: { id_cuenta: cuenta.id_cuenta } },
-          rol_usuario: { connect: { id: rolId } },
-          sede: { connect: { id: datos.sedeId } },
-        },
+        // USUARIO se crea dentro de la misma transacción y utiliza ese UUID.
+        await tx.usuario.create({
+          data: {
+            run: datos.run,
+            pNombre: datos.pNombre,
+            sNombre: datos.sNombre ?? null,
+            pApellido: datos.pApellido,
+            sApellido: datos.sApellido,
+            cuenta: { connect: { id_cuenta: cuenta.id_cuenta } },
+            rol_usuario: { connect: { id: rolId } },
+            sede: { connect: { id: datos.sedeId } },
+          },
+        });
       });
-    });
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError && 
+        error.code === 'P2002' 
+      ) {
+        throw new ConflictException('El correo o el RUN ya están registrados');
+      }
+      // Propaga los errores que no correspondan a una colisión UNIQUE.
+      throw error;
+    }
   }
 }
