@@ -27,11 +27,7 @@ function isSellerChat(otherUserName: string): boolean {
 }
 
 async function ChatsContent({ tab }: { tab: ChatTab }) {
-<<<<<<< HEAD
   const chats = await getActiveChatsTemporal();
-=======
-  const chats = await getActiveChats();
->>>>>>> 1f809d53 (Add(chats) se crea lógica y se arreglan detalles de direccionamiento y de layout.)
   const buying = chats.filter((c) => !isSellerChat(c.otherUserName));
   const selling = chats.filter((c) => isSellerChat(c.otherUserName));
   const visible = tab === "vendiendo" ? selling : buying;
