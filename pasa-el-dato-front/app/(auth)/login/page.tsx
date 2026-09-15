@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { ROUTES } from "@/config";
+import { PasswordInput } from "@/components/ui";
 export const metadata: Metadata = {
   title: "Iniciar sesión | Pasa el Dato",
 };
@@ -17,7 +18,7 @@ export default function LoginPage() {
               <span className="text-lg font-bold text-gold">PD</span>
             </div>
             <h1 className="text-xl font-bold text-navy">Iniciar sesión</h1>
-            <p className="mt-1 text-sm text-gray-400">Bienvenido de vuelta a Pasa el Dato</p>
+            <p className="mt-1 text-sm text-gray-400">Bienvenido de vuelta a Pasa el Dato Duoc</p>
           </div>
 
           <form className="space-y-4">
@@ -27,14 +28,7 @@ export default function LoginPage() {
               placeholder="ejemplo@correo.duoc.cl"
               name="email"
             />
-            <Input label="Contraseña" type="password" placeholder="••••••••" name="password" />
-            {/* <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-500">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300 text-navy focus:ring-gold"
-              />
-              Recordarme
-            </label> */}
+            <PasswordInput label="Contraseña" placeholder="••••••••" name="password" />
             <Button variant="primary" size="lg" type="submit" className="w-full">
               Iniciar sesión
             </Button>
@@ -46,16 +40,12 @@ export default function LoginPage() {
             <div className="h-px flex-1 bg-gray-200" />
           </div>
 
-          {/* <Button variant="secondary" size="lg" className="w-full">
-            Continuar con cuenta Duoc_UC
-          </Button> */}
-
           <div className="mt-6 text-center text-sm">
             <span className="text-gray-400">¿No tienes cuenta? </span>
             <Link href={ROUTES.register} className="font-semibold text-navy">Regístrate aquí</Link>
           </div>
         </div>
       </div>
-    </main>
+    </main >
   );
 }
