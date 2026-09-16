@@ -52,6 +52,19 @@ CREATE TABLE IF NOT EXISTS sede (
     ON DELETE SET NULL
 );
 
+CREATE TABLE IF NOT EXISTS escuela (
+  id SERIAL PRIMARY KEY,
+  nombre TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS carrera (
+  id SERIAL PRIMARY KEY,
+  nombre TEXT NOT NULL,
+
+  fk_escuela INTEGER NOT NULL
+    REFERENCES escuela(id)
+);
+
 CREATE TABLE IF NOT EXISTS usuario (
   id_cuenta UUID PRIMARY KEY
     REFERENCES cuenta(id_cuenta) ON DELETE CASCADE,
@@ -66,7 +79,10 @@ CREATE TABLE IF NOT EXISTS usuario (
     REFERENCES rol_usuario(id),
 
   fk_sede INTEGER NOT NULL
-    REFERENCES sede(id)
+    REFERENCES sede(id),
+
+  fk_carrera INTEGER NOT NULL
+    REFERENCES carrera(id)
 );
 
 CREATE TABLE IF NOT EXISTS log_api (
@@ -96,6 +112,12 @@ CREATE INDEX IF NOT EXISTS idx_usuario_rol
 
 CREATE INDEX IF NOT EXISTS idx_usuario_sede
   ON usuario(fk_sede);
+
+CREATE INDEX IF NOT EXISTS idx_usuario_carrera
+  ON usuario(fk_carrera);
+
+CREATE INDEX IF NOT EXISTS idx_carrera_escuela
+  ON carrera(fk_escuela);
 
 CREATE INDEX IF NOT EXISTS idx_cuenta_modificado_por
   ON cuenta(fk_modificado_por);

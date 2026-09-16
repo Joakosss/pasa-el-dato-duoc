@@ -30,6 +30,7 @@ describe('RegistroService: consultas previas al registro', () => {
     usuario: { findUnique: vi.fn() },
     rolUsuario: { findUnique: vi.fn() },
     sede: { findUnique: vi.fn() },
+    carrera: { findUnique: vi.fn() },
     $transaction: vi.fn(),
   };
 
@@ -96,6 +97,15 @@ describe('RegistroService: consultas previas al registro', () => {
     });
   });
 
+  it('obtiene la carrera por ID o devuelve null si no existe', async () => {
+    prismaFalso.carrera.findUnique
+      .mockResolvedValueOnce({ id: 5 })
+      .mockResolvedValueOnce(null);
+
+    expect(await service.obtenerCarreraPorId(5)).toEqual({ id: 5 });
+    expect(await service.obtenerCarreraPorId(99)).toBeNull();
+  });
+
   it('rechaza un correo registrado antes de consultar el RUN', async () => {
     prismaFalso.cuenta.findUnique.mockResolvedValueOnce({ id_cuenta: 'id' });
 
@@ -129,27 +139,40 @@ describe('RegistroService: consultas previas al registro', () => {
   it('devuelve el ID del rol si la sede existe, aunque esté inactiva', async () => {
     // La regla actual solo exige existencia de la sede.
     prismaFalso.sede.findUnique.mockResolvedValueOnce({ id: 4, activa: false });
+    prismaFalso.carrera.findUnique.mockResolvedValueOnce({ id: 5 });
     prismaFalso.rolUsuario.findUnique.mockResolvedValueOnce({ id: 7 });
 
-    await expect(service.validarReferenciasRegistro(4)).resolves.toBe(7);
+    await expect(service.validarReferenciasRegistro(4, 5)).resolves.toBe(7);
   });
 
   it('rechaza un ID de sede inexistente sin consultar el rol', async () => {
     prismaFalso.sede.findUnique.mockResolvedValueOnce(null);
 
-    await expect(service.validarReferenciasRegistro(99)).rejects.toBeInstanceOf(
-      BadRequestException,
+    await expect(
+      service.validarReferenciasRegistro(99, 5),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prismaFalso.carrera.findUnique).not.toHaveBeenCalled();
+    expect(prismaFalso.rolUsuario.findUnique).not.toHaveBeenCalled();
+  });
+
+  it('rechaza un ID de carrera inexistente sin consultar el rol', async () => {
+    prismaFalso.sede.findUnique.mockResolvedValueOnce({ id: 3, activa: true });
+    prismaFalso.carrera.findUnique.mockResolvedValueOnce(null);
+
+    await expect(service.validarReferenciasRegistro(3, 99)).rejects.toThrow(
+      'La carrera no existe',
     );
     expect(prismaFalso.rolUsuario.findUnique).not.toHaveBeenCalled();
   });
 
   it('señala un problema del servidor si falta el rol Estudiante', async () => {
     prismaFalso.sede.findUnique.mockResolvedValueOnce({ id: 3, activa: true });
+    prismaFalso.carrera.findUnique.mockResolvedValueOnce({ id: 5 });
     prismaFalso.rolUsuario.findUnique.mockResolvedValueOnce(null);
 
-    await expect(service.validarReferenciasRegistro(3)).rejects.toBeInstanceOf(
-      InternalServerErrorException,
-    );
+    await expect(
+      service.validarReferenciasRegistro(3, 5),
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
   it('crea la cuenta pendiente y el usuario dentro de una transacción', async () => {
@@ -163,12 +186,14 @@ describe('RegistroService: consultas previas al registro', () => {
       pApellido: 'Pérez',
       sApellido: 'Gómez',
       sedeId: 3,
+      carreraId: 5,
     };
 
     // Las consultas previas indican que los datos están disponibles.
     prismaFalso.cuenta.findUnique.mockResolvedValueOnce(null);
     prismaFalso.usuario.findUnique.mockResolvedValueOnce(null);
     prismaFalso.sede.findUnique.mockResolvedValueOnce({ id: 3, activa: true });
+    prismaFalso.carrera.findUnique.mockResolvedValueOnce({ id: 5 });
     prismaFalso.rolUsuario.findUnique.mockResolvedValueOnce({ id: 7 });
 
     // El hash se simula para que esta prueba sea rápida y predecible.
@@ -208,6 +233,7 @@ describe('RegistroService: consultas previas al registro', () => {
         cuenta: { connect: { id_cuenta: 'uuid-generado' } },
         rol_usuario: { connect: { id: 7 } },
         sede: { connect: { id: 3 } },
+        carrera: { connect: { id: 5 } },
       },
     });
   });
@@ -222,6 +248,7 @@ describe('RegistroService: consultas previas al registro', () => {
       pApellido: 'Pérez',
       sApellido: 'Gómez',
       sedeId: 3,
+      carreraId: 5,
     };
 
     // Este test se concentra en el catch, por eso simula los pasos anteriores.
@@ -253,6 +280,7 @@ describe('RegistroService: consultas previas al registro', () => {
       pApellido: 'Pérez',
       sApellido: 'Gómez',
       sedeId: 3,
+      carreraId: 5,
     };
 
     vi.spyOn(service, 'verificarUnicidad').mockResolvedValueOnce();

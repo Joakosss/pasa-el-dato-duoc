@@ -40,6 +40,7 @@ describe('UsuarioController', () => {
       pApellido: 'Pérez',
       sApellido: 'Gómez',
       sedeId: 1,
+      carreraId: 1,
     };
     registroServiceFalso.registrar.mockResolvedValueOnce(undefined);
 

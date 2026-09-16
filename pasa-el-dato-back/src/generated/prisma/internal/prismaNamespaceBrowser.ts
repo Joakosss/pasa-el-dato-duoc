@@ -54,6 +54,8 @@ export const ModelName = {
   Cuenta: 'Cuenta',
   RolUsuario: 'RolUsuario',
   Sede: 'Sede',
+  Escuela: 'Escuela',
+  Carrera: 'Carrera',
   Usuario: 'Usuario',
   log_api: 'log_api'
 } as const
@@ -113,6 +115,23 @@ export const SedeScalarFieldEnum = {
 export type SedeScalarFieldEnum = (typeof SedeScalarFieldEnum)[keyof typeof SedeScalarFieldEnum]
 
 
+export const EscuelaScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre'
+} as const
+
+export type EscuelaScalarFieldEnum = (typeof EscuelaScalarFieldEnum)[keyof typeof EscuelaScalarFieldEnum]
+
+
+export const CarreraScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  fk_escuela: 'fk_escuela'
+} as const
+
+export type CarreraScalarFieldEnum = (typeof CarreraScalarFieldEnum)[keyof typeof CarreraScalarFieldEnum]
+
+
 export const UsuarioScalarFieldEnum = {
   id_cuenta: 'id_cuenta',
   run: 'run',
@@ -121,7 +140,8 @@ export const UsuarioScalarFieldEnum = {
   pApellido: 'pApellido',
   sApellido: 'sApellido',
   fk_rol_usuario: 'fk_rol_usuario',
-  fk_sede: 'fk_sede'
+  fk_sede: 'fk_sede',
+  fk_carrera: 'fk_carrera'
 } as const
 
 export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]

@@ -55,6 +55,27 @@ model Sede {
   @@map("sede")
 }
 
+model Escuela {
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  carreras Carrera[]
+
+  @@map("escuela")
+}
+
+model Carrera {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  fk_escuela Int
+
+  escuela  Escuela   @relation(fields: [fk_escuela], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  usuarios Usuario[]
+
+  @@index([fk_escuela], map: "idx_carrera_escuela")
+  @@map("carrera")
+}
+
 model Usuario {
   id_cuenta      String  @id @db.Uuid
   run            String  @unique
@@ -64,13 +85,16 @@ model Usuario {
   sApellido      String  @map("s_apellido")
   fk_rol_usuario Int
   fk_sede        Int
+  fk_carrera     Int
 
   rol_usuario RolUsuario @relation(fields: [fk_rol_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
   sede        Sede       @relation(fields: [fk_sede], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  carrera     Carrera    @relation(fields: [fk_carrera], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cuenta      Cuenta     @relation(fields: [id_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([fk_rol_usuario], map: "idx_usuario_rol")
   @@index([fk_sede], map: "idx_usuario_sede")
+  @@index([fk_carrera], map: "idx_usuario_carrera")
   @@map("usuario")
 }
 

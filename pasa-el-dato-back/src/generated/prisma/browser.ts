@@ -33,6 +33,16 @@ export type RolUsuario = Prisma.RolUsuarioModel
  */
 export type Sede = Prisma.SedeModel
 /**
+ * Model Escuela
+ * 
+ */
+export type Escuela = Prisma.EscuelaModel
+/**
+ * Model Carrera
+ * 
+ */
+export type Carrera = Prisma.CarreraModel
+/**
  * Model Usuario
  * 
  */

@@ -11,6 +11,8 @@
 export type * from './models/Cuenta.js'
 export type * from './models/RolUsuario.js'
 export type * from './models/Sede.js'
+export type * from './models/Escuela.js'
+export type * from './models/Carrera.js'
 export type * from './models/Usuario.js'
 export type * from './models/log_api.js'
 export type * from './commonInputTypes.js'

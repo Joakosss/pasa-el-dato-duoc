@@ -1,4 +1,9 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RegistrarUsuarioDto } from './dto/registrar-usuario.dto.js';
 import { generarHashContrasena } from '../common/security/contrasena-hash.js';
@@ -38,10 +43,17 @@ export class RegistroService {
 
   async obtenerSedePorId(
     sedeId: number,
-  ): Promise<{ id:number; activa: boolean } | null> {
+  ): Promise<{ id: number; activa: boolean } | null> {
     return this.prisma.sede.findUnique({
       where: { id: sedeId },
       select: { id: true, activa: true },
+    });
+  }
+
+  async obtenerCarreraPorId(carreraId: number): Promise<{ id: number } | null> {
+    return this.prisma.carrera.findUnique({
+      where: { id: carreraId },
+      select: { id: true },
     });
   }
 
@@ -55,26 +67,37 @@ export class RegistroService {
     }
   }
 
-  async validarReferenciasRegistro(sedeId: number): Promise<number> {
+  async validarReferenciasRegistro(
+    sedeId: number,
+    carreraId: number,
+  ): Promise<number> {
     const sede = await this.obtenerSedePorId(sedeId);
     if (sede === null) {
       throw new BadRequestException('La sede no existe');
+    }
+
+    const carrera = await this.obtenerCarreraPorId(carreraId);
+    if (carrera === null) {
+      throw new BadRequestException('La carrera no existe');
     }
 
     const rolId = await this.obtenerIdRolEstudiante();
     if (rolId === null) {
       throw new InternalServerErrorException('El rol Estudiante no existe');
     }
-    
+
     return rolId;
   }
-  
+
   async registrar(datos: RegistrarUsuarioDto): Promise<void> {
     // Verifica que el correo y el RUN no estén registrados.
     await this.verificarUnicidad(datos.correo, datos.run);
 
     // Verifica que la sede exista y que el rol Estudiante esté definido.
-    const rolId = await this.validarReferenciasRegistro(datos.sedeId);
+    const rolId = await this.validarReferenciasRegistro(
+      datos.sedeId,
+      datos.carreraId,
+    );
 
     // Genera el hash de la contraseña.
     const claveHash = await generarHashContrasena(datos.contrasena);
@@ -102,13 +125,14 @@ export class RegistroService {
             cuenta: { connect: { id_cuenta: cuenta.id_cuenta } },
             rol_usuario: { connect: { id: rolId } },
             sede: { connect: { id: datos.sedeId } },
+            carrera: { connect: { id: datos.carreraId } },
           },
         });
       });
     } catch (error: unknown) {
       if (
-        error instanceof Prisma.PrismaClientKnownRequestError && 
-        error.code === 'P2002' 
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
       ) {
         throw new ConflictException('El correo o el RUN ya están registrados');
       }

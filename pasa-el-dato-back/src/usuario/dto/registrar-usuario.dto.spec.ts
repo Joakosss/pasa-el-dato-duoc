@@ -8,6 +8,7 @@ const datosUsuarioValidos = {
   pApellido: 'Pérez',
   sApellido: 'Gómez',
   sedeId: 1,
+  carreraId: 1,
 };
 
 describe('RegistrarUsuarioDto: RUN', () => {
@@ -94,37 +95,37 @@ describe('RegistrarUsuarioDto: correo', () => {
 });
 
 describe('RegistrarUsuarioDto: teléfono', () => {
-    it('quita el prefijo 9 y conserva ocho dígitos', async () => {
-      const dto = plainToInstance(RegistrarUsuarioDto, {
-        ...datosUsuarioValidos,
-        correo: 'alumno@duocuc.cl',
-        run: '12345678-5',
-        telefono: '912345678',
-        contrasena: 'abcdefgh',
-      });
-
-      const errores = await validate(dto);
-
-      // @Transform quita el 9 inicial antes de validar.
-      expect(dto.telefono).toBe('12345678');
-      expect(errores).toHaveLength(0);
+  it('quita el prefijo 9 y conserva ocho dígitos', async () => {
+    const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
+      correo: 'alumno@duocuc.cl',
+      run: '12345678-5',
+      telefono: '912345678',
+      contrasena: 'abcdefgh',
     });
 
-    it('quita el prefijo +569 y conserva ocho dígitos', async () => {
-      const dto = plainToInstance(RegistrarUsuarioDto, {
-        ...datosUsuarioValidos,
-        correo: 'alumno@duocuc.cl',
-        run: '12345678-5',
-        telefono: '+56912345678',
-        contrasena: 'abcdefgh',
-      });
+    const errores = await validate(dto);
 
-      const errores = await validate(dto);
+    // @Transform quita el 9 inicial antes de validar.
+    expect(dto.telefono).toBe('12345678');
+    expect(errores).toHaveLength(0);
+  });
 
-      // Ambas formas de entrada producen el mismo valor final.
-      expect(dto.telefono).toBe('12345678');
-      expect(errores).toHaveLength(0);
+  it('quita el prefijo +569 y conserva ocho dígitos', async () => {
+    const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...datosUsuarioValidos,
+      correo: 'alumno@duocuc.cl',
+      run: '12345678-5',
+      telefono: '+56912345678',
+      contrasena: 'abcdefgh',
     });
+
+    const errores = await validate(dto);
+
+    // Ambas formas de entrada producen el mismo valor final.
+    expect(dto.telefono).toBe('12345678');
+    expect(errores).toHaveLength(0);
+  });
 });
 
 describe('RegistrarUsuarioDto: contraseña', () => {
@@ -144,7 +145,7 @@ describe('RegistrarUsuarioDto: contraseña', () => {
   });
 });
 
-describe('RegistrarUsuarioDto: datos personales y sede', () => {
+describe('RegistrarUsuarioDto: datos personales, sede y carrera', () => {
   const entradaValida = {
     ...datosUsuarioValidos,
     correo: 'alumno@duocuc.cl',
@@ -171,5 +172,15 @@ describe('RegistrarUsuarioDto: datos personales y sede', () => {
 
     const errores = await validate(dto);
     expect(errores.map((error) => error.property)).toContain('sedeId');
+  });
+
+  it('exige que carreraId sea un número entero', async () => {
+    const dto = plainToInstance(RegistrarUsuarioDto, {
+      ...entradaValida,
+      carreraId: '1',
+    });
+
+    const errores = await validate(dto);
+    expect(errores.map((error) => error.property)).toContain('carreraId');
   });
 });

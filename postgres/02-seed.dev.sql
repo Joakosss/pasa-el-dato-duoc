@@ -13,3 +13,21 @@ SELECT 'Puente Alto', TRUE
 WHERE NOT EXISTS (
   SELECT 1 FROM sede WHERE nombre = 'Puente Alto'
 );
+
+-- Datos temporales para probar la selección de carrera durante el registro.
+INSERT INTO escuela (nombre)
+SELECT 'Escuela de prueba'
+WHERE NOT EXISTS (
+  SELECT 1 FROM escuela WHERE nombre = 'Escuela de prueba'
+);
+
+INSERT INTO carrera (nombre, fk_escuela)
+SELECT 'Carrera de prueba', escuela.id
+FROM escuela
+WHERE escuela.nombre = 'Escuela de prueba'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM carrera
+    WHERE carrera.nombre = 'Carrera de prueba'
+      AND carrera.fk_escuela = escuela.id
+  );

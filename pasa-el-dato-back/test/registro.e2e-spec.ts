@@ -9,6 +9,7 @@ describe('Registro de usuario (e2e)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
   let sedeId: number;
+  let carreraId: number;
 
   // Estos valores identifican únicamente los datos creados por esta prueba.
   const correoPrueba = 'prueba.e2e.registro@duocuc.cl';
@@ -43,6 +44,15 @@ describe('Registro de usuario (e2e)', () => {
     }
     sedeId = sede.id;
 
+    // La carrera también se obtiene por nombre para no depender de un ID fijo.
+    const carrera = await prisma.carrera.findFirst({
+      where: { nombre: 'Carrera de prueba' },
+      select: { id: true },
+    });
+    if (carrera === null) {
+      throw new Error('La prueba requiere la Carrera de prueba');
+    }
+    carreraId = carrera.id;
   });
 
   beforeEach(async () => {
@@ -72,6 +82,7 @@ describe('Registro de usuario (e2e)', () => {
         pApellido: 'Pérez',
         sApellido: 'Gómez',
         sedeId,
+        carreraId,
       })
       .expect(201);
 
@@ -87,6 +98,12 @@ describe('Registro de usuario (e2e)', () => {
             run: true,
             rol_usuario: { select: { descripcion: true } },
             sede: { select: { nombre: true } },
+            carrera: {
+              select: {
+                nombre: true,
+                escuela: { select: { nombre: true } },
+              },
+            },
           },
         },
       },
@@ -101,6 +118,8 @@ describe('Registro de usuario (e2e)', () => {
     expect(cuenta?.usuario?.run).toBe(runPrueba);
     expect(cuenta?.usuario?.rol_usuario.descripcion).toBe('Estudiante');
     expect(cuenta?.usuario?.sede.nombre).toBe('Puente Alto');
+    expect(cuenta?.usuario?.carrera.nombre).toBe('Carrera de prueba');
+    expect(cuenta?.usuario?.carrera.escuela.nombre).toBe('Escuela de prueba');
   });
 
   it('rechaza con 400 un correo que no sea institucional', async () => {
@@ -115,6 +134,7 @@ describe('Registro de usuario (e2e)', () => {
         pApellido: 'Pérez',
         sApellido: 'Gómez',
         sedeId,
+        carreraId,
       })
       .expect(400);
 
@@ -139,6 +159,7 @@ describe('Registro de usuario (e2e)', () => {
       pApellido: 'Pérez',
       sApellido: 'Gómez',
       sedeId,
+      carreraId,
     };
 
     // La primera petición crea el registro.
