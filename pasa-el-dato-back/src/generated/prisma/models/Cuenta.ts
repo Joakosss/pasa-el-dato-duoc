@@ -29,7 +29,7 @@ export type CuentaMinAggregateOutputType = {
   correo: string | null
   claveHash: string | null
   telefono: string | null
-  estado: $Enums.EstadoCuenta | null
+  aprobada: boolean | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
   eliminado: boolean | null
@@ -44,7 +44,7 @@ export type CuentaMaxAggregateOutputType = {
   correo: string | null
   claveHash: string | null
   telefono: string | null
-  estado: $Enums.EstadoCuenta | null
+  aprobada: boolean | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
   eliminado: boolean | null
@@ -59,7 +59,7 @@ export type CuentaCountAggregateOutputType = {
   correo: number
   claveHash: number
   telefono: number
-  estado: number
+  aprobada: number
   fechaCreacion: number
   fechaModificacion: number
   eliminado: number
@@ -76,7 +76,7 @@ export type CuentaMinAggregateInputType = {
   correo?: true
   claveHash?: true
   telefono?: true
-  estado?: true
+  aprobada?: true
   fechaCreacion?: true
   fechaModificacion?: true
   eliminado?: true
@@ -91,7 +91,7 @@ export type CuentaMaxAggregateInputType = {
   correo?: true
   claveHash?: true
   telefono?: true
-  estado?: true
+  aprobada?: true
   fechaCreacion?: true
   fechaModificacion?: true
   eliminado?: true
@@ -106,7 +106,7 @@ export type CuentaCountAggregateInputType = {
   correo?: true
   claveHash?: true
   telefono?: true
-  estado?: true
+  aprobada?: true
   fechaCreacion?: true
   fechaModificacion?: true
   eliminado?: true
@@ -194,7 +194,7 @@ export type CuentaGroupByOutputType = {
   correo: string
   claveHash: string
   telefono: string
-  estado: $Enums.EstadoCuenta
+  aprobada: boolean
   fechaCreacion: Date
   fechaModificacion: Date
   eliminado: boolean
@@ -230,7 +230,7 @@ export type CuentaWhereInput = {
   correo?: Prisma.StringFilter<"Cuenta"> | string
   claveHash?: Prisma.StringFilter<"Cuenta"> | string
   telefono?: Prisma.StringFilter<"Cuenta"> | string
-  estado?: Prisma.EnumEstadoCuentaFilter<"Cuenta"> | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolFilter<"Cuenta"> | boolean
@@ -250,7 +250,7 @@ export type CuentaOrderByWithRelationInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  estado?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -273,7 +273,7 @@ export type CuentaWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CuentaWhereInput | Prisma.CuentaWhereInput[]
   claveHash?: Prisma.StringFilter<"Cuenta"> | string
   telefono?: Prisma.StringFilter<"Cuenta"> | string
-  estado?: Prisma.EnumEstadoCuentaFilter<"Cuenta"> | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolFilter<"Cuenta"> | boolean
@@ -293,7 +293,7 @@ export type CuentaOrderByWithAggregationInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  estado?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -314,7 +314,7 @@ export type CuentaScalarWhereWithAggregatesInput = {
   correo?: Prisma.StringWithAggregatesFilter<"Cuenta"> | string
   claveHash?: Prisma.StringWithAggregatesFilter<"Cuenta"> | string
   telefono?: Prisma.StringWithAggregatesFilter<"Cuenta"> | string
-  estado?: Prisma.EnumEstadoCuentaWithAggregatesFilter<"Cuenta"> | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolWithAggregatesFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeWithAggregatesFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeWithAggregatesFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolWithAggregatesFilter<"Cuenta"> | boolean
@@ -329,7 +329,7 @@ export type CuentaCreateInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -348,7 +348,7 @@ export type CuentaUncheckedCreateInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -367,7 +367,7 @@ export type CuentaUpdateInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -386,7 +386,7 @@ export type CuentaUncheckedUpdateInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -405,7 +405,7 @@ export type CuentaCreateManyInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -420,7 +420,7 @@ export type CuentaUpdateManyMutationInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -434,7 +434,7 @@ export type CuentaUncheckedUpdateManyInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -464,7 +464,7 @@ export type CuentaCountOrderByAggregateInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  estado?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -479,7 +479,7 @@ export type CuentaMaxOrderByAggregateInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  estado?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -494,7 +494,7 @@ export type CuentaMinOrderByAggregateInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  estado?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -533,16 +533,12 @@ export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
-export type EnumEstadoCuentaFieldUpdateOperationsInput = {
-  set?: $Enums.EstadoCuenta
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
-}
-
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -642,7 +638,7 @@ export type CuentaCreateWithoutOther_cuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -660,7 +656,7 @@ export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -683,7 +679,7 @@ export type CuentaCreateWithoutCuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -701,7 +697,7 @@ export type CuentaUncheckedCreateWithoutCuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -740,7 +736,7 @@ export type CuentaUpdateWithoutOther_cuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -758,7 +754,7 @@ export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -795,7 +791,7 @@ export type CuentaScalarWhereInput = {
   correo?: Prisma.StringFilter<"Cuenta"> | string
   claveHash?: Prisma.StringFilter<"Cuenta"> | string
   telefono?: Prisma.StringFilter<"Cuenta"> | string
-  estado?: Prisma.EnumEstadoCuentaFilter<"Cuenta"> | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolFilter<"Cuenta"> | boolean
@@ -810,7 +806,7 @@ export type CuentaCreateWithoutSedeInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -828,7 +824,7 @@ export type CuentaUncheckedCreateWithoutSedeInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -862,7 +858,7 @@ export type CuentaUpdateWithoutSedeInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -880,7 +876,7 @@ export type CuentaUncheckedUpdateWithoutSedeInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -898,7 +894,7 @@ export type CuentaCreateWithoutUsuarioInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -916,7 +912,7 @@ export type CuentaUncheckedCreateWithoutUsuarioInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -950,7 +946,7 @@ export type CuentaUpdateWithoutUsuarioInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -968,7 +964,7 @@ export type CuentaUncheckedUpdateWithoutUsuarioInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -986,7 +982,7 @@ export type CuentaCreateWithoutLog_apiInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -1004,7 +1000,7 @@ export type CuentaUncheckedCreateWithoutLog_apiInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -1038,7 +1034,7 @@ export type CuentaUpdateWithoutLog_apiInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1056,7 +1052,7 @@ export type CuentaUncheckedUpdateWithoutLog_apiInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1074,7 +1070,7 @@ export type CuentaCreateManyCuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  estado?: $Enums.EstadoCuenta
+  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -1088,7 +1084,7 @@ export type CuentaUpdateWithoutCuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1106,7 +1102,7 @@ export type CuentaUncheckedUpdateWithoutCuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1124,7 +1120,7 @@ export type CuentaUncheckedUpdateManyWithoutCuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  estado?: Prisma.EnumEstadoCuentaFieldUpdateOperationsInput | $Enums.EstadoCuenta
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1187,7 +1183,7 @@ export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  estado?: boolean
+  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1208,7 +1204,7 @@ export type CuentaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  estado?: boolean
+  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1224,7 +1220,7 @@ export type CuentaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  estado?: boolean
+  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1240,7 +1236,7 @@ export type CuentaSelectScalar = {
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  estado?: boolean
+  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1250,7 +1246,7 @@ export type CuentaSelectScalar = {
   motivoBloqueo?: boolean
 }
 
-export type CuentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_cuenta" | "correo" | "claveHash" | "telefono" | "estado" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por" | "bloqueado" | "fechaBloqueo" | "motivoBloqueo", ExtArgs["result"]["cuenta"]>
+export type CuentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_cuenta" | "correo" | "claveHash" | "telefono" | "aprobada" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por" | "bloqueado" | "fechaBloqueo" | "motivoBloqueo", ExtArgs["result"]["cuenta"]>
 export type CuentaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.Cuenta$cuentaArgs<ExtArgs>
   other_cuenta?: boolean | Prisma.Cuenta$other_cuentaArgs<ExtArgs>
@@ -1280,7 +1276,7 @@ export type $CuentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     correo: string
     claveHash: string
     telefono: string
-    estado: $Enums.EstadoCuenta
+    aprobada: boolean
     fechaCreacion: Date
     fechaModificacion: Date
     eliminado: boolean
@@ -1720,7 +1716,7 @@ export interface CuentaFieldRefs {
   readonly correo: Prisma.FieldRef<"Cuenta", 'String'>
   readonly claveHash: Prisma.FieldRef<"Cuenta", 'String'>
   readonly telefono: Prisma.FieldRef<"Cuenta", 'String'>
-  readonly estado: Prisma.FieldRef<"Cuenta", 'EstadoCuenta'>
+  readonly aprobada: Prisma.FieldRef<"Cuenta", 'Boolean'>
   readonly fechaCreacion: Prisma.FieldRef<"Cuenta", 'DateTime'>
   readonly fechaModificacion: Prisma.FieldRef<"Cuenta", 'DateTime'>
   readonly eliminado: Prisma.FieldRef<"Cuenta", 'Boolean'>

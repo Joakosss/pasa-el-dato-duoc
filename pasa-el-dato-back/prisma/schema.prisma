@@ -8,18 +8,18 @@ datasource db {
 }
 
 model Cuenta {
-  id_cuenta         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  correo            String       @unique
-  claveHash         String       @map("clave_hash")
+  id_cuenta         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  correo            String    @unique
+  claveHash         String    @map("clave_hash")
   telefono          String
-  estado            EstadoCuenta @default(PENDIENTE)
-  fechaCreacion     DateTime     @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
-  fechaModificacion DateTime     @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
-  eliminado         Boolean      @default(false)
-  fk_modificado_por String?      @db.Uuid
-  bloqueado         Boolean      @default(false)
-  fechaBloqueo      DateTime?    @map("fecha_bloqueo") @db.Timestamptz(6)
-  motivoBloqueo     String?      @map("motivo_bloqueo")
+  aprobada          Boolean   @default(false)
+  fechaCreacion     DateTime  @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion DateTime  @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  eliminado         Boolean   @default(false)
+  fk_modificado_por String?   @db.Uuid
+  bloqueado         Boolean   @default(false)
+  fechaBloqueo      DateTime? @map("fecha_bloqueo") @db.Timestamptz(6)
+  motivoBloqueo     String?   @map("motivo_bloqueo")
 
   cuenta       Cuenta?   @relation("cuentaTocuenta", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction, map: "fk_cuenta_modificado_por")
   other_cuenta Cuenta[]  @relation("cuentaTocuenta")
@@ -111,11 +111,4 @@ model log_api {
 
   @@index([fk_cuenta], map: "idx_log_api_cuenta")
   @@index([fecha_hora], map: "idx_log_api_fecha_hora")
-}
-
-enum EstadoCuenta {
-  PENDIENTE
-  ACTIVA
-
-  @@map("estado_cuenta")
 }

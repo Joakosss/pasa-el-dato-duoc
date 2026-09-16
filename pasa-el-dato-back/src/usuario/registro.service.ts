@@ -110,7 +110,8 @@ export class RegistroService {
             correo: datos.correo,
             claveHash,
             telefono: datos.telefono,
-            estado: 'PENDIENTE',
+            // La aprobación se realizará en un flujo posterior.
+            aprobada: false,
           },
         });
 

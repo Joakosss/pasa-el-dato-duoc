@@ -175,7 +175,7 @@ describe('RegistroService: consultas previas al registro', () => {
     ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
-  it('crea la cuenta pendiente y el usuario dentro de una transacción', async () => {
+  it('crea la cuenta no aprobada y el usuario dentro de una transacción', async () => {
     const datos = {
       correo: 'nuevo@duocuc.cl',
       run: '12345678-5',
@@ -220,7 +220,7 @@ describe('RegistroService: consultas previas al registro', () => {
         correo: 'nuevo@duocuc.cl',
         claveHash: 'hash-simulado',
         telefono: '12345678',
-        estado: 'PENDIENTE',
+        aprobada: false,
       },
     });
     expect(transaccionFalsa.usuario.create).toHaveBeenCalledWith({

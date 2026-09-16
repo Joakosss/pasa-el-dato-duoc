@@ -1,17 +1,12 @@
 -- 01-schema.sql — ESQUEMA OFICIAL
 -- Corre solo la primera vez (volumen vacío)
 
-CREATE TYPE estado_cuenta AS ENUM (
-  'PENDIENTE',
-  'ACTIVA'
-);
-
 CREATE TABLE IF NOT EXISTS cuenta (
   id_cuenta UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   correo TEXT UNIQUE NOT NULL,
   clave_hash TEXT NOT NULL,
   telefono TEXT NOT NULL,
-  estado estado_cuenta NOT NULL DEFAULT 'PENDIENTE',
+  aprobada BOOLEAN NOT NULL DEFAULT FALSE,
 
   -- BASE
   fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT now(),

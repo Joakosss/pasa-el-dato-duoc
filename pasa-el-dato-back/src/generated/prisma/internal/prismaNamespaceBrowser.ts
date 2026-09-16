@@ -81,7 +81,7 @@ export const CuentaScalarFieldEnum = {
   correo: 'correo',
   claveHash: 'claveHash',
   telefono: 'telefono',
-  estado: 'estado',
+  aprobada: 'aprobada',
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
