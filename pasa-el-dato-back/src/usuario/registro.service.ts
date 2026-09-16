@@ -116,4 +116,12 @@ export class RegistroService {
       throw error;
     }
   }
+
+  async correoDisponible(correo: string): Promise<boolean> {
+    return !(await this.existeCorreo(correo));
+  }
+
+  async runDisponible(run: string): Promise<boolean> {
+    return !(await this.existeRun(run));
+  }
 }

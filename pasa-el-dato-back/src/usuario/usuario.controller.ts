@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { RegistrarUsuarioDto } from './dto/registrar-usuario.dto.js';
 import { RegistroService } from './registro.service.js';
+import { ValidarCorreoDto, ValidarRunDto } from './dto/validar-disponibilidad.dto.js';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -13,5 +14,19 @@ export class UsuarioController {
         @Body() datos: RegistrarUsuarioDto,
     ): Promise<void> {
         await this.registroService.registrar(datos);
+    }
+
+    @Post('validar-correo')
+    async validarCorreo(
+        @Body() datos: ValidarCorreoDto,
+    ): Promise<boolean> {
+        return await this.registroService.correoDisponible(datos.correo);
+    }
+
+    @Post('validar-run')
+    async validarRun(
+        @Body() datos: ValidarRunDto,
+    ): Promise<boolean> {
+        return await this.registroService.runDisponible(datos.run);
     }
 }
