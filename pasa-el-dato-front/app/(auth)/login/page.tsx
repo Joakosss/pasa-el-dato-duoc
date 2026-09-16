@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { ROUTES } from "@/config";
 import { PasswordInput } from "@/components/ui";
+import { AvisoRegistro } from "@/components/auth/AvisoRegistro";
 export const metadata: Metadata = {
   title: "Iniciar sesión | Pasa el Dato",
 };
@@ -22,6 +24,9 @@ export default function LoginPage() {
           </div>
 
           <form className="space-y-4">
+            <Suspense fallback={null}>
+              <AvisoRegistro />
+            </Suspense>
             <Input
               label="Correo institucional"
               type="email"

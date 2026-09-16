@@ -55,6 +55,21 @@ export interface CreateUsuarioDTO {
   carreraId: CarreraIdMomentaneo;
 }
 
+// Forma plana que exige POST /usuario/registro (RegistrarUsuarioDto del back).
+// clave -> contrasena, ids string -> number. Se arma en T2 del cierre registro.
+export interface RegistrarUsuarioRequestDTO {
+  correo: string;
+  contrasena: string;
+  telefono: string;
+  run: string;
+  pNombre: string;
+  sNombre?: string | null;
+  pApellido: string;
+  sApellido: string;
+  sedeId: number;
+  carreraId: number;
+}
+
 export interface CreateMarcaDTO {
   correo: string;
   // Clave en texto plano, solo para crear. Nunca es clave_hash ni se guarda en el model.

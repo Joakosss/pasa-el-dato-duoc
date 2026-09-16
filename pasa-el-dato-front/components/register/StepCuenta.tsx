@@ -8,7 +8,7 @@ import { useVerificarRun, type SnapshotVerificacion as SnapshotRun } from "@/hoo
 import { useVerificarCorreo, type SnapshotVerificacion as SnapshotCorreo } from "@/hooks/use-verificar-correo";
 import { cn } from "@/lib/utils/cn";
 
-// Pausa sin teclear antes de consultar (carcasa, sin fetch).
+// Pausa sin teclear antes de consultar POST /usuario/validar-run.
 const PAUSA_DEBOUNCE_MS = 1300;
 
 interface StepCuentaProps {

@@ -3,6 +3,7 @@ import type {
   CreateUsuarioDTO,
   CuentaDTO,
   MarcaDTO,
+  RegistrarUsuarioRequestDTO,
   UpdateCuentaDTO,
   UsuarioDTO,
 } from "@/domain/dtos/cuenta.dto";
@@ -55,11 +56,16 @@ export function validarBorradorParaCrear(
   if (
     borrador.pNombre.trim().length === 0 ||
     borrador.pApellido.trim().length === 0 ||
+    borrador.sApellido.trim().length === 0 ||
+    borrador.telefono.trim().length === 0 ||
     borrador.sedeId.length === 0 ||
     borrador.escuelaId.length === 0 ||
     borrador.carreraId.length === 0
   ) {
-    return { ok: false, error: "Completa nombres, sede, escuela y carrera." };
+    return { ok: false, error: "Completa nombres, apellidos, teléfono, sede, escuela y carrera." };
+  }
+  if (!Number.isInteger(Number(borrador.sedeId)) || !Number.isInteger(Number(borrador.carreraId))) {
+    return { ok: false, error: "La sede o carrera elegida no es válida." };
   }
   if (!esCarreraDeEscuela(carreras, borrador.carreraId, borrador.escuelaId)) {
     return { ok: false, error: "La carrera no pertenece a la escuela elegida." };
@@ -105,8 +111,27 @@ export const CuentaMapper = {
     };
   },
 
-  toCreateMarcaPayload(input: {
-    correo: string;
+  // Adapta borrador + snapshots a la forma plana de POST /usuario/registro.
+  // clave -> contrasena, ids string -> number, teléfono sin espacios.
+  toRegistrarUsuarioRequest(
+    borrador: RegistroUsuarioBorrador,
+    snapshots: SnapshotsRegistro,
+  ): RegistrarUsuarioRequestDTO {
+    return {
+      correo: (snapshots.correoNormalizado ?? borrador.correo).trim().toLowerCase(),
+      contrasena: borrador.clave,
+      telefono: borrador.telefono.replace(/[\s-]/g, ""),
+      run: (snapshots.runNormalizado ?? borrador.run).trim(),
+      pNombre: borrador.pNombre.trim(),
+      sNombre: borrador.sNombre?.trim() || null,
+      pApellido: borrador.pApellido.trim(),
+      sApellido: borrador.sApellido.trim(),
+      sedeId: Number(borrador.sedeId),
+      carreraId: Number(borrador.carreraId),
+    };
+  },
+
+  toCreateMarcaPayload(input: {    correo: string;
     clave: string;
     telefono?: string | null;
     nombreMarca: string;

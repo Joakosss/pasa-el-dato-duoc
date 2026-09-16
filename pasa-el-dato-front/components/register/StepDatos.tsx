@@ -12,7 +12,10 @@ interface StepDatosProps {
 
 export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
   const valido =
-    datos.pNombre.trim().length > 0 && datos.pApellido.trim().length > 0;
+    datos.pNombre.trim().length > 0 &&
+    datos.pApellido.trim().length > 0 &&
+    datos.sApellido.trim().length > 0 &&
+    datos.telefono.trim().length > 0;
 
   useEffect(() => {
     onValidez(valido);
@@ -46,16 +49,16 @@ export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
           onChange={(e) => onChange({ pApellido: e.target.value })}
         />
         <Input
-          label="Apellido materno"
+          label="Apellido materno *"
           name="sApellido"
-          placeholder="Paredes (opcional)"
+          placeholder="Paredes"
           value={datos.sApellido}
           onChange={(e) => onChange({ sApellido: e.target.value })}
         />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
-          label="Teléfono (opcional)"
+          label="Teléfono *"
           type="tel"
           name="telefono"
           placeholder="+569 1234 5678"

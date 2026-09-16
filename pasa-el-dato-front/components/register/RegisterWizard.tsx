@@ -1,9 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/config";
+import { ApiError } from "@/lib/api";
+import { registrarUsuario } from "@/lib/api/usuarios";
 import { Stepper } from "./Stepper";
 import { StepCuenta } from "./StepCuenta";
 import { StepDatos } from "./StepDatos";
@@ -16,13 +20,14 @@ import {
 import type { SnapshotVerificacion as SnapshotRun } from "@/hooks/use-verificar-run"; // valida y hace una seudo validacion de disponibilidad 
 import type { SnapshotVerificacion as SnapshotCorreo } from "@/hooks/use-verificar-correo"; // valida y hace una seudo validacion de disponibilidad
 import { CARRERAS_MOMENTANEO } from "@/domain/catalogo.data.momentaneo"; // esto debe migrarse a algun endpoint que traiga las escuelas y colegios
-import type { CreateUsuarioDTO } from "@/domain/dtos/cuenta.dto";
+import type { RegistrarUsuarioRequestDTO } from "@/domain/dtos/cuenta.dto";
 import {
   CuentaMapper,
   validarBorradorParaCrear,
 } from "@/domain/mappers/cuenta.mapper";
 
 export function RegisterWizard() {
+  const router = useRouter();
   const [paso, setPaso] = useState(0);
   const [maxVisitado, setMaxVisitado] = useState(0);
   const [datos, setDatos] = useState<RegistroUsuarioBorrador>(REGISTRO_USUARIO_INICIAL);
@@ -33,22 +38,26 @@ export function RegisterWizard() {
   const [carreraValida, setCarreraValida] = useState(false);
   const [claveValida, setClaveValida] = useState(false);
   const [creada, setCreada] = useState(false);
-  const [payloadVista, setPayloadVista] = useState<Omit<CreateUsuarioDTO, "clave"> | null>(null);
   const [errorCrear, setErrorCrear] = useState<string | null>(null);
+  const redireccion = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const actualizar = useCallback((parcial: Partial<RegistroUsuarioBorrador>) => {
     setDatos((prev) => ({ ...prev, ...parcial }));
   }, []);
 
+  //validaciones para ver distintas consultas SQL al Back
   const onCuentaValidez = useCallback((valido: boolean) => setCuentaValida(valido), []);
   const onRunSnapshot = useCallback((snapshot: SnapshotRun | null) => setRunSnapshot(snapshot), []);
-  const onCorreoSnapshot = useCallback(
-    (snapshot: SnapshotCorreo | null) => setCorreoSnapshot(snapshot),
-    [],
-  );
+  const onCorreoSnapshot = useCallback((snapshot: SnapshotCorreo | null) => setCorreoSnapshot(snapshot), []);
   const onDatosValidez = useCallback((valido: boolean) => setDatosValidos(valido), []);
   const onCarreraValidez = useCallback((valido: boolean) => setCarreraValida(valido), []);
   const onClaveValidez = useCallback((valido: boolean) => setClaveValida(valido), []);
+
+  useEffect(() => {
+    return () => {
+      if (redireccion.current) clearTimeout(redireccion.current);
+    };
+  }, []);
 
   const avanzar = () => {
     const siguiente = Math.min(paso + 1, 3);
@@ -65,9 +74,31 @@ export function RegisterWizard() {
     (paso === 1 && !datosValidos) ||
     (paso === 2 && !carreraValida);
 
-  // Solo front: valida borrador en domain y arma CreateUsuarioDTO, sin fetch.
-  // Rol lo asigna el back y no se envía.
+  // Envío real a POST /usuario/registro. 201 -> mensaje breve y salto a login.
+  const crearMutation = useMutation({
+    mutationFn: (payload: RegistrarUsuarioRequestDTO) => registrarUsuario(payload),
+    onSuccess: () => {
+      setCreada(true);
+      if (redireccion.current) clearTimeout(redireccion.current);
+      redireccion.current = setTimeout(() => {
+        router.push(`${ROUTES.login}?registrado=1`);
+      }, 1500);
+    },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError && error.status === 409) {
+        setErrorCrear("El correo o RUT ya están registrados. Vuelve al paso Cuenta y revísalos.");
+        return;
+      }
+      if (error instanceof ApiError && error.status === 400) {
+        setErrorCrear(error.message || "El back rechazó los datos. Revisa el formulario.");
+        return;
+      }
+      setErrorCrear("No pudimos crear tu cuenta. Reintenta.");
+    },
+  });
+
   const crearCuenta = () => {
+    if (crearMutation.isPending) return;
     setErrorCrear(null);
     const validacion = validarBorradorParaCrear(
       datos,
@@ -81,14 +112,12 @@ export function RegisterWizard() {
       setErrorCrear(validacion.error ?? "Revisa los datos ingresados.");
       return;
     }
-    const payload = CuentaMapper.toCreateUsuarioPayload(datos, {
-      runNormalizado: runSnapshot?.normalizado ?? null,
-      correoNormalizado: correoSnapshot?.normalizado ?? null,
-    });
-    const { clave: _omitClave, ...vista } = payload;
-    void _omitClave;
-    setPayloadVista(vista);
-    setCreada(true);
+    crearMutation.mutate(
+      CuentaMapper.toRegistrarUsuarioRequest(datos, {
+        runNormalizado: runSnapshot?.normalizado ?? null,
+        correoNormalizado: correoSnapshot?.normalizado ?? null,
+      }),
+    );
   };
 
   if (creada) {
@@ -97,22 +126,10 @@ export function RegisterWizard() {
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-navy">
           <span className="text-lg font-bold text-gold">✓</span>
         </div>
-        <h1 className="text-xl font-bold text-navy">Cuenta lista (simulado)</h1>
+        <h1 className="text-xl font-bold text-navy">Cuenta creada</h1>
         <p className="mt-1 text-sm text-gray-400" aria-live="polite">
-          {payloadVista?.correo || datos.correo || "Tu correo"} quedó pre-registrado
-          en esta carcasa. Sin envío al back.
+          {(datos.correo || "Tu correo") + " quedó registrado. Te llevamos al inicio de sesión…"}
         </p>
-        {payloadVista ? (
-          <pre className="mt-4 overflow-auto rounded-xl bg-surface p-4 text-left text-xs text-navy">
-            {JSON.stringify(payloadVista, null, 2)}
-          </pre>
-        ) : null}
-        <Link
-          href={ROUTES.home}
-          className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-8 py-3 text-sm font-semibold text-navy shadow-sm transition-colors hover:bg-gold-hover focus:outline-none focus:ring-2 focus:ring-gold"
-        >
-          Volver al inicio
-        </Link>
       </div>
     );
   }
@@ -171,10 +188,10 @@ export function RegisterWizard() {
           <Button
             variant="primary"
             size="lg"
-            disabled={!claveValida}
+            disabled={!claveValida || crearMutation.isPending}
             onClick={crearCuenta}
           >
-            Crear cuenta
+            {crearMutation.isPending ? "Creando cuenta…" : "Crear cuenta"}
           </Button>
         )}
       </div>

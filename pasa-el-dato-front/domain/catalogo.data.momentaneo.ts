@@ -6,24 +6,15 @@ import type {
 
 // TODO[MOMENTANEO]: reemplazar por fetch a /sedes, /escuelas, /carreras.
 export const SEDES_MOMENTANEO: SedeDTO[] = [
-  { id: "sede-centro", nombre: "Sede Centro" },
-  { id: "sede-norte", nombre: "Sede Norte" },
-  { id: "sede-sur", nombre: "Sede Sur" },
+  { id: "1", nombre: "Sede Puente Alto" }
 ];
 
 export const ESCUELAS_MOMENTANEO: EscuelaDTO[] = [
-  { id: "escuela-informatica", nombre: "Escuela de Informática" },
-  { id: "escuela-diseno", nombre: "Escuela de Diseño" },
-  { id: "escuela-negocios", nombre: "Escuela de Negocios" },
+  { id: "1", nombre: "Escuela de prueba" },
 ];
 
 export const CARRERAS_MOMENTANEO: CarreraDTO[] = [
-  { id: "carrera-analista", nombre: "Analista Programador", escuelaId: "escuela-informatica" },
-  { id: "carrera-ingenieria", nombre: "Ingeniería en Informática", escuelaId: "escuela-informatica" },
-  { id: "carrera-diseno-grafico", nombre: "Diseño Gráfico", escuelaId: "escuela-diseno" },
-  { id: "carrera-diseno-ux", nombre: "Diseño UX/UI", escuelaId: "escuela-diseno" },
-  { id: "carrera-admin", nombre: "Administración de Empresas", escuelaId: "escuela-negocios" },
-  { id: "carrera-contador", nombre: "Contador Auditor", escuelaId: "escuela-negocios" },
+  { id: "1", nombre: "Carrera de prueba", escuelaId: "1" },
 ];
 
 export function carrerasPorEscuelaMomentaneo(escuelaId: string): CarreraDTO[] {

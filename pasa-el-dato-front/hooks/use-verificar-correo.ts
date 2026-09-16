@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { normalizarCorreo, validarCorreoDuoc } from "@/lib/validators/correo";
+import { useCallback, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { validarCorreoDuoc } from "@/lib/validators/correo";
+import { validarCorreoDisponible } from "@/lib/api/usuarios";
 
 export type EstadoVerificacion = "vacio" | "revisando" | "libre" | "ocupado";
 
@@ -10,56 +12,68 @@ export interface SnapshotVerificacion {
   mensaje: string;
 }
 
-// Carcasa: simula POST /api/usuarios/verificar-correo -> { disponible: boolean }.
-// TODO[MOMENTANEO]: reemplazar mock por fetch real con misma firma.
 // Solo el éxito (libre) se hidrata desde snapshot: ocupado siempre revalida.
-const CORREOS_OCUPADOS_MOMENTANEO = new Set(["ocupado@duocuc.cl"]);
-const DEMORA_MOMENTANEO_MS = 900;
-
 export function useVerificarCorreo(opciones?: { snapshot?: SnapshotVerificacion | null }) {
   const snapshot = opciones?.snapshot;
-  const [estado, setEstado] = useState<EstadoVerificacion>(snapshot ? "libre" : "vacio");
-  const [mensaje, setMensaje] = useState<string | null>(snapshot?.mensaje ?? null);
-  const [normalizado, setNormalizado] = useState<string | null>(snapshot?.normalizado ?? null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [consulta, setConsulta] = useState<string | null>(null);
+  const [errorFormato, setErrorFormato] = useState<string | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, []);
+  const query = useQuery({
+    queryKey: ["validar-correo", consulta],
+    queryFn: () => validarCorreoDisponible(consulta as string),
+    enabled: consulta !== null && errorFormato === null,
+    staleTime: 30_000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
 
   const resetear = useCallback(() => {
-    if (timer.current) clearTimeout(timer.current);
-    setEstado("vacio");
-    setMensaje(null);
-    setNormalizado(null);
+    setConsulta(null);
+    setErrorFormato(null);
   }, []);
 
   const verificar = useCallback((valor: string) => {
-    if (timer.current) clearTimeout(timer.current);
     const validacion = validarCorreoDuoc(valor);
     if (!validacion.ok) {
-      setEstado("vacio");
-      setMensaje(validacion.error ?? "Correo inválido.");
-      setNormalizado(null);
+      setConsulta(null);
+      setErrorFormato(validacion.error ?? "Correo inválido");
       return;
     }
-    const correoNormalizado = validacion.normalizado ?? normalizarCorreo(valor);
-    setNormalizado(correoNormalizado);
-    setEstado("revisando");
-    setMensaje("Revisando correo…");
-    timer.current = setTimeout(() => {
-      const disponible = !CORREOS_OCUPADOS_MOMENTANEO.has(correoNormalizado);
-      if (disponible) {
-        setEstado("libre");
-        setMensaje("Correo disponible.");
-      } else {
-        setEstado("ocupado");
-        setMensaje("Este correo ya está registrado.");
-      }
-    }, DEMORA_MOMENTANEO_MS);
+    setErrorFormato(null);
+    setConsulta(validacion.normalizado as string);
   }, []);
+
+  let estado: EstadoVerificacion = "vacio";
+  let mensaje: string | null = null;
+  let normalizado: string | null = null;
+
+  // const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  if (errorFormato !== null) {
+    estado = "vacio";
+    mensaje = errorFormato;
+  } else if (consulta === null) {
+    if (snapshot) {
+      estado = "libre";
+      mensaje = snapshot.mensaje;
+      normalizado = snapshot.normalizado;
+    }
+  } else if (query.isPending || query.isFetching) {
+    estado = "revisando";
+    mensaje = "Revisando correo…";
+    normalizado = consulta;
+  } else if (query.isError) {
+    estado = "vacio";
+    mensaje = "No pudimos validar. Reintenta.";
+  } else if (query.data === true) {
+    estado = "libre";
+    mensaje = "Correo disponible.";
+    normalizado = consulta;
+  } else if (query.data === false) {
+    estado = "ocupado";
+    mensaje = "Este correo ya está registrado.";
+    normalizado = consulta;
+  }
 
   return { estado, mensaje, normalizado, verificar, resetear };
 }

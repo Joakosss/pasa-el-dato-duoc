@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { normalizarRun, validarRun } from "@/lib/validators/rut";
+import { useCallback, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { validarRun } from "@/lib/validators/rut";
+import { validarRunDisponible } from "@/lib/api/usuarios";
 
 export type EstadoVerificacion = "vacio" | "revisando" | "libre" | "ocupado";
 
@@ -10,56 +12,67 @@ export interface SnapshotVerificacion {
   mensaje: string;
 }
 
-// Carcasa: simula POST /api/usuarios/verificar-run -> { disponible: boolean }.
-// TODO[MOMENTANEO]: reemplazar mock por fetch real con misma firma.
 // Solo el éxito (libre) se hidrata desde snapshot: ocupado siempre revalida.
-const RUNS_OCUPADOS_MOMENTANEO = new Set(["12345678-5", "19683417-6"]);
-const DEMORA_MOMENTANEO_MS = 900;
-
 export function useVerificarRun(opciones?: { snapshot?: SnapshotVerificacion | null }) {
   const snapshot = opciones?.snapshot;
-  const [estado, setEstado] = useState<EstadoVerificacion>(snapshot ? "libre" : "vacio");
-  const [mensaje, setMensaje] = useState<string | null>(snapshot?.mensaje ?? null);
-  const [normalizado, setNormalizado] = useState<string | null>(snapshot?.normalizado ?? null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [consulta, setConsulta] = useState<string | null>(null);
+  const [errorFormato, setErrorFormato] = useState<string | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, []);
+  const query = useQuery({
+    queryKey: ["validar-run", consulta],
+    queryFn: () => validarRunDisponible(consulta as string),
+    enabled: consulta !== null && errorFormato === null,
+    staleTime: 30_000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
 
   const resetear = useCallback(() => {
-    if (timer.current) clearTimeout(timer.current);
-    setEstado("vacio");
-    setMensaje(null);
-    setNormalizado(null);
+    setConsulta(null);
+    setErrorFormato(null);
   }, []);
 
   const verificar = useCallback((valor: string) => {
-    if (timer.current) clearTimeout(timer.current);
     const validacion = validarRun(valor);
     if (!validacion.ok) {
-      setEstado("vacio");
-      setMensaje(validacion.error ?? "RUT inválido.");
-      setNormalizado(null);
+      setConsulta(null);
+      setErrorFormato(validacion.error ?? "RUT inválido.");
       return;
     }
-    const runNormalizado = validacion.normalizado ?? normalizarRun(valor);
-    setNormalizado(runNormalizado);
-    setEstado("revisando");
-    setMensaje("Revisando RUT…");
-    timer.current = setTimeout(() => {
-      const disponible = !RUNS_OCUPADOS_MOMENTANEO.has(runNormalizado);
-      if (disponible) {
-        setEstado("libre");
-        setMensaje("RUT disponible.");
-      } else {
-        setEstado("ocupado");
-        setMensaje("Este RUT ya está registrado.");
-      }
-    }, DEMORA_MOMENTANEO_MS);
+    setErrorFormato(null);
+    setConsulta(validacion.normalizado as string);
   }, []);
+
+  let estado: EstadoVerificacion = "vacio";
+  let mensaje: string | null = null;
+  let normalizado: string | null = null;
+
+  if (errorFormato !== null) {
+    estado = "vacio";
+    mensaje = errorFormato;
+  } else if (consulta === null) {
+    if (snapshot) {
+      estado = "libre";
+      mensaje = snapshot.mensaje;
+      normalizado = snapshot.normalizado;
+    }
+  } else if (query.isPending || query.isFetching) {
+    estado = "revisando";
+    mensaje = "Revisando RUT…";
+    normalizado = consulta;
+  } else if (query.isError) {
+    estado = "vacio";
+    mensaje = "No pudimos validar. Reintenta.";
+  } else if (query.data === true) {
+    estado = "libre";
+    mensaje = "RUT disponible.";
+    normalizado = consulta;
+  } else if (query.data === false) {
+    estado = "ocupado";
+    mensaje = "Este RUT ya está registrado.";
+    normalizado = consulta;
+  }
+
 
   return { estado, mensaje, normalizado, verificar, resetear };
 }
