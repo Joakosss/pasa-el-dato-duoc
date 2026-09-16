@@ -1,9 +1,9 @@
 import { buildMosaicLayout } from "@/lib/mosaic/buildMosaicLayout";
-import type { ProductCardDataTemporal } from "./ProductCard";
+import type { ProductCardDataMomentaneo } from "./ProductCard";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
 
 export function ProductGridSkeleton({ count }: { count: number }) {
-  const dummies: ProductCardDataTemporal[] = Array.from({ length: count }, (_, i) => ({
+  const dummies: ProductCardDataMomentaneo[] = Array.from({ length: count }, (_, i) => ({
     id: `skeleton-${i}`,
   }));
   const sized = buildMosaicLayout(dummies);

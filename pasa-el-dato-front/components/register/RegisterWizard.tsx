@@ -7,23 +7,36 @@ import { ROUTES } from "@/config";
 import { Stepper } from "./Stepper";
 import { StepCuenta } from "./StepCuenta";
 import { StepDatos } from "./StepDatos";
+import { StepCarrera } from "./StepCarrera";
 import { StepClave } from "./StepClave";
-import { DATOS_REGISTRO_INICIALES, type DatosRegistro } from "./types";
-import type { SnapshotVerificacion as SnapshotRun } from "@/hooks/use-verificar-run";
-import type { SnapshotVerificacion as SnapshotCorreo } from "@/hooks/use-verificar-correo";
+import {
+  REGISTRO_USUARIO_INICIAL,
+  type RegistroUsuarioBorrador,
+} from "@/domain/dtos/registro.dto";
+import type { SnapshotVerificacion as SnapshotRun } from "@/hooks/use-verificar-run"; // valida y hace una seudo validacion de disponibilidad 
+import type { SnapshotVerificacion as SnapshotCorreo } from "@/hooks/use-verificar-correo"; // valida y hace una seudo validacion de disponibilidad
+import { CARRERAS_MOMENTANEO } from "@/domain/catalogo.data.momentaneo"; // esto debe migrarse a algun endpoint que traiga las escuelas y colegios
+import type { CreateUsuarioDTO } from "@/domain/dtos/cuenta.dto";
+import {
+  CuentaMapper,
+  validarBorradorParaCrear,
+} from "@/domain/mappers/cuenta.mapper";
 
 export function RegisterWizard() {
   const [paso, setPaso] = useState(0);
   const [maxVisitado, setMaxVisitado] = useState(0);
-  const [datos, setDatos] = useState<DatosRegistro>(DATOS_REGISTRO_INICIALES);
+  const [datos, setDatos] = useState<RegistroUsuarioBorrador>(REGISTRO_USUARIO_INICIAL);
   const [runSnapshot, setRunSnapshot] = useState<SnapshotRun | null>(null);
   const [correoSnapshot, setCorreoSnapshot] = useState<SnapshotCorreo | null>(null);
   const [cuentaValida, setCuentaValida] = useState(false);
   const [datosValidos, setDatosValidos] = useState(false);
+  const [carreraValida, setCarreraValida] = useState(false);
   const [claveValida, setClaveValida] = useState(false);
   const [creada, setCreada] = useState(false);
+  const [payloadVista, setPayloadVista] = useState<Omit<CreateUsuarioDTO, "clave"> | null>(null);
+  const [errorCrear, setErrorCrear] = useState<string | null>(null);
 
-  const actualizar = useCallback((parcial: Partial<DatosRegistro>) => {
+  const actualizar = useCallback((parcial: Partial<RegistroUsuarioBorrador>) => {
     setDatos((prev) => ({ ...prev, ...parcial }));
   }, []);
 
@@ -34,10 +47,11 @@ export function RegisterWizard() {
     [],
   );
   const onDatosValidez = useCallback((valido: boolean) => setDatosValidos(valido), []);
+  const onCarreraValidez = useCallback((valido: boolean) => setCarreraValida(valido), []);
   const onClaveValidez = useCallback((valido: boolean) => setClaveValida(valido), []);
 
   const avanzar = () => {
-    const siguiente = Math.min(paso + 1, 2);
+    const siguiente = Math.min(paso + 1, 3);
     setPaso(siguiente);
     setMaxVisitado((prev) => Math.max(prev, siguiente));
   };
@@ -47,7 +61,35 @@ export function RegisterWizard() {
   };
 
   const continuarDeshabilitado =
-    (paso === 0 && !cuentaValida) || (paso === 1 && !datosValidos);
+    (paso === 0 && !cuentaValida) ||
+    (paso === 1 && !datosValidos) ||
+    (paso === 2 && !carreraValida);
+
+  // Solo front: valida borrador en domain y arma CreateUsuarioDTO, sin fetch.
+  // Rol lo asigna el back y no se envía.
+  const crearCuenta = () => {
+    setErrorCrear(null);
+    const validacion = validarBorradorParaCrear(
+      datos,
+      {
+        runNormalizado: runSnapshot?.normalizado ?? null,
+        correoNormalizado: correoSnapshot?.normalizado ?? null,
+      },
+      CARRERAS_MOMENTANEO,
+    );
+    if (!validacion.ok) {
+      setErrorCrear(validacion.error ?? "Revisa los datos ingresados.");
+      return;
+    }
+    const payload = CuentaMapper.toCreateUsuarioPayload(datos, {
+      runNormalizado: runSnapshot?.normalizado ?? null,
+      correoNormalizado: correoSnapshot?.normalizado ?? null,
+    });
+    const { clave: _omitClave, ...vista } = payload;
+    void _omitClave;
+    setPayloadVista(vista);
+    setCreada(true);
+  };
 
   if (creada) {
     return (
@@ -57,8 +99,14 @@ export function RegisterWizard() {
         </div>
         <h1 className="text-xl font-bold text-navy">Cuenta lista (simulado)</h1>
         <p className="mt-1 text-sm text-gray-400" aria-live="polite">
-          {datos.correo || "Tu correo"} quedó pre-registrado en esta carcasa. Sin envío al back.
+          {payloadVista?.correo || datos.correo || "Tu correo"} quedó pre-registrado
+          en esta carcasa. Sin envío al back.
         </p>
+        {payloadVista ? (
+          <pre className="mt-4 overflow-auto rounded-xl bg-surface p-4 text-left text-xs text-navy">
+            {JSON.stringify(payloadVista, null, 2)}
+          </pre>
+        ) : null}
         <Link
           href={ROUTES.home}
           className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-gold px-8 py-3 text-sm font-semibold text-navy shadow-sm transition-colors hover:bg-gold-hover focus:outline-none focus:ring-2 focus:ring-gold"
@@ -82,7 +130,7 @@ export function RegisterWizard() {
       <Stepper
         actual={paso}
         maxVisitado={maxVisitado}
-        respondidos={[cuentaValida, datosValidos, claveValida]}
+        respondidos={[cuentaValida, datosValidos, carreraValida, claveValida]}
         onIr={irAPaso}
       />
 
@@ -100,7 +148,14 @@ export function RegisterWizard() {
         />
       ) : null}
       {paso === 1 ? <StepDatos datos={datos} onChange={actualizar} onValidez={onDatosValidez} /> : null}
-      {paso === 2 ? <StepClave datos={datos} onChange={actualizar} onValidez={onClaveValidez} /> : null}
+      {paso === 2 ? <StepCarrera datos={datos} onChange={actualizar} onValidez={onCarreraValidez} /> : null}
+      {paso === 3 ? <StepClave datos={datos} onChange={actualizar} onValidez={onClaveValidez} /> : null}
+
+      {errorCrear ? (
+        <p role="alert" className="mt-4 text-sm font-medium text-red-500">
+          {errorCrear}
+        </p>
+      ) : null}
 
       <div className={`mt-6 flex items-center gap-3 ${paso === 0 ? "justify-end" : "justify-between"}`}>
         {paso > 0 ? (
@@ -108,7 +163,7 @@ export function RegisterWizard() {
             Atrás
           </Button>
         ) : null}
-        {paso < 2 ? (
+        {paso < 3 ? (
           <Button variant="primary" size="lg" disabled={continuarDeshabilitado} onClick={avanzar}>
             Continuar
           </Button>
@@ -117,7 +172,7 @@ export function RegisterWizard() {
             variant="primary"
             size="lg"
             disabled={!claveValida}
-            onClick={() => setCreada(true)}
+            onClick={crearCuenta}
           >
             Crear cuenta
           </Button>

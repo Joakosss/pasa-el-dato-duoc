@@ -1,6 +1,6 @@
-import { ProductCard, type ProductCardDataTemporal } from "./ProductCard";
+import { ProductCard, type ProductCardDataMomentaneo } from "./ProductCard";
 
-export function ProductGrid({ items }: { items: ProductCardDataTemporal[] }) {
+export function ProductGrid({ items }: { items: ProductCardDataMomentaneo[] }) {
   return (
     <div className="grid grid-flow-dense grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-5">
       {items.map((item) => (

@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { TermsContent } from "@/components/legal/terms-content";
 import { validarClave } from "@/lib/validators/clave";
 import { cn } from "@/lib/utils/cn";
-import type { DatosRegistro } from "./types";
+import type { RegistroUsuarioBorrador } from "@/domain/dtos/registro.dto";
 
 interface StepClaveProps {
-  datos: DatosRegistro;
-  onChange: (parcial: Partial<DatosRegistro>) => void;
+  datos: RegistroUsuarioBorrador;
+  onChange: (parcial: Partial<RegistroUsuarioBorrador>) => void;
   onValidez: (valido: boolean) => void;
 }
 

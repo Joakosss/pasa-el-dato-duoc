@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export type CardSize = "1x1" | "2x2";
 
-// TODO[TEMPORAL]: mock de UI sin contrato back. Reemplazar por model de dominio (Publicacion) cuando exista.
-export interface ProductCardDataTemporal {
+// TODO[MOMENTANEO]: mock de UI sin contrato back. Reemplazar por model de dominio (Publicacion) cuando exista.
+export interface ProductCardDataMomentaneo {
   id: string;
   category?: string;
   title?: string;
@@ -18,7 +18,7 @@ export interface ProductCardDataTemporal {
   size?: CardSize;
 }
 
-export function ProductCard({ item }: { item: ProductCardDataTemporal }) {
+export function ProductCard({ item }: { item: ProductCardDataMomentaneo }) {
   const large = item.size === "2x2" || (!item.size && item.featured);
   return (
     <Link

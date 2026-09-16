@@ -11,10 +11,10 @@ export interface SnapshotVerificacion {
 }
 
 // Carcasa: simula POST /api/usuarios/verificar-correo -> { disponible: boolean }.
-// TODO: reemplazar mock por fetch real con misma firma.
+// TODO[MOMENTANEO]: reemplazar mock por fetch real con misma firma.
 // Solo el éxito (libre) se hidrata desde snapshot: ocupado siempre revalida.
-const CORREOS_OCUPADOS_MOCK = new Set(["ocupado@duocuc.cl"]);
-const DEMORA_MOCK_MS = 900;
+const CORREOS_OCUPADOS_MOMENTANEO = new Set(["ocupado@duocuc.cl"]);
+const DEMORA_MOMENTANEO_MS = 900;
 
 export function useVerificarCorreo(opciones?: { snapshot?: SnapshotVerificacion | null }) {
   const snapshot = opciones?.snapshot;
@@ -50,7 +50,7 @@ export function useVerificarCorreo(opciones?: { snapshot?: SnapshotVerificacion 
     setEstado("revisando");
     setMensaje("Revisando correo…");
     timer.current = setTimeout(() => {
-      const disponible = !CORREOS_OCUPADOS_MOCK.has(correoNormalizado);
+      const disponible = !CORREOS_OCUPADOS_MOMENTANEO.has(correoNormalizado);
       if (disponible) {
         setEstado("libre");
         setMensaje("Correo disponible.");
@@ -58,7 +58,7 @@ export function useVerificarCorreo(opciones?: { snapshot?: SnapshotVerificacion 
         setEstado("ocupado");
         setMensaje("Este correo ya está registrado.");
       }
-    }, DEMORA_MOCK_MS);
+    }, DEMORA_MOMENTANEO_MS);
   }, []);
 
   return { estado, mensaje, normalizado, verificar, resetear };

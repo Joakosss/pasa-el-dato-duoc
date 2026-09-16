@@ -1,7 +1,7 @@
 import { ChatCard } from "./ChatCard";
-import type { ChatListItemTemporal } from "@/lib/chats";
+import type { ChatListItemMomentaneo } from "@/lib/chats";
 
-export function ChatList({ chats }: { chats: ChatListItemTemporal[] }) {
+export function ChatList({ chats }: { chats: ChatListItemMomentaneo[] }) {
   return (
     <ul aria-label="Chats activos" className="space-y-3">
       {chats.map((chat) => (

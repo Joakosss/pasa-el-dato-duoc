@@ -1,7 +1,8 @@
 import type {
+  CarreraIdMomentaneo,
   ID,
-  RolIdTemporal,
-  SedeIdTemporal,
+  RolIdMomentaneo,
+  SedeIdMomentaneo,
 } from "@/domain/types/common";
 
 // Forma del cable (JSON con fechas string). Sin clave_hash por decisión aprobada.
@@ -24,8 +25,9 @@ export interface UsuarioDTO extends CuentaBaseDTO {
   sNombre?: string | null;
   pApellido: string;
   sApellido?: string | null;
-  rolId: RolIdTemporal;
-  sedeId: SedeIdTemporal;
+  rolId: RolIdMomentaneo;
+  sedeId: SedeIdMomentaneo;
+  carreraId: CarreraIdMomentaneo;
   correoVerificado: boolean;
 }
 
@@ -48,8 +50,9 @@ export interface CreateUsuarioDTO {
   sNombre?: string | null;
   pApellido: string;
   sApellido?: string | null;
-  rolId: RolIdTemporal;
-  sedeId: SedeIdTemporal;
+  // Rol lo asigna el back. Front envía sede + carrera.
+  sedeId: SedeIdMomentaneo;
+  carreraId: CarreraIdMomentaneo;
 }
 
 export interface CreateMarcaDTO {

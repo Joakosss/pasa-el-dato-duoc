@@ -1,4 +1,4 @@
-export { ProductCard, type ProductCardDataTemporal, type CardSize } from "./ProductCard";
+export { ProductCard, type ProductCardDataMomentaneo, type CardSize } from "./ProductCard";
 export { ProductCardSkeleton } from "./ProductCardSkeleton";
 export { ProductGrid } from "./ProductGrid";
 export { ProductGridSkeleton } from "./ProductGridSkeleton";

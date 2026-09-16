@@ -2,27 +2,17 @@
 
 import { useEffect } from "react";
 import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import type { DatosRegistro } from "./types";
-
-// TODO[TEMPORAL]: reemplazar por IDs reales de SEDE cuando exista la tabla.
-const SEDES_MOCK = [
-  { id: "sede-centro", nombre: "Sede Centro (temporal)" },
-  { id: "sede-norte", nombre: "Sede Norte (temporal)" },
-  { id: "sede-sur", nombre: "Sede Sur (temporal)" },
-];
+import type { RegistroUsuarioBorrador } from "@/domain/dtos/registro.dto";
 
 interface StepDatosProps {
-  datos: DatosRegistro;
-  onChange: (parcial: Partial<DatosRegistro>) => void;
+  datos: RegistroUsuarioBorrador;
+  onChange: (parcial: Partial<RegistroUsuarioBorrador>) => void;
   onValidez: (valido: boolean) => void;
 }
 
 export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
   const valido =
-    datos.pNombre.trim().length > 0 &&
-    datos.pApellido.trim().length > 0 &&
-    datos.sedeId.length > 0;
+    datos.pNombre.trim().length > 0 && datos.pApellido.trim().length > 0;
 
   useEffect(() => {
     onValidez(valido);
@@ -73,19 +63,6 @@ export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
           autoComplete="tel"
           onChange={(e) => onChange({ telefono: e.target.value })}
         />
-        <Select
-          label="Sede *"
-          name="sedeId"
-          value={datos.sedeId}
-          onChange={(e) => onChange({ sedeId: e.target.value })}
-        >
-          <option value="">Selecciona tu sede</option>
-          {SEDES_MOCK.map((sede) => (
-            <option key={sede.id} value={sede.id}>
-              {sede.nombre}
-            </option>
-          ))}
-        </Select>
       </div>
     </div>
   );

@@ -1,5 +1,9 @@
 import { Cuenta, type CuentaProps } from "./Cuenta";
-import type { RolIdTemporal, SedeIdTemporal } from "@/domain/types/common";
+import type {
+  CarreraIdMomentaneo,
+  RolIdMomentaneo,
+  SedeIdMomentaneo,
+} from "@/domain/types/common";
 import type { UsuarioDTO } from "@/domain/dtos/cuenta.dto";
 
 export interface UsuarioProps extends CuentaProps {
@@ -8,12 +12,13 @@ export interface UsuarioProps extends CuentaProps {
   sNombre: string | null;
   pApellido: string;
   sApellido: string | null;
-  rolId: RolIdTemporal;
-  sedeId: SedeIdTemporal;
+  rolId: RolIdMomentaneo;
+  sedeId: SedeIdMomentaneo;
+  carreraId: CarreraIdMomentaneo;
   correoVerificado: boolean;
 }
 
-// Espejo de USUARIO (id_cuenta FK + run UNIQUE + nombres + fk_rol + fk_sede).
+// Espejo de USUARIO (id_cuenta FK + run UNIQUE + nombres + fk_rol + fk_sede + fk_carrera).
 export class Usuario extends Cuenta {
   // Constante solo-front para narrowing (no viene del back, no se envía).
   readonly tipo = "usuario" as const;
@@ -22,8 +27,9 @@ export class Usuario extends Cuenta {
   sNombre: string | null;
   pApellido: string;
   sApellido: string | null;
-  rolId: RolIdTemporal;
-  sedeId: SedeIdTemporal;
+  rolId: RolIdMomentaneo;
+  sedeId: SedeIdMomentaneo;
+  carreraId: CarreraIdMomentaneo;
   correoVerificado: boolean;
 
   constructor(props: UsuarioProps) {
@@ -35,6 +41,7 @@ export class Usuario extends Cuenta {
     this.sApellido = props.sApellido;
     this.rolId = props.rolId;
     this.sedeId = props.sedeId;
+    this.carreraId = props.carreraId;
     this.correoVerificado = props.correoVerificado;
   }
 
@@ -57,13 +64,13 @@ export class Usuario extends Cuenta {
       sApellido: dto.sApellido ?? null,
       rolId: dto.rolId,
       sedeId: dto.sedeId,
+      carreraId: dto.carreraId,
       correoVerificado: dto.correoVerificado,
     });
   }
 
   toJSON(): UsuarioDTO {
     return {
-      tipo: "usuario",
       id: this.id,
       correo: this.correo,
       telefono: this.telefono,
@@ -81,6 +88,7 @@ export class Usuario extends Cuenta {
       sApellido: this.sApellido,
       rolId: this.rolId,
       sedeId: this.sedeId,
+      carreraId: this.carreraId,
       correoVerificado: this.correoVerificado,
     };
   }

@@ -2,10 +2,10 @@ import { ProductGrid } from "./ProductGrid";
 import { buildMosaicLayout } from "@/lib/mosaic/buildMosaicLayout";
 import { interleaveSponsored, SPONSOR_SEED } from "@/lib/mosaic/sponsor";
 import { MOSAIC_SEED } from "@/lib/mosaic/constants";
-import { getFeaturedPageTemporal } from "@/lib/products";
+import { getFeaturedPageMomentaneo } from "@/lib/products";
 
 export async function FeaturedProducts({ page }: { page: number }) {
-  const { items, sponsored } = await getFeaturedPageTemporal(page);
+  const { items, sponsored } = await getFeaturedPageMomentaneo(page);
 
   const mosaicItems = buildMosaicLayout(
     interleaveSponsored(items, sponsored, { seed: SPONSOR_SEED }),

@@ -11,10 +11,10 @@ export interface SnapshotVerificacion {
 }
 
 // Carcasa: simula POST /api/usuarios/verificar-run -> { disponible: boolean }.
-// TODO: reemplazar mock por fetch real con misma firma.
+// TODO[MOMENTANEO]: reemplazar mock por fetch real con misma firma.
 // Solo el éxito (libre) se hidrata desde snapshot: ocupado siempre revalida.
-const RUNS_OCUPADOS_MOCK = new Set(["12345678-5", "19683417-6"]);
-const DEMORA_MOCK_MS = 900;
+const RUNS_OCUPADOS_MOMENTANEO = new Set(["12345678-5", "19683417-6"]);
+const DEMORA_MOMENTANEO_MS = 900;
 
 export function useVerificarRun(opciones?: { snapshot?: SnapshotVerificacion | null }) {
   const snapshot = opciones?.snapshot;
@@ -50,7 +50,7 @@ export function useVerificarRun(opciones?: { snapshot?: SnapshotVerificacion | n
     setEstado("revisando");
     setMensaje("Revisando RUT…");
     timer.current = setTimeout(() => {
-      const disponible = !RUNS_OCUPADOS_MOCK.has(runNormalizado);
+      const disponible = !RUNS_OCUPADOS_MOMENTANEO.has(runNormalizado);
       if (disponible) {
         setEstado("libre");
         setMensaje("RUT disponible.");
@@ -58,7 +58,7 @@ export function useVerificarRun(opciones?: { snapshot?: SnapshotVerificacion | n
         setEstado("ocupado");
         setMensaje("Este RUT ya está registrado.");
       }
-    }, DEMORA_MOCK_MS);
+    }, DEMORA_MOMENTANEO_MS);
   }, []);
 
   return { estado, mensaje, normalizado, verificar, resetear };

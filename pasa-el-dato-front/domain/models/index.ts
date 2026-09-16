@@ -8,3 +8,7 @@ export { Usuario } from "./Usuario";
 export type { UsuarioProps } from "./Usuario";
 export { Marca } from "./Marca";
 export type { MarcaProps } from "./Marca";
+export { Escuela } from "./Escuela";
+export type { EscuelaProps } from "./Escuela";
+export { Carrera } from "./Carrera";
+export type { CarreraProps } from "./Carrera";
