@@ -1,7 +1,19 @@
+"use client";
+
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { APP_NAME, ROUTES } from "@/config/constants";
+import { SearchBar } from "./SearchBar";
 
 export function Navbar() {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+
+  const handleCloseSearch = () => {
+    setSearchOpen(false);
+    searchButtonRef.current?.focus();
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -16,7 +28,50 @@ export function Navbar() {
               </span>
             </Link>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              ref={searchButtonRef}
+              type="button"
+              aria-label={searchOpen ? "Cerrar búsqueda" : "Abrir búsqueda"}
+              aria-expanded={searchOpen}
+              aria-controls="mobile-search"
+              onClick={() =>
+                searchOpen ? handleCloseSearch() : setSearchOpen(true)
+              }
+              className="flex h-10 w-10 items-center justify-center rounded-full border bg-gray-100 text-navy transition-colors duration-300 ease-out hover:bg-navy hover:text-gray-100 sm:hidden"
+            >
+              {searchOpen ? (
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              )}
+            </button>
             <div className="hidden items-center gap-3 sm:flex">
               <Link
                 href={ROUTES.login}
@@ -54,6 +109,13 @@ export function Navbar() {
           </div>
         </div>
       </div>
+      <SearchBar
+        id="mobile-search"
+        variant="panel"
+        open={searchOpen}
+        onClose={handleCloseSearch}
+        autoFocusInput
+      />
     </header>
   );
 }

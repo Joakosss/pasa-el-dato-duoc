@@ -28,7 +28,9 @@ export default async function Home(props: HomeProps) {
 
   return (
     <>
-      <SearchBar />
+      <div className="hidden sm:block">
+        <SearchBar id="desktop-search" />
+      </div>
       <Container className="py-6">
         <Suspense fallback={<NotificationDuocSkeleton />}>
           {/* <NotificationDuocSkeleton /> */}
