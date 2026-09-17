@@ -23,7 +23,7 @@ export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4">
         <Input
           label="Primer nombre *"
           name="pNombre"
@@ -56,7 +56,7 @@ export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
           onChange={(e) => onChange({ sApellido: e.target.value })}
         />
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4">
         <Input
           label="Teléfono *"
           type="tel"

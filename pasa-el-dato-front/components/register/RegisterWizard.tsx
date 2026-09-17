@@ -37,7 +37,6 @@ export function RegisterWizard() {
   const [datosValidos, setDatosValidos] = useState(false);
   const [carreraValida, setCarreraValida] = useState(false);
   const [claveValida, setClaveValida] = useState(false);
-  const [creada, setCreada] = useState(false);
   const [errorCrear, setErrorCrear] = useState<string | null>(null);
   const redireccion = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -78,7 +77,6 @@ export function RegisterWizard() {
   const crearMutation = useMutation({
     mutationFn: (payload: RegistrarUsuarioRequestDTO) => registrarUsuario(payload),
     onSuccess: () => {
-      setCreada(true);
       if (redireccion.current) clearTimeout(redireccion.current);
       redireccion.current = setTimeout(() => {
         router.push(`${ROUTES.login}?registrado=1`);
@@ -119,20 +117,6 @@ export function RegisterWizard() {
       }),
     );
   };
-
-  if (creada) {
-    return (
-      <div className="rounded-2xl border border-gray-200 bg-card p-8 text-center shadow-sm">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-navy">
-          <span className="text-lg font-bold text-gold">✓</span>
-        </div>
-        <h1 className="text-xl font-bold text-navy">Cuenta creada</h1>
-        <p className="mt-1 text-sm text-gray-400" aria-live="polite">
-          {(datos.correo || "Tu correo") + " quedó registrado. Te llevamos al inicio de sesión…"}
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-card p-8 shadow-sm">

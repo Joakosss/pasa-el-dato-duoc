@@ -11,7 +11,7 @@ export function AvisoRegistro() {
       role="status"
       className="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700"
     >
-      ✓ Cuenta creada. Inicia sesión con tu correo y contraseña.
+      ✓ Cuenta creada.
     </p>
   );
 }
