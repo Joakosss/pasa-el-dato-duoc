@@ -69,7 +69,7 @@ describe('Registro de usuario (e2e)', () => {
     await app.close();
   });
 
-  it('crea una cuenta no aprobada y su usuario Estudiante', async () => {
+  it('crea una cuenta aprobada y su usuario Estudiante', async () => {
     await request(app.getHttpServer())
       .post('/api/usuario/registro')
       .send({
@@ -112,7 +112,7 @@ describe('Registro de usuario (e2e)', () => {
     expect(cuenta).not.toBeNull();
     expect(cuenta?.correo).toBe(correoPrueba);
     expect(cuenta?.telefono).toBe('12345678');
-    expect(cuenta?.aprobada).toBe(false);
+    expect(cuenta?.aprobada).toBe(true);
     expect(cuenta?.claveHash).not.toBe('abcdefgh');
     expect(cuenta?.claveHash).toMatch(/^\$argon2/);
     expect(cuenta?.usuario?.run).toBe(runPrueba);

@@ -12,7 +12,7 @@ model Cuenta {
   correo            String    @unique
   claveHash         String    @map("clave_hash")
   telefono          String
-  aprobada          Boolean   @default(false)
+  aprobada          Boolean   @default(true)
   fechaCreacion     DateTime  @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
   fechaModificacion DateTime  @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
   eliminado         Boolean   @default(false)

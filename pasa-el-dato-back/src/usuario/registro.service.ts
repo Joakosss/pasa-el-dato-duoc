@@ -110,8 +110,8 @@ export class RegistroService {
             correo: datos.correo,
             claveHash,
             telefono: datos.telefono,
-            // La aprobación se realizará en un flujo posterior.
-            aprobada: false,
+            // En el MVP, toda cuenta registrada queda aprobada inmediatamente.
+            aprobada: true,
           },
         });
 

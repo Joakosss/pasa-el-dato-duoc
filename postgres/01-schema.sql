@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS cuenta (
   correo TEXT UNIQUE NOT NULL,
   clave_hash TEXT NOT NULL,
   telefono TEXT NOT NULL,
-  aprobada BOOLEAN NOT NULL DEFAULT FALSE,
+  aprobada BOOLEAN NOT NULL DEFAULT TRUE,
 
   -- BASE
   fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT now(),
