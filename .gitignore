@@ -38,7 +38,9 @@ Thumbs.db
 **/.vercel
 */.tsbuildinfo
 **/next-env.d.ts
-# graphify-axet
-.graphify/
 
+# Caché incremental de TypeScript
 **/*.tsbuildinfo
+
+# Archivos locales de análisis
+.graphify/
