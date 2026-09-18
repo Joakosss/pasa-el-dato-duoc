@@ -96,6 +96,26 @@ CREATE TABLE IF NOT EXISTS log_api (
   fecha_hora TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS refresh_token (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  fk_cuenta UUID NOT NULL,
+
+  -- Se guarda solamente el hash, nunca el token entregado al cliente.
+  token_hash TEXT UNIQUE NOT NULL,
+
+  fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT now(),
+  fecha_expiracion TIMESTAMPTZ NOT NULL,
+
+  -- NULL significa que el token todavía no ha sido revocado.
+  fecha_revocacion TIMESTAMPTZ,
+
+  CONSTRAINT fk_refresh_token_cuenta
+    FOREIGN KEY (fk_cuenta)
+    REFERENCES cuenta(id_cuenta)
+    ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_log_api_cuenta
   ON log_api(fk_cuenta);
 
@@ -119,3 +139,6 @@ CREATE INDEX IF NOT EXISTS idx_cuenta_modificado_por
 
 CREATE INDEX IF NOT EXISTS idx_sede_modificado_por
   ON sede(fk_modificado_por);
+
+CREATE INDEX IF NOT EXISTS idx_refresh_token_cuenta
+  ON refresh_token(fk_cuenta);

@@ -29,7 +29,6 @@ export type CuentaMinAggregateOutputType = {
   correo: string | null
   claveHash: string | null
   telefono: string | null
-  aprobada: boolean | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
   eliminado: boolean | null
@@ -37,6 +36,7 @@ export type CuentaMinAggregateOutputType = {
   bloqueado: boolean | null
   fechaBloqueo: Date | null
   motivoBloqueo: string | null
+  aprobada: boolean | null
 }
 
 export type CuentaMaxAggregateOutputType = {
@@ -44,7 +44,6 @@ export type CuentaMaxAggregateOutputType = {
   correo: string | null
   claveHash: string | null
   telefono: string | null
-  aprobada: boolean | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
   eliminado: boolean | null
@@ -52,6 +51,7 @@ export type CuentaMaxAggregateOutputType = {
   bloqueado: boolean | null
   fechaBloqueo: Date | null
   motivoBloqueo: string | null
+  aprobada: boolean | null
 }
 
 export type CuentaCountAggregateOutputType = {
@@ -59,7 +59,6 @@ export type CuentaCountAggregateOutputType = {
   correo: number
   claveHash: number
   telefono: number
-  aprobada: number
   fechaCreacion: number
   fechaModificacion: number
   eliminado: number
@@ -67,6 +66,7 @@ export type CuentaCountAggregateOutputType = {
   bloqueado: number
   fechaBloqueo: number
   motivoBloqueo: number
+  aprobada: number
   _all: number
 }
 
@@ -76,7 +76,6 @@ export type CuentaMinAggregateInputType = {
   correo?: true
   claveHash?: true
   telefono?: true
-  aprobada?: true
   fechaCreacion?: true
   fechaModificacion?: true
   eliminado?: true
@@ -84,6 +83,7 @@ export type CuentaMinAggregateInputType = {
   bloqueado?: true
   fechaBloqueo?: true
   motivoBloqueo?: true
+  aprobada?: true
 }
 
 export type CuentaMaxAggregateInputType = {
@@ -91,7 +91,6 @@ export type CuentaMaxAggregateInputType = {
   correo?: true
   claveHash?: true
   telefono?: true
-  aprobada?: true
   fechaCreacion?: true
   fechaModificacion?: true
   eliminado?: true
@@ -99,6 +98,7 @@ export type CuentaMaxAggregateInputType = {
   bloqueado?: true
   fechaBloqueo?: true
   motivoBloqueo?: true
+  aprobada?: true
 }
 
 export type CuentaCountAggregateInputType = {
@@ -106,7 +106,6 @@ export type CuentaCountAggregateInputType = {
   correo?: true
   claveHash?: true
   telefono?: true
-  aprobada?: true
   fechaCreacion?: true
   fechaModificacion?: true
   eliminado?: true
@@ -114,6 +113,7 @@ export type CuentaCountAggregateInputType = {
   bloqueado?: true
   fechaBloqueo?: true
   motivoBloqueo?: true
+  aprobada?: true
   _all?: true
 }
 
@@ -194,7 +194,6 @@ export type CuentaGroupByOutputType = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada: boolean
   fechaCreacion: Date
   fechaModificacion: Date
   eliminado: boolean
@@ -202,6 +201,7 @@ export type CuentaGroupByOutputType = {
   bloqueado: boolean
   fechaBloqueo: Date | null
   motivoBloqueo: string | null
+  aprobada: boolean
   _count: CuentaCountAggregateOutputType | null
   _min: CuentaMinAggregateOutputType | null
   _max: CuentaMaxAggregateOutputType | null
@@ -230,7 +230,6 @@ export type CuentaWhereInput = {
   correo?: Prisma.StringFilter<"Cuenta"> | string
   claveHash?: Prisma.StringFilter<"Cuenta"> | string
   telefono?: Prisma.StringFilter<"Cuenta"> | string
-  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolFilter<"Cuenta"> | boolean
@@ -238,9 +237,11 @@ export type CuentaWhereInput = {
   bloqueado?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaBloqueo?: Prisma.DateTimeNullableFilter<"Cuenta"> | Date | string | null
   motivoBloqueo?: Prisma.StringNullableFilter<"Cuenta"> | string | null
+  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   cuenta?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   other_cuenta?: Prisma.CuentaListRelationFilter
   log_api?: Prisma.Log_apiListRelationFilter
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
   sede?: Prisma.SedeListRelationFilter
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }
@@ -250,7 +251,6 @@ export type CuentaOrderByWithRelationInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -258,9 +258,11 @@ export type CuentaOrderByWithRelationInput = {
   bloqueado?: Prisma.SortOrder
   fechaBloqueo?: Prisma.SortOrderInput | Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrderInput | Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
   cuenta?: Prisma.CuentaOrderByWithRelationInput
   other_cuenta?: Prisma.CuentaOrderByRelationAggregateInput
   log_api?: Prisma.log_apiOrderByRelationAggregateInput
+  refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
   sede?: Prisma.SedeOrderByRelationAggregateInput
   usuario?: Prisma.UsuarioOrderByWithRelationInput
 }
@@ -273,7 +275,6 @@ export type CuentaWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CuentaWhereInput | Prisma.CuentaWhereInput[]
   claveHash?: Prisma.StringFilter<"Cuenta"> | string
   telefono?: Prisma.StringFilter<"Cuenta"> | string
-  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolFilter<"Cuenta"> | boolean
@@ -281,9 +282,11 @@ export type CuentaWhereUniqueInput = Prisma.AtLeast<{
   bloqueado?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaBloqueo?: Prisma.DateTimeNullableFilter<"Cuenta"> | Date | string | null
   motivoBloqueo?: Prisma.StringNullableFilter<"Cuenta"> | string | null
+  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   cuenta?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   other_cuenta?: Prisma.CuentaListRelationFilter
   log_api?: Prisma.Log_apiListRelationFilter
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
   sede?: Prisma.SedeListRelationFilter
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }, "id_cuenta" | "correo">
@@ -293,7 +296,6 @@ export type CuentaOrderByWithAggregationInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -301,6 +303,7 @@ export type CuentaOrderByWithAggregationInput = {
   bloqueado?: Prisma.SortOrder
   fechaBloqueo?: Prisma.SortOrderInput | Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrderInput | Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
   _count?: Prisma.CuentaCountOrderByAggregateInput
   _max?: Prisma.CuentaMaxOrderByAggregateInput
   _min?: Prisma.CuentaMinOrderByAggregateInput
@@ -314,7 +317,6 @@ export type CuentaScalarWhereWithAggregatesInput = {
   correo?: Prisma.StringWithAggregatesFilter<"Cuenta"> | string
   claveHash?: Prisma.StringWithAggregatesFilter<"Cuenta"> | string
   telefono?: Prisma.StringWithAggregatesFilter<"Cuenta"> | string
-  aprobada?: Prisma.BoolWithAggregatesFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeWithAggregatesFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeWithAggregatesFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolWithAggregatesFilter<"Cuenta"> | boolean
@@ -322,6 +324,7 @@ export type CuentaScalarWhereWithAggregatesInput = {
   bloqueado?: Prisma.BoolWithAggregatesFilter<"Cuenta"> | boolean
   fechaBloqueo?: Prisma.DateTimeNullableWithAggregatesFilter<"Cuenta"> | Date | string | null
   motivoBloqueo?: Prisma.StringNullableWithAggregatesFilter<"Cuenta"> | string | null
+  aprobada?: Prisma.BoolWithAggregatesFilter<"Cuenta"> | boolean
 }
 
 export type CuentaCreateInput = {
@@ -329,16 +332,17 @@ export type CuentaCreateInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -348,7 +352,6 @@ export type CuentaUncheckedCreateInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -356,8 +359,10 @@ export type CuentaUncheckedCreateInput = {
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -367,16 +372,17 @@ export type CuentaUpdateInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -386,7 +392,6 @@ export type CuentaUncheckedUpdateInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -394,8 +399,10 @@ export type CuentaUncheckedUpdateInput = {
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -405,7 +412,6 @@ export type CuentaCreateManyInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -413,6 +419,7 @@ export type CuentaCreateManyInput = {
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
 }
 
 export type CuentaUpdateManyMutationInput = {
@@ -420,13 +427,13 @@ export type CuentaUpdateManyMutationInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CuentaUncheckedUpdateManyInput = {
@@ -434,7 +441,6 @@ export type CuentaUncheckedUpdateManyInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -442,6 +448,7 @@ export type CuentaUncheckedUpdateManyInput = {
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CuentaNullableScalarRelationFilter = {
@@ -464,7 +471,6 @@ export type CuentaCountOrderByAggregateInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -472,6 +478,7 @@ export type CuentaCountOrderByAggregateInput = {
   bloqueado?: Prisma.SortOrder
   fechaBloqueo?: Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
 }
 
 export type CuentaMaxOrderByAggregateInput = {
@@ -479,7 +486,6 @@ export type CuentaMaxOrderByAggregateInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -487,6 +493,7 @@ export type CuentaMaxOrderByAggregateInput = {
   bloqueado?: Prisma.SortOrder
   fechaBloqueo?: Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
 }
 
 export type CuentaMinOrderByAggregateInput = {
@@ -494,7 +501,6 @@ export type CuentaMinOrderByAggregateInput = {
   correo?: Prisma.SortOrder
   claveHash?: Prisma.SortOrder
   telefono?: Prisma.SortOrder
-  aprobada?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
@@ -502,6 +508,7 @@ export type CuentaMinOrderByAggregateInput = {
   bloqueado?: Prisma.SortOrder
   fechaBloqueo?: Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrder
+  aprobada?: Prisma.SortOrder
 }
 
 export type CuentaScalarRelationFilter = {
@@ -533,12 +540,12 @@ export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -633,20 +640,35 @@ export type CuentaUpdateOneWithoutLog_apiNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutLog_apiInput, Prisma.CuentaUpdateWithoutLog_apiInput>, Prisma.CuentaUncheckedUpdateWithoutLog_apiInput>
 }
 
+export type CuentaCreateNestedOneWithoutRefreshTokensInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutRefreshTokensInput, Prisma.CuentaUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutRefreshTokensInput
+  connect?: Prisma.CuentaWhereUniqueInput
+}
+
+export type CuentaUpdateOneRequiredWithoutRefreshTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutRefreshTokensInput, Prisma.CuentaUncheckedCreateWithoutRefreshTokensInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutRefreshTokensInput
+  upsert?: Prisma.CuentaUpsertWithoutRefreshTokensInput
+  connect?: Prisma.CuentaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutRefreshTokensInput, Prisma.CuentaUpdateWithoutRefreshTokensInput>, Prisma.CuentaUncheckedUpdateWithoutRefreshTokensInput>
+}
+
 export type CuentaCreateWithoutOther_cuentaInput = {
   id_cuenta?: string
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -656,7 +678,6 @@ export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -664,7 +685,9 @@ export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -679,15 +702,16 @@ export type CuentaCreateWithoutCuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -697,15 +721,16 @@ export type CuentaUncheckedCreateWithoutCuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -736,15 +761,16 @@ export type CuentaUpdateWithoutOther_cuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -754,7 +780,6 @@ export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -762,7 +787,9 @@ export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -791,7 +818,6 @@ export type CuentaScalarWhereInput = {
   correo?: Prisma.StringFilter<"Cuenta"> | string
   claveHash?: Prisma.StringFilter<"Cuenta"> | string
   telefono?: Prisma.StringFilter<"Cuenta"> | string
-  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Cuenta"> | Date | string
   eliminado?: Prisma.BoolFilter<"Cuenta"> | boolean
@@ -799,6 +825,7 @@ export type CuentaScalarWhereInput = {
   bloqueado?: Prisma.BoolFilter<"Cuenta"> | boolean
   fechaBloqueo?: Prisma.DateTimeNullableFilter<"Cuenta"> | Date | string | null
   motivoBloqueo?: Prisma.StringNullableFilter<"Cuenta"> | string | null
+  aprobada?: Prisma.BoolFilter<"Cuenta"> | boolean
 }
 
 export type CuentaCreateWithoutSedeInput = {
@@ -806,16 +833,17 @@ export type CuentaCreateWithoutSedeInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
 
@@ -824,7 +852,6 @@ export type CuentaUncheckedCreateWithoutSedeInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -832,8 +859,10 @@ export type CuentaUncheckedCreateWithoutSedeInput = {
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
 
@@ -858,16 +887,17 @@ export type CuentaUpdateWithoutSedeInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
 
@@ -876,7 +906,6 @@ export type CuentaUncheckedUpdateWithoutSedeInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -884,8 +913,10 @@ export type CuentaUncheckedUpdateWithoutSedeInput = {
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
 
@@ -894,16 +925,17 @@ export type CuentaCreateWithoutUsuarioInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
 }
 
@@ -912,7 +944,6 @@ export type CuentaUncheckedCreateWithoutUsuarioInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -920,8 +951,10 @@ export type CuentaUncheckedCreateWithoutUsuarioInput = {
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
 }
 
@@ -946,16 +979,17 @@ export type CuentaUpdateWithoutUsuarioInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
 }
 
@@ -964,7 +998,6 @@ export type CuentaUncheckedUpdateWithoutUsuarioInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -972,8 +1005,10 @@ export type CuentaUncheckedUpdateWithoutUsuarioInput = {
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
 }
 
@@ -982,15 +1017,16 @@ export type CuentaCreateWithoutLog_apiInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -1000,7 +1036,6 @@ export type CuentaUncheckedCreateWithoutLog_apiInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
@@ -1008,7 +1043,9 @@ export type CuentaUncheckedCreateWithoutLog_apiInput = {
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -1034,15 +1071,16 @@ export type CuentaUpdateWithoutLog_apiInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -1052,7 +1090,6 @@ export type CuentaUncheckedUpdateWithoutLog_apiInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1060,7 +1097,101 @@ export type CuentaUncheckedUpdateWithoutLog_apiInput = {
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
+}
+
+export type CuentaCreateWithoutRefreshTokensInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
+  other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
+}
+
+export type CuentaUncheckedCreateWithoutRefreshTokensInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
+}
+
+export type CuentaCreateOrConnectWithoutRefreshTokensInput = {
+  where: Prisma.CuentaWhereUniqueInput
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutRefreshTokensInput, Prisma.CuentaUncheckedCreateWithoutRefreshTokensInput>
+}
+
+export type CuentaUpsertWithoutRefreshTokensInput = {
+  update: Prisma.XOR<Prisma.CuentaUpdateWithoutRefreshTokensInput, Prisma.CuentaUncheckedUpdateWithoutRefreshTokensInput>
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutRefreshTokensInput, Prisma.CuentaUncheckedCreateWithoutRefreshTokensInput>
+  where?: Prisma.CuentaWhereInput
+}
+
+export type CuentaUpdateToOneWithWhereWithoutRefreshTokensInput = {
+  where?: Prisma.CuentaWhereInput
+  data: Prisma.XOR<Prisma.CuentaUpdateWithoutRefreshTokensInput, Prisma.CuentaUncheckedUpdateWithoutRefreshTokensInput>
+}
+
+export type CuentaUpdateWithoutRefreshTokensInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
+  other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
+}
+
+export type CuentaUncheckedUpdateWithoutRefreshTokensInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -1070,13 +1201,13 @@ export type CuentaCreateManyCuentaInput = {
   correo: string
   claveHash: string
   telefono: string
-  aprobada?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
   bloqueado?: boolean
   fechaBloqueo?: Date | string | null
   motivoBloqueo?: string | null
+  aprobada?: boolean
 }
 
 export type CuentaUpdateWithoutCuentaInput = {
@@ -1084,15 +1215,16 @@ export type CuentaUpdateWithoutCuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -1102,15 +1234,16 @@ export type CuentaUncheckedUpdateWithoutCuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -1120,13 +1253,13 @@ export type CuentaUncheckedUpdateManyWithoutCuentaInput = {
   correo?: Prisma.StringFieldUpdateOperationsInput | string
   claveHash?: Prisma.StringFieldUpdateOperationsInput | string
   telefono?: Prisma.StringFieldUpdateOperationsInput | string
-  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -1137,12 +1270,14 @@ export type CuentaUncheckedUpdateManyWithoutCuentaInput = {
 export type CuentaCountOutputType = {
   other_cuenta: number
   log_api: number
+  refreshTokens: number
   sede: number
 }
 
 export type CuentaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   other_cuenta?: boolean | CuentaCountOutputTypeCountOther_cuentaArgs
   log_api?: boolean | CuentaCountOutputTypeCountLog_apiArgs
+  refreshTokens?: boolean | CuentaCountOutputTypeCountRefreshTokensArgs
   sede?: boolean | CuentaCountOutputTypeCountSedeArgs
 }
 
@@ -1173,6 +1308,13 @@ export type CuentaCountOutputTypeCountLog_apiArgs<ExtArgs extends runtime.Types.
 /**
  * CuentaCountOutputType without action
  */
+export type CuentaCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RefreshTokenWhereInput
+}
+
+/**
+ * CuentaCountOutputType without action
+ */
 export type CuentaCountOutputTypeCountSedeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SedeWhereInput
 }
@@ -1183,7 +1325,6 @@ export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1191,9 +1332,11 @@ export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   bloqueado?: boolean
   fechaBloqueo?: boolean
   motivoBloqueo?: boolean
+  aprobada?: boolean
   cuenta?: boolean | Prisma.Cuenta$cuentaArgs<ExtArgs>
   other_cuenta?: boolean | Prisma.Cuenta$other_cuentaArgs<ExtArgs>
   log_api?: boolean | Prisma.Cuenta$log_apiArgs<ExtArgs>
+  refreshTokens?: boolean | Prisma.Cuenta$refreshTokensArgs<ExtArgs>
   sede?: boolean | Prisma.Cuenta$sedeArgs<ExtArgs>
   usuario?: boolean | Prisma.Cuenta$usuarioArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
@@ -1204,7 +1347,6 @@ export type CuentaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1212,6 +1354,7 @@ export type CuentaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   bloqueado?: boolean
   fechaBloqueo?: boolean
   motivoBloqueo?: boolean
+  aprobada?: boolean
   cuenta?: boolean | Prisma.Cuenta$cuentaArgs<ExtArgs>
 }, ExtArgs["result"]["cuenta"]>
 
@@ -1220,7 +1363,6 @@ export type CuentaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1228,6 +1370,7 @@ export type CuentaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   bloqueado?: boolean
   fechaBloqueo?: boolean
   motivoBloqueo?: boolean
+  aprobada?: boolean
   cuenta?: boolean | Prisma.Cuenta$cuentaArgs<ExtArgs>
 }, ExtArgs["result"]["cuenta"]>
 
@@ -1236,7 +1379,6 @@ export type CuentaSelectScalar = {
   correo?: boolean
   claveHash?: boolean
   telefono?: boolean
-  aprobada?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
   eliminado?: boolean
@@ -1244,13 +1386,15 @@ export type CuentaSelectScalar = {
   bloqueado?: boolean
   fechaBloqueo?: boolean
   motivoBloqueo?: boolean
+  aprobada?: boolean
 }
 
-export type CuentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_cuenta" | "correo" | "claveHash" | "telefono" | "aprobada" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por" | "bloqueado" | "fechaBloqueo" | "motivoBloqueo", ExtArgs["result"]["cuenta"]>
+export type CuentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_cuenta" | "correo" | "claveHash" | "telefono" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por" | "bloqueado" | "fechaBloqueo" | "motivoBloqueo" | "aprobada", ExtArgs["result"]["cuenta"]>
 export type CuentaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.Cuenta$cuentaArgs<ExtArgs>
   other_cuenta?: boolean | Prisma.Cuenta$other_cuentaArgs<ExtArgs>
   log_api?: boolean | Prisma.Cuenta$log_apiArgs<ExtArgs>
+  refreshTokens?: boolean | Prisma.Cuenta$refreshTokensArgs<ExtArgs>
   sede?: boolean | Prisma.Cuenta$sedeArgs<ExtArgs>
   usuario?: boolean | Prisma.Cuenta$usuarioArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
@@ -1268,6 +1412,7 @@ export type $CuentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     cuenta: Prisma.$CuentaPayload<ExtArgs> | null
     other_cuenta: Prisma.$CuentaPayload<ExtArgs>[]
     log_api: Prisma.$log_apiPayload<ExtArgs>[]
+    refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
     sede: Prisma.$SedePayload<ExtArgs>[]
     usuario: Prisma.$UsuarioPayload<ExtArgs> | null
   }
@@ -1276,7 +1421,6 @@ export type $CuentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     correo: string
     claveHash: string
     telefono: string
-    aprobada: boolean
     fechaCreacion: Date
     fechaModificacion: Date
     eliminado: boolean
@@ -1284,6 +1428,7 @@ export type $CuentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     bloqueado: boolean
     fechaBloqueo: Date | null
     motivoBloqueo: string | null
+    aprobada: boolean
   }, ExtArgs["result"]["cuenta"]>
   composites: {}
 }
@@ -1681,6 +1826,7 @@ export interface Prisma__CuentaClient<T, Null = never, ExtArgs extends runtime.T
   cuenta<T extends Prisma.Cuenta$cuentaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$cuentaArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   other_cuenta<T extends Prisma.Cuenta$other_cuentaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$other_cuentaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   log_api<T extends Prisma.Cuenta$log_apiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$log_apiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$log_apiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  refreshTokens<T extends Prisma.Cuenta$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sede<T extends Prisma.Cuenta$sedeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$sedeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   usuario<T extends Prisma.Cuenta$usuarioArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$usuarioArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1716,7 +1862,6 @@ export interface CuentaFieldRefs {
   readonly correo: Prisma.FieldRef<"Cuenta", 'String'>
   readonly claveHash: Prisma.FieldRef<"Cuenta", 'String'>
   readonly telefono: Prisma.FieldRef<"Cuenta", 'String'>
-  readonly aprobada: Prisma.FieldRef<"Cuenta", 'Boolean'>
   readonly fechaCreacion: Prisma.FieldRef<"Cuenta", 'DateTime'>
   readonly fechaModificacion: Prisma.FieldRef<"Cuenta", 'DateTime'>
   readonly eliminado: Prisma.FieldRef<"Cuenta", 'Boolean'>
@@ -1724,6 +1869,7 @@ export interface CuentaFieldRefs {
   readonly bloqueado: Prisma.FieldRef<"Cuenta", 'Boolean'>
   readonly fechaBloqueo: Prisma.FieldRef<"Cuenta", 'DateTime'>
   readonly motivoBloqueo: Prisma.FieldRef<"Cuenta", 'String'>
+  readonly aprobada: Prisma.FieldRef<"Cuenta", 'Boolean'>
 }
     
 
@@ -2189,6 +2335,30 @@ export type Cuenta$log_apiArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.Log_apiScalarFieldEnum | Prisma.Log_apiScalarFieldEnum[]
+}
+
+/**
+ * Cuenta.refreshTokens
+ */
+export type Cuenta$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RefreshToken
+   */
+  select?: Prisma.RefreshTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RefreshToken
+   */
+  omit?: Prisma.RefreshTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RefreshTokenInclude<ExtArgs> | null
+  where?: Prisma.RefreshTokenWhereInput
+  orderBy?: Prisma.RefreshTokenOrderByWithRelationInput | Prisma.RefreshTokenOrderByWithRelationInput[]
+  cursor?: Prisma.RefreshTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
 }
 
 /**
