@@ -28,11 +28,15 @@ import {
 
 export function RegisterWizard() {
   const router = useRouter();
+  // Stepper 
   const [paso, setPaso] = useState(0);
   const [maxVisitado, setMaxVisitado] = useState(0);
+  // General
   const [datos, setDatos] = useState<RegistroUsuarioBorrador>(REGISTRO_USUARIO_INICIAL);
+  // Validaciones y memoria de correo y run
   const [runSnapshot, setRunSnapshot] = useState<SnapshotRun | null>(null);
   const [correoSnapshot, setCorreoSnapshot] = useState<SnapshotCorreo | null>(null);
+  // validaciones para seguir los pasos
   const [cuentaValida, setCuentaValida] = useState(false);
   const [datosValidos, setDatosValidos] = useState(false);
   const [carreraValida, setCarreraValida] = useState(false);
@@ -58,6 +62,7 @@ export function RegisterWizard() {
     };
   }, []);
 
+  // Movimiento entre páginas
   const avanzar = () => {
     const siguiente = Math.min(paso + 1, 3);
     setPaso(siguiente);
@@ -95,6 +100,7 @@ export function RegisterWizard() {
     },
   });
 
+  // Metodo que llama a la consulta
   const crearCuenta = () => {
     if (crearMutation.isPending) return;
     setErrorCrear(null);
