@@ -1,13 +1,13 @@
 import type {
-  CarreraIdMomentaneo,
-  ID,
-  RolIdMomentaneo,
-  SedeIdMomentaneo,
+  CarreraId,
+  CuentaId,
+  RolId,
+  SedeId,
 } from "@/domain/types/common";
 
 // Forma del cable (JSON con fechas string). Sin clave_hash por decisión aprobada.
 export interface CuentaBaseDTO {
-  id: ID;
+  id: CuentaId;
   correo: string;
   telefono?: string | null;
   fechaCreacion: string;
@@ -25,9 +25,9 @@ export interface UsuarioDTO extends CuentaBaseDTO {
   sNombre?: string | null;
   pApellido: string;
   sApellido?: string | null;
-  rolId: RolIdMomentaneo;
-  sedeId: SedeIdMomentaneo;
-  carreraId: CarreraIdMomentaneo;
+  rolId: RolId;
+  sedeId: SedeId;
+  carreraId: CarreraId;
   correoVerificado: boolean;
 }
 
@@ -51,12 +51,11 @@ export interface CreateUsuarioDTO {
   pApellido: string;
   sApellido?: string | null;
   // Rol lo asigna el back. Front envía sede + carrera.
-  sedeId: SedeIdMomentaneo;
-  carreraId: CarreraIdMomentaneo;
+  sedeId: SedeId;
+  carreraId: CarreraId;
 }
 
 // Forma plana que exige POST /usuario/registro (RegistrarUsuarioDto del back).
-// clave -> contrasena, ids string -> number. Se arma en T2 del cierre registro.
 export interface RegistrarUsuarioRequestDTO {
   correo: string;
   contrasena: string;

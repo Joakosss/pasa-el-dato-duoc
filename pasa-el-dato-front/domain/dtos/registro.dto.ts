@@ -1,10 +1,11 @@
 import type {
-  CarreraIdMomentaneo,
-  EscuelaIdMomentaneo,
-  SedeIdMomentaneo,
+  CarreraId,
+  EscuelaId,
+  SedeId,
 } from "@/domain/types/common";
 
 // (escuelaId no viaja: carrera implica escuela).
+// Sentinel null = sin selección (el <select> muestra value="").
 export interface RegistroUsuarioBorrador {
   run: string;
   correo: string;
@@ -13,9 +14,9 @@ export interface RegistroUsuarioBorrador {
   pApellido: string;
   sApellido: string;
   telefono: string;
-  sedeId: SedeIdMomentaneo;
-  escuelaId: EscuelaIdMomentaneo;
-  carreraId: CarreraIdMomentaneo;
+  sedeId: SedeId | null;
+  escuelaId: EscuelaId | null;
+  carreraId: CarreraId | null;
   clave: string;
   confirmacion: string;
   aceptaTerminos: boolean;
@@ -29,9 +30,9 @@ export const REGISTRO_USUARIO_INICIAL: RegistroUsuarioBorrador = {
   pApellido: "",
   sApellido: "",
   telefono: "",
-  sedeId: "",
-  escuelaId: "",
-  carreraId: "",
+  sedeId: null,
+  escuelaId: null,
+  carreraId: null,
   clave: "",
   confirmacion: "",
   aceptaTerminos: false,

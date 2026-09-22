@@ -13,12 +13,13 @@ import type {
   SnapshotsRegistro,
 } from "@/domain/dtos/registro.dto";
 import type {
-  CarreraIdMomentaneo,
-  EscuelaIdMomentaneo,
+  CarreraId,
+  EscuelaId,
 } from "@/domain/types/common";
 import type { Cuenta } from "@/domain/models/Cuenta";
 import { Usuario } from "@/domain/models/Usuario";
 import { Marca } from "@/domain/models/Marca";
+import { validarTelefono } from "@/lib/validators/telefono";
 
 // Discriminación por forma: el back no envía campo tipo.
 // GET /usuarios -> UsuarioDTO (tiene run), GET /marcas -> MarcaDTO (tiene nombreMarca).
@@ -33,8 +34,8 @@ export function isMarcaDTO(dto: CuentaDTO): dto is MarcaDTO {
 // Carrera implica escuela. Valida coherencia antes de armar payload.
 export function esCarreraDeEscuela(
   carreras: CarreraDTO[],
-  carreraId: CarreraIdMomentaneo,
-  escuelaId: EscuelaIdMomentaneo,
+  carreraId: CarreraId,
+  escuelaId: EscuelaId,
 ): boolean {
   return carreras.some((c) => c.id === carreraId && c.escuelaId === escuelaId);
 }
@@ -57,14 +58,17 @@ export function validarBorradorParaCrear(
     borrador.pNombre.trim().length === 0 ||
     borrador.pApellido.trim().length === 0 ||
     borrador.sApellido.trim().length === 0 ||
-    borrador.telefono.trim().length === 0 ||
-    borrador.sedeId.length === 0 ||
-    borrador.escuelaId.length === 0 ||
-    borrador.carreraId.length === 0
+    borrador.sedeId === null ||
+    borrador.escuelaId === null ||
+    borrador.carreraId === null
   ) {
-    return { ok: false, error: "Completa nombres, apellidos, teléfono, sede, escuela y carrera." };
+    return { ok: false, error: "Completa nombres, apellidos, sede, escuela y carrera." };
   }
-  if (!Number.isInteger(Number(borrador.sedeId)) || !Number.isInteger(Number(borrador.carreraId))) {
+  const validacionTelefono = validarTelefono(borrador.telefono);
+  if (!validacionTelefono.ok) {
+    return { ok: false, error: validacionTelefono.error ?? "El teléfono debe tener 8 dígitos." };
+  }
+  if (!Number.isInteger(borrador.sedeId) || !Number.isInteger(borrador.carreraId)) {
     return { ok: false, error: "La sede o carrera elegida no es válida." };
   }
   if (!esCarreraDeEscuela(carreras, borrador.carreraId, borrador.escuelaId)) {
@@ -100,19 +104,20 @@ export const CuentaMapper = {
     return {
       correo: (snapshots.correoNormalizado ?? borrador.correo).trim().toLowerCase(),
       clave: borrador.clave,
-      telefono: borrador.telefono?.trim() || null,
+      telefono: validarTelefono(borrador.telefono).normalizado ?? null,
       run: (snapshots.runNormalizado ?? borrador.run).trim(),
       pNombre: borrador.pNombre.trim(),
       sNombre: borrador.sNombre?.trim() || null,
       pApellido: borrador.pApellido.trim(),
       sApellido: borrador.sApellido?.trim() || null,
-      sedeId: borrador.sedeId,
-      carreraId: borrador.carreraId,
+      // Solo se llama tras validarBorradorParaCrear: los ids ya no son null.
+      sedeId: borrador.sedeId as number,
+      carreraId: borrador.carreraId as number,
     };
   },
 
   // Adapta borrador + snapshots a la forma plana de POST /usuario/registro.
-  // clave -> contrasena, ids string -> number, teléfono sin espacios.
+  // Los ids ya son number (null se rechaza en validarBorradorParaCrear).
   toRegistrarUsuarioRequest(
     borrador: RegistroUsuarioBorrador,
     snapshots: SnapshotsRegistro,
@@ -120,18 +125,19 @@ export const CuentaMapper = {
     return {
       correo: (snapshots.correoNormalizado ?? borrador.correo).trim().toLowerCase(),
       contrasena: borrador.clave,
-      telefono: borrador.telefono.replace(/[\s-]/g, ""),
+      telefono: validarTelefono(borrador.telefono).normalizado ?? borrador.telefono.trim(),
       run: (snapshots.runNormalizado ?? borrador.run).trim(),
       pNombre: borrador.pNombre.trim(),
       sNombre: borrador.sNombre?.trim() || null,
       pApellido: borrador.pApellido.trim(),
       sApellido: borrador.sApellido.trim(),
-      sedeId: Number(borrador.sedeId),
-      carreraId: Number(borrador.carreraId),
+      sedeId: borrador.sedeId as number,
+      carreraId: borrador.carreraId as number,
     };
   },
 
-  toCreateMarcaPayload(input: {    correo: string;
+  toCreateMarcaPayload(input: {
+    correo: string;
     clave: string;
     telefono?: string | null;
     nombreMarca: string;

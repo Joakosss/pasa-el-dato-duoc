@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Input } from "@/components/ui/Input";
 import type { RegistroUsuarioBorrador } from "@/domain/dtos/registro.dto";
+import { validarTelefono } from "@/lib/validators/telefono";
 
 interface StepDatosProps {
   datos: RegistroUsuarioBorrador;
@@ -11,11 +12,12 @@ interface StepDatosProps {
 }
 
 export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
+  const validacionTelefono = validarTelefono(datos.telefono);
   const valido =
     datos.pNombre.trim().length > 0 &&
     datos.pApellido.trim().length > 0 &&
     datos.sApellido.trim().length > 0 &&
-    datos.telefono.trim().length > 0;
+    validacionTelefono.ok;
 
   useEffect(() => {
     onValidez(valido);
@@ -61,9 +63,15 @@ export function StepDatos({ datos, onChange, onValidez }: StepDatosProps) {
           label="Teléfono *"
           type="tel"
           name="telefono"
-          placeholder="+569 1234 5678"
+          placeholder="12345678"
           value={datos.telefono}
           autoComplete="tel"
+          inputMode="tel"
+          error={
+            datos.telefono.length > 0 && !validacionTelefono.ok
+              ? (validacionTelefono.error ?? undefined)
+              : undefined
+          }
           onChange={(e) => onChange({ telefono: e.target.value })}
         />
       </div>

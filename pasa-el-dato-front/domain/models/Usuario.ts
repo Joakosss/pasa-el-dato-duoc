@@ -1,8 +1,8 @@
 import { Cuenta, type CuentaProps } from "./Cuenta";
 import type {
-  CarreraIdMomentaneo,
-  RolIdMomentaneo,
-  SedeIdMomentaneo,
+  CarreraId,
+  RolId,
+  SedeId,
 } from "@/domain/types/common";
 import type { UsuarioDTO } from "@/domain/dtos/cuenta.dto";
 
@@ -12,9 +12,9 @@ export interface UsuarioProps extends CuentaProps {
   sNombre: string | null;
   pApellido: string;
   sApellido: string | null;
-  rolId: RolIdMomentaneo;
-  sedeId: SedeIdMomentaneo;
-  carreraId: CarreraIdMomentaneo;
+  rolId: RolId;
+  sedeId: SedeId;
+  carreraId: CarreraId;
   correoVerificado: boolean;
 }
 
@@ -27,9 +27,9 @@ export class Usuario extends Cuenta {
   sNombre: string | null;
   pApellido: string;
   sApellido: string | null;
-  rolId: RolIdMomentaneo;
-  sedeId: SedeIdMomentaneo;
-  carreraId: CarreraIdMomentaneo;
+  rolId: RolId;
+  sedeId: SedeId;
+  carreraId: CarreraId;
   correoVerificado: boolean;
 
   constructor(props: UsuarioProps) {

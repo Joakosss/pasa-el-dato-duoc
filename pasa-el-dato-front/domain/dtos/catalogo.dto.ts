@@ -1,22 +1,18 @@
-import type {
-  EscuelaIdMomentaneo,
-  CarreraIdMomentaneo,
-  ID,
-} from "@/domain/types/common";
+import type { EscuelaId, CarreraId, SedeId } from "@/domain/types/common";
 
-// TODO[MOMENTANEO]: reemplazar por contrato back de ESCUELA / CARRERA / SEDE.
 export interface EscuelaDTO {
-  id: EscuelaIdMomentaneo;
+  id: EscuelaId;
   nombre: string;
 }
 
 export interface CarreraDTO {
-  id: CarreraIdMomentaneo;
+  id: CarreraId;
   nombre: string;
-  escuelaId: EscuelaIdMomentaneo;
+  escuelaId: EscuelaId;
 }
 
 export interface SedeDTO {
-  id: ID;
+  id: SedeId;
   nombre: string;
+  activa: boolean;
 }

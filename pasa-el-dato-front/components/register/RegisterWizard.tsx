@@ -19,7 +19,7 @@ import {
 } from "@/domain/dtos/registro.dto";
 import type { SnapshotVerificacion as SnapshotRun } from "@/hooks/use-verificar-run"; // valida y hace una seudo validacion de disponibilidad 
 import type { SnapshotVerificacion as SnapshotCorreo } from "@/hooks/use-verificar-correo"; // valida y hace una seudo validacion de disponibilidad
-import { CARRERAS_MOMENTANEO } from "@/domain/catalogo.data.momentaneo"; // esto debe migrarse a algun endpoint que traiga las escuelas y colegios
+import { useCarreras } from "@/hooks/use-carreras";
 import type { RegistrarUsuarioRequestDTO } from "@/domain/dtos/cuenta.dto";
 import {
   CuentaMapper,
@@ -42,6 +42,7 @@ export function RegisterWizard() {
   const [carreraValida, setCarreraValida] = useState(false);
   const [claveValida, setClaveValida] = useState(false);
   const [errorCrear, setErrorCrear] = useState<string | null>(null);
+  const { carreras: carrerasCatalogo } = useCarreras();
   const redireccion = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const actualizar = useCallback((parcial: Partial<RegistroUsuarioBorrador>) => {
@@ -110,7 +111,7 @@ export function RegisterWizard() {
         runNormalizado: runSnapshot?.normalizado ?? null,
         correoNormalizado: correoSnapshot?.normalizado ?? null,
       },
-      CARRERAS_MOMENTANEO,
+      carrerasCatalogo,
     );
     if (!validacion.ok) {
       setErrorCrear(validacion.error ?? "Revisa los datos ingresados.");
