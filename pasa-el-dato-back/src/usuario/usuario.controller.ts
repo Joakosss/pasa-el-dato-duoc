@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { RegistrarUsuarioDto } from './dto/registrar-usuario.dto.js';
 import { RegistroService } from './registro.service.js';
 import { ValidarCorreoDto, ValidarRunDto } from './dto/validar-disponibilidad.dto.js';
@@ -17,6 +17,7 @@ export class UsuarioController {
     }
 
     @Post('validar-correo')
+    @HttpCode(HttpStatus.OK)
     async validarCorreo(
         @Body() datos: ValidarCorreoDto,
     ): Promise<boolean> {

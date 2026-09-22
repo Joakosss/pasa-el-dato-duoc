@@ -57,7 +57,8 @@ export const ModelName = {
   Escuela: 'Escuela',
   Carrera: 'Carrera',
   Usuario: 'Usuario',
-  log_api: 'log_api'
+  log_api: 'log_api',
+  RefreshToken: 'RefreshToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -81,14 +82,14 @@ export const CuentaScalarFieldEnum = {
   correo: 'correo',
   claveHash: 'claveHash',
   telefono: 'telefono',
-  estado: 'estado',
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
   fk_modificado_por: 'fk_modificado_por',
   bloqueado: 'bloqueado',
   fechaBloqueo: 'fechaBloqueo',
-  motivoBloqueo: 'motivoBloqueo'
+  motivoBloqueo: 'motivoBloqueo',
+  aprobada: 'aprobada'
 } as const
 
 export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
@@ -158,6 +159,18 @@ export const Log_apiScalarFieldEnum = {
 } as const
 
 export type Log_apiScalarFieldEnum = (typeof Log_apiScalarFieldEnum)[keyof typeof Log_apiScalarFieldEnum]
+
+
+export const RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  fk_cuenta: 'fk_cuenta',
+  tokenHash: 'tokenHash',
+  fechaCreacion: 'fechaCreacion',
+  fechaExpiracion: 'fechaExpiracion',
+  fechaRevocacion: 'fechaRevocacion'
+} as const
+
+export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const SortOrder = {
