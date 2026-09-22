@@ -1,2 +1,8 @@
-export { UserMapper } from "./user.mapper";
-export { DatoMapper } from "./dato.mapper";
+export {
+  CuentaMapper,
+  isUsuarioDTO,
+  isMarcaDTO,
+  esCarreraDeEscuela,
+  validarBorradorParaCrear,
+} from "./cuenta.mapper";
+export type { ValidacionBorrador } from "./cuenta.mapper";

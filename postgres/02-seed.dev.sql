@@ -3,28 +3,31 @@
 -- Para volver a esquema limpio: borrar este archivo + `podman-compose down -v && up`.
 -- Corre solo la primera vez (volumen vacío), después de 01-schema.sql.
 
-INSERT INTO users (name, email, avatar_url) VALUES
-  ('Demo Duoc', 'demo@duoc.cl', NULL),
-  ('Mobile Dev', 'mobile@dev.cl', NULL)
-ON CONFLICT (email) DO NOTHING;
+INSERT INTO rol_usuario (descripcion)
+VALUES ('Estudiante')
+ON CONFLICT (descripcion) DO NOTHING;
 
--- Inserta 2 datos de ejemplo asociados al usuario demo
-WITH demo AS (SELECT id FROM users WHERE email = 'demo@duoc.cl' LIMIT 1)
-INSERT INTO datos (title, content, author_id, tags)
-SELECT
-  'Dato de prueba web',
-  'Este dato viene del seed dev. Sirve para verificar que el front lee del back y Postgres.',
-  demo.id,
-  ARRAY['dev','web']
-FROM demo
-WHERE NOT EXISTS (SELECT 1 FROM datos WHERE title = 'Dato de prueba web');
+-- Crea la sede activa solo si aún no existe con ese nombre.
+INSERT INTO sede (nombre, activa)
+SELECT 'Puente Alto', TRUE
+WHERE NOT EXISTS (
+  SELECT 1 FROM sede WHERE nombre = 'Puente Alto'
+);
 
-WITH demo AS (SELECT id FROM users WHERE email = 'demo@duoc.cl' LIMIT 1)
-INSERT INTO datos (title, content, author_id, tags)
-SELECT
-  'Dato desde mobile',
-  'Si tu celular en LAN ve este dato vía http://TU_IP:3001/api, la red Podman está bien.',
-  demo.id,
-  ARRAY['dev','mobile']
-FROM demo
-WHERE NOT EXISTS (SELECT 1 FROM datos WHERE title = 'Dato desde mobile');
+-- Datos temporales para probar la selección de carrera durante el registro.
+INSERT INTO escuela (nombre)
+SELECT 'Escuela de prueba'
+WHERE NOT EXISTS (
+  SELECT 1 FROM escuela WHERE nombre = 'Escuela de prueba'
+);
+
+INSERT INTO carrera (nombre, fk_escuela)
+SELECT 'Carrera de prueba', escuela.id
+FROM escuela
+WHERE escuela.nombre = 'Escuela de prueba'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM carrera
+    WHERE carrera.nombre = 'Carrera de prueba'
+      AND carrera.fk_escuela = escuela.id
+  );

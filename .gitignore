@@ -36,7 +36,7 @@ Thumbs.db
 
 # vercel & typescript
 **/.vercel
-*/.tsbuildinfo
+**/*.tsbuildinfo
 **/next-env.d.ts
 
 # Caché incremental de TypeScript

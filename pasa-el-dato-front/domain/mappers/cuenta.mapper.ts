@@ -1,0 +1,159 @@
+import type {
+  CreateMarcaDTO,
+  CreateUsuarioDTO,
+  CuentaDTO,
+  MarcaDTO,
+  RegistrarUsuarioRequestDTO,
+  UpdateCuentaDTO,
+  UsuarioDTO,
+} from "@/domain/dtos/cuenta.dto";
+import type { CarreraDTO } from "@/domain/dtos/catalogo.dto";
+import type {
+  RegistroUsuarioBorrador,
+  SnapshotsRegistro,
+} from "@/domain/dtos/registro.dto";
+import type {
+  CarreraId,
+  EscuelaId,
+} from "@/domain/types/common";
+import type { Cuenta } from "@/domain/models/Cuenta";
+import { Usuario } from "@/domain/models/Usuario";
+import { Marca } from "@/domain/models/Marca";
+import { validarTelefono } from "@/lib/validators/telefono";
+
+// Discriminación por forma: el back no envía campo tipo.
+// GET /usuarios -> UsuarioDTO (tiene run), GET /marcas -> MarcaDTO (tiene nombreMarca).
+export function isUsuarioDTO(dto: CuentaDTO): dto is UsuarioDTO {
+  return "run" in dto;
+}
+
+export function isMarcaDTO(dto: CuentaDTO): dto is MarcaDTO {
+  return "nombreMarca" in dto;
+}
+
+// Carrera implica escuela. Valida coherencia antes de armar payload.
+export function esCarreraDeEscuela(
+  carreras: CarreraDTO[],
+  carreraId: CarreraId,
+  escuelaId: EscuelaId,
+): boolean {
+  return carreras.some((c) => c.id === carreraId && c.escuelaId === escuelaId);
+}
+
+export interface ValidacionBorrador {
+  ok: boolean;
+  error?: string;
+}
+
+// Validación central del borrador antes de crear. Solo front, sin fetch.
+export function validarBorradorParaCrear(
+  borrador: RegistroUsuarioBorrador,
+  snapshots: SnapshotsRegistro,
+  carreras: CarreraDTO[],
+): ValidacionBorrador {
+  if (!snapshots.runNormalizado || !snapshots.correoNormalizado) {
+    return { ok: false, error: "Vuelve al paso Cuenta y valida RUT y correo." };
+  }
+  if (
+    borrador.pNombre.trim().length === 0 ||
+    borrador.pApellido.trim().length === 0 ||
+    borrador.sApellido.trim().length === 0 ||
+    borrador.sedeId === null ||
+    borrador.escuelaId === null ||
+    borrador.carreraId === null
+  ) {
+    return { ok: false, error: "Completa nombres, apellidos, sede, escuela y carrera." };
+  }
+  const validacionTelefono = validarTelefono(borrador.telefono);
+  if (!validacionTelefono.ok) {
+    return { ok: false, error: validacionTelefono.error ?? "El teléfono debe tener 8 dígitos." };
+  }
+  if (!Number.isInteger(borrador.sedeId) || !Number.isInteger(borrador.carreraId)) {
+    return { ok: false, error: "La sede o carrera elegida no es válida." };
+  }
+  if (!esCarreraDeEscuela(carreras, borrador.carreraId, borrador.escuelaId)) {
+    return { ok: false, error: "La carrera no pertenece a la escuela elegida." };
+  }
+  if (!borrador.clave) {
+    return { ok: false, error: "Ingresa tu contraseña." };
+  }
+  return { ok: true };
+}
+
+export const CuentaMapper = {
+  toUsuario(dto: UsuarioDTO): Usuario {
+    return Usuario.fromJSON(dto);
+  },
+
+  toListUsuario(dtos: UsuarioDTO[]): Usuario[] {
+    return dtos.map((dto) => Usuario.fromJSON(dto));
+  },
+
+  toMarca(dto: MarcaDTO): Marca {
+    return Marca.fromJSON(dto);
+  },
+
+  toListMarca(dtos: MarcaDTO[]): Marca[] {
+    return dtos.map((dto) => Marca.fromJSON(dto));
+  },
+
+  toCreateUsuarioPayload(
+    borrador: RegistroUsuarioBorrador,
+    snapshots: SnapshotsRegistro,
+  ): CreateUsuarioDTO {
+    return {
+      correo: (snapshots.correoNormalizado ?? borrador.correo).trim().toLowerCase(),
+      clave: borrador.clave,
+      telefono: validarTelefono(borrador.telefono).normalizado ?? null,
+      run: (snapshots.runNormalizado ?? borrador.run).trim(),
+      pNombre: borrador.pNombre.trim(),
+      sNombre: borrador.sNombre?.trim() || null,
+      pApellido: borrador.pApellido.trim(),
+      sApellido: borrador.sApellido?.trim() || null,
+      // Solo se llama tras validarBorradorParaCrear: los ids ya no son null.
+      sedeId: borrador.sedeId as number,
+      carreraId: borrador.carreraId as number,
+    };
+  },
+
+  // Adapta borrador + snapshots a la forma plana de POST /usuario/registro.
+  // Los ids ya son number (null se rechaza en validarBorradorParaCrear).
+  toRegistrarUsuarioRequest(
+    borrador: RegistroUsuarioBorrador,
+    snapshots: SnapshotsRegistro,
+  ): RegistrarUsuarioRequestDTO {
+    return {
+      correo: (snapshots.correoNormalizado ?? borrador.correo).trim().toLowerCase(),
+      contrasena: borrador.clave,
+      telefono: validarTelefono(borrador.telefono).normalizado ?? borrador.telefono.trim(),
+      run: (snapshots.runNormalizado ?? borrador.run).trim(),
+      pNombre: borrador.pNombre.trim(),
+      sNombre: borrador.sNombre?.trim() || null,
+      pApellido: borrador.pApellido.trim(),
+      sApellido: borrador.sApellido.trim(),
+      sedeId: borrador.sedeId as number,
+      carreraId: borrador.carreraId as number,
+    };
+  },
+
+  toCreateMarcaPayload(input: {
+    correo: string;
+    clave: string;
+    telefono?: string | null;
+    nombreMarca: string;
+  }): CreateMarcaDTO {
+    return {
+      correo: input.correo.trim().toLowerCase(),
+      clave: input.clave,
+      telefono: input.telefono?.trim() || null,
+      nombreMarca: input.nombreMarca.trim(),
+    };
+  },
+
+  toUpdatePayload(cuenta: Cuenta): UpdateCuentaDTO {
+    return {
+      correo: cuenta.correo,
+      telefono: cuenta.telefono,
+    };
+  },
+};

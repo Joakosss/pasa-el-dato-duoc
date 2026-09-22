@@ -1,2 +1,2 @@
-export type { UserRepository } from "./user.repository";
-export type { DatoRepository } from "./dato.repository";
+export type { CuentaRepository } from "./cuenta.repository";
+export type { CatalogoRepository } from "./catalogo.repository";
