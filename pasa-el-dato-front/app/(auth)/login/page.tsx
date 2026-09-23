@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { ROUTES } from "@/config";
-import { PasswordInput } from "@/components/ui";
 import { AvisoRegistro } from "@/components/auth/AvisoRegistro";
+import { LoginForm } from "@/components/auth/LoginForm";
 export const metadata: Metadata = {
   title: "Iniciar sesión | Pasa el Dato",
 };
@@ -23,21 +21,12 @@ export default function LoginPage() {
             <p className="mt-1 text-sm text-gray-400">Bienvenido de vuelta a Pasa el Dato Duoc</p>
           </div>
 
-          <form className="space-y-4">
-            <Suspense fallback={null}>
-              <AvisoRegistro />
-            </Suspense>
-            <Input
-              label="Correo institucional"
-              type="email"
-              placeholder="ejemplo@correo.duoc.cl"
-              name="email"
-            />
-            <PasswordInput label="Contraseña" placeholder="••••••••" name="password" />
-            <Button variant="primary" size="lg" type="submit" className="w-full">
-              Iniciar sesión
-            </Button>
-          </form>
+          <Suspense fallback={null}>
+            <AvisoRegistro />
+          </Suspense>
+          <div className="mt-4">
+            <LoginForm />
+          </div>
 
           <div className="my-5 flex items-center gap-3">
             <div className="h-px flex-1 bg-gray-200" />
