@@ -1,12 +1,11 @@
 import { type INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import type { App } from 'supertest/types';
 import { AppModule } from '../src/app.module.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 
 describe('Registro de usuario (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: INestApplication;
   let prisma: PrismaService;
   let sedeId: number;
   let carreraId: number;
