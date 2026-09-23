@@ -319,4 +319,46 @@ describe('AuthService: búsqueda de cuenta', () => {
     );
     expect(prismaFalso.refreshToken.create).not.toHaveBeenCalled();
   });
+
+  it('coordina la validación y la creación de ambos tokens', async () => {
+    const datos = {
+      correo: 'alumno@duocuc.cl',
+      contrasena: 'clave-correcta',
+    };
+
+    const usuario: UsuarioAutenticado = {
+      idCuenta: 'uuid-cuenta',
+      correo: datos.correo,
+      usuario: {
+        run: '12345678-5',
+        pNombre: 'Ana',
+        sNombre: null,
+        pApellido: 'Pérez',
+        sApellido: 'Gómez',
+        rol: { id: 1, descripcion: 'Estudiante' },
+      },
+    };
+
+    // Simulamos cada paso para probar la coordinación, sin acceder a PostgreSQL.
+    const validar = vi
+      .spyOn(service, 'validarCredenciales')
+      .mockResolvedValue(usuario);
+    const acceso = vi
+      .spyOn(service, 'generarAccessToken')
+      .mockResolvedValue('jwt-de-prueba');
+    const refresco = vi
+      .spyOn(service, 'crearRefreshToken')
+      .mockResolvedValue('refresh-de-prueba');
+
+    const resultado = await service.iniciarSesion(datos);
+
+    expect(validar).toHaveBeenCalledWith(datos);
+    expect(acceso).toHaveBeenCalledWith(usuario);
+    expect(refresco).toHaveBeenCalledWith(usuario.idCuenta);
+    expect(resultado).toEqual({
+      usuario,
+      accessToken: 'jwt-de-prueba',
+      refreshToken: 'refresh-de-prueba',
+    });
+  });
 });

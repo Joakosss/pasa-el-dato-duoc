@@ -167,4 +167,17 @@ export class AuthService {
     // El llamador recibirá el token únicamente después de persistir su hash.
     return token;
   }
+
+  async iniciarSesion(datos: IniciarSesionDto,): 
+  Promise<{
+    usuario: UsuarioAutenticado;
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    const usuario = await this.validarCredenciales(datos);
+    const accessToken = await this.generarAccessToken(usuario);
+    const refreshToken = await this.crearRefreshToken(usuario.idCuenta);
+
+    return { usuario, accessToken, refreshToken };
+  }
 }
