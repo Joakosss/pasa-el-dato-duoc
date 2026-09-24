@@ -1,5 +1,6 @@
 import { randomInt, randomUUID } from 'node:crypto';
 import { type INestApplication, ValidationPipe } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import cookieParser from 'cookie-parser';
 import request from 'supertest';
@@ -22,6 +23,7 @@ function obtenerCookie(
 describe('Autenticación con PostgreSQL (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
+  let jwtService: JwtService;
   let idCuenta: string;
 
   // Un identificador aleatorio evita tocar cuentas creadas por otras personas.
@@ -40,6 +42,7 @@ describe('Autenticación con PostgreSQL (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     await app.init();
     prisma = modulo.get(PrismaService);
+    jwtService = modulo.get(JwtService);
 
     // Usamos referencias existentes, sin asumir IDs fijos.
     const [sede, carrera] = await Promise.all([
@@ -111,6 +114,25 @@ describe('Autenticación con PostgreSQL (e2e)', () => {
     expect(login.body.usuario.rol.descripcion).toBe('Estudiante');
     expect(login.body).not.toHaveProperty('claveHash');
 
+    const cookieAcceso = obtenerCookie(
+      login.headers['set-cookie'],
+      'accessToken',
+    );
+    if (!cookieAcceso) {
+      throw new Error('El login no entregó la cookie accessToken');
+    }
+
+    // verifyAsync valida la firma y expiración; decodificar el JWT
+    // sin verificarlo no demostraría que el backend lo emitió.
+    const jwtLogin = await jwtService.verifyAsync<{
+      sub: string;
+      rolId: number;
+      exp: number;
+    }>(cookieAcceso.slice('accessToken='.length));
+    expect(jwtLogin.sub).toBe(login.body.idCuenta);
+    expect(jwtLogin.rolId).toBe(login.body.usuario.rol.id);
+    expect(jwtLogin.exp).toBeGreaterThan(Math.floor(Date.now() / 1000));
+
     const cookieAnterior = obtenerCookie(
       login.headers['set-cookie'],
       'refreshToken',
@@ -123,6 +145,20 @@ describe('Autenticación con PostgreSQL (e2e)', () => {
       .set('Cookie', cookieAnterior!)
       .expect(200);
     expect(renovacion.body).toEqual({});
+
+    const cookieAccesoNuevo = obtenerCookie(
+      renovacion.headers['set-cookie'],
+      'accessToken',
+    );
+    if (!cookieAccesoNuevo) {
+      throw new Error('La renovación no entregó la cookie accessToken');
+    }
+    const jwtRenovado = await jwtService.verifyAsync<{
+      sub: string;
+      rolId: number;
+    }>(cookieAccesoNuevo.slice('accessToken='.length));
+    expect(jwtRenovado.sub).toBe(idCuenta);
+    expect(jwtRenovado.rolId).toBe(login.body.usuario.rol.id);
 
     const cookieNueva = obtenerCookie(
       renovacion.headers['set-cookie'],
