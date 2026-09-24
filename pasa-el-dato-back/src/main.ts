@@ -37,6 +37,8 @@ async function bootstrap() {
     .setTitle('Pasa el Dato Duoc API')
     .setDescription('API para la aplicación Pasa el Dato')
     .setVersion('1.0.0')
+    // Documenta la cookie que exige POST /api/auth/refresh.
+    .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
     .build();
 
   const documentoSwagger = () =>

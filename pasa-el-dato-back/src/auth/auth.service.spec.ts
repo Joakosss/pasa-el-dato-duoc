@@ -23,7 +23,10 @@ describe('AuthService: búsqueda de cuenta', () => {
     },
     refreshToken: {
       create: vi.fn(),
+      findUnique: vi.fn(),
+      updateMany: vi.fn(),
     },
+    $transaction: vi.fn(),
   };
 
   const jwtFalso = {
@@ -360,5 +363,222 @@ describe('AuthService: búsqueda de cuenta', () => {
       accessToken: 'jwt-de-prueba',
       refreshToken: 'refresh-de-prueba',
     });
+  });
+
+  it('encuentra un refresh token vigente por su hash', async () => {
+    const token = 'token-de-prueba';
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce({
+      id: 'id-token',
+      fk_cuenta: 'id-cuenta',
+      fechaExpiracion: new Date(Date.now() + 60_000),
+      fechaRevocacion: null,
+    });
+
+    await expect(service.buscarRefreshTokenVigente(token)).resolves.toEqual({
+      id: 'id-token',
+      idCuenta: 'id-cuenta',
+    });
+
+    // Prisma recibe el hash, no el token original enviado en la cookie.
+    expect(prismaFalso.refreshToken.findUnique).toHaveBeenCalledWith({
+      where: { tokenHash: calcularHashRefreshToken(token) },
+      select: {
+        id: true,
+        fk_cuenta: true,
+        fechaExpiracion: true,
+        fechaRevocacion: true,
+      },
+    });
+  });
+
+  it('rechaza un refresh token inexistente', async () => {
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce(null);
+
+    await expect(
+      service.buscarRefreshTokenVigente('desconocido'),
+    ).resolves.toBeNull();
+  });
+
+  it('rechaza un refresh token vencido', async () => {
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce({
+      id: 'id-token',
+      fk_cuenta: 'id-cuenta',
+      fechaExpiracion: new Date(Date.now() - 60_000),
+      fechaRevocacion: null,
+    });
+
+    await expect(
+      service.buscarRefreshTokenVigente('vencido'),
+    ).resolves.toBeNull();
+  });
+
+  it('rechaza un refresh token revocado', async () => {
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce({
+      id: 'id-token',
+      fk_cuenta: 'id-cuenta',
+      fechaExpiracion: new Date(Date.now() + 60_000),
+      fechaRevocacion: new Date(),
+    });
+
+    await expect(
+      service.buscarRefreshTokenVigente('revocado'),
+    ).resolves.toBeNull();
+  });
+
+  it('consulta el estado y rol actuales de la cuenta al renovar', async () => {
+    const cuenta = {
+      aprobada: true,
+      bloqueado: false,
+      usuario: { rol_usuario: { id: 1 } },
+    };
+    prismaFalso.cuenta.findUnique.mockResolvedValueOnce(cuenta);
+
+    await expect(
+      service.buscarCuentaParaRenovacion('id-cuenta'),
+    ).resolves.toEqual(cuenta);
+
+    // No se necesita leer la contraseña para renovar una sesión.
+    expect(prismaFalso.cuenta.findUnique).toHaveBeenCalledWith({
+      where: { id_cuenta: 'id-cuenta' },
+      select: {
+        aprobada: true,
+        bloqueado: true,
+        usuario: {
+          select: {
+            rol_usuario: { select: { id: true } },
+          },
+        },
+      },
+    });
+  });
+
+  it('devuelve null si la cuenta del refresh token ya no existe', async () => {
+    prismaFalso.cuenta.findUnique.mockResolvedValueOnce(null);
+
+    await expect(
+      service.buscarCuentaParaRenovacion('id-inexistente'),
+    ).resolves.toBeNull();
+  });
+
+  it('rota el refresh token y firma un JWT con el rol actual', async () => {
+    vi.stubEnv('REFRESH_TOKEN_TTL_DAYS', '7');
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce({
+      id: 'id-token-viejo',
+      fk_cuenta: 'id-cuenta',
+      fechaExpiracion: new Date(Date.now() + 60_000),
+      fechaRevocacion: null,
+    });
+    prismaFalso.cuenta.findUnique.mockResolvedValueOnce({
+      aprobada: true,
+      bloqueado: false,
+      usuario: { rol_usuario: { id: 2 } },
+    });
+    jwtFalso.signAsync.mockResolvedValueOnce('jwt-nuevo');
+    prismaFalso.refreshToken.updateMany.mockResolvedValueOnce({ count: 1 });
+    prismaFalso.refreshToken.create.mockResolvedValueOnce({});
+    prismaFalso.$transaction.mockImplementationOnce(
+      (operacion: (tx: typeof prismaFalso) => Promise<unknown>) =>
+        operacion(prismaFalso),
+    );
+
+    const resultado = await service.renovarSesion('token-viejo');
+
+    expect(jwtFalso.signAsync).toHaveBeenCalledWith({
+      sub: 'id-cuenta',
+      rolId: 2,
+    });
+    expect(resultado.accessToken).toBe('jwt-nuevo');
+    expect(resultado.idCuenta).toBe('id-cuenta');
+    expect(resultado.refreshToken).not.toBe('token-viejo');
+    expect(prismaFalso.refreshToken.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: 'id-token-viejo',
+        fechaRevocacion: null,
+        fechaExpiracion: { gt: expect.any(Date) },
+      },
+      data: { fechaRevocacion: expect.any(Date) },
+    });
+    const { data } = prismaFalso.refreshToken.create.mock.calls[0][0];
+    expect(data.tokenHash).toBe(
+      calcularHashRefreshToken(resultado.refreshToken),
+    );
+    expect(data.cuenta).toEqual({ connect: { id_cuenta: 'id-cuenta' } });
+  });
+
+  it('rechaza un refresh token desconocido sin generar otro', async () => {
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce(null);
+
+    await expect(service.renovarSesion('desconocido')).rejects.toMatchObject({
+      message: 'Sesión inválida',
+      status: 401,
+    });
+    expect(prismaFalso.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('impide renovar una cuenta bloqueada', async () => {
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce({
+      id: 'id-token',
+      fk_cuenta: 'id-cuenta',
+      fechaExpiracion: new Date(Date.now() + 60_000),
+      fechaRevocacion: null,
+    });
+    prismaFalso.cuenta.findUnique.mockResolvedValueOnce({
+      aprobada: true,
+      bloqueado: true,
+      usuario: { rol_usuario: { id: 1 } },
+    });
+
+    await expect(service.renovarSesion('token')).rejects.toMatchObject({
+      message: 'Cuenta bloqueada',
+      status: 403,
+    });
+    expect(prismaFalso.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('impide renovar una cuenta inactiva', async () => {
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce({
+      id: 'id-token',
+      fk_cuenta: 'id-cuenta',
+      fechaExpiracion: new Date(Date.now() + 60_000),
+      fechaRevocacion: null,
+    });
+    prismaFalso.cuenta.findUnique.mockResolvedValueOnce({
+      aprobada: false,
+      bloqueado: false,
+      usuario: { rol_usuario: { id: 1 } },
+    });
+
+    await expect(service.renovarSesion('token')).rejects.toMatchObject({
+      message: 'Cuenta inactiva',
+      status: 403,
+    });
+    expect(prismaFalso.$transaction).not.toHaveBeenCalled();
+  });
+
+  it('rechaza el segundo uso simultáneo del mismo token', async () => {
+    prismaFalso.refreshToken.findUnique.mockResolvedValueOnce({
+      id: 'id-token-viejo',
+      fk_cuenta: 'id-cuenta',
+      fechaExpiracion: new Date(Date.now() + 60_000),
+      fechaRevocacion: null,
+    });
+    prismaFalso.cuenta.findUnique.mockResolvedValueOnce({
+      aprobada: true,
+      bloqueado: false,
+      usuario: { rol_usuario: { id: 1 } },
+    });
+    vi.stubEnv('REFRESH_TOKEN_TTL_DAYS', '7');
+    jwtFalso.signAsync.mockResolvedValueOnce('jwt-nuevo');
+    prismaFalso.refreshToken.updateMany.mockResolvedValueOnce({ count: 0 });
+    prismaFalso.$transaction.mockImplementationOnce(
+      (operacion: (tx: typeof prismaFalso) => Promise<unknown>) =>
+        operacion(prismaFalso),
+    );
+
+    await expect(service.renovarSesion('token-viejo')).rejects.toMatchObject({
+      message: 'Sesión inválida',
+      status: 401,
+    });
+    expect(prismaFalso.refreshToken.create).not.toHaveBeenCalled();
   });
 });
