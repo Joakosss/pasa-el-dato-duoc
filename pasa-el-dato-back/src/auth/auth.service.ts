@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { IniciarSesionDto } from './dto/iniciar-sesion.dto.js';
 import { verificarContrasena } from '../common/security/contrasena-hash.js';
-import { generarRefreshToken } from './refresh-token.js';
+import { calcularHashRefreshToken, generarRefreshToken } from './refresh-token.js';
 
 // Datos que puede usar el flujo de autenticación sin exponer el hash.
 export interface UsuarioAutenticado {
@@ -179,5 +179,121 @@ export class AuthService {
     const refreshToken = await this.crearRefreshToken(usuario.idCuenta);
 
     return { usuario, accessToken, refreshToken };
+  }
+
+  async buscarRefreshTokenVigente(
+    token: string,
+  ): Promise<{ id: string; idCuenta: string } | null> {
+    // Buscamos por el hash: el token original solo llega en la cookie.
+    const registro = await this.prisma.refreshToken.findUnique({
+      where: { tokenHash: calcularHashRefreshToken(token) },
+      select: {
+        id: true,
+        fk_cuenta: true,
+        fechaExpiracion: true,
+        fechaRevocacion: true,
+      },
+    });
+
+    // Ninguno de estos casos debe permitir renovar la sesión.
+    if (
+      !registro ||
+      registro.fechaRevocacion !== null ||
+      registro.fechaExpiracion <= new Date()
+    ) {
+      return null;
+    }
+
+    return { id: registro.id, idCuenta: registro.fk_cuenta };
+  }
+
+  async buscarCuentaParaRenovacion(idCuenta: string) {
+    return this.prisma.cuenta.findUnique({
+      where: { id_cuenta: idCuenta },
+      select: {
+        aprobada: true,
+        bloqueado: true,
+        usuario: {
+          select: {
+            rol_usuario: {
+              select: { id: true },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async renovarSesion(token: string): Promise<{
+    idCuenta: string;
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    if (!token) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    const registro = await this.buscarRefreshTokenVigente(token);
+    if (!registro) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    // El rol y el estado se consultan de nuevo: pueden haber cambiado
+    // desde que la persona inició sesión.
+    const cuenta = await this.buscarCuentaParaRenovacion(registro.idCuenta);
+    if (!cuenta || !cuenta.usuario) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+    if (cuenta.bloqueado) {
+      throw new ForbiddenException('Cuenta bloqueada');
+    }
+    if (!cuenta.aprobada) {
+      throw new ForbiddenException('Cuenta inactiva');
+    }
+
+    const dias = Number(process.env.REFRESH_TOKEN_TTL_DAYS);
+    if (!Number.isInteger(dias) || dias <= 0) {
+      throw new Error('REFRESH_TOKEN_TTL_DAYS debe ser un entero positivo');
+    }
+
+    const accessToken = await this.jwtService.signAsync({
+      sub: registro.idCuenta,
+      rolId: cuenta.usuario.rol_usuario.id,
+    });
+    const nuevo = generarRefreshToken();
+    const ahora = new Date();
+    const fechaExpiracion = new Date(
+      ahora.getTime() + dias * 24 * 60 * 60 * 1000,
+    );
+
+    await this.prisma.$transaction(async (tx) => {
+      // La condición evita que dos peticiones usen el mismo token a la vez.
+      const revocados = await tx.refreshToken.updateMany({
+        where: {
+          id: registro.id,
+          fechaRevocacion: null,
+          fechaExpiracion: { gt: ahora },
+        },
+        data: { fechaRevocacion: ahora },
+      });
+      if (revocados.count !== 1) {
+        throw new UnauthorizedException('Sesión inválida');
+      }
+
+      // Si falla esta inserción, la transacción deshace también la revocación.
+      await tx.refreshToken.create({
+        data: {
+          tokenHash: nuevo.tokenHash,
+          fechaExpiracion,
+          cuenta: { connect: { id_cuenta: registro.idCuenta } },
+        },
+      });
+    });
+
+    return {
+      idCuenta: registro.idCuenta,
+      accessToken,
+      refreshToken: nuevo.token,
+    };
   }
 }
