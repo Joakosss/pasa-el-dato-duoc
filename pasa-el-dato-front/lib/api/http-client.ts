@@ -34,6 +34,9 @@ export class HttpClient {
   private async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { query, ...init } = options;
     const res = await fetch(this.buildUrl(path, query), {
+      // Las cookies HttpOnly del back (access/refresh) son cross-origin
+      // (:3000 -> :3001); sin "include" el navegador no las guarda/envía.
+      credentials: "include",
       ...init,
       headers: {
         "Content-Type": "application/json",

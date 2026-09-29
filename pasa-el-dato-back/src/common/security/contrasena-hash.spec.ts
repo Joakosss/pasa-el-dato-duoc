@@ -1,5 +1,5 @@
 import { verify } from '@node-rs/argon2';
-import { generarHashContrasena } from './contrasena-hash.js';
+import { generarHashContrasena, verificarContrasena } from './contrasena-hash.js';
 
 describe('generarHashContrasena', () => {
   it('genera un hash Argon2id verificable', async () => {
@@ -15,5 +15,8 @@ describe('generarHashContrasena', () => {
     // verify compara la contraseña con el hash; no lo «descifra».
     expect(await verify(hashGenerado, contrasena)).toBe(true);
     expect(await verify(hashGenerado, 'OtraClave123')).toBe(false);
+
+    expect(await verificarContrasena(contrasena, hashGenerado)).toBe(true);
+    expect(await verificarContrasena('OtraClave123', hashGenerado)).toBe(false);
   });
 });

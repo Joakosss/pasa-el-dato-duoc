@@ -19,7 +19,7 @@ import {
 } from "@/domain/dtos/registro.dto";
 import type { SnapshotVerificacion as SnapshotRun } from "@/hooks/use-verificar-run"; // valida y hace una seudo validacion de disponibilidad 
 import type { SnapshotVerificacion as SnapshotCorreo } from "@/hooks/use-verificar-correo"; // valida y hace una seudo validacion de disponibilidad
-import { CARRERAS_MOMENTANEO } from "@/domain/catalogo.data.momentaneo"; // esto debe migrarse a algun endpoint que traiga las escuelas y colegios
+import { useCarreras } from "@/hooks/use-carreras";
 import type { RegistrarUsuarioRequestDTO } from "@/domain/dtos/cuenta.dto";
 import {
   CuentaMapper,
@@ -28,16 +28,21 @@ import {
 
 export function RegisterWizard() {
   const router = useRouter();
+  // Stepper 
   const [paso, setPaso] = useState(0);
   const [maxVisitado, setMaxVisitado] = useState(0);
+  // General
   const [datos, setDatos] = useState<RegistroUsuarioBorrador>(REGISTRO_USUARIO_INICIAL);
+  // Validaciones y memoria de correo y run
   const [runSnapshot, setRunSnapshot] = useState<SnapshotRun | null>(null);
   const [correoSnapshot, setCorreoSnapshot] = useState<SnapshotCorreo | null>(null);
+  // validaciones para seguir los pasos
   const [cuentaValida, setCuentaValida] = useState(false);
   const [datosValidos, setDatosValidos] = useState(false);
   const [carreraValida, setCarreraValida] = useState(false);
   const [claveValida, setClaveValida] = useState(false);
   const [errorCrear, setErrorCrear] = useState<string | null>(null);
+  const { carreras: carrerasCatalogo } = useCarreras();
   const redireccion = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const actualizar = useCallback((parcial: Partial<RegistroUsuarioBorrador>) => {
@@ -58,6 +63,7 @@ export function RegisterWizard() {
     };
   }, []);
 
+  // Movimiento entre páginas
   const avanzar = () => {
     const siguiente = Math.min(paso + 1, 3);
     setPaso(siguiente);
@@ -95,6 +101,7 @@ export function RegisterWizard() {
     },
   });
 
+  // Metodo que llama a la consulta
   const crearCuenta = () => {
     if (crearMutation.isPending) return;
     setErrorCrear(null);
@@ -104,7 +111,7 @@ export function RegisterWizard() {
         runNormalizado: runSnapshot?.normalizado ?? null,
         correoNormalizado: correoSnapshot?.normalizado ?? null,
       },
-      CARRERAS_MOMENTANEO,
+      carrerasCatalogo,
     );
     if (!validacion.ok) {
       setErrorCrear(validacion.error ?? "Revisa los datos ingresados.");

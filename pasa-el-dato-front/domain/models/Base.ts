@@ -1,7 +1,7 @@
-import type { ID } from "@/domain/types/common";
+import type { CuentaId } from "@/domain/types/common";
 
 export interface BaseProps {
-  id: ID;
+  id: CuentaId;
   fechaCreacion: Date;
   fechaModificacion: Date;
   eliminado: boolean;
@@ -10,7 +10,7 @@ export interface BaseProps {
 
 // Espejo de BASE del diagrama BD SQL: auditoría común a todas las tablas verdes.
 export abstract class Base {
-  readonly id: ID;
+  readonly id: CuentaId;
   readonly fechaCreacion: Date;
   fechaModificacion: Date;
   eliminado: boolean;

@@ -8,24 +8,24 @@ datasource db {
 }
 
 model Cuenta {
-  id_cuenta         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  correo            String       @unique
-  claveHash         String       @map("clave_hash")
+  id_cuenta         String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  correo            String         @unique
+  claveHash         String         @map("clave_hash")
   telefono          String
-  estado            EstadoCuenta @default(PENDIENTE)
-  fechaCreacion     DateTime     @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
-  fechaModificacion DateTime     @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
-  eliminado         Boolean      @default(false)
-  fk_modificado_por String?      @db.Uuid
-  bloqueado         Boolean      @default(false)
-  fechaBloqueo      DateTime?    @map("fecha_bloqueo") @db.Timestamptz(6)
-  motivoBloqueo     String?      @map("motivo_bloqueo")
-
-  cuenta       Cuenta?   @relation("cuentaTocuenta", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction, map: "fk_cuenta_modificado_por")
-  other_cuenta Cuenta[]  @relation("cuentaTocuenta")
-  log_api      log_api[]
-  sede         Sede[]
-  usuario      Usuario?
+  fechaCreacion     DateTime       @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion DateTime       @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  eliminado         Boolean        @default(false)
+  fk_modificado_por String?        @db.Uuid
+  bloqueado         Boolean        @default(false)
+  fechaBloqueo      DateTime?      @map("fecha_bloqueo") @db.Timestamptz(6)
+  motivoBloqueo     String?        @map("motivo_bloqueo")
+  aprobada          Boolean        @default(true)
+  cuenta            Cuenta?        @relation("cuentaTocuenta", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction, map: "fk_cuenta_modificado_por")
+  other_cuenta      Cuenta[]       @relation("cuentaTocuenta")
+  log_api           log_api[]
+  refreshTokens     RefreshToken[]
+  sede              Sede[]
+  usuario           Usuario?
 
   @@index([fk_modificado_por], map: "idx_cuenta_modificado_por")
   @@map("cuenta")
@@ -40,57 +40,53 @@ model RolUsuario {
 }
 
 model Sede {
-  id                Int      @id @default(autoincrement())
+  id                Int       @id @default(autoincrement())
   nombre            String
-  activa            Boolean  @default(true)
-  fechaCreacion     DateTime @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
-  fechaModificacion DateTime @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
-  eliminado         Boolean  @default(false)
-  fk_modificado_por String?  @db.Uuid
-
-  cuenta  Cuenta?   @relation(fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction, map: "fk_sede_modificado_por")
-  usuario Usuario[]
+  activa            Boolean   @default(true)
+  fechaCreacion     DateTime  @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion DateTime  @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  eliminado         Boolean   @default(false)
+  fk_modificado_por String?   @db.Uuid
+  cuenta            Cuenta?   @relation(fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction, map: "fk_sede_modificado_por")
+  usuario           Usuario[]
 
   @@index([fk_modificado_por], map: "idx_sede_modificado_por")
   @@map("sede")
 }
 
 model Escuela {
-  id     Int    @id @default(autoincrement())
-  nombre String
-
+  id       Int       @id @default(autoincrement())
+  nombre   String
   carreras Carrera[]
 
   @@map("escuela")
 }
 
 model Carrera {
-  id         Int    @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   nombre     String
   fk_escuela Int
-
-  escuela  Escuela   @relation(fields: [fk_escuela], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  usuarios Usuario[]
+  escuela    Escuela   @relation(fields: [fk_escuela], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  usuarios   Usuario[]
 
   @@index([fk_escuela], map: "idx_carrera_escuela")
   @@map("carrera")
 }
 
 model Usuario {
-  id_cuenta      String  @id @db.Uuid
-  run            String  @unique
-  pNombre        String  @map("p_nombre")
-  sNombre        String? @map("s_nombre")
-  pApellido      String  @map("p_apellido")
-  sApellido      String  @map("s_apellido")
+  id_cuenta      String     @id @db.Uuid
+  run            String     @unique
+  pNombre        String     @map("p_nombre")
+  sNombre        String?    @map("s_nombre")
+  pApellido      String     @map("p_apellido")
+  sApellido      String     @map("s_apellido")
   fk_rol_usuario Int
   fk_sede        Int
   fk_carrera     Int
-
-  rol_usuario RolUsuario @relation(fields: [fk_rol_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  sede        Sede       @relation(fields: [fk_sede], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  carrera     Carrera    @relation(fields: [fk_carrera], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  cuenta      Cuenta     @relation(fields: [id_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
+  carrera        Carrera    @relation(fields: [fk_carrera], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  rol_usuario    RolUsuario @relation(fields: [fk_rol_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sede           Sede       @relation(fields: [fk_sede], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cuenta         Cuenta     @relation(fields: [id_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([fk_rol_usuario], map: "idx_usuario_rol")
   @@index([fk_sede], map: "idx_usuario_sede")
@@ -106,16 +102,22 @@ model log_api {
   mensaje_error String?
   fk_cuenta     String?  @db.Uuid
   fecha_hora    DateTime @default(now()) @db.Timestamptz(6)
-
-  cuenta Cuenta? @relation(fields: [fk_cuenta], references: [id_cuenta], onUpdate: NoAction)
+  cuenta        Cuenta?  @relation(fields: [fk_cuenta], references: [id_cuenta], onUpdate: NoAction)
 
   @@index([fk_cuenta], map: "idx_log_api_cuenta")
   @@index([fecha_hora], map: "idx_log_api_fecha_hora")
 }
 
-enum EstadoCuenta {
-  PENDIENTE
-  ACTIVA
+model RefreshToken {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fk_cuenta       String    @db.Uuid
+  tokenHash       String    @unique @map("token_hash")
+  fechaCreacion   DateTime  @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaExpiracion DateTime  @map("fecha_expiracion") @db.Timestamptz(6)
+  fechaRevocacion DateTime? @map("fecha_revocacion") @db.Timestamptz(6)
 
-  @@map("estado_cuenta")
+  cuenta Cuenta @relation(fields: [fk_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction, map: "fk_refresh_token_cuenta")
+
+  @@index([fk_cuenta], map: "idx_refresh_token_cuenta")
+  @@map("refresh_token")
 }

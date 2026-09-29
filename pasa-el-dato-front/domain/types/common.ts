@@ -1,7 +1,6 @@
-export type ID = string;
-
-// TODO[MOMENTANEO]: reemplazar por IDs reales de ROL_USUARIO / SEDE / ESCUELA / CARRERA cuando existan esas tablas.
-export type RolIdMomentaneo = string;
-export type SedeIdMomentaneo = string;
-export type EscuelaIdMomentaneo = string;
-export type CarreraIdMomentaneo = string;
+// IDs fieles a BD/back: solo CUENTA es uuid string; el resto es Int autoincremental.
+export type CuentaId = string;
+export type SedeId = number;
+export type EscuelaId = number;
+export type CarreraId = number;
+export type RolId = number;

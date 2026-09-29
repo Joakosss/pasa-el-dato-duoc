@@ -41,13 +41,6 @@ export type StringFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringFilter<$PrismaModel> | string
 }
 
-export type EnumEstadoCuentaFilter<$PrismaModel = never> = {
-  equals?: $Enums.EstadoCuenta | Prisma.EnumEstadoCuentaFieldRefInput<$PrismaModel>
-  in?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEstadoCuentaFilter<$PrismaModel> | $Enums.EstadoCuenta
-}
-
 export type DateTimeFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
@@ -138,16 +131,6 @@ export type StringWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedStringFilter<$PrismaModel>
   _max?: Prisma.NestedStringFilter<$PrismaModel>
-}
-
-export type EnumEstadoCuentaWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.EstadoCuenta | Prisma.EnumEstadoCuentaFieldRefInput<$PrismaModel>
-  in?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEstadoCuentaWithAggregatesFilter<$PrismaModel> | $Enums.EstadoCuenta
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumEstadoCuentaFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumEstadoCuentaFilter<$PrismaModel>
 }
 
 export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -298,13 +281,6 @@ export type NestedStringFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringFilter<$PrismaModel> | string
 }
 
-export type NestedEnumEstadoCuentaFilter<$PrismaModel = never> = {
-  equals?: $Enums.EstadoCuenta | Prisma.EnumEstadoCuentaFieldRefInput<$PrismaModel>
-  in?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEstadoCuentaFilter<$PrismaModel> | $Enums.EstadoCuenta
-}
-
 export type NestedDateTimeFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel>
@@ -397,16 +373,6 @@ export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedStringFilter<$PrismaModel>
   _max?: Prisma.NestedStringFilter<$PrismaModel>
-}
-
-export type NestedEnumEstadoCuentaWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.EstadoCuenta | Prisma.EnumEstadoCuentaFieldRefInput<$PrismaModel>
-  in?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  notIn?: $Enums.EstadoCuenta[] | Prisma.ListEnumEstadoCuentaFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumEstadoCuentaWithAggregatesFilter<$PrismaModel> | $Enums.EstadoCuenta
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumEstadoCuentaFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumEstadoCuentaFilter<$PrismaModel>
 }
 
 export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {

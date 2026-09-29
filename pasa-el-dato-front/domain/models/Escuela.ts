@@ -1,15 +1,16 @@
-import { Base, type BaseProps } from "./Base";
-
-export interface EscuelaProps extends BaseProps {
+// Catálogo ESCUELA (id, nombre). Escuela filtra carreras en registro.
+// No extiende Base: en BD no tiene auditoría, y su id es number (no uuid).
+export interface EscuelaProps {
+  id: number;
   nombre: string;
 }
 
-// Catálogo ESCUELA (id, nombre). Escuela filtra carreras en registro.
-export class Escuela extends Base {
+export class Escuela {
+  readonly id: number;
   nombre: string;
 
   constructor(props: EscuelaProps) {
-    super(props);
+    this.id = props.id;
     this.nombre = props.nombre;
   }
 }
