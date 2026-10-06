@@ -39,6 +39,8 @@ async function bootstrap() {
     .setVersion('1.0.0')
     // Documenta la cookie que exige POST /api/auth/refresh.
     .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
+    // Documenta la cookie que exige GET /api/auth/sesion.
+    .addCookieAuth('accessToken', { type: 'apiKey' }, 'accessToken')
     .build();
 
   const documentoSwagger = () =>

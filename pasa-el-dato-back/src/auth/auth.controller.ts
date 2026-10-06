@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
@@ -21,6 +23,7 @@ import {
 import { AuthService, type UsuarioAutenticado } from './auth.service.js';
 import { IniciarSesionDto } from './dto/iniciar-sesion.dto.js';
 import { AuthLogInterceptor } from './auth-log.interceptor.js';
+import { JwtAuthGuard, type SesionAutenticada } from './jwt-auth.guard.js';
 
 @ApiTags('Autenticación')
 @Controller('auth')
@@ -74,6 +77,35 @@ export class AuthController {
       await this.authService.renovarSesion(token);
     this.establecerCookies(respuesta, accessToken, refreshToken);
     respuesta.locals.authCuentaId = idCuenta;
+  }
+
+  @Get('sesion')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(AuthLogInterceptor)
+  @ApiOperation({
+    summary: 'Consultar el rol de la sesión vigente',
+    description:
+      'No recibe cuerpo ni parámetros. Deriva el rol desde la cookie HttpOnly accessToken y la cuenta en PostgreSQL.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({
+    description: 'Sesión vigente. Devuelve el único rol activo con su descripción.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Sin sesión, sesión vencida o sesión inválida.',
+  })
+  sesion(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): { rol: { id: number; descripcion: string } } {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return {
+      rol: { id: user.rol.id, descripcion: user.rol.descripcion },
+    };
   }
 
   private establecerCookies(
