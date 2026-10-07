@@ -12,3 +12,7 @@ export async function iniciarSesion(
 ): Promise<UsuarioAutenticadoDTO> {
   return apiClient.post<UsuarioAutenticadoDTO>("/auth/login", payload);
 }
+
+export async function cerrarSesionApi(): Promise<void> {
+  return apiClient.post<void>("/auth/logout");
+}
