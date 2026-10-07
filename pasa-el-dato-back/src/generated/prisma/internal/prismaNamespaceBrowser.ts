@@ -58,7 +58,8 @@ export const ModelName = {
   Carrera: 'Carrera',
   Usuario: 'Usuario',
   log_api: 'log_api',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  AccessTokenRevocado: 'AccessTokenRevocado'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -171,6 +172,15 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const AccessTokenRevocadoScalarFieldEnum = {
+  jti: 'jti',
+  fk_cuenta: 'fk_cuenta',
+  fechaExpiracion: 'fechaExpiracion'
+} as const
+
+export type AccessTokenRevocadoScalarFieldEnum = (typeof AccessTokenRevocadoScalarFieldEnum)[keyof typeof AccessTokenRevocadoScalarFieldEnum]
 
 
 export const SortOrder = {

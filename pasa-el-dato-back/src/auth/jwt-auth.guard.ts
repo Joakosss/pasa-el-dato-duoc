@@ -38,15 +38,28 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     let sub: unknown;
+    let jti: unknown;
     try {
       const verificado = await this.jwtService.verifyAsync(token);
       sub = verificado?.sub;
+      jti = verificado?.jti;
     } catch {
       // Mensaje genérico: no revela si expiró o si firma falla.
       throw new UnauthorizedException('Sesión inválida');
     }
 
     if (typeof sub !== 'string' || !sub) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    // Denylist de logout: solo jti revocados. Sin purga aquí.
+    if (typeof jti !== 'string' || !jti) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+    const revocado = await this.prisma.accessTokenRevocado.findUnique({
+      where: { jti },
+    });
+    if (revocado) {
       throw new UnauthorizedException('Sesión inválida');
     }
 

@@ -81,3 +81,8 @@ export type log_api = Prisma.log_apiModel
  * 
  */
 export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model AccessTokenRevocado
+ * 
+ */
+export type AccessTokenRevocado = Prisma.AccessTokenRevocadoModel

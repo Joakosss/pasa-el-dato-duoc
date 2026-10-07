@@ -286,6 +286,7 @@ describe('AuthService: búsqueda de cuenta', () => {
     expect(jwtFalso.signAsync).toHaveBeenCalledWith({
       sub: 'uuid-cuenta',
       rolId: 7,
+      jti: expect.any(String),
     });
   });
 
@@ -486,6 +487,7 @@ describe('AuthService: búsqueda de cuenta', () => {
     expect(jwtFalso.signAsync).toHaveBeenCalledWith({
       sub: 'id-cuenta',
       rolId: 2,
+      jti: expect.any(String),
     });
     expect(resultado.accessToken).toBe('jwt-nuevo');
     expect(resultado.idCuenta).toBe('id-cuenta');

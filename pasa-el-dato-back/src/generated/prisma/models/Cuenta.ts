@@ -242,6 +242,7 @@ export type CuentaWhereInput = {
   other_cuenta?: Prisma.CuentaListRelationFilter
   log_api?: Prisma.Log_apiListRelationFilter
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoListRelationFilter
   sede?: Prisma.SedeListRelationFilter
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }
@@ -263,6 +264,7 @@ export type CuentaOrderByWithRelationInput = {
   other_cuenta?: Prisma.CuentaOrderByRelationAggregateInput
   log_api?: Prisma.log_apiOrderByRelationAggregateInput
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoOrderByRelationAggregateInput
   sede?: Prisma.SedeOrderByRelationAggregateInput
   usuario?: Prisma.UsuarioOrderByWithRelationInput
 }
@@ -287,6 +289,7 @@ export type CuentaWhereUniqueInput = Prisma.AtLeast<{
   other_cuenta?: Prisma.CuentaListRelationFilter
   log_api?: Prisma.Log_apiListRelationFilter
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoListRelationFilter
   sede?: Prisma.SedeListRelationFilter
   usuario?: Prisma.XOR<Prisma.UsuarioNullableScalarRelationFilter, Prisma.UsuarioWhereInput> | null
 }, "id_cuenta" | "correo">
@@ -343,6 +346,7 @@ export type CuentaCreateInput = {
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -363,6 +367,7 @@ export type CuentaUncheckedCreateInput = {
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -383,6 +388,7 @@ export type CuentaUpdateInput = {
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -403,6 +409,7 @@ export type CuentaUncheckedUpdateInput = {
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -654,6 +661,20 @@ export type CuentaUpdateOneRequiredWithoutRefreshTokensNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutRefreshTokensInput, Prisma.CuentaUpdateWithoutRefreshTokensInput>, Prisma.CuentaUncheckedUpdateWithoutRefreshTokensInput>
 }
 
+export type CuentaCreateNestedOneWithoutAccessTokensRevocadosInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutAccessTokensRevocadosInput, Prisma.CuentaUncheckedCreateWithoutAccessTokensRevocadosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutAccessTokensRevocadosInput
+  connect?: Prisma.CuentaWhereUniqueInput
+}
+
+export type CuentaUpdateOneRequiredWithoutAccessTokensRevocadosNestedInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutAccessTokensRevocadosInput, Prisma.CuentaUncheckedCreateWithoutAccessTokensRevocadosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutAccessTokensRevocadosInput
+  upsert?: Prisma.CuentaUpsertWithoutAccessTokensRevocadosInput
+  connect?: Prisma.CuentaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutAccessTokensRevocadosInput, Prisma.CuentaUpdateWithoutAccessTokensRevocadosInput>, Prisma.CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput>
+}
+
 export type CuentaCreateWithoutOther_cuentaInput = {
   id_cuenta?: string
   correo: string
@@ -669,6 +690,7 @@ export type CuentaCreateWithoutOther_cuentaInput = {
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -688,6 +710,7 @@ export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
   aprobada?: boolean
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -712,6 +735,7 @@ export type CuentaCreateWithoutCuentaInput = {
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -731,6 +755,7 @@ export type CuentaUncheckedCreateWithoutCuentaInput = {
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -771,6 +796,7 @@ export type CuentaUpdateWithoutOther_cuentaInput = {
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -790,6 +816,7 @@ export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
   aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -844,6 +871,7 @@ export type CuentaCreateWithoutSedeInput = {
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
 
@@ -863,6 +891,7 @@ export type CuentaUncheckedCreateWithoutSedeInput = {
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
 
@@ -898,6 +927,7 @@ export type CuentaUpdateWithoutSedeInput = {
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
 
@@ -917,6 +947,7 @@ export type CuentaUncheckedUpdateWithoutSedeInput = {
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
 
@@ -936,6 +967,7 @@ export type CuentaCreateWithoutUsuarioInput = {
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
 }
 
@@ -955,6 +987,7 @@ export type CuentaUncheckedCreateWithoutUsuarioInput = {
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
 }
 
@@ -990,6 +1023,7 @@ export type CuentaUpdateWithoutUsuarioInput = {
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
 }
 
@@ -1009,6 +1043,7 @@ export type CuentaUncheckedUpdateWithoutUsuarioInput = {
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
 }
 
@@ -1027,6 +1062,7 @@ export type CuentaCreateWithoutLog_apiInput = {
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -1046,6 +1082,7 @@ export type CuentaUncheckedCreateWithoutLog_apiInput = {
   aprobada?: boolean
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -1081,6 +1118,7 @@ export type CuentaUpdateWithoutLog_apiInput = {
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -1100,6 +1138,7 @@ export type CuentaUncheckedUpdateWithoutLog_apiInput = {
   aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -1119,6 +1158,7 @@ export type CuentaCreateWithoutRefreshTokensInput = {
   cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
   other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
 }
@@ -1138,6 +1178,7 @@ export type CuentaUncheckedCreateWithoutRefreshTokensInput = {
   aprobada?: boolean
   other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
   log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
   sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
 }
@@ -1173,6 +1214,7 @@ export type CuentaUpdateWithoutRefreshTokensInput = {
   cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -1192,6 +1234,103 @@ export type CuentaUncheckedUpdateWithoutRefreshTokensInput = {
   aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
+}
+
+export type CuentaCreateWithoutAccessTokensRevocadosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
+  other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
+}
+
+export type CuentaUncheckedCreateWithoutAccessTokensRevocadosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
+}
+
+export type CuentaCreateOrConnectWithoutAccessTokensRevocadosInput = {
+  where: Prisma.CuentaWhereUniqueInput
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutAccessTokensRevocadosInput, Prisma.CuentaUncheckedCreateWithoutAccessTokensRevocadosInput>
+}
+
+export type CuentaUpsertWithoutAccessTokensRevocadosInput = {
+  update: Prisma.XOR<Prisma.CuentaUpdateWithoutAccessTokensRevocadosInput, Prisma.CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput>
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutAccessTokensRevocadosInput, Prisma.CuentaUncheckedCreateWithoutAccessTokensRevocadosInput>
+  where?: Prisma.CuentaWhereInput
+}
+
+export type CuentaUpdateToOneWithWhereWithoutAccessTokensRevocadosInput = {
+  where?: Prisma.CuentaWhereInput
+  data: Prisma.XOR<Prisma.CuentaUpdateWithoutAccessTokensRevocadosInput, Prisma.CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput>
+}
+
+export type CuentaUpdateWithoutAccessTokensRevocadosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
+  other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
+}
+
+export type CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -1225,6 +1364,7 @@ export type CuentaUpdateWithoutCuentaInput = {
   other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
 }
@@ -1244,6 +1384,7 @@ export type CuentaUncheckedUpdateWithoutCuentaInput = {
   other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
   log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
   sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
 }
@@ -1271,6 +1412,7 @@ export type CuentaCountOutputType = {
   other_cuenta: number
   log_api: number
   refreshTokens: number
+  accessTokensRevocados: number
   sede: number
 }
 
@@ -1278,6 +1420,7 @@ export type CuentaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   other_cuenta?: boolean | CuentaCountOutputTypeCountOther_cuentaArgs
   log_api?: boolean | CuentaCountOutputTypeCountLog_apiArgs
   refreshTokens?: boolean | CuentaCountOutputTypeCountRefreshTokensArgs
+  accessTokensRevocados?: boolean | CuentaCountOutputTypeCountAccessTokensRevocadosArgs
   sede?: boolean | CuentaCountOutputTypeCountSedeArgs
 }
 
@@ -1315,6 +1458,13 @@ export type CuentaCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.
 /**
  * CuentaCountOutputType without action
  */
+export type CuentaCountOutputTypeCountAccessTokensRevocadosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccessTokenRevocadoWhereInput
+}
+
+/**
+ * CuentaCountOutputType without action
+ */
 export type CuentaCountOutputTypeCountSedeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SedeWhereInput
 }
@@ -1337,6 +1487,7 @@ export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   other_cuenta?: boolean | Prisma.Cuenta$other_cuentaArgs<ExtArgs>
   log_api?: boolean | Prisma.Cuenta$log_apiArgs<ExtArgs>
   refreshTokens?: boolean | Prisma.Cuenta$refreshTokensArgs<ExtArgs>
+  accessTokensRevocados?: boolean | Prisma.Cuenta$accessTokensRevocadosArgs<ExtArgs>
   sede?: boolean | Prisma.Cuenta$sedeArgs<ExtArgs>
   usuario?: boolean | Prisma.Cuenta$usuarioArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
@@ -1395,6 +1546,7 @@ export type CuentaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   other_cuenta?: boolean | Prisma.Cuenta$other_cuentaArgs<ExtArgs>
   log_api?: boolean | Prisma.Cuenta$log_apiArgs<ExtArgs>
   refreshTokens?: boolean | Prisma.Cuenta$refreshTokensArgs<ExtArgs>
+  accessTokensRevocados?: boolean | Prisma.Cuenta$accessTokensRevocadosArgs<ExtArgs>
   sede?: boolean | Prisma.Cuenta$sedeArgs<ExtArgs>
   usuario?: boolean | Prisma.Cuenta$usuarioArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
@@ -1413,6 +1565,7 @@ export type $CuentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     other_cuenta: Prisma.$CuentaPayload<ExtArgs>[]
     log_api: Prisma.$log_apiPayload<ExtArgs>[]
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+    accessTokensRevocados: Prisma.$AccessTokenRevocadoPayload<ExtArgs>[]
     sede: Prisma.$SedePayload<ExtArgs>[]
     usuario: Prisma.$UsuarioPayload<ExtArgs> | null
   }
@@ -1827,6 +1980,7 @@ export interface Prisma__CuentaClient<T, Null = never, ExtArgs extends runtime.T
   other_cuenta<T extends Prisma.Cuenta$other_cuentaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$other_cuentaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   log_api<T extends Prisma.Cuenta$log_apiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$log_apiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$log_apiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refreshTokens<T extends Prisma.Cuenta$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accessTokensRevocados<T extends Prisma.Cuenta$accessTokensRevocadosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$accessTokensRevocadosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessTokenRevocadoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sede<T extends Prisma.Cuenta$sedeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$sedeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   usuario<T extends Prisma.Cuenta$usuarioArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$usuarioArgs<ExtArgs>>): Prisma.Prisma__UsuarioClient<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -2359,6 +2513,30 @@ export type Cuenta$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
+}
+
+/**
+ * Cuenta.accessTokensRevocados
+ */
+export type Cuenta$accessTokensRevocadosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccessTokenRevocado
+   */
+  select?: Prisma.AccessTokenRevocadoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccessTokenRevocado
+   */
+  omit?: Prisma.AccessTokenRevocadoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccessTokenRevocadoInclude<ExtArgs> | null
+  where?: Prisma.AccessTokenRevocadoWhereInput
+  orderBy?: Prisma.AccessTokenRevocadoOrderByWithRelationInput | Prisma.AccessTokenRevocadoOrderByWithRelationInput[]
+  cursor?: Prisma.AccessTokenRevocadoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccessTokenRevocadoScalarFieldEnum | Prisma.AccessTokenRevocadoScalarFieldEnum[]
 }
 
 /**

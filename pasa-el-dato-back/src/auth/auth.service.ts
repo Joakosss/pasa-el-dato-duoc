@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { randomUUID } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { IniciarSesionDto } from './dto/iniciar-sesion.dto.js';
 import { verificarContrasena } from '../common/security/contrasena-hash.js';
@@ -130,11 +131,13 @@ export class AuthService {
   async generarAccessToken(
     autenticado: UsuarioAutenticado,
   ): Promise<string> {
-    // El JWT contiene solo la identidad de la cuenta y su rol.
+    // El JWT contiene solo la identidad de la cuenta, su rol y un jti único
+    // por emisión. Los emitidos no se persisten; solo los revocados.
     // JwtModule ya configuró el secreto y la vigencia desde el entorno.
     return this.jwtService.signAsync({
       sub: autenticado.idCuenta,
       rolId: autenticado.usuario.rol.id,
+      jti: randomUUID(),
     });
   }
 
@@ -259,6 +262,7 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync({
       sub: registro.idCuenta,
       rolId: cuenta.usuario.rol_usuario.id,
+      jti: randomUUID(),
     });
     const nuevo = generarRefreshToken();
     const ahora = new Date();
@@ -295,5 +299,81 @@ export class AuthService {
       accessToken,
       refreshToken: nuevo.token,
     };
+  }
+
+  async cerrarSesion(datos: {
+    accessJti?: string;
+    accessSub?: string;
+    accessExp?: number;
+    refreshToken?: string;
+  }): Promise<void> {
+    const ahora = new Date();
+
+    // Purga perezosa en esta única ruta: sin scheduler, el guard no purga.
+    await this.prisma.accessTokenRevocado.deleteMany({
+      where: { fechaExpiracion: { lte: ahora } },
+    });
+
+    let idCuenta: string | undefined =
+      typeof datos.accessSub === 'string' && datos.accessSub
+        ? datos.accessSub
+        : undefined;
+
+    // Revoca solo el refresh actual vigente. Condición fechaRevocacion NULL:
+    // idempotente y nunca toca otros refresh de la misma cuenta.
+    if (typeof datos.refreshToken === 'string' && datos.refreshToken) {
+      const registro = await this.prisma.refreshToken.findUnique({
+        where: { tokenHash: calcularHashRefreshToken(datos.refreshToken) },
+        select: {
+          fk_cuenta: true,
+          fechaExpiracion: true,
+          fechaRevocacion: true,
+        },
+      });
+      if (registro && !idCuenta) {
+        idCuenta = registro.fk_cuenta;
+      }
+      if (
+        registro &&
+        registro.fechaRevocacion === null &&
+        registro.fechaExpiracion > ahora
+      ) {
+        await this.prisma.refreshToken.updateMany({
+          where: {
+            tokenHash: calcularHashRefreshToken(datos.refreshToken),
+            fechaRevocacion: null,
+            fechaExpiracion: { gt: ahora },
+          },
+          data: { fechaRevocacion: ahora },
+        });
+      }
+    }
+
+    // Persiste solo el jti actual revocado, nunca emitidos ni otros jti.
+    if (typeof datos.accessJti === 'string' && datos.accessJti && idCuenta) {
+      let fechaExpiracion: Date;
+      if (
+        typeof datos.accessExp === 'number' &&
+        Number.isFinite(datos.accessExp) &&
+        datos.accessExp > 0
+      ) {
+        fechaExpiracion = new Date(datos.accessExp * 1000);
+      } else {
+        const ttl = Number(process.env.JWT_ACCESS_TTL_SECONDS);
+        fechaExpiracion =
+          Number.isInteger(ttl) && ttl > 0
+            ? new Date(ahora.getTime() + ttl * 1000)
+            : ahora;
+      }
+      await this.prisma.accessTokenRevocado.upsert({
+        where: { jti: datos.accessJti },
+        update: {},
+        create: {
+          jti: datos.accessJti,
+          fk_cuenta: idCuenta,
+          fechaExpiracion,
+        },
+      });
+    }
   }
 }
