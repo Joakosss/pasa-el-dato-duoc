@@ -1,14 +1,14 @@
 # HU-PUB-01 — Crear publicación
 
-**Como** usuario autenticado en rol vendedor
-**quiero** crear una publicación con título, descripción, precio, sede, tipo de venta, categoría e imágenes
+**Como** usuario autenticado  
+**quiero** crear una publicación con título, descripción, precio, sede, tipo de venta, categoría e imágenes  
 **para** ofrecer mi producto o servicio a la comunidad Duoc.
 
 ## Criterios de aceptación
 
 - **Dado** que soy un usuario autenticado y entrego todos los campos con valores válidos y catálogos válidos,
   **cuando** confirmo la creación,
-  **entonces** el sistema crea la publicación asociada a mi usuario, con sede, tipo de venta, categoría, estado inicial y confirma la creación.
+  **entonces** el sistema crea la publicación asociada a mi usuario, con sede, tipo de venta, categoría, estado inicial `Publicada` y confirma la creación.
 
 - **Dado** que no estoy autenticado,
   **cuando** intento crear una publicación,
@@ -22,21 +22,21 @@
   **cuando** intento crear la publicación,
   **entonces** el sistema rechaza la creación por catálogo inválido.
 
-- **Dado** que adjunto una imagen que no puede ser procesada o almacenada, o que excede los límites propuestos,
+- **Dado** que el título tiene menos de 5 o más de 100 caracteres, o la descripción menos de 20 o más de 2.000 caracteres,
   **cuando** intento crear la publicación,
-  **entonces** el sistema informa el problema y no crea una publicación incompleta.
+  **entonces** el sistema rechaza la creación por validación.
 
-- **Dado** que el título está fuera de 5 a 100 caracteres o la descripción fuera de 20 a 2.000 caracteres,
+- **Dado** que el precio está ausente, es menor o igual a cero, no está expresado en CLP, o es “gratis” o “a convenir”,
   **cuando** intento crear la publicación,
-  **entonces** el sistema rechaza la creación por validación. [Supuesto pendiente PO]
+  **entonces** el sistema rechaza la creación por precio inválido.
 
-- **Dado** que el precio está ausente, es menor o igual a cero, o no está expresado en CLP,
+- **Dado** que adjunto cero o más de 5 imágenes, un formato distinto de JPEG, PNG o WebP, o una imagen mayor a 5 MB,
   **cuando** intento crear la publicación,
-  **entonces** el sistema rechaza la creación por precio inválido. [Supuesto pendiente PO]
+  **entonces** el sistema rechaza la creación e indica la causa.
 
-- **Dado** que adjunto más de 5 imágenes, un formato distinto de JPEG, PNG o WebP, o una imagen mayor a 5 MB,
-  **cuando** intento crear la publicación,
-  **entonces** el sistema rechaza la creación e indica la causa. [Supuesto pendiente PO]
+- **Dado** que adjunto entre 1 y 5 imágenes válidas con datos válidos,
+  **cuando** confirmo la creación,
+  **entonces** el sistema crea la publicación con esas imágenes.
 
 ## Reglas de negocio
 
@@ -47,12 +47,15 @@ Aprobadas documentalmente (requerimientos publicaciones, CU005, R.3):
 - Tipo de venta, categoría y sede deben corresponder a registros válidos.
 - El control administrativo y bloqueo de contenido se trata por separado.
 
-Propuestas MVP pendientes de validación del Product Owner, no definitivas:
+Aprobadas MVP para esta HU:
 
-1. Estado inicial `Publicada` solo si no existe moderación previa. Si el negocio exige aprobación administrativa, el estado queda pendiente de confirmación y no se asume otro estado.
-2. Máximo 5 imágenes por publicación, formatos JPEG, PNG y WebP, hasta 5 MB por imagen.
-3. Precio obligatorio, mayor que cero y expresado en CLP. No se admiten gratuitos ni “a convenir” hasta definir esa necesidad.
-4. Título entre 5 y 100 caracteres; descripción entre 20 y 2.000 caracteres.
+- Estado inicial `Publicada`, sin moderación previa para el MVP. El bloqueo administrativo es un mecanismo separado.
+- Imagen mínima obligatoria: 1 al crear; máximo 5 por publicación.
+- Formatos permitidos: JPEG, PNG y WebP. Tamaño máximo 5 MB por imagen.
+- Precio obligatorio, en CLP y mayor a $0. No se permite “gratis” ni “a convenir”.
+- Título entre 5 y 100 caracteres; descripción entre 20 y 2.000 caracteres.
+
+Fuera de alcance de esta HU: reglas de contenido o palabras prohibidas, IA de precio o recomendaciones, contador de vistas, comprador.
 
 ## Dependencias
 
@@ -62,7 +65,6 @@ Propuestas MVP pendientes de validación del Product Owner, no definitivas:
 - Catálogo de categorías disponible.
 - Catálogo de estados de publicación.
 - Almacenamiento de imágenes.
-- Definición de moderación previa, condiciona el estado inicial.
 
 ## Prioridad
 
@@ -72,11 +74,8 @@ Núcleo del MVP. Base para búsqueda, filtros, favoritos, chat, calificaciones y
 
 ## Dudas pendientes
 
-- Confirmación PO de los 4 supuestos (estado inicial, imágenes, precio, longitudes).
-- Definición de moderación previa: ¿existe aprobación antes de publicar?
-- Reglas definitivas de contenido o palabras prohibidas, fuera de esta HU hasta definirse.
-- Alcance IA para precio o recomendaciones, fuera de esta HU.
+- Ninguna bloqueante para iniciar el flujo.
 
 ## Estado
 
-`requiere aclaración` — puede continuar con los supuestos como base explícita, pendiente de validación PO para `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.
