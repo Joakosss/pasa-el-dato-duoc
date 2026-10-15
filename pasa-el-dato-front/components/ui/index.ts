@@ -6,3 +6,4 @@ export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { Avatar } from "./Avatar";
 export { Select } from "./Select";
+export { Textarea } from "./Textarea";

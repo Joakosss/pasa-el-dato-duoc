@@ -12,6 +12,7 @@ import {
   SPONSORED_PER_PAGE_MOMENTANEO,
   TOTAL_PAGES_MOMENTANEO,
 } from "@/lib/products";
+import { PublicarCTAHeader } from "@/components/publicar/PublicarCTAHeader";
 
 const SKELETON_COUNT = FEATURED_PER_PAGE_MOMENTANEO + SPONSORED_PER_PAGE_MOMENTANEO;
 
@@ -43,7 +44,8 @@ export default async function Home(props: HomeProps) {
         </Suspense>
 
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-navy">Productos para ti</h2>
+          <h2 className="text-lg font-bold text-navy">Sugerencias para ti</h2>
+          <PublicarCTAHeader />
         </div>
 
         <Suspense key={page} fallback={<ProductGridSkeleton count={SKELETON_COUNT} />}>

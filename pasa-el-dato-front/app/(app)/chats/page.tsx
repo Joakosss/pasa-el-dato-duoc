@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { Badge } from "@/components/ui/Badge";
-import {
+import { RutaProtegida } from "@/components/auth/RutaProtegida";
+import { Badge } from "@/components/ui/Badge";import {
   ChatList,
   ChatEmptyState,
   ChatListSkeleton,
@@ -86,10 +86,12 @@ export default async function ChatsPage(props: ChatsPageProps) {
     searchParams?.tab === "vendiendo" ? "vendiendo" : "comprando";
 
   return (
-    <Container className="py-6">
-      <Suspense key={tab} fallback={<ChatListSkeleton />}>
-        <ChatsContent tab={tab} />
-      </Suspense>
-    </Container>
+    <RutaProtegida>
+      <Container className="py-6">
+        <Suspense key={tab} fallback={<ChatListSkeleton />}>
+          <ChatsContent tab={tab} />
+        </Suspense>
+      </Container>
+    </RutaProtegida>
   );
 }

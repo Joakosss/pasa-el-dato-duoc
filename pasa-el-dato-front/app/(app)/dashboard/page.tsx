@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RutaProtegida } from "@/components/auth/RutaProtegida";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 
@@ -11,7 +12,8 @@ const STATS = ["Usuarios totales", "Publicaciones activas", "Reportes pendientes
 
 export default function DashboardPage() {
   return (
-    <div className="flex min-h-[calc(100vh-16rem)]">
+    <RutaProtegida>
+      <div className="flex min-h-[calc(100vh-16rem)]">
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-navy text-white md:flex">
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Admin">
           {NAV.map((item, i) => (
@@ -76,6 +78,7 @@ export default function DashboardPage() {
           </table>
         </div>
       </main>
-    </div>
+      </div>
+    </RutaProtegida>
   );
 }

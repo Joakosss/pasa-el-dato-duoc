@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { RutaProtegida } from "@/components/auth/RutaProtegida";
 import { ROUTES } from "@/config/constants";
 
 export const metadata: Metadata = {
@@ -15,7 +16,8 @@ export default async function ChatDetailPage({
   const { id } = await params;
 
   return (
-    <Container className="py-6">
+    <RutaProtegida>
+      <Container className="py-6">
       <div className="mx-auto w-full max-w-md rounded-2xl border border-gray-200 bg-card p-8 text-center shadow-sm">
         <p className="text-xs font-medium text-gray-400">Chat {id}</p>
         <h1 className="mt-1 text-lg font-bold text-navy">
@@ -40,6 +42,7 @@ export default async function ChatDetailPage({
           </Link>
         </div>
       </div>
-    </Container>
+      </Container>
+    </RutaProtegida>
   );
 }
