@@ -24,6 +24,7 @@ model Cuenta {
   other_cuenta      Cuenta[]       @relation("cuentaTocuenta")
   log_api           log_api[]
   refreshTokens     RefreshToken[]
+  accessTokensRevocados AccessTokenRevocado[]
   sede              Sede[]
   usuario           Usuario?
 
@@ -120,4 +121,16 @@ model RefreshToken {
 
   @@index([fk_cuenta], map: "idx_refresh_token_cuenta")
   @@map("refresh_token")
+}
+
+model AccessTokenRevocado {
+  jti             String   @id
+  fk_cuenta       String   @db.Uuid
+  fechaExpiracion DateTime @map("fecha_expiracion") @db.Timestamptz(6)
+
+  cuenta Cuenta @relation(fields: [fk_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction, map: "fk_access_token_revocado_cuenta")
+
+  @@index([fk_cuenta], map: "idx_access_token_revocado_cuenta")
+  @@index([fechaExpiracion], map: "idx_access_token_revocado_expiracion")
+  @@map("access_token_revocado")
 }

@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
@@ -19,13 +21,18 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthService, type UsuarioAutenticado } from './auth.service.js';
+import { JwtService } from '@nestjs/jwt';
 import { IniciarSesionDto } from './dto/iniciar-sesion.dto.js';
 import { AuthLogInterceptor } from './auth-log.interceptor.js';
+import { JwtAuthGuard, type SesionAutenticada } from './jwt-auth.guard.js';
 
 @ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -74,6 +81,122 @@ export class AuthController {
       await this.authService.renovarSesion(token);
     this.establecerCookies(respuesta, accessToken, refreshToken);
     respuesta.locals.authCuentaId = idCuenta;
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(AuthLogInterceptor)
+  @ApiOperation({
+    summary: 'Cerrar la sesión vigente',
+    description:
+      'No recibe un cuerpo. Revoca solo la sesión actual desde las cookies HttpOnly accessToken y refreshToken, limpia ambas cookies y siempre responde 200 con cuerpo vacío.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  @ApiOkResponse({
+    description: 'Sesión cerrada. Ambas cookies quedan limpias; el cuerpo está vacío.',
+  })
+  async logout(
+    @Req() solicitud: Request,
+    @Res({ passthrough: true }) respuesta: Response,
+  ): Promise<void> {
+    const accessToken = solicitud.cookies?.accessToken;
+    const refreshToken = solicitud.cookies?.refreshToken;
+
+    // Decodifica sin verificar: logout es idempotente y funciona
+    // incluso con firma inválida o sesión expirada.
+    let accessJti: string | undefined;
+    let accessSub: string | undefined;
+    let accessExp: number | undefined;
+    if (typeof accessToken === 'string' && accessToken) {
+      try {
+        const decodificado = this.jwtService.decode(accessToken) as
+          | { jti?: unknown; sub?: unknown; exp?: unknown }
+          | null;
+        if (decodificado) {
+          if (
+            typeof decodificado.jti === 'string' &&
+            decodificado.jti
+          ) {
+            accessJti = decodificado.jti;
+          }
+          if (
+            typeof decodificado.sub === 'string' &&
+            decodificado.sub
+          ) {
+            accessSub = decodificado.sub;
+          }
+          if (
+            typeof decodificado.exp === 'number' &&
+            Number.isFinite(decodificado.exp)
+          ) {
+            accessExp = decodificado.exp;
+          }
+        }
+      } catch {
+        // Sin sesión válida igual se limpian cookies y se responde 200.
+      }
+    }
+
+    await this.authService.cerrarSesion({
+      accessJti,
+      accessSub,
+      accessExp,
+      refreshToken:
+        typeof refreshToken === 'string' && refreshToken
+          ? refreshToken
+          : undefined,
+    });
+    if (accessSub) {
+      respuesta.locals.authCuentaId = accessSub;
+    }
+    this.limpiarCookies(respuesta);
+  }
+
+  @Get('sesion')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(AuthLogInterceptor)
+  @ApiOperation({
+    summary: 'Consultar el rol de la sesión vigente',
+    description:
+      'No recibe cuerpo ni parámetros. Deriva el rol desde la cookie HttpOnly accessToken y la cuenta en PostgreSQL.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({
+    description: 'Sesión vigente. Devuelve el único rol activo con su descripción.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Sin sesión, sesión vencida o sesión inválida.',
+  })
+  sesion(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): { rol: { id: number; descripcion: string } } {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return {
+      rol: { id: user.rol.id, descripcion: user.rol.descripcion },
+    };
+  }
+
+  private limpiarCookies(respuesta: Response): void {
+    const opcionesComunes = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+    };
+
+    respuesta.clearCookie('accessToken', {
+      ...opcionesComunes,
+      path: '/api',
+    });
+    respuesta.clearCookie('refreshToken', {
+      ...opcionesComunes,
+      path: '/api/auth',
+    });
   }
 
   private establecerCookies(

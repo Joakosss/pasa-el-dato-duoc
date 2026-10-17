@@ -4,7 +4,7 @@
 -- Corre solo la primera vez (volumen vacío), después de 01-schema.sql.
 
 INSERT INTO rol_usuario (descripcion)
-VALUES ('Estudiante')
+VALUES ('Estudiante'), ('Administrador'), ('Marca')
 ON CONFLICT (descripcion) DO NOTHING;
 
 -- Crea la sede activa solo si aún no existe con ese nombre.

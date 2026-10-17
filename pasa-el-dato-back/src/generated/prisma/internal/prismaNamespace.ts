@@ -404,7 +404,8 @@ export const ModelName = {
   Carrera: 'Carrera',
   Usuario: 'Usuario',
   log_api: 'log_api',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  AccessTokenRevocado: 'AccessTokenRevocado'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "rolUsuario" | "sede" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken"
+    modelProps: "cuenta" | "rolUsuario" | "sede" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1016,6 +1017,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AccessTokenRevocado: {
+      payload: Prisma.$AccessTokenRevocadoPayload<ExtArgs>
+      fields: Prisma.AccessTokenRevocadoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AccessTokenRevocadoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AccessTokenRevocadoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>
+        }
+        findFirst: {
+          args: Prisma.AccessTokenRevocadoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AccessTokenRevocadoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>
+        }
+        findMany: {
+          args: Prisma.AccessTokenRevocadoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>[]
+        }
+        create: {
+          args: Prisma.AccessTokenRevocadoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>
+        }
+        createMany: {
+          args: Prisma.AccessTokenRevocadoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AccessTokenRevocadoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>[]
+        }
+        delete: {
+          args: Prisma.AccessTokenRevocadoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>
+        }
+        update: {
+          args: Prisma.AccessTokenRevocadoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>
+        }
+        deleteMany: {
+          args: Prisma.AccessTokenRevocadoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AccessTokenRevocadoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AccessTokenRevocadoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>[]
+        }
+        upsert: {
+          args: Prisma.AccessTokenRevocadoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AccessTokenRevocadoPayload>
+        }
+        aggregate: {
+          args: Prisma.AccessTokenRevocadoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAccessTokenRevocado>
+        }
+        groupBy: {
+          args: Prisma.AccessTokenRevocadoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessTokenRevocadoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AccessTokenRevocadoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AccessTokenRevocadoCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1149,6 +1224,15 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const AccessTokenRevocadoScalarFieldEnum = {
+  jti: 'jti',
+  fk_cuenta: 'fk_cuenta',
+  fechaExpiracion: 'fechaExpiracion'
+} as const
+
+export type AccessTokenRevocadoScalarFieldEnum = (typeof AccessTokenRevocadoScalarFieldEnum)[keyof typeof AccessTokenRevocadoScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1416,6 +1500,7 @@ export type GlobalOmitConfig = {
   usuario?: Prisma.UsuarioOmit
   log_api?: Prisma.log_apiOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  accessTokenRevocado?: Prisma.AccessTokenRevocadoOmit
 }
 
 /* Types for Logging */

@@ -4,6 +4,8 @@ import { AuthService } from './auth.service.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { AuthController } from './auth.controller.js';
 import { AuthLogInterceptor } from './auth-log.interceptor.js';
+import { JwtAuthGuard } from './jwt-auth.guard.js';
+import { RolesGuard } from './roles.guard.js';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { AuthLogInterceptor } from './auth-log.interceptor.js';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthLogInterceptor],
+  providers: [AuthService, AuthLogInterceptor, JwtAuthGuard, RolesGuard],
+  exports: [JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}
