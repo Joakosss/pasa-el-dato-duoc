@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module.js';
 import { SedeModule } from './sede/sede.module.js';
 import { EscuelaModule } from './escuela/escuela.module.js';
 import { CarreraModule } from './carrera/carrera.module.js';
+import { PerfilModule } from './perfil/perfil.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CarreraModule } from './carrera/carrera.module.js';
     SedeModule,
     EscuelaModule,
     CarreraModule,
+    PerfilModule,
   ],
   controllers: [AppController],
   providers: [AppService],
