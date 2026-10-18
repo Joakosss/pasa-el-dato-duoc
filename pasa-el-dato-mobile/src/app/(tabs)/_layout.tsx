@@ -1,15 +1,28 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { Pressable, type View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Ref } from 'react';
 
 import { colors } from '@/theme';
+import {
+  selectEstaAutenticado,
+  selectHasHydrated,
+  useSesionStore,
+} from '@/stores/sesion-store';
 
 // Grupo (tabs): menú inferior JS compacto estilo TikTok.
 // AUTH queda fuera y no lo muestra.
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
+  const hasHydrated = useSesionStore(selectHasHydrated);
+  const estaAutenticado = useSesionStore(selectEstaAutenticado);
+
+  // Guarda de rutas: mientras no se lea el almacenamiento seguro no se decide
+  // nada, para no expulsar al login a quien sí tiene sesión guardada.
+  if (!hasHydrated) return null;
+  if (!estaAutenticado) return <Redirect href="/auth/login" />;
+
   return (
     <Tabs
       screenOptions={{

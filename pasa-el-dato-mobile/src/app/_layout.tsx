@@ -7,6 +7,7 @@ import { AnimatedSplashOverlay } from '@/components/animated-icon';
 SplashScreen.preventAutoHideAsync();
 
 // Raíz: index redirige a /inicio (tabs). AUTH fuera de tabs, sin menú.
+// PRODUCTO también queda fuera de tabs: el detalle no muestra menú inferior.
 export default function RootLayout() {
   return (
     <>
@@ -17,6 +18,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="auth" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="producto/[id]" />
       </Stack>
     </>
   );

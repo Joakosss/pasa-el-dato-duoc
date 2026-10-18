@@ -113,6 +113,11 @@ describe('Autenticación con PostgreSQL (e2e)', () => {
     expect(login.body.idCuenta).toBe(idCuenta);
     expect(login.body.usuario.rol.descripcion).toBe('Estudiante');
     expect(login.body).not.toHaveProperty('claveHash');
+    // Los tokens también viajan en el cuerpo para el cliente móvil.
+    expect(typeof login.body.accessToken).toBe('string');
+    expect(login.body.accessToken.length).toBeGreaterThan(0);
+    expect(typeof login.body.refreshToken).toBe('string');
+    expect(login.body.refreshToken.length).toBeGreaterThan(0);
 
     const cookieAcceso = obtenerCookie(
       login.headers['set-cookie'],
@@ -133,6 +138,19 @@ describe('Autenticación con PostgreSQL (e2e)', () => {
     expect(jwtLogin.rolId).toBe(login.body.usuario.rol.id);
     expect(jwtLogin.exp).toBeGreaterThan(Math.floor(Date.now() / 1000));
 
+    // El cliente móvil no tiene cookies: el mismo token debe servir en la
+    // cabecera Authorization: Bearer <token>.
+    const sesionPorBearer = await request(servidor)
+      .get('/api/auth/sesion')
+      .set('Authorization', `Bearer ${login.body.accessToken}`)
+      .expect(200);
+    expect(sesionPorBearer.body).toEqual({
+      rol: { id: login.body.usuario.rol.id, descripcion: 'Estudiante' },
+    });
+
+    // Sin cookie ni encabezado la sesión sigue siendo inválida.
+    await request(servidor).get('/api/auth/sesion').expect(401);
+
     const cookieAnterior = obtenerCookie(
       login.headers['set-cookie'],
       'refreshToken',
@@ -144,7 +162,10 @@ describe('Autenticación con PostgreSQL (e2e)', () => {
       .post('/api/auth/refresh')
       .set('Cookie', cookieAnterior!)
       .expect(200);
-    expect(renovacion.body).toEqual({});
+    // El par renovado se devuelve en el cuerpo (además de las cookies).
+    expect(typeof renovacion.body.accessToken).toBe('string');
+    expect(typeof renovacion.body.refreshToken).toBe('string');
+    expect(renovacion.body.refreshToken).not.toBe(tokenAnterior);
 
     const cookieAccesoNuevo = obtenerCookie(
       renovacion.headers['set-cookie'],

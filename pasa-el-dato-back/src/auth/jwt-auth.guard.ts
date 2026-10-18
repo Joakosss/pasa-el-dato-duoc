@@ -31,9 +31,10 @@ export class JwtAuthGuard implements CanActivate {
     >();
     const respuesta = http.getResponse<Response>();
 
-    // CU001/HU-AUTH-01 entrega la sesión en cookie accessToken.
-    const token = solicitud.cookies?.accessToken;
-    if (typeof token !== 'string' || !token) {
+    // CU001/HU-AUTH-01 entrega la sesión en cookie accessToken (web).
+    // El cliente móvil no dispone de cookie jar y usa Authorization: Bearer.
+    const token = this.obtenerToken(solicitud);
+    if (!token) {
       throw new UnauthorizedException('Sesión inválida');
     }
 
@@ -99,5 +100,24 @@ export class JwtAuthGuard implements CanActivate {
     solicitud.user = sesion;
     respuesta.locals.authCuentaId = sub;
     return true;
+  }
+
+  // Cookie primero, para no alterar el mecanismo de la web. Si no hay cookie,
+  // acepta Authorization: Bearer <token>, pensado para el cliente móvil.
+  // Cuando llegan ambos, gana la cookie: el resultado no depende del encabezado.
+  private obtenerToken(solicitud: Request): string | null {
+    const deCookie = solicitud.cookies?.accessToken;
+    if (typeof deCookie === 'string' && deCookie) {
+      return deCookie;
+    }
+
+    const autorizacion = solicitud.headers?.authorization;
+    if (typeof autorizacion !== 'string') {
+      return null;
+    }
+
+    // Solo el formato "Bearer <token>"; el esquema no distingue mayúsculas.
+    const coincidencia = /^Bearer\s+(\S+)$/i.exec(autorizacion.trim());
+    return coincidencia ? coincidencia[1] : null;
   }
 }

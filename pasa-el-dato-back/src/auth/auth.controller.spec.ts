@@ -4,10 +4,10 @@ import {
   UnauthorizedException,
   ValidationPipe,
 } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import request from 'supertest';
-import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Test } from '@nestjs/testing';
+import cookieParser from 'cookie-parser';
+import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, expect, it, vi } from 'vitest';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AuthModule } from './auth.module.js';
@@ -50,7 +50,7 @@ describe('AuthController: login y renovación', () => {
     vi.unstubAllEnvs();
   });
 
-  it('registra la ruta y envía los tokens solo en cookies', async () => {
+  it('registra la ruta y envía los tokens en cookies y en el cuerpo', async () => {
     const usuario = {
       idCuenta: 'uuid-cuenta',
       correo: 'alumno@duocuc.cl',
@@ -81,12 +81,21 @@ describe('AuthController: login y renovación', () => {
       correo: 'alumno@duocuc.cl',
       contrasena: 'clave-correcta',
     });
-    expect(respuesta.body).toEqual(usuario);
+    // El cuerpo es la identidad más los tokens (para el cliente móvil).
+    expect(respuesta.body).toEqual({
+      ...usuario,
+      accessToken: 'jwt-de-prueba',
+      refreshToken: 'refresh-de-prueba',
+    });
+    // Las cookies HttpOnly para la web siguen intactas.
     expect(respuesta.headers['set-cookie']).toEqual([
       expect.stringContaining('accessToken=jwt-de-prueba'),
       expect.stringContaining('refreshToken=refresh-de-prueba'),
     ]);
     expect(respuesta.headers['set-cookie'][0]).toContain('HttpOnly');
+    expect(respuesta.headers['set-cookie'][1]).toContain('HttpOnly');
+    expect(respuesta.headers['set-cookie'][0]).toContain('Path=/api');
+    expect(respuesta.headers['set-cookie'][1]).toContain('Path=/api/auth');
     expect(respuesta.headers['set-cookie'][1]).toContain('Max-Age=604800');
     expect(crearLog).toHaveBeenCalledWith({
       data: {
@@ -99,7 +108,7 @@ describe('AuthController: login y renovación', () => {
     });
   });
 
-  it('renueva ambas cookies sin poner los tokens en el cuerpo', async () => {
+  it('renueva las cookies y también devuelve el par en el cuerpo', async () => {
     renovarSesion.mockResolvedValueOnce({
       idCuenta: 'uuid-cuenta',
       accessToken: 'jwt-nuevo',
@@ -112,7 +121,11 @@ describe('AuthController: login y renovación', () => {
       .expect(200);
 
     expect(renovarSesion).toHaveBeenCalledWith('refresh-viejo');
-    expect(respuesta.body).toEqual({});
+    // El cuerpo trae el par renovado, sin datos de cuenta.
+    expect(respuesta.body).toEqual({
+      accessToken: 'jwt-nuevo',
+      refreshToken: 'refresh-nuevo',
+    });
     expect(respuesta.headers['set-cookie']).toEqual([
       expect.stringContaining('accessToken=jwt-nuevo'),
       expect.stringContaining('refreshToken=refresh-nuevo'),
@@ -131,9 +144,7 @@ describe('AuthController: login y renovación', () => {
   });
 
   it('rechaza la renovación cuando falta la cookie', async () => {
-    await request(app.getHttpServer())
-      .post('/api/auth/refresh')
-      .expect(401);
+    await request(app.getHttpServer()).post('/api/auth/refresh').expect(401);
 
     expect(renovarSesion).not.toHaveBeenCalled();
     expect(crearLog).toHaveBeenCalledWith({

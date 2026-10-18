@@ -93,6 +93,78 @@ describe('GET /api/auth/sesion', () => {
     expect(buscarCuenta).not.toHaveBeenCalled();
   });
 
+  it('200 con Authorization: Bearer, sin cookie (cliente móvil)', async () => {
+    verificar.mockResolvedValueOnce({ sub: 'uuid-cuenta', jti: 'jti-vigente' });
+    buscarCuenta.mockResolvedValueOnce({
+      aprobada: true,
+      bloqueado: false,
+      usuario: { rol_usuario: { id: 1, descripcion: 'Estudiante' } },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/auth/sesion')
+      .set('Authorization', 'Bearer jwt-desde-encabezado')
+      .expect(200);
+
+    expect(respuesta.body).toEqual({
+      rol: { id: 1, descripcion: 'Estudiante' },
+    });
+    expect(verificar).toHaveBeenCalledWith('jwt-desde-encabezado');
+  });
+
+  it('acepta el esquema Bearer sin distinguir mayúsculas', async () => {
+    verificar.mockResolvedValueOnce({ sub: 'uuid-cuenta', jti: 'jti-vigente' });
+    buscarCuenta.mockResolvedValueOnce({
+      aprobada: true,
+      bloqueado: false,
+      usuario: { rol_usuario: { id: 1, descripcion: 'Estudiante' } },
+    });
+
+    await request(app.getHttpServer())
+      .get('/api/auth/sesion')
+      .set('Authorization', 'bearer jwt-desde-encabezado')
+      .expect(200);
+
+    expect(verificar).toHaveBeenCalledWith('jwt-desde-encabezado');
+  });
+
+  it('la cookie tiene prioridad cuando llegan cookie y encabezado', async () => {
+    verificar.mockResolvedValueOnce({ sub: 'uuid-cuenta', jti: 'jti-vigente' });
+    buscarCuenta.mockResolvedValueOnce({
+      aprobada: true,
+      bloqueado: false,
+      usuario: { rol_usuario: { id: 1, descripcion: 'Estudiante' } },
+    });
+
+    await request(app.getHttpServer())
+      .get('/api/auth/sesion')
+      .set('Cookie', 'accessToken=jwt-de-cookie')
+      .set('Authorization', 'Bearer jwt-de-encabezado')
+      .expect(200);
+
+    expect(verificar).toHaveBeenCalledWith('jwt-de-cookie');
+  });
+
+  it('401 si el encabezado no usa el esquema Bearer', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/auth/sesion')
+      .set('Authorization', 'Basic jwt-de-encabezado')
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+    expect(verificar).not.toHaveBeenCalled();
+  });
+
+  it('401 si el encabezado Bearer viene sin token', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/auth/sesion')
+      .set('Authorization', 'Bearer')
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+    expect(verificar).not.toHaveBeenCalled();
+  });
+
   it('401 con token inválido y mensaje genérico', async () => {
     verificar.mockRejectedValueOnce(new Error('invalid signature'));
 
