@@ -9,6 +9,9 @@ import { SedeModule } from './sede/sede.module.js';
 import { EscuelaModule } from './escuela/escuela.module.js';
 import { CarreraModule } from './carrera/carrera.module.js';
 import { PerfilModule } from './perfil/perfil.module.js';
+import { RegionModule } from './region/region.module.js';
+import { CiudadModule } from './ciudad/ciudad.module.js';
+import { ComunaModule } from './comuna/comuna.module.js';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { PerfilModule } from './perfil/perfil.module.js';
     EscuelaModule,
     CarreraModule,
     PerfilModule,
+    RegionModule,
+    CiudadModule,
+    ComunaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

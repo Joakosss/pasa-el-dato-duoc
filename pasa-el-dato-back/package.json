@@ -19,7 +19,12 @@
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:schema:sql": "prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script",
+    "db:seed:dev": "pnpm build && node dist/seed/ejecutar-seed-dev.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",

@@ -42,17 +42,58 @@ model RolUsuario {
 
 model Sede {
   id                Int       @id @default(autoincrement())
-  nombre            String
+  nombre            String    @unique
   activa            Boolean   @default(true)
   fechaCreacion     DateTime  @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
   fechaModificacion DateTime  @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
   eliminado         Boolean   @default(false)
   fk_modificado_por String?   @db.Uuid
   cuenta            Cuenta?   @relation(fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction, map: "fk_sede_modificado_por")
+  // Fase A (HU-UBI-01, ES-MIG-A): comunaId nace nullable; se vuelve NOT NULL
+  // recién en la fase D, tras el gate de sedes sin territorializar.
+  comunaId          Int?      @map("fk_comuna")
+  comuna            Comuna?   @relation(fields: [comunaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   usuario           Usuario[]
 
   @@index([fk_modificado_por], map: "idx_sede_modificado_por")
+  @@index([comunaId], map: "idx_sede_comuna")
   @@map("sede")
+}
+
+model Region {
+  id            Int     @id @default(autoincrement())
+  nombre        String
+  codigoSubdere String  @unique @map("codigo_subdere")
+
+  ciudades Ciudad[]
+
+  @@map("region")
+}
+
+model Ciudad {
+  id       Int    @id @default(autoincrement())
+  nombre   String
+  regionId Int    @map("fk_region")
+
+  region  Region   @relation(fields: [regionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comunas Comuna[]
+
+  @@unique([nombre, regionId], map: "ux_ciudad_nombre_region")
+  @@index([regionId], map: "idx_ciudad_region")
+  @@map("ciudad")
+}
+
+model Comuna {
+  id            Int    @id @default(autoincrement())
+  nombre        String
+  codigoSubdere String @unique @map("codigo_subdere")
+  ciudadId      Int    @map("fk_ciudad")
+
+  ciudad Ciudad @relation(fields: [ciudadId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sedes  Sede[]
+
+  @@index([ciudadId], map: "idx_comuna_ciudad")
+  @@map("comuna")
 }
 
 model Escuela {
