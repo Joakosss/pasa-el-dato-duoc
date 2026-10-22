@@ -1,9 +1,10 @@
--- 02-seed.dev.sql — RETIRADO DE INITDB (HU-UBI-01, T-03)
+-- 02-seed.dev.sql — RETIRADO DE INITDB
 -- Este archivo ya no se monta en docker-entrypoint-initdb.d.
 -- Su contenido dev (roles, escuela, carrera) y la sede "Puente Alto" migraron
--- al seed dev idempotente:
+-- al seed dev idempotente de pasa-el-dato-back/src/seed/seed-dev.ts:
 --   podman compose exec back pnpm db:seed:dev
--- Conservado solo como referencia histórica.
+-- Conservado solo como referencia documental. Mantener sincronizado con
+-- seed-dev.ts si cambian los datos dev.
 
 INSERT INTO rol_usuario (descripcion)
 VALUES ('Estudiante'), ('Administrador'), ('Marca')
