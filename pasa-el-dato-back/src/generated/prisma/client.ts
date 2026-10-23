@@ -57,6 +57,21 @@ export type RolUsuario = Prisma.RolUsuarioModel
  */
 export type Sede = Prisma.SedeModel
 /**
+ * Model Region
+ * 
+ */
+export type Region = Prisma.RegionModel
+/**
+ * Model Ciudad
+ * 
+ */
+export type Ciudad = Prisma.CiudadModel
+/**
+ * Model Comuna
+ * 
+ */
+export type Comuna = Prisma.ComunaModel
+/**
  * Model Escuela
  * 
  */

@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ListarSedesQueryDto } from './dto/listar-sedes-query.dto.js';
 import { SedeRespuestaDto } from './dto/sede-respuesta.dto.js';
 import { SedeService } from './sede.service.js';
 
@@ -9,9 +10,12 @@ export class SedeController {
   constructor(private readonly sedeService: SedeService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Listar las sedes predefinidas' })
+  @ApiOperation({
+    summary:
+      'Listar las sedes predefinidas, opcionalmente filtradas por comuna o disponibilidad',
+  })
   @ApiOkResponse({ type: SedeRespuestaDto, isArray: true })
-  listar(): Promise<SedeRespuestaDto[]> {
-    return this.sedeService.listar();
+  listar(@Query() consulta: ListarSedesQueryDto): Promise<SedeRespuestaDto[]> {
+    return this.sedeService.listar(consulta);
   }
 }

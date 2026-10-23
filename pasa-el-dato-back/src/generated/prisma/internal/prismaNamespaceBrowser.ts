@@ -54,6 +54,9 @@ export const ModelName = {
   Cuenta: 'Cuenta',
   RolUsuario: 'RolUsuario',
   Sede: 'Sede',
+  Region: 'Region',
+  Ciudad: 'Ciudad',
+  Comuna: 'Comuna',
   Escuela: 'Escuela',
   Carrera: 'Carrera',
   Usuario: 'Usuario',
@@ -111,10 +114,39 @@ export const SedeScalarFieldEnum = {
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
-  fk_modificado_por: 'fk_modificado_por'
+  fk_modificado_por: 'fk_modificado_por',
+  comunaId: 'comunaId'
 } as const
 
 export type SedeScalarFieldEnum = (typeof SedeScalarFieldEnum)[keyof typeof SedeScalarFieldEnum]
+
+
+export const RegionScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  codigoSubdere: 'codigoSubdere'
+} as const
+
+export type RegionScalarFieldEnum = (typeof RegionScalarFieldEnum)[keyof typeof RegionScalarFieldEnum]
+
+
+export const CiudadScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  regionId: 'regionId'
+} as const
+
+export type CiudadScalarFieldEnum = (typeof CiudadScalarFieldEnum)[keyof typeof CiudadScalarFieldEnum]
+
+
+export const ComunaScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  codigoSubdere: 'codigoSubdere',
+  ciudadId: 'ciudadId'
+} as const
+
+export type ComunaScalarFieldEnum = (typeof ComunaScalarFieldEnum)[keyof typeof ComunaScalarFieldEnum]
 
 
 export const EscuelaScalarFieldEnum = {
