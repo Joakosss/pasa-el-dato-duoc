@@ -127,13 +127,21 @@ export function Navbar() {
                   </span>
                 </div>
               ) : estaAutenticado ? (
-                <button
-                  type="button"
-                  onClick={() => setModalAbierto(true)}
-                  className="cursor-pointer text-sm font-medium text-navy transition hover:text-gold"
-                >
-                  Cerrar sesión
-                </button>
+                <>
+                  <Link
+                    href={ROUTES.miPerfil}
+                    className="text-sm font-medium text-navy transition hover:text-gold"
+                  >
+                    Mi perfil
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setModalAbierto(true)}
+                    className="cursor-pointer text-sm font-medium text-navy transition hover:text-gold"
+                  >
+                    Cerrar sesión
+                  </button>
+                </>
               ) : (
                 <>
                   <Link
@@ -202,14 +210,24 @@ export function Navbar() {
                   className="absolute right-0 top-[calc(100%+8px)] z-50 w-48 rounded-xl border border-gray-200 bg-white py-1 shadow-lg"
                 >
                   {estaAutenticado ? (
-                    <button
-                      role="menuitem"
-                      type="button"
-                      onClick={abrirConfirmacion}
-                      className="cursor-pointer block w-full px-4 py-2 text-left text-sm font-medium text-navy transition hover:bg-gold-hover/10 hover:text-navy hover:font-bold"
-                    >
-                      Cerrar sesión
-                    </button>
+                    <>
+                      <Link
+                        role="menuitem"
+                        href={ROUTES.miPerfil}
+                        onClick={cerrarMenu}
+                        className="block px-4 py-2 text-sm font-medium text-navy transition hover:bg-gold-hover/10 hover:text-navy hover:font-bold"
+                      >
+                        Mi perfil
+                      </Link>
+                      <button
+                        role="menuitem"
+                        type="button"
+                        onClick={abrirConfirmacion}
+                        className="cursor-pointer block w-full px-4 py-2 text-left text-sm font-medium text-navy transition hover:bg-gold-hover/10 hover:text-navy hover:font-bold"
+                      >
+                        Cerrar sesión
+                      </button>
+                    </>
                   ) : (
                     <>
                       <Link
