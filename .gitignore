@@ -44,3 +44,6 @@ Thumbs.db
 
 # Archivos locales de análisis
 .graphify/
+# Datasets territoriales pesados o no usados por la implementación
+docs/data-bd/DPA_2023/
+docs/data-bd/Ciudades/CPV2024_Entidades_por_Distrito.xlsx
