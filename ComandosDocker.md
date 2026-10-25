@@ -32,6 +32,10 @@
 
 `podman exec pasael-postgres psql -U pasael -d pasaeldato -c "SELECT * FROM rol_usuario;" -c "SELECT id, nombre, activa FROM sede;" -c "SELECT * FROM escuela;" -c "SELECT * FROM carrera;"`
 
+Verificar el catálogo territorial (esperado tras seeds completos: `16 | 345 | 271 | 19`):
+
+`podman exec pasael-postgres psql -U pasael -d pasaeldato -c "SELECT (SELECT count(*) FROM region) AS regiones, (SELECT count(*) FROM comuna) AS comunas, (SELECT count(*) FROM ciudad) AS ciudades, (SELECT count(*) FROM sede WHERE eliminado = false) AS sedes;"`
+
 ## Postgres: migraciones (Prisma)
 
 > Fuente de verdad del esquema: `pasa-el-dato-back/prisma/schema.prisma` y `pasa-el-dato-back/prisma/migrations`.
@@ -55,19 +59,31 @@ podman compose exec back pnpm db:migrate:deploy
 podman compose exec back pnpm db:generate
 ```
 
-> 4. Cargar los datos dev (roles, sede "Puente Alto", escuela y carrera de prueba):
+> 4. Cargar el catálogo territorial (16 regiones, 345 comunas y 271 ciudades CPAC/DPA). Idempotente:
+
+```
+podman compose exec back pnpm db:seed:territorial
+```
+
+> 5. Cargar las 19 sedes Duoc UC. Idempotente:
+
+```
+podman compose exec back pnpm db:seed:sedes
+```
+
+> 6. Cargar los datos dev (roles, escuela y carrera de prueba):
 
 ```
 podman compose exec back pnpm db:seed:dev
 ```
 
-> 5. Regenerar la exportación documental del esquema:
+> 7. Regenerar la exportación documental del esquema:
 
 ```
 podman compose exec -T back pnpm db:schema:sql > postgres/01-schema.sql
 ```
 
-> 6. Verificar el estado de los servicios:
+> 8. Verificar el estado de los servicios:
 
 ```
 podman compose ps
@@ -79,12 +95,14 @@ PostgreSQL debería aparecer como:
 ## Postgres: reiniciar la base desde cero
 
 > Esto elimina los volúmenes de PostgreSQL y MongoDB y pierde los datos actuales.
-> Al levantar de nuevo, la base queda vacía: hay que aplicar migraciones y seed dev.
+> Al levantar de nuevo, la base queda vacía: hay que aplicar migraciones y correr los seeds en orden (territorial → sedes → dev).
 
 ```
 podman compose down -v
 podman compose up --build -d
 podman compose exec back pnpm db:migrate:deploy
+podman compose exec back pnpm db:seed:territorial
+podman compose exec back pnpm db:seed:sedes
 podman compose exec back pnpm db:seed:dev
 ```
 
@@ -100,9 +118,9 @@ podman compose exec back pnpm db:seed:dev
 
 - `podman volume ls` # ver pgdata, mongodata, etc.
 
-- `podman-compose down -v` # BORRA datos; al próximo up la BD queda vacía y hay que correr migraciones + seed dev
+- `podman-compose down -v` # BORRA datos; al próximo up la BD queda vacía y hay que correr migraciones + seeds
 
-> Regla: `down` apaga guardando datos; `down -v` formatea los volúmenes. Los SQL de `postgres/` NO se ejecutan automáticamente: el esquema se crea con `pnpm db:migrate:deploy` y los datos dev con `pnpm db:seed:dev`.
+> Regla: `down` apaga guardando datos; `down -v` formatea los volúmenes. Los SQL de `postgres/` NO se ejecutan automáticamente: el esquema se crea con `pnpm db:migrate:deploy` y los datos se cargan con `pnpm db:seed:territorial`, `pnpm db:seed:sedes` y `pnpm db:seed:dev`.
 
   
 
