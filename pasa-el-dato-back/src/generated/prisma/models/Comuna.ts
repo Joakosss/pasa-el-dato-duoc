@@ -28,66 +28,66 @@ export type AggregateComuna = {
 
 export type ComunaAvgAggregateOutputType = {
   id: number | null
-  ciudadId: number | null
+  regionId: number | null
 }
 
 export type ComunaSumAggregateOutputType = {
   id: number | null
-  ciudadId: number | null
+  regionId: number | null
 }
 
 export type ComunaMinAggregateOutputType = {
   id: number | null
   nombre: string | null
   codigoSubdere: string | null
-  ciudadId: number | null
+  regionId: number | null
 }
 
 export type ComunaMaxAggregateOutputType = {
   id: number | null
   nombre: string | null
   codigoSubdere: string | null
-  ciudadId: number | null
+  regionId: number | null
 }
 
 export type ComunaCountAggregateOutputType = {
   id: number
   nombre: number
   codigoSubdere: number
-  ciudadId: number
+  regionId: number
   _all: number
 }
 
 
 export type ComunaAvgAggregateInputType = {
   id?: true
-  ciudadId?: true
+  regionId?: true
 }
 
 export type ComunaSumAggregateInputType = {
   id?: true
-  ciudadId?: true
+  regionId?: true
 }
 
 export type ComunaMinAggregateInputType = {
   id?: true
   nombre?: true
   codigoSubdere?: true
-  ciudadId?: true
+  regionId?: true
 }
 
 export type ComunaMaxAggregateInputType = {
   id?: true
   nombre?: true
   codigoSubdere?: true
-  ciudadId?: true
+  regionId?: true
 }
 
 export type ComunaCountAggregateInputType = {
   id?: true
   nombre?: true
   codigoSubdere?: true
-  ciudadId?: true
+  regionId?: true
   _all?: true
 }
 
@@ -181,7 +181,7 @@ export type ComunaGroupByOutputType = {
   id: number
   nombre: string
   codigoSubdere: string
-  ciudadId: number
+  regionId: number
   _count: ComunaCountAggregateOutputType | null
   _avg: ComunaAvgAggregateOutputType | null
   _sum: ComunaSumAggregateOutputType | null
@@ -211,8 +211,9 @@ export type ComunaWhereInput = {
   id?: Prisma.IntFilter<"Comuna"> | number
   nombre?: Prisma.StringFilter<"Comuna"> | string
   codigoSubdere?: Prisma.StringFilter<"Comuna"> | string
-  ciudadId?: Prisma.IntFilter<"Comuna"> | number
-  ciudad?: Prisma.XOR<Prisma.CiudadScalarRelationFilter, Prisma.CiudadWhereInput>
+  regionId?: Prisma.IntFilter<"Comuna"> | number
+  region?: Prisma.XOR<Prisma.RegionScalarRelationFilter, Prisma.RegionWhereInput>
+  ciudades?: Prisma.CiudadListRelationFilter
   sedes?: Prisma.SedeListRelationFilter
 }
 
@@ -220,8 +221,9 @@ export type ComunaOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
   codigoSubdere?: Prisma.SortOrder
-  ciudadId?: Prisma.SortOrder
-  ciudad?: Prisma.CiudadOrderByWithRelationInput
+  regionId?: Prisma.SortOrder
+  region?: Prisma.RegionOrderByWithRelationInput
+  ciudades?: Prisma.CiudadOrderByRelationAggregateInput
   sedes?: Prisma.SedeOrderByRelationAggregateInput
 }
 
@@ -232,8 +234,9 @@ export type ComunaWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ComunaWhereInput[]
   NOT?: Prisma.ComunaWhereInput | Prisma.ComunaWhereInput[]
   nombre?: Prisma.StringFilter<"Comuna"> | string
-  ciudadId?: Prisma.IntFilter<"Comuna"> | number
-  ciudad?: Prisma.XOR<Prisma.CiudadScalarRelationFilter, Prisma.CiudadWhereInput>
+  regionId?: Prisma.IntFilter<"Comuna"> | number
+  region?: Prisma.XOR<Prisma.RegionScalarRelationFilter, Prisma.RegionWhereInput>
+  ciudades?: Prisma.CiudadListRelationFilter
   sedes?: Prisma.SedeListRelationFilter
 }, "id" | "codigoSubdere">
 
@@ -241,7 +244,7 @@ export type ComunaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
   codigoSubdere?: Prisma.SortOrder
-  ciudadId?: Prisma.SortOrder
+  regionId?: Prisma.SortOrder
   _count?: Prisma.ComunaCountOrderByAggregateInput
   _avg?: Prisma.ComunaAvgOrderByAggregateInput
   _max?: Prisma.ComunaMaxOrderByAggregateInput
@@ -256,13 +259,14 @@ export type ComunaScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Comuna"> | number
   nombre?: Prisma.StringWithAggregatesFilter<"Comuna"> | string
   codigoSubdere?: Prisma.StringWithAggregatesFilter<"Comuna"> | string
-  ciudadId?: Prisma.IntWithAggregatesFilter<"Comuna"> | number
+  regionId?: Prisma.IntWithAggregatesFilter<"Comuna"> | number
 }
 
 export type ComunaCreateInput = {
   nombre: string
   codigoSubdere: string
-  ciudad: Prisma.CiudadCreateNestedOneWithoutComunasInput
+  region: Prisma.RegionCreateNestedOneWithoutComunasInput
+  ciudades?: Prisma.CiudadCreateNestedManyWithoutComunaInput
   sedes?: Prisma.SedeCreateNestedManyWithoutComunaInput
 }
 
@@ -270,14 +274,16 @@ export type ComunaUncheckedCreateInput = {
   id?: number
   nombre: string
   codigoSubdere: string
-  ciudadId: number
+  regionId: number
+  ciudades?: Prisma.CiudadUncheckedCreateNestedManyWithoutComunaInput
   sedes?: Prisma.SedeUncheckedCreateNestedManyWithoutComunaInput
 }
 
 export type ComunaUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
-  ciudad?: Prisma.CiudadUpdateOneRequiredWithoutComunasNestedInput
+  region?: Prisma.RegionUpdateOneRequiredWithoutComunasNestedInput
+  ciudades?: Prisma.CiudadUpdateManyWithoutComunaNestedInput
   sedes?: Prisma.SedeUpdateManyWithoutComunaNestedInput
 }
 
@@ -285,7 +291,8 @@ export type ComunaUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
-  ciudadId?: Prisma.IntFieldUpdateOperationsInput | number
+  regionId?: Prisma.IntFieldUpdateOperationsInput | number
+  ciudades?: Prisma.CiudadUncheckedUpdateManyWithoutComunaNestedInput
   sedes?: Prisma.SedeUncheckedUpdateManyWithoutComunaNestedInput
 }
 
@@ -293,7 +300,7 @@ export type ComunaCreateManyInput = {
   id?: number
   nombre: string
   codigoSubdere: string
-  ciudadId: number
+  regionId: number
 }
 
 export type ComunaUpdateManyMutationInput = {
@@ -305,7 +312,7 @@ export type ComunaUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
-  ciudadId?: Prisma.IntFieldUpdateOperationsInput | number
+  regionId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ComunaNullableScalarRelationFilter = {
@@ -327,31 +334,31 @@ export type ComunaCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
   codigoSubdere?: Prisma.SortOrder
-  ciudadId?: Prisma.SortOrder
+  regionId?: Prisma.SortOrder
 }
 
 export type ComunaAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  ciudadId?: Prisma.SortOrder
+  regionId?: Prisma.SortOrder
 }
 
 export type ComunaMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
   codigoSubdere?: Prisma.SortOrder
-  ciudadId?: Prisma.SortOrder
+  regionId?: Prisma.SortOrder
 }
 
 export type ComunaMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
   codigoSubdere?: Prisma.SortOrder
-  ciudadId?: Prisma.SortOrder
+  regionId?: Prisma.SortOrder
 }
 
 export type ComunaSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  ciudadId?: Prisma.SortOrder
+  regionId?: Prisma.SortOrder
 }
 
 export type ComunaCreateNestedOneWithoutSedesInput = {
@@ -370,59 +377,77 @@ export type ComunaUpdateOneWithoutSedesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ComunaUpdateToOneWithWhereWithoutSedesInput, Prisma.ComunaUpdateWithoutSedesInput>, Prisma.ComunaUncheckedUpdateWithoutSedesInput>
 }
 
-export type ComunaCreateNestedManyWithoutCiudadInput = {
-  create?: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadInput, Prisma.ComunaUncheckedCreateWithoutCiudadInput> | Prisma.ComunaCreateWithoutCiudadInput[] | Prisma.ComunaUncheckedCreateWithoutCiudadInput[]
-  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutCiudadInput | Prisma.ComunaCreateOrConnectWithoutCiudadInput[]
-  createMany?: Prisma.ComunaCreateManyCiudadInputEnvelope
+export type ComunaCreateNestedManyWithoutRegionInput = {
+  create?: Prisma.XOR<Prisma.ComunaCreateWithoutRegionInput, Prisma.ComunaUncheckedCreateWithoutRegionInput> | Prisma.ComunaCreateWithoutRegionInput[] | Prisma.ComunaUncheckedCreateWithoutRegionInput[]
+  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutRegionInput | Prisma.ComunaCreateOrConnectWithoutRegionInput[]
+  createMany?: Prisma.ComunaCreateManyRegionInputEnvelope
   connect?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
 }
 
-export type ComunaUncheckedCreateNestedManyWithoutCiudadInput = {
-  create?: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadInput, Prisma.ComunaUncheckedCreateWithoutCiudadInput> | Prisma.ComunaCreateWithoutCiudadInput[] | Prisma.ComunaUncheckedCreateWithoutCiudadInput[]
-  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutCiudadInput | Prisma.ComunaCreateOrConnectWithoutCiudadInput[]
-  createMany?: Prisma.ComunaCreateManyCiudadInputEnvelope
+export type ComunaUncheckedCreateNestedManyWithoutRegionInput = {
+  create?: Prisma.XOR<Prisma.ComunaCreateWithoutRegionInput, Prisma.ComunaUncheckedCreateWithoutRegionInput> | Prisma.ComunaCreateWithoutRegionInput[] | Prisma.ComunaUncheckedCreateWithoutRegionInput[]
+  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutRegionInput | Prisma.ComunaCreateOrConnectWithoutRegionInput[]
+  createMany?: Prisma.ComunaCreateManyRegionInputEnvelope
   connect?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
 }
 
-export type ComunaUpdateManyWithoutCiudadNestedInput = {
-  create?: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadInput, Prisma.ComunaUncheckedCreateWithoutCiudadInput> | Prisma.ComunaCreateWithoutCiudadInput[] | Prisma.ComunaUncheckedCreateWithoutCiudadInput[]
-  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutCiudadInput | Prisma.ComunaCreateOrConnectWithoutCiudadInput[]
-  upsert?: Prisma.ComunaUpsertWithWhereUniqueWithoutCiudadInput | Prisma.ComunaUpsertWithWhereUniqueWithoutCiudadInput[]
-  createMany?: Prisma.ComunaCreateManyCiudadInputEnvelope
+export type ComunaUpdateManyWithoutRegionNestedInput = {
+  create?: Prisma.XOR<Prisma.ComunaCreateWithoutRegionInput, Prisma.ComunaUncheckedCreateWithoutRegionInput> | Prisma.ComunaCreateWithoutRegionInput[] | Prisma.ComunaUncheckedCreateWithoutRegionInput[]
+  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutRegionInput | Prisma.ComunaCreateOrConnectWithoutRegionInput[]
+  upsert?: Prisma.ComunaUpsertWithWhereUniqueWithoutRegionInput | Prisma.ComunaUpsertWithWhereUniqueWithoutRegionInput[]
+  createMany?: Prisma.ComunaCreateManyRegionInputEnvelope
   set?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
   disconnect?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
   delete?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
   connect?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
-  update?: Prisma.ComunaUpdateWithWhereUniqueWithoutCiudadInput | Prisma.ComunaUpdateWithWhereUniqueWithoutCiudadInput[]
-  updateMany?: Prisma.ComunaUpdateManyWithWhereWithoutCiudadInput | Prisma.ComunaUpdateManyWithWhereWithoutCiudadInput[]
+  update?: Prisma.ComunaUpdateWithWhereUniqueWithoutRegionInput | Prisma.ComunaUpdateWithWhereUniqueWithoutRegionInput[]
+  updateMany?: Prisma.ComunaUpdateManyWithWhereWithoutRegionInput | Prisma.ComunaUpdateManyWithWhereWithoutRegionInput[]
   deleteMany?: Prisma.ComunaScalarWhereInput | Prisma.ComunaScalarWhereInput[]
 }
 
-export type ComunaUncheckedUpdateManyWithoutCiudadNestedInput = {
-  create?: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadInput, Prisma.ComunaUncheckedCreateWithoutCiudadInput> | Prisma.ComunaCreateWithoutCiudadInput[] | Prisma.ComunaUncheckedCreateWithoutCiudadInput[]
-  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutCiudadInput | Prisma.ComunaCreateOrConnectWithoutCiudadInput[]
-  upsert?: Prisma.ComunaUpsertWithWhereUniqueWithoutCiudadInput | Prisma.ComunaUpsertWithWhereUniqueWithoutCiudadInput[]
-  createMany?: Prisma.ComunaCreateManyCiudadInputEnvelope
+export type ComunaUncheckedUpdateManyWithoutRegionNestedInput = {
+  create?: Prisma.XOR<Prisma.ComunaCreateWithoutRegionInput, Prisma.ComunaUncheckedCreateWithoutRegionInput> | Prisma.ComunaCreateWithoutRegionInput[] | Prisma.ComunaUncheckedCreateWithoutRegionInput[]
+  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutRegionInput | Prisma.ComunaCreateOrConnectWithoutRegionInput[]
+  upsert?: Prisma.ComunaUpsertWithWhereUniqueWithoutRegionInput | Prisma.ComunaUpsertWithWhereUniqueWithoutRegionInput[]
+  createMany?: Prisma.ComunaCreateManyRegionInputEnvelope
   set?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
   disconnect?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
   delete?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
   connect?: Prisma.ComunaWhereUniqueInput | Prisma.ComunaWhereUniqueInput[]
-  update?: Prisma.ComunaUpdateWithWhereUniqueWithoutCiudadInput | Prisma.ComunaUpdateWithWhereUniqueWithoutCiudadInput[]
-  updateMany?: Prisma.ComunaUpdateManyWithWhereWithoutCiudadInput | Prisma.ComunaUpdateManyWithWhereWithoutCiudadInput[]
+  update?: Prisma.ComunaUpdateWithWhereUniqueWithoutRegionInput | Prisma.ComunaUpdateWithWhereUniqueWithoutRegionInput[]
+  updateMany?: Prisma.ComunaUpdateManyWithWhereWithoutRegionInput | Prisma.ComunaUpdateManyWithWhereWithoutRegionInput[]
   deleteMany?: Prisma.ComunaScalarWhereInput | Prisma.ComunaScalarWhereInput[]
+}
+
+export type ComunaCreateNestedOneWithoutCiudadesInput = {
+  create?: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadesInput, Prisma.ComunaUncheckedCreateWithoutCiudadesInput>
+  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutCiudadesInput
+  connect?: Prisma.ComunaWhereUniqueInput
+}
+
+export type ComunaUpdateOneWithoutCiudadesNestedInput = {
+  create?: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadesInput, Prisma.ComunaUncheckedCreateWithoutCiudadesInput>
+  connectOrCreate?: Prisma.ComunaCreateOrConnectWithoutCiudadesInput
+  upsert?: Prisma.ComunaUpsertWithoutCiudadesInput
+  disconnect?: Prisma.ComunaWhereInput | boolean
+  delete?: Prisma.ComunaWhereInput | boolean
+  connect?: Prisma.ComunaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ComunaUpdateToOneWithWhereWithoutCiudadesInput, Prisma.ComunaUpdateWithoutCiudadesInput>, Prisma.ComunaUncheckedUpdateWithoutCiudadesInput>
 }
 
 export type ComunaCreateWithoutSedesInput = {
   nombre: string
   codigoSubdere: string
-  ciudad: Prisma.CiudadCreateNestedOneWithoutComunasInput
+  region: Prisma.RegionCreateNestedOneWithoutComunasInput
+  ciudades?: Prisma.CiudadCreateNestedManyWithoutComunaInput
 }
 
 export type ComunaUncheckedCreateWithoutSedesInput = {
   id?: number
   nombre: string
   codigoSubdere: string
-  ciudadId: number
+  regionId: number
+  ciudades?: Prisma.CiudadUncheckedCreateNestedManyWithoutComunaInput
 }
 
 export type ComunaCreateOrConnectWithoutSedesInput = {
@@ -444,53 +469,57 @@ export type ComunaUpdateToOneWithWhereWithoutSedesInput = {
 export type ComunaUpdateWithoutSedesInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
-  ciudad?: Prisma.CiudadUpdateOneRequiredWithoutComunasNestedInput
+  region?: Prisma.RegionUpdateOneRequiredWithoutComunasNestedInput
+  ciudades?: Prisma.CiudadUpdateManyWithoutComunaNestedInput
 }
 
 export type ComunaUncheckedUpdateWithoutSedesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
-  ciudadId?: Prisma.IntFieldUpdateOperationsInput | number
+  regionId?: Prisma.IntFieldUpdateOperationsInput | number
+  ciudades?: Prisma.CiudadUncheckedUpdateManyWithoutComunaNestedInput
 }
 
-export type ComunaCreateWithoutCiudadInput = {
+export type ComunaCreateWithoutRegionInput = {
   nombre: string
   codigoSubdere: string
+  ciudades?: Prisma.CiudadCreateNestedManyWithoutComunaInput
   sedes?: Prisma.SedeCreateNestedManyWithoutComunaInput
 }
 
-export type ComunaUncheckedCreateWithoutCiudadInput = {
+export type ComunaUncheckedCreateWithoutRegionInput = {
   id?: number
   nombre: string
   codigoSubdere: string
+  ciudades?: Prisma.CiudadUncheckedCreateNestedManyWithoutComunaInput
   sedes?: Prisma.SedeUncheckedCreateNestedManyWithoutComunaInput
 }
 
-export type ComunaCreateOrConnectWithoutCiudadInput = {
+export type ComunaCreateOrConnectWithoutRegionInput = {
   where: Prisma.ComunaWhereUniqueInput
-  create: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadInput, Prisma.ComunaUncheckedCreateWithoutCiudadInput>
+  create: Prisma.XOR<Prisma.ComunaCreateWithoutRegionInput, Prisma.ComunaUncheckedCreateWithoutRegionInput>
 }
 
-export type ComunaCreateManyCiudadInputEnvelope = {
-  data: Prisma.ComunaCreateManyCiudadInput | Prisma.ComunaCreateManyCiudadInput[]
+export type ComunaCreateManyRegionInputEnvelope = {
+  data: Prisma.ComunaCreateManyRegionInput | Prisma.ComunaCreateManyRegionInput[]
   skipDuplicates?: boolean
 }
 
-export type ComunaUpsertWithWhereUniqueWithoutCiudadInput = {
+export type ComunaUpsertWithWhereUniqueWithoutRegionInput = {
   where: Prisma.ComunaWhereUniqueInput
-  update: Prisma.XOR<Prisma.ComunaUpdateWithoutCiudadInput, Prisma.ComunaUncheckedUpdateWithoutCiudadInput>
-  create: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadInput, Prisma.ComunaUncheckedCreateWithoutCiudadInput>
+  update: Prisma.XOR<Prisma.ComunaUpdateWithoutRegionInput, Prisma.ComunaUncheckedUpdateWithoutRegionInput>
+  create: Prisma.XOR<Prisma.ComunaCreateWithoutRegionInput, Prisma.ComunaUncheckedCreateWithoutRegionInput>
 }
 
-export type ComunaUpdateWithWhereUniqueWithoutCiudadInput = {
+export type ComunaUpdateWithWhereUniqueWithoutRegionInput = {
   where: Prisma.ComunaWhereUniqueInput
-  data: Prisma.XOR<Prisma.ComunaUpdateWithoutCiudadInput, Prisma.ComunaUncheckedUpdateWithoutCiudadInput>
+  data: Prisma.XOR<Prisma.ComunaUpdateWithoutRegionInput, Prisma.ComunaUncheckedUpdateWithoutRegionInput>
 }
 
-export type ComunaUpdateManyWithWhereWithoutCiudadInput = {
+export type ComunaUpdateManyWithWhereWithoutRegionInput = {
   where: Prisma.ComunaScalarWhereInput
-  data: Prisma.XOR<Prisma.ComunaUpdateManyMutationInput, Prisma.ComunaUncheckedUpdateManyWithoutCiudadInput>
+  data: Prisma.XOR<Prisma.ComunaUpdateManyMutationInput, Prisma.ComunaUncheckedUpdateManyWithoutRegionInput>
 }
 
 export type ComunaScalarWhereInput = {
@@ -500,29 +529,77 @@ export type ComunaScalarWhereInput = {
   id?: Prisma.IntFilter<"Comuna"> | number
   nombre?: Prisma.StringFilter<"Comuna"> | string
   codigoSubdere?: Prisma.StringFilter<"Comuna"> | string
-  ciudadId?: Prisma.IntFilter<"Comuna"> | number
+  regionId?: Prisma.IntFilter<"Comuna"> | number
 }
 
-export type ComunaCreateManyCiudadInput = {
+export type ComunaCreateWithoutCiudadesInput = {
+  nombre: string
+  codigoSubdere: string
+  region: Prisma.RegionCreateNestedOneWithoutComunasInput
+  sedes?: Prisma.SedeCreateNestedManyWithoutComunaInput
+}
+
+export type ComunaUncheckedCreateWithoutCiudadesInput = {
+  id?: number
+  nombre: string
+  codigoSubdere: string
+  regionId: number
+  sedes?: Prisma.SedeUncheckedCreateNestedManyWithoutComunaInput
+}
+
+export type ComunaCreateOrConnectWithoutCiudadesInput = {
+  where: Prisma.ComunaWhereUniqueInput
+  create: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadesInput, Prisma.ComunaUncheckedCreateWithoutCiudadesInput>
+}
+
+export type ComunaUpsertWithoutCiudadesInput = {
+  update: Prisma.XOR<Prisma.ComunaUpdateWithoutCiudadesInput, Prisma.ComunaUncheckedUpdateWithoutCiudadesInput>
+  create: Prisma.XOR<Prisma.ComunaCreateWithoutCiudadesInput, Prisma.ComunaUncheckedCreateWithoutCiudadesInput>
+  where?: Prisma.ComunaWhereInput
+}
+
+export type ComunaUpdateToOneWithWhereWithoutCiudadesInput = {
+  where?: Prisma.ComunaWhereInput
+  data: Prisma.XOR<Prisma.ComunaUpdateWithoutCiudadesInput, Prisma.ComunaUncheckedUpdateWithoutCiudadesInput>
+}
+
+export type ComunaUpdateWithoutCiudadesInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
+  region?: Prisma.RegionUpdateOneRequiredWithoutComunasNestedInput
+  sedes?: Prisma.SedeUpdateManyWithoutComunaNestedInput
+}
+
+export type ComunaUncheckedUpdateWithoutCiudadesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
+  regionId?: Prisma.IntFieldUpdateOperationsInput | number
+  sedes?: Prisma.SedeUncheckedUpdateManyWithoutComunaNestedInput
+}
+
+export type ComunaCreateManyRegionInput = {
   id?: number
   nombre: string
   codigoSubdere: string
 }
 
-export type ComunaUpdateWithoutCiudadInput = {
+export type ComunaUpdateWithoutRegionInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
+  ciudades?: Prisma.CiudadUpdateManyWithoutComunaNestedInput
   sedes?: Prisma.SedeUpdateManyWithoutComunaNestedInput
 }
 
-export type ComunaUncheckedUpdateWithoutCiudadInput = {
+export type ComunaUncheckedUpdateWithoutRegionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
+  ciudades?: Prisma.CiudadUncheckedUpdateManyWithoutComunaNestedInput
   sedes?: Prisma.SedeUncheckedUpdateManyWithoutComunaNestedInput
 }
 
-export type ComunaUncheckedUpdateManyWithoutCiudadInput = {
+export type ComunaUncheckedUpdateManyWithoutRegionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   codigoSubdere?: Prisma.StringFieldUpdateOperationsInput | string
@@ -534,10 +611,12 @@ export type ComunaUncheckedUpdateManyWithoutCiudadInput = {
  */
 
 export type ComunaCountOutputType = {
+  ciudades: number
   sedes: number
 }
 
 export type ComunaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  ciudades?: boolean | ComunaCountOutputTypeCountCiudadesArgs
   sedes?: boolean | ComunaCountOutputTypeCountSedesArgs
 }
 
@@ -554,6 +633,13 @@ export type ComunaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
 /**
  * ComunaCountOutputType without action
  */
+export type ComunaCountOutputTypeCountCiudadesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CiudadWhereInput
+}
+
+/**
+ * ComunaCountOutputType without action
+ */
 export type ComunaCountOutputTypeCountSedesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SedeWhereInput
 }
@@ -563,8 +649,9 @@ export type ComunaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   id?: boolean
   nombre?: boolean
   codigoSubdere?: boolean
-  ciudadId?: boolean
-  ciudad?: boolean | Prisma.CiudadDefaultArgs<ExtArgs>
+  regionId?: boolean
+  region?: boolean | Prisma.RegionDefaultArgs<ExtArgs>
+  ciudades?: boolean | Prisma.Comuna$ciudadesArgs<ExtArgs>
   sedes?: boolean | Prisma.Comuna$sedesArgs<ExtArgs>
   _count?: boolean | Prisma.ComunaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["comuna"]>
@@ -573,49 +660,51 @@ export type ComunaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   nombre?: boolean
   codigoSubdere?: boolean
-  ciudadId?: boolean
-  ciudad?: boolean | Prisma.CiudadDefaultArgs<ExtArgs>
+  regionId?: boolean
+  region?: boolean | Prisma.RegionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["comuna"]>
 
 export type ComunaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   nombre?: boolean
   codigoSubdere?: boolean
-  ciudadId?: boolean
-  ciudad?: boolean | Prisma.CiudadDefaultArgs<ExtArgs>
+  regionId?: boolean
+  region?: boolean | Prisma.RegionDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["comuna"]>
 
 export type ComunaSelectScalar = {
   id?: boolean
   nombre?: boolean
   codigoSubdere?: boolean
-  ciudadId?: boolean
+  regionId?: boolean
 }
 
-export type ComunaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "codigoSubdere" | "ciudadId", ExtArgs["result"]["comuna"]>
+export type ComunaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "codigoSubdere" | "regionId", ExtArgs["result"]["comuna"]>
 export type ComunaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ciudad?: boolean | Prisma.CiudadDefaultArgs<ExtArgs>
+  region?: boolean | Prisma.RegionDefaultArgs<ExtArgs>
+  ciudades?: boolean | Prisma.Comuna$ciudadesArgs<ExtArgs>
   sedes?: boolean | Prisma.Comuna$sedesArgs<ExtArgs>
   _count?: boolean | Prisma.ComunaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ComunaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ciudad?: boolean | Prisma.CiudadDefaultArgs<ExtArgs>
+  region?: boolean | Prisma.RegionDefaultArgs<ExtArgs>
 }
 export type ComunaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  ciudad?: boolean | Prisma.CiudadDefaultArgs<ExtArgs>
+  region?: boolean | Prisma.RegionDefaultArgs<ExtArgs>
 }
 
 export type $ComunaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Comuna"
   objects: {
-    ciudad: Prisma.$CiudadPayload<ExtArgs>
+    region: Prisma.$RegionPayload<ExtArgs>
+    ciudades: Prisma.$CiudadPayload<ExtArgs>[]
     sedes: Prisma.$SedePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     nombre: string
     codigoSubdere: string
-    ciudadId: number
+    regionId: number
   }, ExtArgs["result"]["comuna"]>
   composites: {}
 }
@@ -1010,7 +1099,8 @@ readonly fields: ComunaFieldRefs;
  */
 export interface Prisma__ComunaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  ciudad<T extends Prisma.CiudadDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CiudadDefaultArgs<ExtArgs>>): Prisma.Prisma__CiudadClient<runtime.Types.Result.GetResult<Prisma.$CiudadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  region<T extends Prisma.RegionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RegionDefaultArgs<ExtArgs>>): Prisma.Prisma__RegionClient<runtime.Types.Result.GetResult<Prisma.$RegionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  ciudades<T extends Prisma.Comuna$ciudadesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Comuna$ciudadesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CiudadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sedes<T extends Prisma.Comuna$sedesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Comuna$sedesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1044,7 +1134,7 @@ export interface ComunaFieldRefs {
   readonly id: Prisma.FieldRef<"Comuna", 'Int'>
   readonly nombre: Prisma.FieldRef<"Comuna", 'String'>
   readonly codigoSubdere: Prisma.FieldRef<"Comuna", 'String'>
-  readonly ciudadId: Prisma.FieldRef<"Comuna", 'Int'>
+  readonly regionId: Prisma.FieldRef<"Comuna", 'Int'>
 }
     
 
@@ -1443,6 +1533,30 @@ export type ComunaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many Comunas to delete.
    */
   limit?: number
+}
+
+/**
+ * Comuna.ciudades
+ */
+export type Comuna$ciudadesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Ciudad
+   */
+  select?: Prisma.CiudadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Ciudad
+   */
+  omit?: Prisma.CiudadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CiudadInclude<ExtArgs> | null
+  where?: Prisma.CiudadWhereInput
+  orderBy?: Prisma.CiudadOrderByWithRelationInput | Prisma.CiudadOrderByWithRelationInput[]
+  cursor?: Prisma.CiudadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CiudadScalarFieldEnum | Prisma.CiudadScalarFieldEnum[]
 }
 
 /**

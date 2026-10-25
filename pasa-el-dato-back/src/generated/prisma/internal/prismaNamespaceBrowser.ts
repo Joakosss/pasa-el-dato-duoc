@@ -132,8 +132,10 @@ export type RegionScalarFieldEnum = (typeof RegionScalarFieldEnum)[keyof typeof 
 
 export const CiudadScalarFieldEnum = {
   id: 'id',
+  idEntidad: 'idEntidad',
   nombre: 'nombre',
-  regionId: 'regionId'
+  regionId: 'regionId',
+  comunaId: 'comunaId'
 } as const
 
 export type CiudadScalarFieldEnum = (typeof CiudadScalarFieldEnum)[keyof typeof CiudadScalarFieldEnum]
@@ -143,7 +145,7 @@ export const ComunaScalarFieldEnum = {
   id: 'id',
   nombre: 'nombre',
   codigoSubdere: 'codigoSubdere',
-  ciudadId: 'ciudadId'
+  regionId: 'regionId'
 } as const
 
 export type ComunaScalarFieldEnum = (typeof ComunaScalarFieldEnum)[keyof typeof ComunaScalarFieldEnum]

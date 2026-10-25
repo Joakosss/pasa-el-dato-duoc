@@ -66,20 +66,23 @@ model Region {
   codigoSubdere String  @unique @map("codigo_subdere")
 
   ciudades Ciudad[]
+  comunas  Comuna[]
 
   @@map("region")
 }
 
 model Ciudad {
-  id       Int    @id @default(autoincrement())
-  nombre   String
-  regionId Int    @map("fk_region")
+  id        Int     @id @default(autoincrement())
+  idEntidad String? @unique @map("id_entidad")
+  nombre    String
+  regionId  Int     @map("fk_region")
+  comunaId  Int?    @map("fk_comuna")
 
-  region  Region   @relation(fields: [regionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  comunas Comuna[]
+  region Region  @relation(fields: [regionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comuna Comuna? @relation(fields: [comunaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([nombre, regionId], map: "ux_ciudad_nombre_region")
   @@index([regionId], map: "idx_ciudad_region")
+  @@index([comunaId], map: "idx_ciudad_comuna")
   @@map("ciudad")
 }
 
@@ -87,12 +90,13 @@ model Comuna {
   id            Int    @id @default(autoincrement())
   nombre        String
   codigoSubdere String @unique @map("codigo_subdere")
-  ciudadId      Int    @map("fk_ciudad")
+  regionId      Int    @map("fk_region")
 
-  ciudad Ciudad @relation(fields: [ciudadId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  sedes  Sede[]
+  region   Region   @relation(fields: [regionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ciudades Ciudad[]
+  sedes    Sede[]
 
-  @@index([ciudadId], map: "idx_comuna_ciudad")
+  @@index([regionId], map: "idx_comuna_region")
   @@map("comuna")
 }
 
