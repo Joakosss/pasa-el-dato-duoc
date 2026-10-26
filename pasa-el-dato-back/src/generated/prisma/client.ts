@@ -101,3 +101,28 @@ export type RefreshToken = Prisma.RefreshTokenModel
  * 
  */
 export type AccessTokenRevocado = Prisma.AccessTokenRevocadoModel
+/**
+ * Model TipoVenta
+ * 
+ */
+export type TipoVenta = Prisma.TipoVentaModel
+/**
+ * Model Categoria
+ * 
+ */
+export type Categoria = Prisma.CategoriaModel
+/**
+ * Model EstadoPublicacion
+ * 
+ */
+export type EstadoPublicacion = Prisma.EstadoPublicacionModel
+/**
+ * Model Publicacion
+ * 
+ */
+export type Publicacion = Prisma.PublicacionModel
+/**
+ * Model ImagenPublicacion
+ * 
+ */
+export type ImagenPublicacion = Prisma.ImagenPublicacionModel

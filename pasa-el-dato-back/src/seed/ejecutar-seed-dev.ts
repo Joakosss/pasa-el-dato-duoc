@@ -4,5 +4,5 @@ import { ejecutarSeedDev } from './seed-dev.js';
 await ejecutarSeedDev();
 
 console.log(
-  'Seed dev aplicado: roles, sede Puente Alto, escuela y carrera de prueba.',
+  'Seed dev aplicado: roles, sede Puente Alto, escuela, carrera de prueba, estados de publicación y tipos de venta.',
 );
