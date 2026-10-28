@@ -48,9 +48,11 @@ estricto salvo T-08/T-09 (paralelizables).
   - `EstadoPublicacion`: `En curso`, `Pausado`, `Vendido` (valores del MER).
   - `TipoVenta`: `Producto`, `Servicio` (derivado de `(servicio-producto)` del
     MER).
-- **BLOQUEADA la parte de `Categoria`**: el MER define la tabla pero no valores.
-  No se inventan categorías. Subtarea T-02b queda pendiente de lista aprobada
-  por el equipo; desbloquea T-12 (E2E de creación válida).
+- `Categoria`: catálogo inicial autorizado para esta implementación:
+  `Tecnología y accesorios`, `Libros y material de estudio`, `Insumos y
+  materiales académicos`, `Vestuario y accesorios`, `Hogar y vida diaria`,
+  `Deportes y bienestar`, `Servicios académicos`, `Servicios técnicos y
+  creativos`, `Servicios personales y varios`, `Otros`.
 - El seed no crea imágenes ni publicaciones.
 - **Verificación:** ejecutar seed dos veces en dev; segunda pasada sin
   duplicados ni errores; `SELECT` de catálogos con los valores esperados.
@@ -106,15 +108,16 @@ estricto salvo T-08/T-09 (paralelizables).
 
 - Configuración `UPLOAD_DIR` (variable de entorno, con ruta por defecto
   documentada); flujo con compensación de la spec sección 6: escribir en
-  `UPLOAD_DIR/tmp/`, validar, mover (rename), transacción, borrar archivos si la
-  BD falla; si el movimiento falla parcialmente, borrar los ya movidos y no
-  tocar la BD.
+  `UPLOAD_DIR/tmp/` por solicitud, validar, mover (rename), transacción, borrar
+  archivos si la BD falla; si el movimiento falla parcialmente, borrar los ya
+  movidos y no tocar la BD.
 - Servido público: `useStaticAssets(UPLOAD_DIR, { prefix: '/api/uploads' })`
   con `NestExpressApplication` en `main.ts`.
 - Tratamiento de fallos de disco: error de escritura/movimiento → 500, BD sin
   cambios, sin archivos residuales.
 - **Verificación:** pruebas unitarias de la compensación (BD falla → archivos
-  eliminados; movimiento falla → BD intacta).
+  eliminados; movimiento falla → BD intacta), prueba unitaria de aislamiento de
+  `tmp/` concurrente y verificación HTTP de recuperación de imagen por su URL.
 
 ### T-09 — Infraestructura de almacenamiento (paralelizable con T-08)
 
@@ -156,8 +159,9 @@ estricto salvo T-08/T-09 (paralelizables).
 
 ## 3. Bloqueos vigentes
 
-1. **T-02b / lista de categorías**: sin lista aprobada no hay seed de
-   `Categoria` ni E2E de creación válida. No se inventan valores.
+1. **T-02b / lista de categorías**: resuelta para esta implementación con un
+   catálogo inicial autorizado. Si el equipo redefine nombres o granularidad,
+   deberá tratarse como cambio funcional posterior.
 2. **Texto de la HU**: dice `Publicada`; la decisión confirmada es `En curso`.
    Corrección de la HU pendiente, fuera de estas tareas.
 3. **Aplicación de la migración a desarrollo**: T-01 la genera; su ejecución

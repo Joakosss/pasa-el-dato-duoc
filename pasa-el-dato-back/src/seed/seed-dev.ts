@@ -75,8 +75,21 @@ export async function ejecutarSeedDev(): Promise<void> {
       skipDuplicates: true,
     });
 
-    // Categoria: lista oficial pendiente (T-02b, bloqueado). No se inventan
-    // valores; se agregará cuando el equipo confirme la lista.
+    await prisma.categoria.createMany({
+      data: [
+        { nombre: 'Tecnología y accesorios' },
+        { nombre: 'Libros y material de estudio' },
+        { nombre: 'Insumos y materiales académicos' },
+        { nombre: 'Vestuario y accesorios' },
+        { nombre: 'Hogar y vida diaria' },
+        { nombre: 'Deportes y bienestar' },
+        { nombre: 'Servicios académicos' },
+        { nombre: 'Servicios técnicos y creativos' },
+        { nombre: 'Servicios personales y varios' },
+        { nombre: 'Otros' },
+      ],
+      skipDuplicates: true,
+    });
   } finally {
     await prisma.$disconnect();
   }
