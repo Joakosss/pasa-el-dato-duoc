@@ -2,6 +2,10 @@
 /dist
 /node_modules
 /build
+*.tsbuildinfo
+
+# runtime uploads
+/uploads-publicaciones
 
 # Logs
 logs
