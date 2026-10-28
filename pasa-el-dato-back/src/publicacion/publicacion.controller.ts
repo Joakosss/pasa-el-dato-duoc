@@ -1,5 +1,116 @@
-import { Controller } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import type { Request } from 'express';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  ApiConsumes,
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js';
+import { AlmacenamientoImagenesService } from './almacenamiento-imagenes.service.js';
+import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
+import { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
+import {
+  CAMPO_IMAGENES,
+  CANTIDAD_MAXIMA_IMAGENES,
+  TAMANO_MAXIMO_IMAGEN_BYTES,
+  MIMES_IMAGEN_PERMITIDOS,
+} from './imagenes.constantes.js';
+import { PublicacionService } from './publicacion.service.js';
+import { traducirErrorMulter } from './errores-multer.js';
+import { asegurarCampoImagenes, type ImagenRecibida } from './validar-imagenes.js';
 
-// T-03: controlador base sin rutas. POST /api/publicaciones llega en T-06/T-10.
+// Los archivos de multer con memoryStorage tienen la misma forma que
+// ImagenRecibida pero son tipados por la plataforma como Express.Multer.File.
+// Se usa conversión explícita de tipo para evitar dependencia de @types/multer.
+function toImagenesRecibidas(archivos: unknown[]): ImagenRecibida[] {
+  return archivos as ImagenRecibida[];
+}
+
+@ApiTags('Publicaciones')
 @Controller('publicaciones')
-export class PublicacionController {}
+export class PublicacionController {
+  constructor(
+    private readonly publicacionService: PublicacionService,
+    private readonly almacenamientoImagenesService: AlmacenamientoImagenesService,
+  ) {}
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FilesInterceptor(CAMPO_IMAGENES, CANTIDAD_MAXIMA_IMAGENES, {
+      storage: undefined, // memoryStorage por defecto: buffers en memoria
+      limits: { fileSize: TAMANO_MAXIMO_IMAGEN_BYTES },
+      fileFilter: (
+        _req: unknown,
+        file: unknown,
+        cb: (err: Error | null, acceptFile: boolean) => void,
+      ) => {
+        const f = file as { mimetype: string; originalname: string };
+        if (
+          MIMES_IMAGEN_PERMITIDOS.includes(
+            f.mimetype as (typeof MIMES_IMAGEN_PERMITIDOS)[number],
+          )
+        ) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              `Formato de imagen no permitido: ${f.originalname}`,
+            ),
+            false,
+          );
+        }
+      },
+    }),
+  )
+  @ApiOperation({ summary: 'Crear publicación con imágenes' })
+  @ApiConsumes('multipart/form-data')
+  @ApiCookieAuth('accessToken')
+  @ApiCreatedResponse({ type: PublicacionCreadaRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  async crear(
+    @Req() solicitud: Request & { user?: SesionAutenticada; files?: unknown[] },
+    @Body() dto: CrearPublicacionDto,
+  ): Promise<PublicacionCreadaRespuestaDto> {
+    // El guard garantiza que user existe; el check explícito evita el tipo nullable.
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    // FilesInterceptor coloca los archivos en request.files.
+    // Traducir errores de multer que hayan pasado hasta aquí.
+    const archivosRaw = solicitud.files ?? [];
+    const archivos = toImagenesRecibidas(Array.isArray(archivosRaw) ? archivosRaw : []);
+
+    // Verifica que el campo sea exactamente CAMPO_IMAGENES.
+    try {
+      asegurarCampoImagenes(archivos);
+    } catch (err: unknown) {
+      throw traducirErrorMulter(err) as Error;
+    }
+
+    return this.publicacionService.crearPublicacion(
+      dto,
+      archivos,
+      user.idCuenta,
+      this.almacenamientoImagenesService,
+    );
+  }
+}

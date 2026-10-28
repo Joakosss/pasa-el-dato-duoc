@@ -1,7 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { mkdir, rename, rm, writeFile } from 'node:fs/promises';
-import { isAbsolute, join, resolve } from 'node:path';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { basename, isAbsolute, join, relative, resolve } from 'node:path';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { validarImagenesRecibidas, type ImagenRecibida } from './validar-imagenes.js';
 
 const DIRECTORIO_UPLOADS_POR_DEFECTO = '/app/uploads-publicaciones';
@@ -24,6 +28,21 @@ export interface ResultadoOperacionAlmacenamiento<T> {
   imagenes: ImagenAlmacenada[];
 }
 
+function asegurarRutaDentroDe(base: string, objetivo: string): void {
+  const relativa = relative(base, objetivo);
+  if (
+    relativa === '' ||
+    relativa === '.' ||
+    (!relativa.startsWith('..') && !isAbsolute(relativa))
+  ) {
+    return;
+  }
+
+  throw new InternalServerErrorException(
+    'No fue posible almacenar las imágenes',
+  );
+}
+
 export function obtenerDirectorioUploads(
   valor = process.env.UPLOAD_DIR,
 ): string {
@@ -41,19 +60,32 @@ export class AlmacenamientoImagenesService {
       imagenes: ImagenAlmacenada[],
     ) => Promise<T>,
   ): Promise<ResultadoOperacionAlmacenamiento<T>> {
-    validarImagenesRecibidas(imagenes);
+    // La validación también se ejecuta aquí para preservar invariantes del
+    // servicio aunque el controlador ya haya filtrado MIME, cantidad y firma.
+    // Si la validación funcional falla, se re-lanza como BadRequestException.
+    // Si ocurre un error de disco o una excepción inesperada, se traduce a
+    // InternalServerErrorException y se compensan todos los archivos escritos.
 
     const archivosTemporales: string[] = [];
     const archivosFinales: string[] = [];
     const imagenesAlmacenadas: ImagenAlmacenada[] = [];
 
+    const dirTmpRequest = join(this.directorioUploads, 'tmp', randomUUID());
+
     try {
-      await mkdir(join(this.directorioUploads, 'tmp'), { recursive: true });
+      validarImagenesRecibidas(imagenes);
+
+      await mkdir(dirTmpRequest, { recursive: true });
+      asegurarRutaDentroDe(this.directorioUploads, dirTmpRequest);
 
       for (const [indice, imagen] of imagenes.entries()) {
         const nombreArchivo = `${randomUUID()}${EXTENSIONES_POR_MIME[imagen.mimetype]}`;
-        const rutaTemporal = join(this.directorioUploads, 'tmp', nombreArchivo);
+        const rutaTemporal = join(dirTmpRequest, nombreArchivo);
         const rutaFinal = join(this.directorioUploads, nombreArchivo);
+
+        asegurarRutaDentroDe(this.directorioUploads, rutaTemporal);
+        asegurarRutaDentroDe(this.directorioUploads, rutaFinal);
+
         archivosTemporales.push(rutaTemporal);
 
         await writeFile(rutaTemporal, imagen.buffer);
@@ -61,8 +93,8 @@ export class AlmacenamientoImagenesService {
         archivosFinales.push(rutaFinal);
 
         imagenesAlmacenadas.push({
-          nombreArchivo,
-          url: `${PREFIJO_URL_IMAGENES}/${nombreArchivo}`,
+          nombreArchivo: basename(nombreArchivo),
+          url: `${PREFIJO_URL_IMAGENES}/${basename(nombreArchivo)}`,
           orden: indice + 1,
         });
       }
@@ -72,8 +104,12 @@ export class AlmacenamientoImagenesService {
       return { resultado, imagenes: imagenesAlmacenadas };
     } catch (error) {
       await this.eliminarArchivos(archivosTemporales, archivosFinales);
+      await rm(dirTmpRequest, { recursive: true, force: true }).catch(() => undefined);
 
-      if (error instanceof InternalServerErrorException) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof InternalServerErrorException
+      ) {
         throw error;
       }
 
