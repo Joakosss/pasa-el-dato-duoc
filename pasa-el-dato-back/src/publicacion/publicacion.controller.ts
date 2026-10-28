@@ -13,6 +13,7 @@ import {
 import type { Request } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBody,
   ApiConsumes,
   ApiCookieAuth,
   ApiCreatedResponse,
@@ -81,6 +82,65 @@ export class PublicacionController {
   )
   @ApiOperation({ summary: 'Crear publicación con imágenes' })
   @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: [
+        'titulo',
+        'descripcion',
+        'precio',
+        'sedeId',
+        'tipoVentaId',
+        'categoriaId',
+        'imagenes',
+      ],
+      properties: {
+        titulo: {
+          type: 'string',
+          minLength: 5,
+          maxLength: 100,
+          example: 'Notebook Lenovo ThinkPad',
+        },
+        descripcion: {
+          type: 'string',
+          minLength: 20,
+          maxLength: 2000,
+          example: 'Notebook en buen estado, 16 GB de RAM y disco de 512 GB.',
+        },
+        precio: {
+          type: 'string',
+          example: '150000',
+          description: 'Entero en CLP enviado como texto en multipart/form-data',
+        },
+        sedeId: {
+          type: 'string',
+          example: '1',
+          description: 'Identificador de sede enviado como texto en multipart/form-data',
+        },
+        tipoVentaId: {
+          type: 'string',
+          example: '1',
+          description:
+            'Identificador de tipo de venta enviado como texto en multipart/form-data',
+        },
+        categoriaId: {
+          type: 'string',
+          example: '1',
+          description:
+            'Identificador de categoría enviado como texto en multipart/form-data',
+        },
+        imagenes: {
+          type: 'array',
+          minItems: 1,
+          maxItems: 5,
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
   @ApiCookieAuth('accessToken')
   @ApiCreatedResponse({ type: PublicacionCreadaRespuestaDto })
   @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
