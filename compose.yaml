@@ -53,10 +53,12 @@ services:
       API_PORT: ${API_PORT}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       MONGO_URL: mongodb://mongo:27017/${MONGO_DB}
+      UPLOAD_DIR: ${UPLOAD_DIR}
     ports:
       - "0.0.0.0:${API_PORT}:${API_PORT}"
     volumes:
       - ./pasa-el-dato-back:/app:z
+      - uploadsdata:${UPLOAD_DIR}
       - /app/node_modules
     depends_on:
       postgres:
@@ -98,6 +100,7 @@ services:
 volumes:
   pgdata:
   mongodata:
+  uploadsdata:
 
 networks:
   pasaelnetz:
