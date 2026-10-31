@@ -1,12 +1,15 @@
 import {
+  Body,
   Controller,
   Get,
+  Patch,
   Req,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import {
+  ApiBody,
   ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
@@ -14,6 +17,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js';
+import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 import { PerfilRespuestaDto } from './dto/perfil-respuesta.dto.js';
 import { PerfilService } from './perfil.service.js';
 
@@ -40,5 +44,25 @@ export class PerfilController {
     }
 
     return this.perfilService.obtenerPerfil(user.idCuenta);
+  }
+
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Actualizar mi perfil' })
+  @ApiCookieAuth('accessToken')
+  @ApiBody({ type: ActualizarPerfilDto })
+  @ApiOkResponse({ type: PerfilRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  async actualizarPerfil(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Body() dto: ActualizarPerfilDto,
+  ): Promise<PerfilRespuestaDto> {
+    const user = solicitud.user;
+
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.perfilService.actualizarPerfil(user.idCuenta, dto);
   }
 }
