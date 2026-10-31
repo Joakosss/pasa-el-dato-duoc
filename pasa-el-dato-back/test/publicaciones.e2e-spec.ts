@@ -24,10 +24,11 @@ const firmaPngValida = Buffer.from([
 
 const bufferTextoPlano = Buffer.from('esto no es una imagen real', 'utf8');
 
-describe('Crear publicación (e2e)', () => {
+describe('Publicaciones (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
   let cookieAcceso: string;
+  let cookieAccesoOtroUsuario: string;
   let sedeActivaId: number;
   let tipoVentaExistenteId: number;
   let sedeNoDisponibleId: number | null = null;
@@ -37,8 +38,13 @@ describe('Crear publicación (e2e)', () => {
   const contrasena = 'clave-temporal-publicacion';
   const correo = `publicacion.e2e.${randomUUID()}@duocuc.cl`;
   const run = `${Date.now()}${randomInt(100000, 999999)}-1`;
+  const correoOtroUsuario = `publicacion.e2e.otro.${randomUUID()}@duocuc.cl`;
+  const runOtroUsuario = `${Date.now()}${randomInt(100000, 999999)}-2`;
 
-  async function registrarCuenta(): Promise<void> {
+  async function registrarCuenta(
+    correoCuenta: string,
+    runCuenta: string,
+  ): Promise<void> {
     const carrera = await prisma.carrera.findFirst({
       select: { id: true },
     });
@@ -49,8 +55,8 @@ describe('Crear publicación (e2e)', () => {
     await request(app.getHttpServer())
       .post('/api/usuario/registro')
       .send({
-        correo,
-        run,
+        correo: correoCuenta,
+        run: runCuenta,
         telefono: '91234567',
         contrasena,
         pNombre: 'Prueba',
@@ -62,10 +68,10 @@ describe('Crear publicación (e2e)', () => {
       .expect(201);
   }
 
-  async function iniciarSesion(): Promise<string> {
+  async function iniciarSesion(correoCuenta: string): Promise<string> {
     const login = await request(app.getHttpServer())
       .post('/api/auth/login')
-      .send({ correo, contrasena })
+      .send({ correo: correoCuenta, contrasena })
       .expect(200);
 
     const cookie = obtenerCookie(login.headers['set-cookie'], 'accessToken');
@@ -190,8 +196,10 @@ describe('Crear publicación (e2e)', () => {
     sedeNoDisponibleId = sedeNoDisponible?.id ?? null;
     categoriaExistenteId = categoria?.id ?? null;
 
-    await registrarCuenta();
-    cookieAcceso = await iniciarSesion();
+    await registrarCuenta(correo, run);
+    await registrarCuenta(correoOtroUsuario, runOtroUsuario);
+    cookieAcceso = await iniciarSesion(correo);
+    cookieAccesoOtroUsuario = await iniciarSesion(correoOtroUsuario);
   }, 30_000);
 
   afterAll(async () => {
@@ -207,7 +215,7 @@ describe('Crear publicación (e2e)', () => {
       }
 
       await prisma.cuenta.deleteMany({
-        where: { correo },
+        where: { correo: { in: [correo, correoOtroUsuario] } },
       });
     }
 
@@ -528,5 +536,104 @@ describe('Crear publicación (e2e)', () => {
       .expect(413);
 
     expect(respuesta.body.message).toBe('File too large');
+  });
+
+  it('E12: obtiene 200 la publicación propia no eliminada para pre-edición', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}/edicion`)
+      .set('Cookie', cookieAcceso)
+      .expect(200);
+
+    expect(respuesta.body).toMatchObject({
+      id: creacion.body.id,
+      titulo: 'Notebook Lenovo ThinkPad',
+      descripcion: 'Notebook en buen estado, 16 GB de RAM y disco de 512 GB.',
+      precio: 150000,
+      sede: {
+        id: sedeActivaId,
+        nombre: expect.any(String),
+      },
+      tipoVenta: {
+        id: tipoVentaExistenteId,
+        nombre: expect.any(String),
+      },
+      categoria: {
+        id: categoriaExistenteId,
+        nombre: expect.any(String),
+      },
+      imagenes: [
+        {
+          idImagen: expect.any(String),
+          url: expect.stringMatching(/^\/api\/uploads\/.+/),
+          orden: 1,
+        },
+        {
+          idImagen: expect.any(String),
+          url: expect.stringMatching(/^\/api\/uploads\/.+/),
+          orden: 2,
+        },
+      ],
+    });
+  });
+
+  it('E13: responde 401 al consultar pre-edición sin autenticación', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${randomUUID()}/edicion`)
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('E14: responde 404 cuando la publicación no existe en pre-edición', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${randomUUID()}/edicion`)
+      .set('Cookie', cookieAcceso)
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Publicación no encontrada');
+  });
+
+  it('E15: responde 404 cuando la publicación pertenece a otro usuario', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}/edicion`)
+      .set('Cookie', cookieAccesoOtroUsuario)
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Publicación no encontrada');
+  });
+
+  it('E16: responde 404 cuando la publicación está eliminada', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    await prisma.publicacion.update({
+      where: { id: creacion.body.id },
+      data: { eliminado: true },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}/edicion`)
+      .set('Cookie', cookieAcceso)
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Publicación no encontrada');
   });
 });

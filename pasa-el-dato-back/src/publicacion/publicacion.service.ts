@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import type { AlmacenamientoImagenesService, ImagenAlmacenada } from './almacenamiento-imagenes.service.js';
 import type { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import type { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
+import type { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
 import type { ImagenRecibida } from './validar-imagenes.js';
 
 @Injectable()
@@ -103,6 +104,64 @@ export class PublicacionService {
     );
 
     return resultado;
+  }
+
+  async obtenerPublicacionParaEdicion(
+    idPublicacion: string,
+    idCuenta: string,
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    const publicacion = await this.prisma.publicacion.findFirst({
+      where: {
+        id: idPublicacion,
+        fk_usuario: idCuenta,
+        eliminado: false,
+      },
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        sede: { select: { id: true, nombre: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        imagenes: {
+          select: {
+            idImagen: true,
+            url: true,
+            orden: true,
+          },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    if (publicacion === null) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    return {
+      id: publicacion.id,
+      titulo: publicacion.titulo,
+      descripcion: publicacion.descripcion,
+      precio: publicacion.precio,
+      sede: {
+        id: publicacion.sede.id,
+        nombre: publicacion.sede.nombre,
+      },
+      tipoVenta: {
+        id: publicacion.tipoVenta.id,
+        nombre: publicacion.tipoVenta.nombre,
+      },
+      categoria: {
+        id: publicacion.categoria.id,
+        nombre: publicacion.categoria.nombre,
+      },
+      imagenes: publicacion.imagenes.map((imagen) => ({
+        idImagen: imagen.idImagen,
+        url: imagen.url,
+        orden: imagen.orden,
+      })),
+    };
   }
 
   async asegurarSedeDisponible(sedeId: number): Promise<void> {

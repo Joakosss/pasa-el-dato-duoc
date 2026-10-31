@@ -2,8 +2,10 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -17,6 +19,8 @@ import {
   ApiConsumes,
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -25,6 +29,7 @@ import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js'
 import { AlmacenamientoImagenesService } from './almacenamiento-imagenes.service.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
+import { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
 import {
   CAMPO_IMAGENES,
   CANTIDAD_MAXIMA_IMAGENES,
@@ -49,6 +54,25 @@ export class PublicacionController {
     private readonly publicacionService: PublicacionService,
     private readonly almacenamientoImagenesService: AlmacenamientoImagenesService,
   ) {}
+
+  @Get(':id/edicion')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Obtener publicación propia no eliminada para pre-edición' })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: PublicacionEdicionRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async obtenerParaEdicion(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicacionService.obtenerPublicacionParaEdicion(id, user.idCuenta);
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
