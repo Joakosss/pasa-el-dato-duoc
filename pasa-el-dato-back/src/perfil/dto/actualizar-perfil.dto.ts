@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import {
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -85,4 +86,9 @@ export class ActualizarPerfilDto {
     return telefono;
   })
   telefono?: string;
+
+  @ApiPropertyOptional({ example: 1 })
+  @IsOptional()
+  @IsInt({ message: 'La sede debe ser un identificador entero' })
+  sedeId?: number;
 }

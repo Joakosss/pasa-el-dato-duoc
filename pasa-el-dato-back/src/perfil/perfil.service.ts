@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 import { PerfilRespuestaDto } from './dto/perfil-respuesta.dto.js';
@@ -26,11 +30,26 @@ export class PerfilService {
       throw new UnauthorizedException('Sesión inválida');
     }
 
+    const tieneCamposActualizables =
+      dto.pNombre !== undefined ||
+      dto.sNombre !== undefined ||
+      dto.pApellido !== undefined ||
+      dto.sApellido !== undefined ||
+      dto.telefono !== undefined ||
+      dto.sedeId !== undefined;
+
+    if (!tieneCamposActualizables) {
+      throw new BadRequestException(
+        'Debe enviar al menos un campo para actualizar',
+      );
+    }
+
     const datosUsuario: {
       pNombre?: string;
       sNombre?: string | null;
       pApellido?: string;
       sApellido?: string;
+      fk_sede?: number;
     } = {};
     const datosCuenta: {
       telefono?: string;
@@ -54,6 +73,23 @@ export class PerfilService {
 
     if (dto.telefono !== undefined) {
       datosCuenta.telefono = dto.telefono;
+    }
+
+    if (dto.sedeId !== undefined) {
+      const sede = await this.prisma.sede.findFirst({
+        where: {
+          id: dto.sedeId,
+          activa: true,
+          eliminado: false,
+        },
+        select: { id: true },
+      });
+
+      if (sede === null) {
+        throw new BadRequestException('La sede indicada no es válida');
+      }
+
+      datosUsuario.fk_sede = dto.sedeId;
     }
 
     if (Object.keys(datosUsuario).length > 0) {
