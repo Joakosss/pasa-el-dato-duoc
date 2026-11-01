@@ -13,6 +13,7 @@ import { RegionModule } from './region/region.module.js';
 import { CiudadModule } from './ciudad/ciudad.module.js';
 import { ComunaModule } from './comuna/comuna.module.js';
 import { PublicacionModule } from './publicacion/publicacion.module.js';
+import { CategoriaModule } from './categoria/categoria.module.js';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { PublicacionModule } from './publicacion/publicacion.module.js';
     CiudadModule,
     ComunaModule,
     PublicacionModule,
+    CategoriaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
