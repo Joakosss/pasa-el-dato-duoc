@@ -636,4 +636,358 @@ describe('Publicaciones (e2e)', () => {
 
     expect(respuesta.body.message).toBe('Publicación no encontrada');
   });
+
+  it('E17: responde 401 al actualizar sin autenticación', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .field('titulo', 'Notebook Lenovo ThinkPad (editado)')
+      .field(
+        'descripcion',
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '120000')
+      .field('sedeId', String(sedeActivaId))
+      .field('tipoVentaId', String(tipoVentaExistenteId))
+      .field('categoriaId', String(categoriaExistenteId))
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada.png',
+        contentType: 'image/png',
+      })
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('E18: responde 404 cuando se intenta actualizar una publicación de otro usuario', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAccesoOtroUsuario)
+      .field('titulo', 'Notebook Lenovo ThinkPad (editado)')
+      .field(
+        'descripcion',
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '120000')
+      .field('sedeId', String(sedeActivaId))
+      .field('tipoVentaId', String(tipoVentaExistenteId))
+      .field('categoriaId', String(categoriaExistenteId))
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada.png',
+        contentType: 'image/png',
+      })
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Publicación no encontrada');
+  });
+
+  it('E19: actualiza 200 una publicación propia no eliminada, mantiene dueño y estado', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const antes = await prisma.publicacion.findUnique({
+      where: { id: creacion.body.id },
+      select: {
+        fk_usuario: true,
+        fk_estado_publicacion: true,
+      },
+    });
+
+    expect(antes).not.toBeNull();
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .field('titulo', 'Notebook Lenovo ThinkPad (editado)')
+      .field(
+        'descripcion',
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '120000')
+      .field('sedeId', String(sedeActivaId))
+      .field('tipoVentaId', String(tipoVentaExistenteId))
+      .field('categoriaId', String(categoriaExistenteId))
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada-1.png',
+        contentType: 'image/png',
+      })
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada-2.png',
+        contentType: 'image/png',
+      })
+      .expect(200);
+
+    expect(respuesta.body).toMatchObject({
+      id: creacion.body.id,
+      titulo: 'Notebook Lenovo ThinkPad (editado)',
+      descripcion:
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      precio: 120000,
+      sede: {
+        id: sedeActivaId,
+        nombre: expect.any(String),
+      },
+      tipoVenta: {
+        id: tipoVentaExistenteId,
+        nombre: expect.any(String),
+      },
+      categoria: {
+        id: categoriaExistenteId,
+        nombre: expect.any(String),
+      },
+      imagenes: [
+        {
+          idImagen: expect.any(String),
+          url: expect.stringMatching(/^\/api\/uploads\/.+/),
+          orden: 1,
+        },
+        {
+          idImagen: expect.any(String),
+          url: expect.stringMatching(/^\/api\/uploads\/.+/),
+          orden: 2,
+        },
+      ],
+    });
+
+    const despues = await prisma.publicacion.findUnique({
+      where: { id: creacion.body.id },
+      include: {
+        imagenes: { orderBy: { orden: 'asc' } },
+      },
+    });
+
+    expect(despues).not.toBeNull();
+    expect(despues?.titulo).toBe('Notebook Lenovo ThinkPad (editado)');
+    expect(despues?.precio).toBe(120000);
+    expect(despues?.fk_usuario).toBe(antes?.fk_usuario);
+    expect(despues?.fk_estado_publicacion).toBe(antes?.fk_estado_publicacion);
+    expect(despues?.imagenes).toHaveLength(2);
+    expect(despues?.imagenes.map((img) => img.orden)).toEqual([1, 2]);
+  });
+
+  it('E20: responde 400 cuando el DTO es inválido al actualizar', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .field('titulo', 'abc')
+      .field('descripcion', 'muy corta')
+      .field('precio', '0')
+      .field('sedeId', '0')
+      .field('tipoVentaId', '0')
+      .field('categoriaId', '0')
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto.png',
+        contentType: 'image/png',
+      })
+      .expect(400);
+
+    expect(respuesta.body.message).toEqual([
+      'El título debe tener entre 5 y 100 caracteres',
+      'La descripción debe tener entre 20 y 2.000 caracteres',
+      'El precio debe ser mayor que cero',
+      'La sede debe ser un identificador válido',
+      'El tipo de venta debe ser un identificador válido',
+      'La categoría debe ser un identificador válido',
+    ]);
+  });
+
+  it('E21: responde 404 cuando el tipo de venta no existe al actualizar', async () => {
+    if (categoriaExistenteId === null) {
+      // Requiere categoría válida para aislar el caso tipoVenta inexistente.
+      return;
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .field('titulo', 'Notebook Lenovo ThinkPad (editado)')
+      .field(
+        'descripcion',
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '120000')
+      .field('sedeId', String(sedeActivaId))
+      .field('tipoVentaId', '999999')
+      .field('categoriaId', String(categoriaExistenteId))
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada.png',
+        contentType: 'image/png',
+      })
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Tipo de venta no existe');
+  });
+
+  it('E22: responde 404 cuando la categoría no existe al actualizar', async () => {
+    if (categoriaExistenteId === null) {
+      // Sin una categoría válida no se puede aislar este caso (primero validaría tipoVenta).
+      return;
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .field('titulo', 'Notebook Lenovo ThinkPad (editado)')
+      .field(
+        'descripcion',
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '120000')
+      .field('sedeId', String(sedeActivaId))
+      .field('tipoVentaId', String(tipoVentaExistenteId))
+      .field('categoriaId', '999999')
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada.png',
+        contentType: 'image/png',
+      })
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Categoría no existe');
+  });
+
+  it('E23: responde 404 cuando la sede no existe al actualizar', async () => {
+    if (categoriaExistenteId === null) {
+      return;
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .field('titulo', 'Notebook Lenovo ThinkPad (editado)')
+      .field(
+        'descripcion',
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '120000')
+      .field('sedeId', '999999')
+      .field('tipoVentaId', String(tipoVentaExistenteId))
+      .field('categoriaId', String(categoriaExistenteId))
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada.png',
+        contentType: 'image/png',
+      })
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Sede no existe');
+  });
+
+  it('E24: responde 400 cuando la sede existe pero no está disponible al actualizar', async () => {
+    if (categoriaExistenteId === null) {
+      return;
+    }
+
+    if (sedeNoDisponibleId === null) {
+      // Requiere al menos una sede inactiva o eliminada.
+      return;
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .field('titulo', 'Notebook Lenovo ThinkPad (editado)')
+      .field(
+        'descripcion',
+        'Notebook editado en buen estado, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '120000')
+      .field('sedeId', String(sedeNoDisponibleId))
+      .field('tipoVentaId', String(tipoVentaExistenteId))
+      .field('categoriaId', String(categoriaExistenteId))
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto-editada.png',
+        contentType: 'image/png',
+      })
+      .expect(400);
+
+    expect(respuesta.body.message).toBe('Sede no disponible');
+  });
+
+  it('E25: permite actualizar sin re-subir imágenes y mantiene las existentes', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const imagenesAntes = await prisma.imagenPublicacion.findMany({
+      where: { fk_publicacion: creacion.body.id },
+      orderBy: { orden: 'asc' },
+      select: { url: true, orden: true },
+    });
+
+    expect(imagenesAntes).toHaveLength(2);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .field('titulo', 'Notebook Lenovo ThinkPad (solo texto)')
+      .field(
+        'descripcion',
+        'Notebook editado solo texto, 16 GB de RAM y disco de 512 GB.',
+      )
+      .field('precio', '110000')
+      .field('sedeId', String(sedeActivaId))
+      .field('tipoVentaId', String(tipoVentaExistenteId))
+      .field('categoriaId', String(categoriaExistenteId))
+      .expect(200);
+
+    expect(respuesta.body).toMatchObject({
+      id: creacion.body.id,
+      titulo: 'Notebook Lenovo ThinkPad (solo texto)',
+      descripcion:
+        'Notebook editado solo texto, 16 GB de RAM y disco de 512 GB.',
+      precio: 110000,
+    });
+
+    expect(respuesta.body.imagenes).toHaveLength(2);
+    expect(respuesta.body.imagenes.map((img: { orden: number }) => img.orden)).toEqual([
+      1, 2,
+    ]);
+
+    const imagenesDespues = await prisma.imagenPublicacion.findMany({
+      where: { fk_publicacion: creacion.body.id },
+      orderBy: { orden: 'asc' },
+      select: { url: true, orden: true },
+    });
+
+    expect(imagenesDespues).toHaveLength(2);
+    expect(imagenesDespues).toEqual(imagenesAntes);
+  });
 });

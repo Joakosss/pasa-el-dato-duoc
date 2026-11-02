@@ -1,6 +1,15 @@
-import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
-import type { AlmacenamientoImagenesService, ImagenAlmacenada } from './almacenamiento-imagenes.service.js';
+import type {
+  AlmacenamientoImagenesService,
+  ImagenAlmacenada,
+} from './almacenamiento-imagenes.service.js';
+import type { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.js';
 import type { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import type { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
 import type { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
@@ -162,6 +171,177 @@ export class PublicacionService {
         orden: imagen.orden,
       })),
     };
+  }
+
+  async actualizarPublicacion(
+    idPublicacion: string,
+    dto: ActualizarPublicacionDto,
+    archivos: ImagenRecibida[],
+    idCuenta: string,
+    almacenamiento: AlmacenamientoImagenesService,
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    const existente = await this.prisma.publicacion.findFirst({
+      where: {
+        id: idPublicacion,
+        fk_usuario: idCuenta,
+        eliminado: false,
+      },
+      select: {
+        id: true,
+        imagenes: {
+          select: { url: true },
+        },
+      },
+    });
+
+    if (existente === null) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    await this.asegurarSedeDisponible(dto.sedeId);
+    await this.asegurarTipoVentaExistente(dto.tipoVentaId);
+    await this.asegurarCategoriaExistente(dto.categoriaId);
+
+    // Permite guardar cambios sin re-subir imágenes:
+    // si no vienen archivos, se mantienen las imágenes actuales.
+    if (archivos.length === 0) {
+      // Invariante esperada: toda publicación creada por el flujo actual tiene 1..5 imágenes.
+      // Si por algún motivo no hay imágenes, se rechaza para preservar el contrato.
+      if (existente.imagenes.length < 1 || existente.imagenes.length > 5) {
+        throw new BadRequestException('Debe adjuntar entre 1 y 5 imágenes');
+      }
+
+      await this.prisma.publicacion.update({
+        where: { id: existente.id },
+        data: {
+          titulo: dto.titulo,
+          descripcion: dto.descripcion,
+          precio: dto.precio,
+          fk_sede: dto.sedeId,
+          fk_tipoventa: dto.tipoVentaId,
+          fk_categoria: dto.categoriaId,
+        },
+      });
+
+      return this.obtenerPublicacionParaEdicion(existente.id, idCuenta);
+    }
+
+    const urlsPrevias = existente.imagenes.map((img) => img.url);
+
+    const { resultado } = await almacenamiento.ejecutarConImagenesAlmacenadas(
+      archivos,
+      async (imagenesAlmacenadas: ImagenAlmacenada[]) => {
+        return this.prisma.$transaction(async (tx) => {
+          await tx.publicacion.update({
+            where: { id: existente.id },
+            data: {
+              titulo: dto.titulo,
+              descripcion: dto.descripcion,
+              precio: dto.precio,
+              fk_sede: dto.sedeId,
+              fk_tipoventa: dto.tipoVentaId,
+              fk_categoria: dto.categoriaId,
+            },
+          });
+
+          await tx.imagenPublicacion.deleteMany({
+            where: { fk_publicacion: existente.id },
+          });
+
+          await Promise.all(
+            imagenesAlmacenadas.map((img) =>
+              tx.imagenPublicacion.create({
+                data: {
+                  fk_publicacion: existente.id,
+                  url: img.url,
+                  orden: img.orden,
+                },
+              }),
+            ),
+          );
+
+          const actualizada = await tx.publicacion.findUnique({
+            where: { id: existente.id },
+            select: {
+              id: true,
+              titulo: true,
+              descripcion: true,
+              precio: true,
+              sede: { select: { id: true, nombre: true } },
+              tipoVenta: { select: { id: true, nombre: true } },
+              categoria: { select: { id: true, nombre: true } },
+              imagenes: {
+                select: {
+                  idImagen: true,
+                  url: true,
+                  orden: true,
+                },
+                orderBy: { orden: 'asc' },
+              },
+            },
+          });
+
+          if (actualizada === null) {
+            throw new InternalServerErrorException(
+              'No fue posible actualizar la publicación',
+            );
+          }
+
+          return {
+            id: actualizada.id,
+            titulo: actualizada.titulo,
+            descripcion: actualizada.descripcion,
+            precio: actualizada.precio,
+            sede: {
+              id: actualizada.sede.id,
+              nombre: actualizada.sede.nombre,
+            },
+            tipoVenta: {
+              id: actualizada.tipoVenta.id,
+              nombre: actualizada.tipoVenta.nombre,
+            },
+            categoria: {
+              id: actualizada.categoria.id,
+              nombre: actualizada.categoria.nombre,
+            },
+            imagenes: actualizada.imagenes.map((imagen) => ({
+              idImagen: imagen.idImagen,
+              url: imagen.url,
+              orden: imagen.orden,
+            })),
+          };
+        });
+      },
+    );
+
+    // Mejor esfuerzo: eliminar archivos antiguos una vez persistido todo lo nuevo.
+    // Si falla, no afecta la actualización de la publicación.
+    await Promise.all(
+      urlsPrevias.map((url) => this.eliminarImagenPorUrl(url, almacenamiento)),
+    ).catch(() => undefined);
+
+    return resultado;
+  }
+
+  private async eliminarImagenPorUrl(
+    url: string,
+    almacenamiento: AlmacenamientoImagenesService,
+  ): Promise<void> {
+    const prefijo = almacenamiento.getPrefijoUrl();
+    if (!url.startsWith(prefijo)) {
+      return;
+    }
+
+    const nombre = url.slice(prefijo.length + 1);
+    if (!nombre) {
+      return;
+    }
+
+    const { resolve, join } = await import('node:path');
+    const { rm } = await import('node:fs/promises');
+
+    const ruta = resolve(join(almacenamiento.getDirectorioUploads(), nombre));
+    await rm(ruta, { force: true }).catch(() => undefined);
   }
 
   async asegurarSedeDisponible(sedeId: number): Promise<void> {
