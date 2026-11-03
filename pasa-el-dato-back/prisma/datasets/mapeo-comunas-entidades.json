@@ -1,0 +1,2923 @@
+[
+  {
+    "cut": "01101",
+    "comuna": "Iquique",
+    "codigoRegion": "01",
+    "estado": "unica",
+    "ciudades": [
+      "110100900101"
+    ]
+  },
+  {
+    "cut": "01107",
+    "comuna": "Alto Hospicio",
+    "codigoRegion": "01",
+    "estado": "unica",
+    "ciudades": [
+      "110700100101"
+    ]
+  },
+  {
+    "cut": "01401",
+    "comuna": "Pozo Almonte",
+    "codigoRegion": "01",
+    "estado": "unica",
+    "ciudades": [
+      "140102100101"
+    ]
+  },
+  {
+    "cut": "01402",
+    "comuna": "Camiña",
+    "codigoRegion": "01",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "01403",
+    "comuna": "Colchane",
+    "codigoRegion": "01",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "01404",
+    "comuna": "Huara",
+    "codigoRegion": "01",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "01405",
+    "comuna": "Pica",
+    "codigoRegion": "01",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "02101",
+    "comuna": "Antofagasta",
+    "codigoRegion": "02",
+    "estado": "unica",
+    "ciudades": [
+      "210100100101"
+    ]
+  },
+  {
+    "cut": "02102",
+    "comuna": "Mejillones",
+    "codigoRegion": "02",
+    "estado": "unica",
+    "ciudades": [
+      "210200900101"
+    ]
+  },
+  {
+    "cut": "02103",
+    "comuna": "Sierra Gorda",
+    "codigoRegion": "02",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "02104",
+    "comuna": "Taltal",
+    "codigoRegion": "02",
+    "estado": "unica",
+    "ciudades": [
+      "210402800101"
+    ]
+  },
+  {
+    "cut": "02201",
+    "comuna": "Calama",
+    "codigoRegion": "02",
+    "estado": "unica",
+    "ciudades": [
+      "220100200101"
+    ]
+  },
+  {
+    "cut": "02202",
+    "comuna": "Ollagüe",
+    "codigoRegion": "02",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "02203",
+    "comuna": "San Pedro de Atacama",
+    "codigoRegion": "02",
+    "estado": "unica",
+    "ciudades": [
+      "220301400101"
+    ]
+  },
+  {
+    "cut": "02301",
+    "comuna": "Tocopilla",
+    "codigoRegion": "02",
+    "estado": "unica",
+    "ciudades": [
+      "230102500101"
+    ]
+  },
+  {
+    "cut": "02302",
+    "comuna": "María Elena",
+    "codigoRegion": "02",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "03101",
+    "comuna": "Copiapó",
+    "codigoRegion": "03",
+    "estado": "unica",
+    "ciudades": [
+      "310101600101"
+    ]
+  },
+  {
+    "cut": "03102",
+    "comuna": "Caldera",
+    "codigoRegion": "03",
+    "estado": "unica",
+    "ciudades": [
+      "310200400101"
+    ]
+  },
+  {
+    "cut": "03103",
+    "comuna": "Tierra Amarilla",
+    "codigoRegion": "03",
+    "estado": "unica",
+    "ciudades": [
+      "310302900101"
+    ]
+  },
+  {
+    "cut": "03201",
+    "comuna": "Chañaral",
+    "codigoRegion": "03",
+    "estado": "unica",
+    "ciudades": [
+      "320100300101"
+    ]
+  },
+  {
+    "cut": "03202",
+    "comuna": "Diego de Almagro",
+    "codigoRegion": "03",
+    "estado": "unica",
+    "ciudades": [
+      "320200400101"
+    ]
+  },
+  {
+    "cut": "03301",
+    "comuna": "Vallenar",
+    "codigoRegion": "03",
+    "estado": "unica",
+    "ciudades": [
+      "330106400101"
+    ]
+  },
+  {
+    "cut": "03302",
+    "comuna": "Alto del Carmen",
+    "codigoRegion": "03",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "03303",
+    "comuna": "Freirina",
+    "codigoRegion": "03",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "03304",
+    "comuna": "Huasco",
+    "codigoRegion": "03",
+    "estado": "unica",
+    "ciudades": [
+      "330401000101"
+    ]
+  },
+  {
+    "cut": "04101",
+    "comuna": "La Serena",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "410105900101"
+    ]
+  },
+  {
+    "cut": "04102",
+    "comuna": "Coquimbo",
+    "codigoRegion": "04",
+    "estado": "multiple",
+    "ciudades": [
+      "410203000501",
+      "410203300101"
+    ]
+  },
+  {
+    "cut": "04103",
+    "comuna": "Andacollo",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "410300100101"
+    ]
+  },
+  {
+    "cut": "04104",
+    "comuna": "La Higuera",
+    "codigoRegion": "04",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "04105",
+    "comuna": "Paiguano",
+    "codigoRegion": "04",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "04106",
+    "comuna": "Vicuña",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "410605900101"
+    ]
+  },
+  {
+    "cut": "04201",
+    "comuna": "Illapel",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "420101900101"
+    ]
+  },
+  {
+    "cut": "04202",
+    "comuna": "Canela",
+    "codigoRegion": "04",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "04203",
+    "comuna": "Los Vilos",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "420302600101"
+    ]
+  },
+  {
+    "cut": "04204",
+    "comuna": "Salamanca",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "420402700101"
+    ]
+  },
+  {
+    "cut": "04301",
+    "comuna": "Ovalle",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "430109000101"
+    ]
+  },
+  {
+    "cut": "04302",
+    "comuna": "Combarbalá",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "430200400101"
+    ]
+  },
+  {
+    "cut": "04303",
+    "comuna": "Monte Patria",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "430307800101"
+    ]
+  },
+  {
+    "cut": "04304",
+    "comuna": "Punitaqui",
+    "codigoRegion": "04",
+    "estado": "unica",
+    "ciudades": [
+      "430402200101"
+    ]
+  },
+  {
+    "cut": "04305",
+    "comuna": "Río Hurtado",
+    "codigoRegion": "04",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "05101",
+    "comuna": "Valparaíso",
+    "codigoRegion": "05",
+    "estado": "multiple",
+    "ciudades": [
+      "510100200201",
+      "510100500301",
+      "510100700101"
+    ]
+  },
+  {
+    "cut": "05102",
+    "comuna": "Casablanca",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "510200200101"
+    ]
+  },
+  {
+    "cut": "05103",
+    "comuna": "Concón",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "510300300101"
+    ]
+  },
+  {
+    "cut": "05104",
+    "comuna": "Juan Fernández",
+    "codigoRegion": "05",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "05105",
+    "comuna": "Puchuncaví",
+    "codigoRegion": "05",
+    "estado": "multiple",
+    "ciudades": [
+      "510501000301",
+      "510501500101"
+    ]
+  },
+  {
+    "cut": "05107",
+    "comuna": "Quintero",
+    "codigoRegion": "05",
+    "estado": "multiple",
+    "ciudades": [
+      "510700800101",
+      "510700800201"
+    ]
+  },
+  {
+    "cut": "05109",
+    "comuna": "Viña del Mar",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "510900200101"
+    ]
+  },
+  {
+    "cut": "05201",
+    "comuna": "Isla de Pascua",
+    "codigoRegion": "05",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "05301",
+    "comuna": "Los Andes",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "530101600101"
+    ]
+  },
+  {
+    "cut": "05302",
+    "comuna": "Calle Larga",
+    "codigoRegion": "05",
+    "estado": "multiple",
+    "ciudades": [
+      "530201400101",
+      "530201400301"
+    ]
+  },
+  {
+    "cut": "05303",
+    "comuna": "Rinconada",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "530301200101"
+    ]
+  },
+  {
+    "cut": "05304",
+    "comuna": "San Esteban",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "530402100101"
+    ]
+  },
+  {
+    "cut": "05401",
+    "comuna": "La Ligua",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "540100900101"
+    ]
+  },
+  {
+    "cut": "05402",
+    "comuna": "Cabildo",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "540200400101"
+    ]
+  },
+  {
+    "cut": "05403",
+    "comuna": "Papudo",
+    "codigoRegion": "05",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "05404",
+    "comuna": "Petorca",
+    "codigoRegion": "05",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "05405",
+    "comuna": "Zapallar",
+    "codigoRegion": "05",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "05501",
+    "comuna": "Quillota",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "550101200101"
+    ]
+  },
+  {
+    "cut": "05502",
+    "comuna": "Calera",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "550200100101"
+    ]
+  },
+  {
+    "cut": "05503",
+    "comuna": "Hijuelas",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "550301600201"
+    ]
+  },
+  {
+    "cut": "05504",
+    "comuna": "La Cruz",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "550400500101"
+    ]
+  },
+  {
+    "cut": "05506",
+    "comuna": "Nogales",
+    "codigoRegion": "05",
+    "estado": "multiple",
+    "ciudades": [
+      "550600300201",
+      "550600600101"
+    ]
+  },
+  {
+    "cut": "05601",
+    "comuna": "San Antonio",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "560101700101"
+    ]
+  },
+  {
+    "cut": "05602",
+    "comuna": "Algarrobo",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "560201400101"
+    ]
+  },
+  {
+    "cut": "05603",
+    "comuna": "Cartagena",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "560300500101"
+    ]
+  },
+  {
+    "cut": "05604",
+    "comuna": "El Quisco",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "560400500101"
+    ]
+  },
+  {
+    "cut": "05605",
+    "comuna": "El Tabo",
+    "codigoRegion": "05",
+    "estado": "multiple",
+    "ciudades": [
+      "560501000101",
+      "560501100201"
+    ]
+  },
+  {
+    "cut": "05606",
+    "comuna": "Santo Domingo",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "560602000101"
+    ]
+  },
+  {
+    "cut": "05701",
+    "comuna": "San Felipe",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "570101700101"
+    ]
+  },
+  {
+    "cut": "05702",
+    "comuna": "Catemu",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "570200100101"
+    ]
+  },
+  {
+    "cut": "05703",
+    "comuna": "Llaillay",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "570300700101"
+    ]
+  },
+  {
+    "cut": "05704",
+    "comuna": "Panquehue",
+    "codigoRegion": "05",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "05705",
+    "comuna": "Putaendo",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "570501100101"
+    ]
+  },
+  {
+    "cut": "05706",
+    "comuna": "Santa María",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "570601700101"
+    ]
+  },
+  {
+    "cut": "05801",
+    "comuna": "Quilpué",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "580102000101"
+    ]
+  },
+  {
+    "cut": "05802",
+    "comuna": "Limache",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "580200700101"
+    ]
+  },
+  {
+    "cut": "05803",
+    "comuna": "Olmué",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "580301400101"
+    ]
+  },
+  {
+    "cut": "05804",
+    "comuna": "Villa Alemana",
+    "codigoRegion": "05",
+    "estado": "unica",
+    "ciudades": [
+      "580401700101"
+    ]
+  },
+  {
+    "cut": "06101",
+    "comuna": "Rancagua",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "610101700101"
+    ]
+  },
+  {
+    "cut": "06102",
+    "comuna": "Codegua",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "610200200101"
+    ]
+  },
+  {
+    "cut": "06103",
+    "comuna": "Coinco",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06104",
+    "comuna": "Coltauco",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "610400200101"
+    ]
+  },
+  {
+    "cut": "06105",
+    "comuna": "Doñihue",
+    "codigoRegion": "06",
+    "estado": "multiple",
+    "ciudades": [
+      "610500300101",
+      "610500400201"
+    ]
+  },
+  {
+    "cut": "06106",
+    "comuna": "Graneros",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "610600400101"
+    ]
+  },
+  {
+    "cut": "06107",
+    "comuna": "Las Cabras",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "610702600101"
+    ]
+  },
+  {
+    "cut": "06108",
+    "comuna": "Machalí",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "610801200101"
+    ]
+  },
+  {
+    "cut": "06109",
+    "comuna": "Malloa",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06110",
+    "comuna": "Mostazal",
+    "codigoRegion": "06",
+    "estado": "multiple",
+    "ciudades": [
+      "611000600301",
+      "611001200201"
+    ]
+  },
+  {
+    "cut": "06111",
+    "comuna": "Olivar",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "611100400201"
+    ]
+  },
+  {
+    "cut": "06112",
+    "comuna": "Peumo",
+    "codigoRegion": "06",
+    "estado": "multiple",
+    "ciudades": [
+      "611200500101",
+      "611200600301"
+    ]
+  },
+  {
+    "cut": "06113",
+    "comuna": "Pichidegua",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "611301400101"
+    ]
+  },
+  {
+    "cut": "06114",
+    "comuna": "Quinta de Tilcoco",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "611401100101"
+    ]
+  },
+  {
+    "cut": "06115",
+    "comuna": "Rengo",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "611503800101"
+    ]
+  },
+  {
+    "cut": "06116",
+    "comuna": "Requínoa",
+    "codigoRegion": "06",
+    "estado": "multiple",
+    "ciudades": [
+      "611602400101",
+      "611602800301"
+    ]
+  },
+  {
+    "cut": "06117",
+    "comuna": "San Vicente",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "611703000101"
+    ]
+  },
+  {
+    "cut": "06201",
+    "comuna": "Pichilemu",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "620102500101"
+    ]
+  },
+  {
+    "cut": "06202",
+    "comuna": "La Estrella",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06203",
+    "comuna": "Litueche",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06204",
+    "comuna": "Marchihue",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06205",
+    "comuna": "Navidad",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06206",
+    "comuna": "Paredones",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06301",
+    "comuna": "San Fernando",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "630102300101"
+    ]
+  },
+  {
+    "cut": "06302",
+    "comuna": "Chépica",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "630200200101"
+    ]
+  },
+  {
+    "cut": "06303",
+    "comuna": "Chimbarongo",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "630300300101"
+    ]
+  },
+  {
+    "cut": "06304",
+    "comuna": "Lolol",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06305",
+    "comuna": "Nancagua",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "630501500101"
+    ]
+  },
+  {
+    "cut": "06306",
+    "comuna": "Palmilla",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06307",
+    "comuna": "Peralillo",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "630700900101"
+    ]
+  },
+  {
+    "cut": "06308",
+    "comuna": "Placilla",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06309",
+    "comuna": "Pumanque",
+    "codigoRegion": "06",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "06310",
+    "comuna": "Santa Cruz",
+    "codigoRegion": "06",
+    "estado": "unica",
+    "ciudades": [
+      "631002300101"
+    ]
+  },
+  {
+    "cut": "07101",
+    "comuna": "Talca",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "710102400101"
+    ]
+  },
+  {
+    "cut": "07102",
+    "comuna": "Constitución",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "710201300101"
+    ]
+  },
+  {
+    "cut": "07103",
+    "comuna": "Curepto",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07104",
+    "comuna": "Empedrado",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07105",
+    "comuna": "Maule",
+    "codigoRegion": "07",
+    "estado": "multiple",
+    "ciudades": [
+      "710501500101",
+      "710502900301"
+    ]
+  },
+  {
+    "cut": "07106",
+    "comuna": "Pelarco",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07107",
+    "comuna": "Pencahue",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07108",
+    "comuna": "Río Claro",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07109",
+    "comuna": "San Clemente",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "710904800101"
+    ]
+  },
+  {
+    "cut": "07110",
+    "comuna": "San Rafael",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "711001600101"
+    ]
+  },
+  {
+    "cut": "07201",
+    "comuna": "Cauquenes",
+    "codigoRegion": "07",
+    "estado": "multiple",
+    "ciudades": [
+      "720101200101",
+      "720101200201"
+    ]
+  },
+  {
+    "cut": "07202",
+    "comuna": "Chanco",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07203",
+    "comuna": "Pelluhue",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07301",
+    "comuna": "Curicó",
+    "codigoRegion": "07",
+    "estado": "multiple",
+    "ciudades": [
+      "730100700301",
+      "730103000201"
+    ]
+  },
+  {
+    "cut": "07302",
+    "comuna": "Hualañé",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07303",
+    "comuna": "Licantén",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07304",
+    "comuna": "Molina",
+    "codigoRegion": "07",
+    "estado": "multiple",
+    "ciudades": [
+      "730403100101",
+      "730403100301"
+    ]
+  },
+  {
+    "cut": "07305",
+    "comuna": "Rauco",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "730501200101"
+    ]
+  },
+  {
+    "cut": "07306",
+    "comuna": "Romeral",
+    "codigoRegion": "07",
+    "estado": "multiple",
+    "ciudades": [
+      "730602500201",
+      "730603000101"
+    ]
+  },
+  {
+    "cut": "07307",
+    "comuna": "Sagrada Familia",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07308",
+    "comuna": "Teno",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "730803900101"
+    ]
+  },
+  {
+    "cut": "07309",
+    "comuna": "Vichuquén",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "07401",
+    "comuna": "Linares",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "740102500101"
+    ]
+  },
+  {
+    "cut": "07402",
+    "comuna": "Colbún",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "740200500101"
+    ]
+  },
+  {
+    "cut": "07403",
+    "comuna": "Longaví",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "740302500101"
+    ]
+  },
+  {
+    "cut": "07404",
+    "comuna": "Parral",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "740405000101"
+    ]
+  },
+  {
+    "cut": "07405",
+    "comuna": "Retiro",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "740503200201"
+    ]
+  },
+  {
+    "cut": "07406",
+    "comuna": "San Javier",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "740604600301"
+    ]
+  },
+  {
+    "cut": "07407",
+    "comuna": "Villa Alegre",
+    "codigoRegion": "07",
+    "estado": "unica",
+    "ciudades": [
+      "740703500301"
+    ]
+  },
+  {
+    "cut": "07408",
+    "comuna": "Yerbas Buenas",
+    "codigoRegion": "07",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08101",
+    "comuna": "Concepción",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810100700101"
+    ]
+  },
+  {
+    "cut": "08102",
+    "comuna": "Coronel",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810200300101"
+    ]
+  },
+  {
+    "cut": "08103",
+    "comuna": "Chiguayante",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810300200101"
+    ]
+  },
+  {
+    "cut": "08104",
+    "comuna": "Florida",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08105",
+    "comuna": "Hualqui",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810502000101"
+    ]
+  },
+  {
+    "cut": "08106",
+    "comuna": "Lota",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810600400101"
+    ]
+  },
+  {
+    "cut": "08107",
+    "comuna": "Penco",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810701200101"
+    ]
+  },
+  {
+    "cut": "08108",
+    "comuna": "San Pedro de la Paz",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810800300101"
+    ]
+  },
+  {
+    "cut": "08109",
+    "comuna": "Santa Juana",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "810902900101"
+    ]
+  },
+  {
+    "cut": "08110",
+    "comuna": "Talcahuano",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "811000500101"
+    ]
+  },
+  {
+    "cut": "08111",
+    "comuna": "Tomé",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "811104400101"
+    ]
+  },
+  {
+    "cut": "08112",
+    "comuna": "Hualpén",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "811200200101"
+    ]
+  },
+  {
+    "cut": "08201",
+    "comuna": "Lebu",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "820101600101"
+    ]
+  },
+  {
+    "cut": "08202",
+    "comuna": "Arauco",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "820200300101"
+    ]
+  },
+  {
+    "cut": "08203",
+    "comuna": "Cañete",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "820300700101"
+    ]
+  },
+  {
+    "cut": "08204",
+    "comuna": "Contulmo",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08205",
+    "comuna": "Curanilahue",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "820500500101"
+    ]
+  },
+  {
+    "cut": "08206",
+    "comuna": "Los Alamos",
+    "codigoRegion": "08",
+    "estado": "multiple",
+    "ciudades": [
+      "820600400301",
+      "820600900101"
+    ]
+  },
+  {
+    "cut": "08207",
+    "comuna": "Tirúa",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08301",
+    "comuna": "Los Angeles",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "830103500101"
+    ]
+  },
+  {
+    "cut": "08302",
+    "comuna": "Antuco",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08303",
+    "comuna": "Cabrero",
+    "codigoRegion": "08",
+    "estado": "multiple",
+    "ciudades": [
+      "830300500101",
+      "830304300201"
+    ]
+  },
+  {
+    "cut": "08304",
+    "comuna": "Laja",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "830401100101"
+    ]
+  },
+  {
+    "cut": "08305",
+    "comuna": "Mulchén",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "830503500101"
+    ]
+  },
+  {
+    "cut": "08306",
+    "comuna": "Nacimiento",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "830602600101"
+    ]
+  },
+  {
+    "cut": "08307",
+    "comuna": "Negrete",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08308",
+    "comuna": "Quilaco",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08309",
+    "comuna": "Quilleco",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "08310",
+    "comuna": "San Rosendo",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "831001500101"
+    ]
+  },
+  {
+    "cut": "08311",
+    "comuna": "Santa Bárbara",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "831102500101"
+    ]
+  },
+  {
+    "cut": "08312",
+    "comuna": "Tucapel",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "831200400201"
+    ]
+  },
+  {
+    "cut": "08313",
+    "comuna": "Yumbel",
+    "codigoRegion": "08",
+    "estado": "unica",
+    "ciudades": [
+      "831308700101"
+    ]
+  },
+  {
+    "cut": "08314",
+    "comuna": "Alto Biobío",
+    "codigoRegion": "08",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09101",
+    "comuna": "Temuco",
+    "codigoRegion": "09",
+    "estado": "multiple",
+    "ciudades": [
+      "910102800201",
+      "910107400101"
+    ]
+  },
+  {
+    "cut": "09102",
+    "comuna": "Carahue",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "910200700101"
+    ]
+  },
+  {
+    "cut": "09103",
+    "comuna": "Cunco",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "910301200101"
+    ]
+  },
+  {
+    "cut": "09104",
+    "comuna": "Curarrehue",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09105",
+    "comuna": "Freire",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09106",
+    "comuna": "Galvarino",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09107",
+    "comuna": "Gorbea",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "910701500101"
+    ]
+  },
+  {
+    "cut": "09108",
+    "comuna": "Lautaro",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "910802300101"
+    ]
+  },
+  {
+    "cut": "09109",
+    "comuna": "Loncoche",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "910902900101"
+    ]
+  },
+  {
+    "cut": "09110",
+    "comuna": "Melipeuco",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09111",
+    "comuna": "Nueva Imperial",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "911105300101"
+    ]
+  },
+  {
+    "cut": "09112",
+    "comuna": "Padre Las Casas",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "911211400101"
+    ]
+  },
+  {
+    "cut": "09113",
+    "comuna": "Perquenco",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09114",
+    "comuna": "Pitrufquén",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "911402800101"
+    ]
+  },
+  {
+    "cut": "09115",
+    "comuna": "Pucón",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "911501800101"
+    ]
+  },
+  {
+    "cut": "09116",
+    "comuna": "Saavedra",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09117",
+    "comuna": "Teodoro Schmidt",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09118",
+    "comuna": "Toltén",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09119",
+    "comuna": "Vilcún",
+    "codigoRegion": "09",
+    "estado": "multiple",
+    "ciudades": [
+      "911900400201",
+      "911905900101"
+    ]
+  },
+  {
+    "cut": "09120",
+    "comuna": "Villarrica",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "912005400101"
+    ]
+  },
+  {
+    "cut": "09121",
+    "comuna": "Cholchol",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09201",
+    "comuna": "Angol",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "920100300101"
+    ]
+  },
+  {
+    "cut": "09202",
+    "comuna": "Collipulli",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "920200600101"
+    ]
+  },
+  {
+    "cut": "09203",
+    "comuna": "Curacautín",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "920301100101"
+    ]
+  },
+  {
+    "cut": "09204",
+    "comuna": "Ercilla",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09205",
+    "comuna": "Lonquimay",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09206",
+    "comuna": "Los Sauces",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09207",
+    "comuna": "Lumaco",
+    "codigoRegion": "09",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "09208",
+    "comuna": "Purén",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "920803400101"
+    ]
+  },
+  {
+    "cut": "09209",
+    "comuna": "Renaico",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "920901400101"
+    ]
+  },
+  {
+    "cut": "09210",
+    "comuna": "Traiguén",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "921006900101"
+    ]
+  },
+  {
+    "cut": "09211",
+    "comuna": "Victoria",
+    "codigoRegion": "09",
+    "estado": "unica",
+    "ciudades": [
+      "921109200101"
+    ]
+  },
+  {
+    "cut": "10101",
+    "comuna": "Puerto Montt",
+    "codigoRegion": "10",
+    "estado": "multiple",
+    "ciudades": [
+      "1010100100201",
+      "1010104300101",
+      "1010104800601"
+    ]
+  },
+  {
+    "cut": "10102",
+    "comuna": "Calbuco",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1010200700101"
+    ]
+  },
+  {
+    "cut": "10103",
+    "comuna": "Cochamó",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10104",
+    "comuna": "Fresia",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1010401800101"
+    ]
+  },
+  {
+    "cut": "10105",
+    "comuna": "Frutillar",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1010501000101"
+    ]
+  },
+  {
+    "cut": "10106",
+    "comuna": "Los Muermos",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1010602900101"
+    ]
+  },
+  {
+    "cut": "10107",
+    "comuna": "Llanquihue",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1010701700101"
+    ]
+  },
+  {
+    "cut": "10108",
+    "comuna": "Maullín",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10109",
+    "comuna": "Puerto Varas",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1010903000101"
+    ]
+  },
+  {
+    "cut": "10201",
+    "comuna": "Castro",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1020100300101"
+    ]
+  },
+  {
+    "cut": "10202",
+    "comuna": "Ancud",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1020200400101"
+    ]
+  },
+  {
+    "cut": "10203",
+    "comuna": "Chonchi",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1020300500101"
+    ]
+  },
+  {
+    "cut": "10204",
+    "comuna": "Curaco de Vélez",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10205",
+    "comuna": "Dalcahue",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1020500900101"
+    ]
+  },
+  {
+    "cut": "10206",
+    "comuna": "Puqueldón",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10207",
+    "comuna": "Queilén",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10208",
+    "comuna": "Quellón",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1020803300101"
+    ]
+  },
+  {
+    "cut": "10209",
+    "comuna": "Quemchi",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10210",
+    "comuna": "Quinchao",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10301",
+    "comuna": "Osorno",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1030103300101"
+    ]
+  },
+  {
+    "cut": "10302",
+    "comuna": "Puerto Octay",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10303",
+    "comuna": "Purranque",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1030303900101"
+    ]
+  },
+  {
+    "cut": "10304",
+    "comuna": "Puyehue",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1030401500101"
+    ]
+  },
+  {
+    "cut": "10305",
+    "comuna": "Río Negro",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1030504000101"
+    ]
+  },
+  {
+    "cut": "10306",
+    "comuna": "San Juan de la Costa",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10307",
+    "comuna": "San Pablo",
+    "codigoRegion": "10",
+    "estado": "unica",
+    "ciudades": [
+      "1030705000101"
+    ]
+  },
+  {
+    "cut": "10401",
+    "comuna": "Chaitén",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10402",
+    "comuna": "Futaleufú",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10403",
+    "comuna": "Hualaihué",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "10404",
+    "comuna": "Palena",
+    "codigoRegion": "10",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11101",
+    "comuna": "Coihaique",
+    "codigoRegion": "11",
+    "estado": "unica",
+    "ciudades": [
+      "1110101100101"
+    ]
+  },
+  {
+    "cut": "11102",
+    "comuna": "Lago Verde",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11201",
+    "comuna": "Aisén",
+    "codigoRegion": "11",
+    "estado": "unica",
+    "ciudades": [
+      "1120104500101"
+    ]
+  },
+  {
+    "cut": "11202",
+    "comuna": "Cisnes",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11203",
+    "comuna": "Guaitecas",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11301",
+    "comuna": "Cochrane",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11302",
+    "comuna": "O'Higgins",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11303",
+    "comuna": "Tortel",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11401",
+    "comuna": "Chile Chico",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "11402",
+    "comuna": "Río Ibáñez",
+    "codigoRegion": "11",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "12101",
+    "comuna": "Punta Arenas",
+    "codigoRegion": "12",
+    "estado": "unica",
+    "ciudades": [
+      "1210102300101"
+    ]
+  },
+  {
+    "cut": "12102",
+    "comuna": "Laguna Blanca",
+    "codigoRegion": "12",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "12103",
+    "comuna": "Río Verde",
+    "codigoRegion": "12",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "12104",
+    "comuna": "San Gregorio",
+    "codigoRegion": "12",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "12201",
+    "comuna": "Cabo de Hornos",
+    "codigoRegion": "12",
+    "estado": "unica",
+    "ciudades": [
+      "1220102600101"
+    ]
+  },
+  {
+    "cut": "12301",
+    "comuna": "Porvenir",
+    "codigoRegion": "12",
+    "estado": "unica",
+    "ciudades": [
+      "1230100800101"
+    ]
+  },
+  {
+    "cut": "12302",
+    "comuna": "Primavera",
+    "codigoRegion": "12",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "12303",
+    "comuna": "Timaukel",
+    "codigoRegion": "12",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "12401",
+    "comuna": "Natales",
+    "codigoRegion": "12",
+    "estado": "unica",
+    "ciudades": [
+      "1240102200101"
+    ]
+  },
+  {
+    "cut": "12402",
+    "comuna": "Torres del Paine",
+    "codigoRegion": "12",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "13101",
+    "comuna": "Santiago",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310100100101"
+    ]
+  },
+  {
+    "cut": "13102",
+    "comuna": "Cerrillos",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310200100101"
+    ]
+  },
+  {
+    "cut": "13103",
+    "comuna": "Cerro Navia",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310300100101"
+    ]
+  },
+  {
+    "cut": "13104",
+    "comuna": "Conchalí",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310400100101"
+    ]
+  },
+  {
+    "cut": "13105",
+    "comuna": "El Bosque",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310500100101"
+    ]
+  },
+  {
+    "cut": "13106",
+    "comuna": "Estación Central",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310600100101"
+    ]
+  },
+  {
+    "cut": "13107",
+    "comuna": "Huechuraba",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310700200101"
+    ]
+  },
+  {
+    "cut": "13108",
+    "comuna": "Independencia",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310800100101"
+    ]
+  },
+  {
+    "cut": "13109",
+    "comuna": "La Cisterna",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1310900100101"
+    ]
+  },
+  {
+    "cut": "13110",
+    "comuna": "La Florida",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311000100101"
+    ]
+  },
+  {
+    "cut": "13111",
+    "comuna": "La Granja",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311100100101"
+    ]
+  },
+  {
+    "cut": "13112",
+    "comuna": "La Pintana",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311200100101"
+    ]
+  },
+  {
+    "cut": "13113",
+    "comuna": "La Reina",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311300100101"
+    ]
+  },
+  {
+    "cut": "13114",
+    "comuna": "Las Condes",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311400100101"
+    ]
+  },
+  {
+    "cut": "13115",
+    "comuna": "Lo Barnechea",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311501100101"
+    ]
+  },
+  {
+    "cut": "13116",
+    "comuna": "Lo Espejo",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311600100101"
+    ]
+  },
+  {
+    "cut": "13117",
+    "comuna": "Lo Prado",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311700100101"
+    ]
+  },
+  {
+    "cut": "13118",
+    "comuna": "Macul",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311800100101"
+    ]
+  },
+  {
+    "cut": "13119",
+    "comuna": "Maipú",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1311900500101"
+    ]
+  },
+  {
+    "cut": "13120",
+    "comuna": "Ñuñoa",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312000100101"
+    ]
+  },
+  {
+    "cut": "13121",
+    "comuna": "Pedro Aguirre Cerda",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312100100101"
+    ]
+  },
+  {
+    "cut": "13122",
+    "comuna": "Peñalolén",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312200100101"
+    ]
+  },
+  {
+    "cut": "13123",
+    "comuna": "Providencia",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312300100101"
+    ]
+  },
+  {
+    "cut": "13124",
+    "comuna": "Pudahuel",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1312402100101",
+      "1312402300201"
+    ]
+  },
+  {
+    "cut": "13125",
+    "comuna": "Quilicura",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312500300101"
+    ]
+  },
+  {
+    "cut": "13126",
+    "comuna": "Quinta Normal",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312600100101"
+    ]
+  },
+  {
+    "cut": "13127",
+    "comuna": "Recoleta",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312700100101"
+    ]
+  },
+  {
+    "cut": "13128",
+    "comuna": "Renca",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312800100101"
+    ]
+  },
+  {
+    "cut": "13129",
+    "comuna": "San Joaquín",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1312900100101"
+    ]
+  },
+  {
+    "cut": "13130",
+    "comuna": "San Miguel",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1313000100101"
+    ]
+  },
+  {
+    "cut": "13131",
+    "comuna": "San Ramón",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1313100100101"
+    ]
+  },
+  {
+    "cut": "13132",
+    "comuna": "Vitacura",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1313200100101"
+    ]
+  },
+  {
+    "cut": "13201",
+    "comuna": "Puente Alto",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1320100300101"
+    ]
+  },
+  {
+    "cut": "13202",
+    "comuna": "Pirque",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1320200300201",
+      "1320201500101"
+    ]
+  },
+  {
+    "cut": "13203",
+    "comuna": "San José de Maipo",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1320301900101",
+      "1320302000201"
+    ]
+  },
+  {
+    "cut": "13301",
+    "comuna": "Colina",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1330100300201",
+      "1330100400301",
+      "1330100500101",
+      "1330103100401"
+    ]
+  },
+  {
+    "cut": "13302",
+    "comuna": "Lampa",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1330200100201",
+      "1330201300101",
+      "1330202900301"
+    ]
+  },
+  {
+    "cut": "13303",
+    "comuna": "Tiltil",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1330301200101"
+    ]
+  },
+  {
+    "cut": "13401",
+    "comuna": "San Bernardo",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1340101000201",
+      "1340101700101"
+    ]
+  },
+  {
+    "cut": "13402",
+    "comuna": "Buin",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1340200100201",
+      "1340200200101"
+    ]
+  },
+  {
+    "cut": "13403",
+    "comuna": "Calera de Tango",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1340300100101"
+    ]
+  },
+  {
+    "cut": "13404",
+    "comuna": "Paine",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1340402500401",
+      "1340403200101"
+    ]
+  },
+  {
+    "cut": "13501",
+    "comuna": "Melipilla",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1350100100201",
+      "1350102900101"
+    ]
+  },
+  {
+    "cut": "13502",
+    "comuna": "Alhué",
+    "codigoRegion": "13",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "13503",
+    "comuna": "Curacaví",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1350300600101"
+    ]
+  },
+  {
+    "cut": "13504",
+    "comuna": "María Pinto",
+    "codigoRegion": "13",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "13505",
+    "comuna": "San Pedro",
+    "codigoRegion": "13",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "13601",
+    "comuna": "Talagante",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1360102000101"
+    ]
+  },
+  {
+    "cut": "13602",
+    "comuna": "El Monte",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1360200200101"
+    ]
+  },
+  {
+    "cut": "13603",
+    "comuna": "Isla de Maipo",
+    "codigoRegion": "13",
+    "estado": "multiple",
+    "ciudades": [
+      "1360300300201",
+      "1360300400301"
+    ]
+  },
+  {
+    "cut": "13604",
+    "comuna": "Padre Hurtado",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1360401500101"
+    ]
+  },
+  {
+    "cut": "13605",
+    "comuna": "Peñaflor",
+    "codigoRegion": "13",
+    "estado": "unica",
+    "ciudades": [
+      "1360500800101"
+    ]
+  },
+  {
+    "cut": "14101",
+    "comuna": "Valdivia",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1410106200101"
+    ]
+  },
+  {
+    "cut": "14102",
+    "comuna": "Corral",
+    "codigoRegion": "14",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "14103",
+    "comuna": "Lanco",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1410302400101"
+    ]
+  },
+  {
+    "cut": "14104",
+    "comuna": "Los Lagos",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1410404200201"
+    ]
+  },
+  {
+    "cut": "14105",
+    "comuna": "Máfil",
+    "codigoRegion": "14",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "14106",
+    "comuna": "Mariquina",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1410606000101"
+    ]
+  },
+  {
+    "cut": "14107",
+    "comuna": "Paillaco",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1410703500101"
+    ]
+  },
+  {
+    "cut": "14108",
+    "comuna": "Panguipulli",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1410804800101"
+    ]
+  },
+  {
+    "cut": "14201",
+    "comuna": "La Unión",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1420102400101"
+    ]
+  },
+  {
+    "cut": "14202",
+    "comuna": "Futrono",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1420201500101"
+    ]
+  },
+  {
+    "cut": "14203",
+    "comuna": "Lago Ranco",
+    "codigoRegion": "14",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "14204",
+    "comuna": "Río Bueno",
+    "codigoRegion": "14",
+    "estado": "unica",
+    "ciudades": [
+      "1420404100101"
+    ]
+  },
+  {
+    "cut": "15101",
+    "comuna": "Arica",
+    "codigoRegion": "15",
+    "estado": "unica",
+    "ciudades": [
+      "1510100100101"
+    ]
+  },
+  {
+    "cut": "15102",
+    "comuna": "Camarones",
+    "codigoRegion": "15",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "15201",
+    "comuna": "Putre",
+    "codigoRegion": "15",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "15202",
+    "comuna": "General Lagos",
+    "codigoRegion": "15",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16101",
+    "comuna": "Chillán",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1610103800101"
+    ]
+  },
+  {
+    "cut": "16102",
+    "comuna": "Bulnes",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1610200300101"
+    ]
+  },
+  {
+    "cut": "16103",
+    "comuna": "Chillán Viejo",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1610303500101"
+    ]
+  },
+  {
+    "cut": "16104",
+    "comuna": "El Carmen",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1610400500101"
+    ]
+  },
+  {
+    "cut": "16105",
+    "comuna": "Pemuco",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16106",
+    "comuna": "Pinto",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16107",
+    "comuna": "Quillón",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1610702600101"
+    ]
+  },
+  {
+    "cut": "16108",
+    "comuna": "San Ignacio",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16109",
+    "comuna": "Yungay",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1610905700101"
+    ]
+  },
+  {
+    "cut": "16201",
+    "comuna": "Quirihue",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1620106600101"
+    ]
+  },
+  {
+    "cut": "16202",
+    "comuna": "Cobquecura",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16203",
+    "comuna": "Coelemu",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1620300700101"
+    ]
+  },
+  {
+    "cut": "16204",
+    "comuna": "Ninhue",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16205",
+    "comuna": "Portezuelo",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16206",
+    "comuna": "Ranquil",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16207",
+    "comuna": "Treguaco",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16301",
+    "comuna": "San Carlos",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1630105800101"
+    ]
+  },
+  {
+    "cut": "16302",
+    "comuna": "Coihueco",
+    "codigoRegion": "16",
+    "estado": "unica",
+    "ciudades": [
+      "1630201100101"
+    ]
+  },
+  {
+    "cut": "16303",
+    "comuna": "Ñiquén",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16304",
+    "comuna": "San Fabián",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  },
+  {
+    "cut": "16305",
+    "comuna": "San Nicolás",
+    "codigoRegion": "16",
+    "estado": "sin_ciudad",
+    "ciudades": []
+  }
+]

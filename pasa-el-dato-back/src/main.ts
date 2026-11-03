@@ -1,11 +1,17 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module.js';
+import { obtenerDirectorioUploads } from './publicacion/almacenamiento-imagenes.service.js';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets(obtenerDirectorioUploads(), {
+    prefix: '/api/uploads',
+  });
 
   // Convierte el encabezado Cookie en request.cookies.
   app.use(cookieParser());

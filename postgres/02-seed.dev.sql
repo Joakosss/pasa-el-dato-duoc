@@ -1,7 +1,10 @@
--- 02-seed.dev.sql — SEED DEV TEMPORAL (descartable)
--- Para tener algo que mostrar en front/back/mobile sin crear a mano.
--- Para volver a esquema limpio: borrar este archivo + `podman-compose down -v && up`.
--- Corre solo la primera vez (volumen vacío), después de 01-schema.sql.
+-- 02-seed.dev.sql — RETIRADO DE INITDB
+-- Este archivo ya no se monta en docker-entrypoint-initdb.d.
+-- Su contenido dev (roles, escuela, carrera) y la sede "Puente Alto" migraron
+-- al seed dev idempotente de pasa-el-dato-back/src/seed/seed-dev.ts:
+--   podman compose exec back pnpm db:seed:dev
+-- Conservado solo como referencia documental. Mantener sincronizado con
+-- seed-dev.ts si cambian los datos dev.
 
 INSERT INTO rol_usuario (descripcion)
 VALUES ('Estudiante'), ('Administrador'), ('Marca')

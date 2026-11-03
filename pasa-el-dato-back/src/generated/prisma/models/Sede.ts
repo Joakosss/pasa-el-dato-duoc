@@ -28,10 +28,12 @@ export type AggregateSede = {
 
 export type SedeAvgAggregateOutputType = {
   id: number | null
+  comunaId: number | null
 }
 
 export type SedeSumAggregateOutputType = {
   id: number | null
+  comunaId: number | null
 }
 
 export type SedeMinAggregateOutputType = {
@@ -42,6 +44,7 @@ export type SedeMinAggregateOutputType = {
   fechaModificacion: Date | null
   eliminado: boolean | null
   fk_modificado_por: string | null
+  comunaId: number | null
 }
 
 export type SedeMaxAggregateOutputType = {
@@ -52,6 +55,7 @@ export type SedeMaxAggregateOutputType = {
   fechaModificacion: Date | null
   eliminado: boolean | null
   fk_modificado_por: string | null
+  comunaId: number | null
 }
 
 export type SedeCountAggregateOutputType = {
@@ -62,16 +66,19 @@ export type SedeCountAggregateOutputType = {
   fechaModificacion: number
   eliminado: number
   fk_modificado_por: number
+  comunaId: number
   _all: number
 }
 
 
 export type SedeAvgAggregateInputType = {
   id?: true
+  comunaId?: true
 }
 
 export type SedeSumAggregateInputType = {
   id?: true
+  comunaId?: true
 }
 
 export type SedeMinAggregateInputType = {
@@ -82,6 +89,7 @@ export type SedeMinAggregateInputType = {
   fechaModificacion?: true
   eliminado?: true
   fk_modificado_por?: true
+  comunaId?: true
 }
 
 export type SedeMaxAggregateInputType = {
@@ -92,6 +100,7 @@ export type SedeMaxAggregateInputType = {
   fechaModificacion?: true
   eliminado?: true
   fk_modificado_por?: true
+  comunaId?: true
 }
 
 export type SedeCountAggregateInputType = {
@@ -102,6 +111,7 @@ export type SedeCountAggregateInputType = {
   fechaModificacion?: true
   eliminado?: true
   fk_modificado_por?: true
+  comunaId?: true
   _all?: true
 }
 
@@ -199,6 +209,7 @@ export type SedeGroupByOutputType = {
   fechaModificacion: Date
   eliminado: boolean
   fk_modificado_por: string | null
+  comunaId: number | null
   _count: SedeCountAggregateOutputType | null
   _avg: SedeAvgAggregateOutputType | null
   _sum: SedeSumAggregateOutputType | null
@@ -232,8 +243,11 @@ export type SedeWhereInput = {
   fechaModificacion?: Prisma.DateTimeFilter<"Sede"> | Date | string
   eliminado?: Prisma.BoolFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableFilter<"Sede"> | string | null
+  comunaId?: Prisma.IntNullableFilter<"Sede"> | number | null
   cuenta?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
+  comuna?: Prisma.XOR<Prisma.ComunaNullableScalarRelationFilter, Prisma.ComunaWhereInput> | null
   usuario?: Prisma.UsuarioListRelationFilter
+  publicaciones?: Prisma.PublicacionListRelationFilter
 }
 
 export type SedeOrderByWithRelationInput = {
@@ -244,24 +258,30 @@ export type SedeOrderByWithRelationInput = {
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrderInput | Prisma.SortOrder
+  comunaId?: Prisma.SortOrderInput | Prisma.SortOrder
   cuenta?: Prisma.CuentaOrderByWithRelationInput
+  comuna?: Prisma.ComunaOrderByWithRelationInput
   usuario?: Prisma.UsuarioOrderByRelationAggregateInput
+  publicaciones?: Prisma.PublicacionOrderByRelationAggregateInput
 }
 
 export type SedeWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  nombre?: string
   AND?: Prisma.SedeWhereInput | Prisma.SedeWhereInput[]
   OR?: Prisma.SedeWhereInput[]
   NOT?: Prisma.SedeWhereInput | Prisma.SedeWhereInput[]
-  nombre?: Prisma.StringFilter<"Sede"> | string
   activa?: Prisma.BoolFilter<"Sede"> | boolean
   fechaCreacion?: Prisma.DateTimeFilter<"Sede"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Sede"> | Date | string
   eliminado?: Prisma.BoolFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableFilter<"Sede"> | string | null
+  comunaId?: Prisma.IntNullableFilter<"Sede"> | number | null
   cuenta?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
+  comuna?: Prisma.XOR<Prisma.ComunaNullableScalarRelationFilter, Prisma.ComunaWhereInput> | null
   usuario?: Prisma.UsuarioListRelationFilter
-}, "id">
+  publicaciones?: Prisma.PublicacionListRelationFilter
+}, "id" | "nombre">
 
 export type SedeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -271,6 +291,7 @@ export type SedeOrderByWithAggregationInput = {
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrderInput | Prisma.SortOrder
+  comunaId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SedeCountOrderByAggregateInput
   _avg?: Prisma.SedeAvgOrderByAggregateInput
   _max?: Prisma.SedeMaxOrderByAggregateInput
@@ -289,6 +310,7 @@ export type SedeScalarWhereWithAggregatesInput = {
   fechaModificacion?: Prisma.DateTimeWithAggregatesFilter<"Sede"> | Date | string
   eliminado?: Prisma.BoolWithAggregatesFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableWithAggregatesFilter<"Sede"> | string | null
+  comunaId?: Prisma.IntNullableWithAggregatesFilter<"Sede"> | number | null
 }
 
 export type SedeCreateInput = {
@@ -298,7 +320,9 @@ export type SedeCreateInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
+  comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateInput = {
@@ -309,7 +333,9 @@ export type SedeUncheckedCreateInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   fk_modificado_por?: string | null
+  comunaId?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUpdateInput = {
@@ -319,7 +345,9 @@ export type SedeUpdateInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
+  comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateInput = {
@@ -330,7 +358,9 @@ export type SedeUncheckedUpdateInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeCreateManyInput = {
@@ -341,6 +371,7 @@ export type SedeCreateManyInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   fk_modificado_por?: string | null
+  comunaId?: number | null
 }
 
 export type SedeUpdateManyMutationInput = {
@@ -359,6 +390,7 @@ export type SedeUncheckedUpdateManyInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type SedeListRelationFilter = {
@@ -379,10 +411,12 @@ export type SedeCountOrderByAggregateInput = {
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrder
+  comunaId?: Prisma.SortOrder
 }
 
 export type SedeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  comunaId?: Prisma.SortOrder
 }
 
 export type SedeMaxOrderByAggregateInput = {
@@ -393,6 +427,7 @@ export type SedeMaxOrderByAggregateInput = {
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrder
+  comunaId?: Prisma.SortOrder
 }
 
 export type SedeMinOrderByAggregateInput = {
@@ -403,10 +438,12 @@ export type SedeMinOrderByAggregateInput = {
   fechaModificacion?: Prisma.SortOrder
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrder
+  comunaId?: Prisma.SortOrder
 }
 
 export type SedeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  comunaId?: Prisma.SortOrder
 }
 
 export type SedeScalarRelationFilter = {
@@ -456,6 +493,56 @@ export type SedeUncheckedUpdateManyWithoutCuentaNestedInput = {
   deleteMany?: Prisma.SedeScalarWhereInput | Prisma.SedeScalarWhereInput[]
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type SedeCreateNestedManyWithoutComunaInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutComunaInput, Prisma.SedeUncheckedCreateWithoutComunaInput> | Prisma.SedeCreateWithoutComunaInput[] | Prisma.SedeUncheckedCreateWithoutComunaInput[]
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutComunaInput | Prisma.SedeCreateOrConnectWithoutComunaInput[]
+  createMany?: Prisma.SedeCreateManyComunaInputEnvelope
+  connect?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+}
+
+export type SedeUncheckedCreateNestedManyWithoutComunaInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutComunaInput, Prisma.SedeUncheckedCreateWithoutComunaInput> | Prisma.SedeCreateWithoutComunaInput[] | Prisma.SedeUncheckedCreateWithoutComunaInput[]
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutComunaInput | Prisma.SedeCreateOrConnectWithoutComunaInput[]
+  createMany?: Prisma.SedeCreateManyComunaInputEnvelope
+  connect?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+}
+
+export type SedeUpdateManyWithoutComunaNestedInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutComunaInput, Prisma.SedeUncheckedCreateWithoutComunaInput> | Prisma.SedeCreateWithoutComunaInput[] | Prisma.SedeUncheckedCreateWithoutComunaInput[]
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutComunaInput | Prisma.SedeCreateOrConnectWithoutComunaInput[]
+  upsert?: Prisma.SedeUpsertWithWhereUniqueWithoutComunaInput | Prisma.SedeUpsertWithWhereUniqueWithoutComunaInput[]
+  createMany?: Prisma.SedeCreateManyComunaInputEnvelope
+  set?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  disconnect?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  delete?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  connect?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  update?: Prisma.SedeUpdateWithWhereUniqueWithoutComunaInput | Prisma.SedeUpdateWithWhereUniqueWithoutComunaInput[]
+  updateMany?: Prisma.SedeUpdateManyWithWhereWithoutComunaInput | Prisma.SedeUpdateManyWithWhereWithoutComunaInput[]
+  deleteMany?: Prisma.SedeScalarWhereInput | Prisma.SedeScalarWhereInput[]
+}
+
+export type SedeUncheckedUpdateManyWithoutComunaNestedInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutComunaInput, Prisma.SedeUncheckedCreateWithoutComunaInput> | Prisma.SedeCreateWithoutComunaInput[] | Prisma.SedeUncheckedCreateWithoutComunaInput[]
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutComunaInput | Prisma.SedeCreateOrConnectWithoutComunaInput[]
+  upsert?: Prisma.SedeUpsertWithWhereUniqueWithoutComunaInput | Prisma.SedeUpsertWithWhereUniqueWithoutComunaInput[]
+  createMany?: Prisma.SedeCreateManyComunaInputEnvelope
+  set?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  disconnect?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  delete?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  connect?: Prisma.SedeWhereUniqueInput | Prisma.SedeWhereUniqueInput[]
+  update?: Prisma.SedeUpdateWithWhereUniqueWithoutComunaInput | Prisma.SedeUpdateWithWhereUniqueWithoutComunaInput[]
+  updateMany?: Prisma.SedeUpdateManyWithWhereWithoutComunaInput | Prisma.SedeUpdateManyWithWhereWithoutComunaInput[]
+  deleteMany?: Prisma.SedeScalarWhereInput | Prisma.SedeScalarWhereInput[]
+}
+
 export type SedeCreateNestedOneWithoutUsuarioInput = {
   create?: Prisma.XOR<Prisma.SedeCreateWithoutUsuarioInput, Prisma.SedeUncheckedCreateWithoutUsuarioInput>
   connectOrCreate?: Prisma.SedeCreateOrConnectWithoutUsuarioInput
@@ -470,13 +557,29 @@ export type SedeUpdateOneRequiredWithoutUsuarioNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SedeUpdateToOneWithWhereWithoutUsuarioInput, Prisma.SedeUpdateWithoutUsuarioInput>, Prisma.SedeUncheckedUpdateWithoutUsuarioInput>
 }
 
+export type SedeCreateNestedOneWithoutPublicacionesInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutPublicacionesInput, Prisma.SedeUncheckedCreateWithoutPublicacionesInput>
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutPublicacionesInput
+  connect?: Prisma.SedeWhereUniqueInput
+}
+
+export type SedeUpdateOneRequiredWithoutPublicacionesNestedInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutPublicacionesInput, Prisma.SedeUncheckedCreateWithoutPublicacionesInput>
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutPublicacionesInput
+  upsert?: Prisma.SedeUpsertWithoutPublicacionesInput
+  connect?: Prisma.SedeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SedeUpdateToOneWithWhereWithoutPublicacionesInput, Prisma.SedeUpdateWithoutPublicacionesInput>, Prisma.SedeUncheckedUpdateWithoutPublicacionesInput>
+}
+
 export type SedeCreateWithoutCuentaInput = {
   nombre: string
   activa?: boolean
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateWithoutCuentaInput = {
@@ -486,7 +589,9 @@ export type SedeUncheckedCreateWithoutCuentaInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  comunaId?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeCreateOrConnectWithoutCuentaInput = {
@@ -526,6 +631,56 @@ export type SedeScalarWhereInput = {
   fechaModificacion?: Prisma.DateTimeFilter<"Sede"> | Date | string
   eliminado?: Prisma.BoolFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableFilter<"Sede"> | string | null
+  comunaId?: Prisma.IntNullableFilter<"Sede"> | number | null
+}
+
+export type SedeCreateWithoutComunaInput = {
+  nombre: string
+  activa?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
+  usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
+}
+
+export type SedeUncheckedCreateWithoutComunaInput = {
+  id?: number
+  nombre: string
+  activa?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
+}
+
+export type SedeCreateOrConnectWithoutComunaInput = {
+  where: Prisma.SedeWhereUniqueInput
+  create: Prisma.XOR<Prisma.SedeCreateWithoutComunaInput, Prisma.SedeUncheckedCreateWithoutComunaInput>
+}
+
+export type SedeCreateManyComunaInputEnvelope = {
+  data: Prisma.SedeCreateManyComunaInput | Prisma.SedeCreateManyComunaInput[]
+  skipDuplicates?: boolean
+}
+
+export type SedeUpsertWithWhereUniqueWithoutComunaInput = {
+  where: Prisma.SedeWhereUniqueInput
+  update: Prisma.XOR<Prisma.SedeUpdateWithoutComunaInput, Prisma.SedeUncheckedUpdateWithoutComunaInput>
+  create: Prisma.XOR<Prisma.SedeCreateWithoutComunaInput, Prisma.SedeUncheckedCreateWithoutComunaInput>
+}
+
+export type SedeUpdateWithWhereUniqueWithoutComunaInput = {
+  where: Prisma.SedeWhereUniqueInput
+  data: Prisma.XOR<Prisma.SedeUpdateWithoutComunaInput, Prisma.SedeUncheckedUpdateWithoutComunaInput>
+}
+
+export type SedeUpdateManyWithWhereWithoutComunaInput = {
+  where: Prisma.SedeScalarWhereInput
+  data: Prisma.XOR<Prisma.SedeUpdateManyMutationInput, Prisma.SedeUncheckedUpdateManyWithoutComunaInput>
 }
 
 export type SedeCreateWithoutUsuarioInput = {
@@ -535,6 +690,8 @@ export type SedeCreateWithoutUsuarioInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
+  comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateWithoutUsuarioInput = {
@@ -545,6 +702,8 @@ export type SedeUncheckedCreateWithoutUsuarioInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   fk_modificado_por?: string | null
+  comunaId?: number | null
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeCreateOrConnectWithoutUsuarioInput = {
@@ -570,6 +729,8 @@ export type SedeUpdateWithoutUsuarioInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
+  comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateWithoutUsuarioInput = {
@@ -580,6 +741,70 @@ export type SedeUncheckedUpdateWithoutUsuarioInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
+}
+
+export type SedeCreateWithoutPublicacionesInput = {
+  nombre: string
+  activa?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
+  comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
+  usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
+}
+
+export type SedeUncheckedCreateWithoutPublicacionesInput = {
+  id?: number
+  nombre: string
+  activa?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  comunaId?: number | null
+  usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
+}
+
+export type SedeCreateOrConnectWithoutPublicacionesInput = {
+  where: Prisma.SedeWhereUniqueInput
+  create: Prisma.XOR<Prisma.SedeCreateWithoutPublicacionesInput, Prisma.SedeUncheckedCreateWithoutPublicacionesInput>
+}
+
+export type SedeUpsertWithoutPublicacionesInput = {
+  update: Prisma.XOR<Prisma.SedeUpdateWithoutPublicacionesInput, Prisma.SedeUncheckedUpdateWithoutPublicacionesInput>
+  create: Prisma.XOR<Prisma.SedeCreateWithoutPublicacionesInput, Prisma.SedeUncheckedCreateWithoutPublicacionesInput>
+  where?: Prisma.SedeWhereInput
+}
+
+export type SedeUpdateToOneWithWhereWithoutPublicacionesInput = {
+  where?: Prisma.SedeWhereInput
+  data: Prisma.XOR<Prisma.SedeUpdateWithoutPublicacionesInput, Prisma.SedeUncheckedUpdateWithoutPublicacionesInput>
+}
+
+export type SedeUpdateWithoutPublicacionesInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
+  comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
+  usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
+}
+
+export type SedeUncheckedUpdateWithoutPublicacionesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeCreateManyCuentaInput = {
@@ -589,6 +814,7 @@ export type SedeCreateManyCuentaInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  comunaId?: number | null
 }
 
 export type SedeUpdateWithoutCuentaInput = {
@@ -597,7 +823,9 @@ export type SedeUpdateWithoutCuentaInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateWithoutCuentaInput = {
@@ -607,7 +835,9 @@ export type SedeUncheckedUpdateWithoutCuentaInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateManyWithoutCuentaInput = {
@@ -617,6 +847,50 @@ export type SedeUncheckedUpdateManyWithoutCuentaInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type SedeCreateManyComunaInput = {
+  id?: number
+  nombre: string
+  activa?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+}
+
+export type SedeUpdateWithoutComunaInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
+  usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
+}
+
+export type SedeUncheckedUpdateWithoutComunaInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
+}
+
+export type SedeUncheckedUpdateManyWithoutComunaInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -626,10 +900,12 @@ export type SedeUncheckedUpdateManyWithoutCuentaInput = {
 
 export type SedeCountOutputType = {
   usuario: number
+  publicaciones: number
 }
 
 export type SedeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | SedeCountOutputTypeCountUsuarioArgs
+  publicaciones?: boolean | SedeCountOutputTypeCountPublicacionesArgs
 }
 
 /**
@@ -649,6 +925,13 @@ export type SedeCountOutputTypeCountUsuarioArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.UsuarioWhereInput
 }
 
+/**
+ * SedeCountOutputType without action
+ */
+export type SedeCountOutputTypeCountPublicacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PublicacionWhereInput
+}
+
 
 export type SedeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -658,8 +941,11 @@ export type SedeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   fechaModificacion?: boolean
   eliminado?: boolean
   fk_modificado_por?: boolean
+  comunaId?: boolean
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
+  comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
   usuario?: boolean | Prisma.Sede$usuarioArgs<ExtArgs>
+  publicaciones?: boolean | Prisma.Sede$publicacionesArgs<ExtArgs>
   _count?: boolean | Prisma.SedeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sede"]>
 
@@ -671,7 +957,9 @@ export type SedeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   fechaModificacion?: boolean
   eliminado?: boolean
   fk_modificado_por?: boolean
+  comunaId?: boolean
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
+  comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
 }, ExtArgs["result"]["sede"]>
 
 export type SedeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -682,7 +970,9 @@ export type SedeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   fechaModificacion?: boolean
   eliminado?: boolean
   fk_modificado_por?: boolean
+  comunaId?: boolean
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
+  comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
 }, ExtArgs["result"]["sede"]>
 
 export type SedeSelectScalar = {
@@ -693,26 +983,33 @@ export type SedeSelectScalar = {
   fechaModificacion?: boolean
   eliminado?: boolean
   fk_modificado_por?: boolean
+  comunaId?: boolean
 }
 
-export type SedeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "activa" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por", ExtArgs["result"]["sede"]>
+export type SedeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "activa" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por" | "comunaId", ExtArgs["result"]["sede"]>
 export type SedeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
+  comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
   usuario?: boolean | Prisma.Sede$usuarioArgs<ExtArgs>
+  publicaciones?: boolean | Prisma.Sede$publicacionesArgs<ExtArgs>
   _count?: boolean | Prisma.SedeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SedeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
+  comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
 }
 export type SedeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
+  comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
 }
 
 export type $SedePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Sede"
   objects: {
     cuenta: Prisma.$CuentaPayload<ExtArgs> | null
+    comuna: Prisma.$ComunaPayload<ExtArgs> | null
     usuario: Prisma.$UsuarioPayload<ExtArgs>[]
+    publicaciones: Prisma.$PublicacionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -722,6 +1019,7 @@ export type $SedePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     fechaModificacion: Date
     eliminado: boolean
     fk_modificado_por: string | null
+    comunaId: number | null
   }, ExtArgs["result"]["sede"]>
   composites: {}
 }
@@ -1117,7 +1415,9 @@ readonly fields: SedeFieldRefs;
 export interface Prisma__SedeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   cuenta<T extends Prisma.Sede$cuentaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$cuentaArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  comuna<T extends Prisma.Sede$comunaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$comunaArgs<ExtArgs>>): Prisma.Prisma__ComunaClient<runtime.Types.Result.GetResult<Prisma.$ComunaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   usuario<T extends Prisma.Sede$usuarioArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$usuarioArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  publicaciones<T extends Prisma.Sede$publicacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$publicacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1154,6 +1454,7 @@ export interface SedeFieldRefs {
   readonly fechaModificacion: Prisma.FieldRef<"Sede", 'DateTime'>
   readonly eliminado: Prisma.FieldRef<"Sede", 'Boolean'>
   readonly fk_modificado_por: Prisma.FieldRef<"Sede", 'String'>
+  readonly comunaId: Prisma.FieldRef<"Sede", 'Int'>
 }
     
 
@@ -1574,6 +1875,25 @@ export type Sede$cuentaArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 
 /**
+ * Sede.comuna
+ */
+export type Sede$comunaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Comuna
+   */
+  select?: Prisma.ComunaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Comuna
+   */
+  omit?: Prisma.ComunaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ComunaInclude<ExtArgs> | null
+  where?: Prisma.ComunaWhereInput
+}
+
+/**
  * Sede.usuario
  */
 export type Sede$usuarioArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1595,6 +1915,30 @@ export type Sede$usuarioArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.UsuarioScalarFieldEnum | Prisma.UsuarioScalarFieldEnum[]
+}
+
+/**
+ * Sede.publicaciones
+ */
+export type Sede$publicacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Publicacion
+   */
+  select?: Prisma.PublicacionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Publicacion
+   */
+  omit?: Prisma.PublicacionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PublicacionInclude<ExtArgs> | null
+  where?: Prisma.PublicacionWhereInput
+  orderBy?: Prisma.PublicacionOrderByWithRelationInput | Prisma.PublicacionOrderByWithRelationInput[]
+  cursor?: Prisma.PublicacionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PublicacionScalarFieldEnum | Prisma.PublicacionScalarFieldEnum[]
 }
 
 /**

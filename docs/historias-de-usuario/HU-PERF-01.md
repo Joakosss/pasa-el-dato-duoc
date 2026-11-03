@@ -22,9 +22,14 @@
   **cuando** intento acceder al perfil,  
   **entonces** el sistema rechaza la solicitud por autenticación requerida.
 
-- **Dado** que tengo una cuenta sin registro de usuario asociado o sin sede, carrera o rol asignado,  
-  **cuando** consulto mi perfil,  
-  **entonces** el sistema responde sin error y marca esos campos como no disponibles.
+- Dado una sesión válida asociada a una cuenta con usuario, sede, carrera y rol registrados,
+  cuando consulto mi perfil,
+  entonces el sistema responde mis datos de perfil.
+
+- Dado una cuenta sin registro de usuario asociado,
+  cuando intenta consultar su perfil,
+  entonces el sistema rechaza la solicitud como sesión no válida según las reglas actuales de autenticación.
+
 
 ## Reglas de negocio
 
@@ -53,7 +58,14 @@ Base para verificar el registro, insumo necesario para la edición de perfil (HU
 
 ## Estado
 
-`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.
+`en-progreso` — Backend completado (BE01–BE05) y verificado; Frontend (FE01–FE05) y QA/Integración (INT01–INT03) pendientes.
+
+Notas de cierre backend:
+
+- Ruta implementada: `GET /api/perfil/me` (sin prefijo `/api/v1`). La subtarea BE01 la describía con `/api/v1/perfil/me`; se ajustó a la convención actual del proyecto (sin versionado en la ruta) siguiendo la aclaración del flujo. La aclaración prevalece sobre el texto original de la subtarea.
+- Verificación backend: lint sin errores (1 warning preexistente no relacionado), `tsc --noEmit` limpio, 112 tests unitarios y 16 tests E2E en verde, smoke 401 sin token.
+- `AuthModule` exporta `JwtModule` (mínimo necesario) para resolver la inyección en `PerfilModule`.
+- Criterio de aceptación corregido durante la fase: cuenta sin usuario asociado → 401 (sesión no válida), y FKs obligatorias → sin `null` inesperados para sede/carrera/rol.
 
 ---
 

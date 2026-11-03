@@ -1,0 +1,1727 @@
+[
+  {
+    "codigoSubdere": "01101",
+    "nombre": "Iquique",
+    "codigoRegionSubdere": "01"
+  },
+  {
+    "codigoSubdere": "01107",
+    "nombre": "Alto Hospicio",
+    "codigoRegionSubdere": "01"
+  },
+  {
+    "codigoSubdere": "01401",
+    "nombre": "Pozo Almonte",
+    "codigoRegionSubdere": "01"
+  },
+  {
+    "codigoSubdere": "01402",
+    "nombre": "Camiña",
+    "codigoRegionSubdere": "01"
+  },
+  {
+    "codigoSubdere": "01403",
+    "nombre": "Colchane",
+    "codigoRegionSubdere": "01"
+  },
+  {
+    "codigoSubdere": "01404",
+    "nombre": "Huara",
+    "codigoRegionSubdere": "01"
+  },
+  {
+    "codigoSubdere": "01405",
+    "nombre": "Pica",
+    "codigoRegionSubdere": "01"
+  },
+  {
+    "codigoSubdere": "02101",
+    "nombre": "Antofagasta",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02102",
+    "nombre": "Mejillones",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02103",
+    "nombre": "Sierra Gorda",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02104",
+    "nombre": "Taltal",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02201",
+    "nombre": "Calama",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02202",
+    "nombre": "Ollagüe",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02203",
+    "nombre": "San Pedro de Atacama",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02301",
+    "nombre": "Tocopilla",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "02302",
+    "nombre": "María Elena",
+    "codigoRegionSubdere": "02"
+  },
+  {
+    "codigoSubdere": "03101",
+    "nombre": "Copiapó",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03102",
+    "nombre": "Caldera",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03103",
+    "nombre": "Tierra Amarilla",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03201",
+    "nombre": "Chañaral",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03202",
+    "nombre": "Diego de Almagro",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03301",
+    "nombre": "Vallenar",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03302",
+    "nombre": "Alto del Carmen",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03303",
+    "nombre": "Freirina",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "03304",
+    "nombre": "Huasco",
+    "codigoRegionSubdere": "03"
+  },
+  {
+    "codigoSubdere": "04101",
+    "nombre": "La Serena",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04102",
+    "nombre": "Coquimbo",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04103",
+    "nombre": "Andacollo",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04104",
+    "nombre": "La Higuera",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04105",
+    "nombre": "Paiguano",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04106",
+    "nombre": "Vicuña",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04201",
+    "nombre": "Illapel",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04202",
+    "nombre": "Canela",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04203",
+    "nombre": "Los Vilos",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04204",
+    "nombre": "Salamanca",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04301",
+    "nombre": "Ovalle",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04302",
+    "nombre": "Combarbalá",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04303",
+    "nombre": "Monte Patria",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04304",
+    "nombre": "Punitaqui",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "04305",
+    "nombre": "Río Hurtado",
+    "codigoRegionSubdere": "04"
+  },
+  {
+    "codigoSubdere": "05101",
+    "nombre": "Valparaíso",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05102",
+    "nombre": "Casablanca",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05103",
+    "nombre": "Concón",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05104",
+    "nombre": "Juan Fernández",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05105",
+    "nombre": "Puchuncaví",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05107",
+    "nombre": "Quintero",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05109",
+    "nombre": "Viña del Mar",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05201",
+    "nombre": "Isla de Pascua",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05301",
+    "nombre": "Los Andes",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05302",
+    "nombre": "Calle Larga",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05303",
+    "nombre": "Rinconada",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05304",
+    "nombre": "San Esteban",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05401",
+    "nombre": "La Ligua",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05402",
+    "nombre": "Cabildo",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05403",
+    "nombre": "Papudo",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05404",
+    "nombre": "Petorca",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05405",
+    "nombre": "Zapallar",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05501",
+    "nombre": "Quillota",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05502",
+    "nombre": "Calera",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05503",
+    "nombre": "Hijuelas",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05504",
+    "nombre": "La Cruz",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05506",
+    "nombre": "Nogales",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05601",
+    "nombre": "San Antonio",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05602",
+    "nombre": "Algarrobo",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05603",
+    "nombre": "Cartagena",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05604",
+    "nombre": "El Quisco",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05605",
+    "nombre": "El Tabo",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05606",
+    "nombre": "Santo Domingo",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05701",
+    "nombre": "San Felipe",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05702",
+    "nombre": "Catemu",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05703",
+    "nombre": "Llaillay",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05704",
+    "nombre": "Panquehue",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05705",
+    "nombre": "Putaendo",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05706",
+    "nombre": "Santa María",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05801",
+    "nombre": "Quilpué",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05802",
+    "nombre": "Limache",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05803",
+    "nombre": "Olmué",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "05804",
+    "nombre": "Villa Alemana",
+    "codigoRegionSubdere": "05"
+  },
+  {
+    "codigoSubdere": "06101",
+    "nombre": "Rancagua",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06102",
+    "nombre": "Codegua",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06103",
+    "nombre": "Coinco",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06104",
+    "nombre": "Coltauco",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06105",
+    "nombre": "Doñihue",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06106",
+    "nombre": "Graneros",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06107",
+    "nombre": "Las Cabras",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06108",
+    "nombre": "Machalí",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06109",
+    "nombre": "Malloa",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06110",
+    "nombre": "Mostazal",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06111",
+    "nombre": "Olivar",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06112",
+    "nombre": "Peumo",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06113",
+    "nombre": "Pichidegua",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06114",
+    "nombre": "Quinta de Tilcoco",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06115",
+    "nombre": "Rengo",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06116",
+    "nombre": "Requínoa",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06117",
+    "nombre": "San Vicente",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06201",
+    "nombre": "Pichilemu",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06202",
+    "nombre": "La Estrella",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06203",
+    "nombre": "Litueche",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06204",
+    "nombre": "Marchihue",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06205",
+    "nombre": "Navidad",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06206",
+    "nombre": "Paredones",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06301",
+    "nombre": "San Fernando",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06302",
+    "nombre": "Chépica",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06303",
+    "nombre": "Chimbarongo",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06304",
+    "nombre": "Lolol",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06305",
+    "nombre": "Nancagua",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06306",
+    "nombre": "Palmilla",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06307",
+    "nombre": "Peralillo",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06308",
+    "nombre": "Placilla",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06309",
+    "nombre": "Pumanque",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "06310",
+    "nombre": "Santa Cruz",
+    "codigoRegionSubdere": "06"
+  },
+  {
+    "codigoSubdere": "07101",
+    "nombre": "Talca",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07102",
+    "nombre": "Constitución",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07103",
+    "nombre": "Curepto",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07104",
+    "nombre": "Empedrado",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07105",
+    "nombre": "Maule",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07106",
+    "nombre": "Pelarco",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07107",
+    "nombre": "Pencahue",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07108",
+    "nombre": "Río Claro",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07109",
+    "nombre": "San Clemente",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07110",
+    "nombre": "San Rafael",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07201",
+    "nombre": "Cauquenes",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07202",
+    "nombre": "Chanco",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07203",
+    "nombre": "Pelluhue",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07301",
+    "nombre": "Curicó",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07302",
+    "nombre": "Hualañé",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07303",
+    "nombre": "Licantén",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07304",
+    "nombre": "Molina",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07305",
+    "nombre": "Rauco",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07306",
+    "nombre": "Romeral",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07307",
+    "nombre": "Sagrada Familia",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07308",
+    "nombre": "Teno",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07309",
+    "nombre": "Vichuquén",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07401",
+    "nombre": "Linares",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07402",
+    "nombre": "Colbún",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07403",
+    "nombre": "Longaví",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07404",
+    "nombre": "Parral",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07405",
+    "nombre": "Retiro",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07406",
+    "nombre": "San Javier",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07407",
+    "nombre": "Villa Alegre",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "07408",
+    "nombre": "Yerbas Buenas",
+    "codigoRegionSubdere": "07"
+  },
+  {
+    "codigoSubdere": "08101",
+    "nombre": "Concepción",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08102",
+    "nombre": "Coronel",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08103",
+    "nombre": "Chiguayante",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08104",
+    "nombre": "Florida",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08105",
+    "nombre": "Hualqui",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08106",
+    "nombre": "Lota",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08107",
+    "nombre": "Penco",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08108",
+    "nombre": "San Pedro de la Paz",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08109",
+    "nombre": "Santa Juana",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08110",
+    "nombre": "Talcahuano",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08111",
+    "nombre": "Tomé",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08112",
+    "nombre": "Hualpén",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08201",
+    "nombre": "Lebu",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08202",
+    "nombre": "Arauco",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08203",
+    "nombre": "Cañete",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08204",
+    "nombre": "Contulmo",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08205",
+    "nombre": "Curanilahue",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08206",
+    "nombre": "Los Alamos",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08207",
+    "nombre": "Tirúa",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08301",
+    "nombre": "Los Angeles",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08302",
+    "nombre": "Antuco",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08303",
+    "nombre": "Cabrero",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08304",
+    "nombre": "Laja",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08305",
+    "nombre": "Mulchén",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08306",
+    "nombre": "Nacimiento",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08307",
+    "nombre": "Negrete",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08308",
+    "nombre": "Quilaco",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08309",
+    "nombre": "Quilleco",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08310",
+    "nombre": "San Rosendo",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08311",
+    "nombre": "Santa Bárbara",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08312",
+    "nombre": "Tucapel",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08313",
+    "nombre": "Yumbel",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "08314",
+    "nombre": "Alto Biobío",
+    "codigoRegionSubdere": "08"
+  },
+  {
+    "codigoSubdere": "09101",
+    "nombre": "Temuco",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09102",
+    "nombre": "Carahue",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09103",
+    "nombre": "Cunco",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09104",
+    "nombre": "Curarrehue",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09105",
+    "nombre": "Freire",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09106",
+    "nombre": "Galvarino",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09107",
+    "nombre": "Gorbea",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09108",
+    "nombre": "Lautaro",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09109",
+    "nombre": "Loncoche",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09110",
+    "nombre": "Melipeuco",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09111",
+    "nombre": "Nueva Imperial",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09112",
+    "nombre": "Padre Las Casas",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09113",
+    "nombre": "Perquenco",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09114",
+    "nombre": "Pitrufquén",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09115",
+    "nombre": "Pucón",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09116",
+    "nombre": "Saavedra",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09117",
+    "nombre": "Teodoro Schmidt",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09118",
+    "nombre": "Toltén",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09119",
+    "nombre": "Vilcún",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09120",
+    "nombre": "Villarrica",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09121",
+    "nombre": "Cholchol",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09201",
+    "nombre": "Angol",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09202",
+    "nombre": "Collipulli",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09203",
+    "nombre": "Curacautín",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09204",
+    "nombre": "Ercilla",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09205",
+    "nombre": "Lonquimay",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09206",
+    "nombre": "Los Sauces",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09207",
+    "nombre": "Lumaco",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09208",
+    "nombre": "Purén",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09209",
+    "nombre": "Renaico",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09210",
+    "nombre": "Traiguén",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "09211",
+    "nombre": "Victoria",
+    "codigoRegionSubdere": "09"
+  },
+  {
+    "codigoSubdere": "10101",
+    "nombre": "Puerto Montt",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10102",
+    "nombre": "Calbuco",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10103",
+    "nombre": "Cochamó",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10104",
+    "nombre": "Fresia",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10105",
+    "nombre": "Frutillar",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10106",
+    "nombre": "Los Muermos",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10107",
+    "nombre": "Llanquihue",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10108",
+    "nombre": "Maullín",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10109",
+    "nombre": "Puerto Varas",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10201",
+    "nombre": "Castro",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10202",
+    "nombre": "Ancud",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10203",
+    "nombre": "Chonchi",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10204",
+    "nombre": "Curaco de Vélez",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10205",
+    "nombre": "Dalcahue",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10206",
+    "nombre": "Puqueldón",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10207",
+    "nombre": "Queilén",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10208",
+    "nombre": "Quellón",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10209",
+    "nombre": "Quemchi",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10210",
+    "nombre": "Quinchao",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10301",
+    "nombre": "Osorno",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10302",
+    "nombre": "Puerto Octay",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10303",
+    "nombre": "Purranque",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10304",
+    "nombre": "Puyehue",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10305",
+    "nombre": "Río Negro",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10306",
+    "nombre": "San Juan de la Costa",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10307",
+    "nombre": "San Pablo",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10401",
+    "nombre": "Chaitén",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10402",
+    "nombre": "Futaleufú",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10403",
+    "nombre": "Hualaihué",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "10404",
+    "nombre": "Palena",
+    "codigoRegionSubdere": "10"
+  },
+  {
+    "codigoSubdere": "11101",
+    "nombre": "Coihaique",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11102",
+    "nombre": "Lago Verde",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11201",
+    "nombre": "Aisén",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11202",
+    "nombre": "Cisnes",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11203",
+    "nombre": "Guaitecas",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11301",
+    "nombre": "Cochrane",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11302",
+    "nombre": "O'Higgins",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11303",
+    "nombre": "Tortel",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11401",
+    "nombre": "Chile Chico",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "11402",
+    "nombre": "Río Ibáñez",
+    "codigoRegionSubdere": "11"
+  },
+  {
+    "codigoSubdere": "12101",
+    "nombre": "Punta Arenas",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12102",
+    "nombre": "Laguna Blanca",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12103",
+    "nombre": "Río Verde",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12104",
+    "nombre": "San Gregorio",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12201",
+    "nombre": "Cabo de Hornos",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12301",
+    "nombre": "Porvenir",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12302",
+    "nombre": "Primavera",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12303",
+    "nombre": "Timaukel",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12401",
+    "nombre": "Natales",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "12402",
+    "nombre": "Torres del Paine",
+    "codigoRegionSubdere": "12"
+  },
+  {
+    "codigoSubdere": "13101",
+    "nombre": "Santiago",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13102",
+    "nombre": "Cerrillos",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13103",
+    "nombre": "Cerro Navia",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13104",
+    "nombre": "Conchalí",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13105",
+    "nombre": "El Bosque",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13106",
+    "nombre": "Estación Central",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13107",
+    "nombre": "Huechuraba",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13108",
+    "nombre": "Independencia",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13109",
+    "nombre": "La Cisterna",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13110",
+    "nombre": "La Florida",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13111",
+    "nombre": "La Granja",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13112",
+    "nombre": "La Pintana",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13113",
+    "nombre": "La Reina",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13114",
+    "nombre": "Las Condes",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13115",
+    "nombre": "Lo Barnechea",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13116",
+    "nombre": "Lo Espejo",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13117",
+    "nombre": "Lo Prado",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13118",
+    "nombre": "Macul",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13119",
+    "nombre": "Maipú",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13120",
+    "nombre": "Ñuñoa",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13121",
+    "nombre": "Pedro Aguirre Cerda",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13122",
+    "nombre": "Peñalolén",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13123",
+    "nombre": "Providencia",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13124",
+    "nombre": "Pudahuel",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13125",
+    "nombre": "Quilicura",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13126",
+    "nombre": "Quinta Normal",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13127",
+    "nombre": "Recoleta",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13128",
+    "nombre": "Renca",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13129",
+    "nombre": "San Joaquín",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13130",
+    "nombre": "San Miguel",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13131",
+    "nombre": "San Ramón",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13132",
+    "nombre": "Vitacura",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13201",
+    "nombre": "Puente Alto",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13202",
+    "nombre": "Pirque",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13203",
+    "nombre": "San José de Maipo",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13301",
+    "nombre": "Colina",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13302",
+    "nombre": "Lampa",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13303",
+    "nombre": "Tiltil",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13401",
+    "nombre": "San Bernardo",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13402",
+    "nombre": "Buin",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13403",
+    "nombre": "Calera de Tango",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13404",
+    "nombre": "Paine",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13501",
+    "nombre": "Melipilla",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13502",
+    "nombre": "Alhué",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13503",
+    "nombre": "Curacaví",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13504",
+    "nombre": "María Pinto",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13505",
+    "nombre": "San Pedro",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13601",
+    "nombre": "Talagante",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13602",
+    "nombre": "El Monte",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13603",
+    "nombre": "Isla de Maipo",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13604",
+    "nombre": "Padre Hurtado",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "13605",
+    "nombre": "Peñaflor",
+    "codigoRegionSubdere": "13"
+  },
+  {
+    "codigoSubdere": "14101",
+    "nombre": "Valdivia",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14102",
+    "nombre": "Corral",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14103",
+    "nombre": "Lanco",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14104",
+    "nombre": "Los Lagos",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14105",
+    "nombre": "Máfil",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14106",
+    "nombre": "Mariquina",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14107",
+    "nombre": "Paillaco",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14108",
+    "nombre": "Panguipulli",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14201",
+    "nombre": "La Unión",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14202",
+    "nombre": "Futrono",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14203",
+    "nombre": "Lago Ranco",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "14204",
+    "nombre": "Río Bueno",
+    "codigoRegionSubdere": "14"
+  },
+  {
+    "codigoSubdere": "15101",
+    "nombre": "Arica",
+    "codigoRegionSubdere": "15"
+  },
+  {
+    "codigoSubdere": "15102",
+    "nombre": "Camarones",
+    "codigoRegionSubdere": "15"
+  },
+  {
+    "codigoSubdere": "15201",
+    "nombre": "Putre",
+    "codigoRegionSubdere": "15"
+  },
+  {
+    "codigoSubdere": "15202",
+    "nombre": "General Lagos",
+    "codigoRegionSubdere": "15"
+  },
+  {
+    "codigoSubdere": "16101",
+    "nombre": "Chillán",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16102",
+    "nombre": "Bulnes",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16103",
+    "nombre": "Chillán Viejo",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16104",
+    "nombre": "El Carmen",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16105",
+    "nombre": "Pemuco",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16106",
+    "nombre": "Pinto",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16107",
+    "nombre": "Quillón",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16108",
+    "nombre": "San Ignacio",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16109",
+    "nombre": "Yungay",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16201",
+    "nombre": "Quirihue",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16202",
+    "nombre": "Cobquecura",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16203",
+    "nombre": "Coelemu",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16204",
+    "nombre": "Ninhue",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16205",
+    "nombre": "Portezuelo",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16206",
+    "nombre": "Ranquil",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16207",
+    "nombre": "Treguaco",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16301",
+    "nombre": "San Carlos",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16302",
+    "nombre": "Coihueco",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16303",
+    "nombre": "Ñiquén",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16304",
+    "nombre": "San Fabián",
+    "codigoRegionSubdere": "16"
+  },
+  {
+    "codigoSubdere": "16305",
+    "nombre": "San Nicolás",
+    "codigoRegionSubdere": "16"
+  }
+]

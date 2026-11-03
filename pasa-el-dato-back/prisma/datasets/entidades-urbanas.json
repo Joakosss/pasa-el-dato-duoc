@@ -1,0 +1,2170 @@
+[
+  {
+    "idEntidad": "110100900101",
+    "nombre": "IQUIQUE",
+    "cut": "01101",
+    "codigoRegion": "01",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "110700100101",
+    "nombre": "ALTO HOSPICIO",
+    "cut": "01107",
+    "codigoRegion": "01",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "140102100101",
+    "nombre": "POZO ALMONTE",
+    "cut": "01401",
+    "codigoRegion": "01",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "210100100101",
+    "nombre": "ANTOFAGASTA",
+    "cut": "02101",
+    "codigoRegion": "02",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "210200900101",
+    "nombre": "MEJILLONES",
+    "cut": "02102",
+    "codigoRegion": "02",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "210402800101",
+    "nombre": "TALTAL",
+    "cut": "02104",
+    "codigoRegion": "02",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "220100200101",
+    "nombre": "CALAMA",
+    "cut": "02201",
+    "codigoRegion": "02",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "220301400101",
+    "nombre": "SAN PEDRO DE ATACAMA",
+    "cut": "02203",
+    "codigoRegion": "02",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "230102500101",
+    "nombre": "TOCOPILLA",
+    "cut": "02301",
+    "codigoRegion": "02",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "310101600101",
+    "nombre": "COPIAPÓ",
+    "cut": "03101",
+    "codigoRegion": "03",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "310200400101",
+    "nombre": "CALDERA",
+    "cut": "03102",
+    "codigoRegion": "03",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "310302900101",
+    "nombre": "TIERRA AMARILLA",
+    "cut": "03103",
+    "codigoRegion": "03",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "320100300101",
+    "nombre": "CHAÑARAL",
+    "cut": "03201",
+    "codigoRegion": "03",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "320200400101",
+    "nombre": "DIEGO DE ALMAGRO",
+    "cut": "03202",
+    "codigoRegion": "03",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "330106400101",
+    "nombre": "VALLENAR",
+    "cut": "03301",
+    "codigoRegion": "03",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "330401000101",
+    "nombre": "HUASCO",
+    "cut": "03304",
+    "codigoRegion": "03",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "410105900101",
+    "nombre": "LA SERENA",
+    "cut": "04101",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "410203300101",
+    "nombre": "COQUIMBO",
+    "cut": "04102",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "410203000501",
+    "nombre": "TONGOY",
+    "cut": "04102",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "410300100101",
+    "nombre": "ANDACOLLO",
+    "cut": "04103",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "410605900101",
+    "nombre": "VICUÑA",
+    "cut": "04106",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "420101900101",
+    "nombre": "ILLAPEL",
+    "cut": "04201",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "420302600101",
+    "nombre": "LOS VILOS",
+    "cut": "04203",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "420402700101",
+    "nombre": "SALAMANCA",
+    "cut": "04204",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "430109000101",
+    "nombre": "OVALLE",
+    "cut": "04301",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "430200400101",
+    "nombre": "COMBARBALÁ",
+    "cut": "04302",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "430307800101",
+    "nombre": "MONTE PATRIA",
+    "cut": "04303",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "430402200101",
+    "nombre": "PUNITAQUI",
+    "cut": "04304",
+    "codigoRegion": "04",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510100200201",
+    "nombre": "LAGUNA VERDE",
+    "cut": "05101",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510100500301",
+    "nombre": "PLACILLA DE PEÑUELAS",
+    "cut": "05101",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510100700101",
+    "nombre": "VALPARAÍSO",
+    "cut": "05101",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510200200101",
+    "nombre": "CASABLANCA",
+    "cut": "05102",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510300300101",
+    "nombre": "CONCÓN",
+    "cut": "05103",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510501000301",
+    "nombre": "LAS VENTANAS",
+    "cut": "05105",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510501500101",
+    "nombre": "PUCHUNCAVÍ",
+    "cut": "05105",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510700800101",
+    "nombre": "LONCURA",
+    "cut": "05107",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510700800201",
+    "nombre": "QUINTERO",
+    "cut": "05107",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "510900200101",
+    "nombre": "VIÑA DEL MAR",
+    "cut": "05109",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "530101600101",
+    "nombre": "LOS ANDES",
+    "cut": "05301",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "530201400101",
+    "nombre": "CALLE LARGA",
+    "cut": "05302",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "530201400301",
+    "nombre": "LOS ANDES",
+    "cut": "05302",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "530301200101",
+    "nombre": "RINCONADA",
+    "cut": "05303",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "530402100101",
+    "nombre": "SAN ESTEBAN",
+    "cut": "05304",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "540100900101",
+    "nombre": "LA LIGUA",
+    "cut": "05401",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "540200400101",
+    "nombre": "CABILDO",
+    "cut": "05402",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "550101200101",
+    "nombre": "QUILLOTA",
+    "cut": "05501",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "550200100101",
+    "nombre": "LA CALERA",
+    "cut": "05502",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "550301600201",
+    "nombre": "HIJUELAS",
+    "cut": "05503",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "550400500101",
+    "nombre": "LA CRUZ",
+    "cut": "05504",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "550600300201",
+    "nombre": "EL MELÓN",
+    "cut": "05506",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "550600600101",
+    "nombre": "NOGALES",
+    "cut": "05506",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "560101700101",
+    "nombre": "SAN ANTONIO",
+    "cut": "05601",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "560201400101",
+    "nombre": "ALGARROBO",
+    "cut": "05602",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "560300500101",
+    "nombre": "CARTAGENA",
+    "cut": "05603",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "560400500101",
+    "nombre": "EL QUISCO",
+    "cut": "05604",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "560501000101",
+    "nombre": "EL TABO",
+    "cut": "05605",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "560501100201",
+    "nombre": "LAS CRUCES",
+    "cut": "05605",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "560602000101",
+    "nombre": "SANTO DOMINGO",
+    "cut": "05606",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "570101700101",
+    "nombre": "SAN FELIPE",
+    "cut": "05701",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "570200100101",
+    "nombre": "CATEMU",
+    "cut": "05702",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "570300700101",
+    "nombre": "LLAILLAY",
+    "cut": "05703",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "570501100101",
+    "nombre": "PUTAENDO",
+    "cut": "05705",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "570601700101",
+    "nombre": "SANTA MARÍA",
+    "cut": "05706",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "580102000101",
+    "nombre": "QUILPUÉ",
+    "cut": "05801",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "580200700101",
+    "nombre": "LIMACHE",
+    "cut": "05802",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "580301400101",
+    "nombre": "OLMUÉ",
+    "cut": "05803",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "580401700101",
+    "nombre": "VILLA ALEMANA",
+    "cut": "05804",
+    "codigoRegion": "05",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610101700101",
+    "nombre": "RANCAGUA",
+    "cut": "06101",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610200200101",
+    "nombre": "CODEGUA",
+    "cut": "06102",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610400200101",
+    "nombre": "COLTAUCO-ALMENDRO-PARRAL",
+    "cut": "06104",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610500300101",
+    "nombre": "DOÑIHUE-CERRILLOS",
+    "cut": "06105",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610500400201",
+    "nombre": "LO MIRANDA",
+    "cut": "06105",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610600400101",
+    "nombre": "GRANEROS",
+    "cut": "06106",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610702600101",
+    "nombre": "LAS CABRAS",
+    "cut": "06107",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "610801200101",
+    "nombre": "MACHALÍ",
+    "cut": "06108",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611001200201",
+    "nombre": "SAN FRANCISCO DE MOSTAZAL",
+    "cut": "06110",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611000600301",
+    "nombre": "SECTOR CORDILLERA",
+    "cut": "06110",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611100400201",
+    "nombre": "GULTRO",
+    "cut": "06111",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611200500101",
+    "nombre": "PEUMO",
+    "cut": "06112",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611200600301",
+    "nombre": "PUNTA DE DIAMANTE",
+    "cut": "06112",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611301400101",
+    "nombre": "PICHIDEGUA",
+    "cut": "06113",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611401100101",
+    "nombre": "QUINTA DE TILCOCO",
+    "cut": "06114",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611503800101",
+    "nombre": "RENGO",
+    "cut": "06115",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611602800301",
+    "nombre": "LOS LIRIOS",
+    "cut": "06116",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611602400101",
+    "nombre": "REQUÍNOA",
+    "cut": "06116",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "611703000101",
+    "nombre": "SAN VICENTE DE TAGUA TAGUA",
+    "cut": "06117",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "620102500101",
+    "nombre": "PICHILEMU",
+    "cut": "06201",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "630102300101",
+    "nombre": "SAN FERNANDO",
+    "cut": "06301",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "630200200101",
+    "nombre": "CHÉPICA",
+    "cut": "06302",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "630300300101",
+    "nombre": "CHIMBARONGO",
+    "cut": "06303",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "630501500101",
+    "nombre": "NANCAGUA",
+    "cut": "06305",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "630700900101",
+    "nombre": "PERALILLO",
+    "cut": "06307",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "631002300101",
+    "nombre": "SANTA CRUZ",
+    "cut": "06310",
+    "codigoRegion": "06",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "710102400101",
+    "nombre": "TALCA",
+    "cut": "07101",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "710201300101",
+    "nombre": "CONSTITUCIÓN",
+    "cut": "07102",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "710502900301",
+    "nombre": "CULENAR",
+    "cut": "07105",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "710501500101",
+    "nombre": "MAULE",
+    "cut": "07105",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "710904800101",
+    "nombre": "SAN CLEMENTE",
+    "cut": "07109",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "711001600101",
+    "nombre": "SAN RAFAEL",
+    "cut": "07110",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "720101200101",
+    "nombre": "BARRIO ESTACIÓN",
+    "cut": "07201",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "720101200201",
+    "nombre": "CAUQUENES",
+    "cut": "07201",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730103000201",
+    "nombre": "CURICÓ",
+    "cut": "07301",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730100700301",
+    "nombre": "SARMIENTO",
+    "cut": "07301",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730403100301",
+    "nombre": "LONTUÉ",
+    "cut": "07304",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730403100101",
+    "nombre": "MOLINA",
+    "cut": "07304",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730501200101",
+    "nombre": "RAUCO",
+    "cut": "07305",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730603000101",
+    "nombre": "CURICÓ",
+    "cut": "07306",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730602500201",
+    "nombre": "ROMERAL",
+    "cut": "07306",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "730803900101",
+    "nombre": "TENO",
+    "cut": "07308",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "740102500101",
+    "nombre": "LINARES",
+    "cut": "07401",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "740200500101",
+    "nombre": "COLBÚN",
+    "cut": "07402",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "740302500101",
+    "nombre": "LONGAVÍ",
+    "cut": "07403",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "740405000101",
+    "nombre": "PARRAL",
+    "cut": "07404",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "740503200201",
+    "nombre": "RETIRO",
+    "cut": "07405",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "740604600301",
+    "nombre": "SAN JAVIER",
+    "cut": "07406",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "740703500301",
+    "nombre": "VILLA ALEGRE",
+    "cut": "07407",
+    "codigoRegion": "07",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810100700101",
+    "nombre": "CONCEPCIÓN",
+    "cut": "08101",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810200300101",
+    "nombre": "CORONEL",
+    "cut": "08102",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810300200101",
+    "nombre": "CHIGUAYANTE",
+    "cut": "08103",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810502000101",
+    "nombre": "HUALQUI",
+    "cut": "08105",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810600400101",
+    "nombre": "LOTA",
+    "cut": "08106",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810701200101",
+    "nombre": "PENCO",
+    "cut": "08107",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810800300101",
+    "nombre": "SAN PEDRO DE LA PAZ",
+    "cut": "08108",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "810902900101",
+    "nombre": "SANTA JUANA",
+    "cut": "08109",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "811000500101",
+    "nombre": "TALCAHUANO",
+    "cut": "08110",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "811104400101",
+    "nombre": "TOMÉ",
+    "cut": "08111",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "811200200101",
+    "nombre": "HUALPÉN",
+    "cut": "08112",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "820101600101",
+    "nombre": "LEBU",
+    "cut": "08201",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "820200300101",
+    "nombre": "ARAUCO",
+    "cut": "08202",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "820300700101",
+    "nombre": "CAÑETE",
+    "cut": "08203",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "820500500101",
+    "nombre": "CURANILAHUE",
+    "cut": "08205",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "820600400301",
+    "nombre": "CERRO ALTO",
+    "cut": "08206",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "820600900101",
+    "nombre": "LOS ÁLAMOS",
+    "cut": "08206",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "830103500101",
+    "nombre": "LOS ÁNGELES",
+    "cut": "08301",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "830300500101",
+    "nombre": "CABRERO",
+    "cut": "08303",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "830304300201",
+    "nombre": "MONTE ÁGUILA",
+    "cut": "08303",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "830401100101",
+    "nombre": "LA LAJA",
+    "cut": "08304",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "830503500101",
+    "nombre": "MULCHÉN",
+    "cut": "08305",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "830602600101",
+    "nombre": "NACIMIENTO",
+    "cut": "08306",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "831001500101",
+    "nombre": "SAN ROSENDO",
+    "cut": "08310",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "831102500101",
+    "nombre": "SANTA BÁRBARA",
+    "cut": "08311",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "831200400201",
+    "nombre": "HUÉPIL",
+    "cut": "08312",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "831308700101",
+    "nombre": "YUMBEL",
+    "cut": "08313",
+    "codigoRegion": "08",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "910102800201",
+    "nombre": "LABRANZA",
+    "cut": "09101",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "910107400101",
+    "nombre": "TEMUCO",
+    "cut": "09101",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "910200700101",
+    "nombre": "CARAHUE",
+    "cut": "09102",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "910301200101",
+    "nombre": "CUNCO",
+    "cut": "09103",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "910701500101",
+    "nombre": "GORBEA",
+    "cut": "09107",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "910802300101",
+    "nombre": "LAUTARO",
+    "cut": "09108",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "910902900101",
+    "nombre": "LONCOCHE",
+    "cut": "09109",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "911105300101",
+    "nombre": "NUEVA IMPERIAL",
+    "cut": "09111",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "911211400101",
+    "nombre": "PADRE LAS CASAS",
+    "cut": "09112",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "911402800101",
+    "nombre": "PITRUFQUÉN",
+    "cut": "09114",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "911501800101",
+    "nombre": "PUCÓN",
+    "cut": "09115",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "911900400201",
+    "nombre": "CAJÓN",
+    "cut": "09119",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "911905900101",
+    "nombre": "VILCÚN",
+    "cut": "09119",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "912005400101",
+    "nombre": "VILLARRICA",
+    "cut": "09120",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "920100300101",
+    "nombre": "ANGOL",
+    "cut": "09201",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "920200600101",
+    "nombre": "COLLIPULLI",
+    "cut": "09202",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "920301100101",
+    "nombre": "CURACAUTÍN",
+    "cut": "09203",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "920803400101",
+    "nombre": "PURÉN",
+    "cut": "09208",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "920901400101",
+    "nombre": "RENAICO",
+    "cut": "09209",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "921006900101",
+    "nombre": "TRAIGUÉN",
+    "cut": "09210",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "921109200101",
+    "nombre": "VICTORIA",
+    "cut": "09211",
+    "codigoRegion": "09",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010100100201",
+    "nombre": "ALERCE",
+    "cut": "10101",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010104800601",
+    "nombre": "LA VARA - SENDA SUR",
+    "cut": "10101",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010104300101",
+    "nombre": "PUERTO MONTT",
+    "cut": "10101",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010200700101",
+    "nombre": "CALBUCO",
+    "cut": "10102",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010401800101",
+    "nombre": "FRESIA",
+    "cut": "10104",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010501000101",
+    "nombre": "FRUTILLAR",
+    "cut": "10105",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010602900101",
+    "nombre": "LOS MUERMOS",
+    "cut": "10106",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010701700101",
+    "nombre": "LLANQUIHUE",
+    "cut": "10107",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1010903000101",
+    "nombre": "PUERTO VARAS",
+    "cut": "10109",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1020100300101",
+    "nombre": "CASTRO",
+    "cut": "10201",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1020200400101",
+    "nombre": "ANCUD",
+    "cut": "10202",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1020300500101",
+    "nombre": "CHONCHI",
+    "cut": "10203",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1020500900101",
+    "nombre": "DALCAHUE",
+    "cut": "10205",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1020803300101",
+    "nombre": "QUELLÓN",
+    "cut": "10208",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1030103300101",
+    "nombre": "OSORNO",
+    "cut": "10301",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1030303900101",
+    "nombre": "PURRANQUE",
+    "cut": "10303",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1030401500101",
+    "nombre": "ENTRE LAGOS",
+    "cut": "10304",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1030504000101",
+    "nombre": "RÍO NEGRO",
+    "cut": "10305",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1030705000101",
+    "nombre": "SAN PABLO",
+    "cut": "10307",
+    "codigoRegion": "10",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1110101100101",
+    "nombre": "COYHAIQUE",
+    "cut": "11101",
+    "codigoRegion": "11",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1120104500101",
+    "nombre": "PUERTO AYSÉN",
+    "cut": "11201",
+    "codigoRegion": "11",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1210102300101",
+    "nombre": "PUNTA ARENAS",
+    "cut": "12101",
+    "codigoRegion": "12",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1220102600101",
+    "nombre": "PUERTO WILLIAMS",
+    "cut": "12201",
+    "codigoRegion": "12",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1230100800101",
+    "nombre": "PORVENIR",
+    "cut": "12301",
+    "codigoRegion": "12",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1240102200101",
+    "nombre": "PUERTO NATALES",
+    "cut": "12401",
+    "codigoRegion": "12",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310100100101",
+    "nombre": "SANTIAGO",
+    "cut": "13101",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310200100101",
+    "nombre": "CERRILLOS",
+    "cut": "13102",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310300100101",
+    "nombre": "CERRO NAVIA",
+    "cut": "13103",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310400100101",
+    "nombre": "CONCHALÍ",
+    "cut": "13104",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310500100101",
+    "nombre": "EL BOSQUE",
+    "cut": "13105",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310600100101",
+    "nombre": "ESTACIÓN CENTRAL",
+    "cut": "13106",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310700200101",
+    "nombre": "HUECHURABA",
+    "cut": "13107",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310800100101",
+    "nombre": "INDEPENDENCIA",
+    "cut": "13108",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1310900100101",
+    "nombre": "LA CISTERNA",
+    "cut": "13109",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311000100101",
+    "nombre": "LA FLORIDA",
+    "cut": "13110",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311100100101",
+    "nombre": "LA GRANJA",
+    "cut": "13111",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311200100101",
+    "nombre": "LA PINTANA",
+    "cut": "13112",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311300100101",
+    "nombre": "LA REINA",
+    "cut": "13113",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311400100101",
+    "nombre": "LAS CONDES",
+    "cut": "13114",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311501100101",
+    "nombre": "LO BARNECHEA",
+    "cut": "13115",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311600100101",
+    "nombre": "LO ESPEJO",
+    "cut": "13116",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311700100101",
+    "nombre": "LO PRADO",
+    "cut": "13117",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311800100101",
+    "nombre": "MACUL",
+    "cut": "13118",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1311900500101",
+    "nombre": "MAIPÚ",
+    "cut": "13119",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312000100101",
+    "nombre": "ÑUÑOA",
+    "cut": "13120",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312100100101",
+    "nombre": "PEDRO AGUIRRE CERDA",
+    "cut": "13121",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312200100101",
+    "nombre": "PEÑALOLÉN",
+    "cut": "13122",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312300100101",
+    "nombre": "PROVIDENCIA",
+    "cut": "13123",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312402300201",
+    "nombre": "CIUDAD DE LOS VALLES",
+    "cut": "13124",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312402100101",
+    "nombre": "PUDAHUEL",
+    "cut": "13124",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312500300101",
+    "nombre": "QUILICURA",
+    "cut": "13125",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312600100101",
+    "nombre": "QUINTA NORMAL",
+    "cut": "13126",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312700100101",
+    "nombre": "RECOLETA",
+    "cut": "13127",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312800100101",
+    "nombre": "RENCA",
+    "cut": "13128",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1312900100101",
+    "nombre": "SAN JOAQUÍN",
+    "cut": "13129",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1313000100101",
+    "nombre": "SAN MIGUEL",
+    "cut": "13130",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1313100100101",
+    "nombre": "SAN RAMÓN",
+    "cut": "13131",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1313200100101",
+    "nombre": "VITACURA",
+    "cut": "13132",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1320100300101",
+    "nombre": "PUENTE ALTO",
+    "cut": "13201",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1320200300201",
+    "nombre": "EL PRINCIPAL",
+    "cut": "13202",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1320201500101",
+    "nombre": "PIRQUE",
+    "cut": "13202",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1320302000201",
+    "nombre": "LA OBRA - LAS VERTIENTES",
+    "cut": "13203",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1320301900101",
+    "nombre": "SAN JOSÉ DE MAIPO",
+    "cut": "13203",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330100300201",
+    "nombre": "CHAMISERO",
+    "cut": "13301",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330100400301",
+    "nombre": "CHICUREO",
+    "cut": "13301",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330100500101",
+    "nombre": "COLINA",
+    "cut": "13301",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330103100401",
+    "nombre": "LAS CANTERAS",
+    "cut": "13301",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330200100201",
+    "nombre": "BATUCO",
+    "cut": "13302",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330202900301",
+    "nombre": "CHICAUMA - VALLE GRANDE",
+    "cut": "13302",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330201300101",
+    "nombre": "LAMPA",
+    "cut": "13302",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1330301200101",
+    "nombre": "TILTIL",
+    "cut": "13303",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1340101000201",
+    "nombre": "LO HERRERA",
+    "cut": "13401",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1340101700101",
+    "nombre": "SAN BERNARDO",
+    "cut": "13401",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1340200100201",
+    "nombre": "ALTO JAHUEL",
+    "cut": "13402",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1340200200101",
+    "nombre": "BUIN",
+    "cut": "13402",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1340300100101",
+    "nombre": "BAJOS DE SAN AGUSTÍN",
+    "cut": "13403",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1340402500401",
+    "nombre": "HOSPITAL",
+    "cut": "13404",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1340403200101",
+    "nombre": "PAINE",
+    "cut": "13404",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1350100100201",
+    "nombre": "BOLLENAR",
+    "cut": "13501",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1350102900101",
+    "nombre": "MELIPILLA",
+    "cut": "13501",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1350300600101",
+    "nombre": "CURACAVÍ",
+    "cut": "13503",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1360102000101",
+    "nombre": "TALAGANTE",
+    "cut": "13601",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1360200200101",
+    "nombre": "EL MONTE",
+    "cut": "13602",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1360300300201",
+    "nombre": "ISLA DE MAIPO",
+    "cut": "13603",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1360300400301",
+    "nombre": "LA ISLITA",
+    "cut": "13603",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1360401500101",
+    "nombre": "PADRE HURTADO",
+    "cut": "13604",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1360500800101",
+    "nombre": "PEÑAFLOR",
+    "cut": "13605",
+    "codigoRegion": "13",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1410106200101",
+    "nombre": "VALDIVIA",
+    "cut": "14101",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1410302400101",
+    "nombre": "LANCO",
+    "cut": "14103",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1410404200201",
+    "nombre": "LOS LAGOS",
+    "cut": "14104",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1410606000101",
+    "nombre": "SAN JOSÉ DE LA MARIQUINA",
+    "cut": "14106",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1410703500101",
+    "nombre": "PAILLACO",
+    "cut": "14107",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1410804800101",
+    "nombre": "PANGUIPULLI",
+    "cut": "14108",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1420102400101",
+    "nombre": "LA UNIÓN",
+    "cut": "14201",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1420201500101",
+    "nombre": "FUTRONO",
+    "cut": "14202",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1420404100101",
+    "nombre": "RÍO BUENO",
+    "cut": "14204",
+    "codigoRegion": "14",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1510100100101",
+    "nombre": "ARICA",
+    "cut": "15101",
+    "codigoRegion": "15",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1610103800101",
+    "nombre": "CHILLÁN",
+    "cut": "16101",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1610200300101",
+    "nombre": "BULNES",
+    "cut": "16102",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1610303500101",
+    "nombre": "CHILLÁN VIEJO",
+    "cut": "16103",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1610400500101",
+    "nombre": "EL CARMEN",
+    "cut": "16104",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1610702600101",
+    "nombre": "QUILLÓN",
+    "cut": "16107",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1610905700101",
+    "nombre": "YUNGAY",
+    "cut": "16109",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1620106600101",
+    "nombre": "QUIRIHUE",
+    "cut": "16201",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1620300700101",
+    "nombre": "COELEMU",
+    "cut": "16203",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1630105800101",
+    "nombre": "SAN CARLOS",
+    "cut": "16301",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  },
+  {
+    "idEntidad": "1630201100101",
+    "nombre": "COIHUECO",
+    "cut": "16302",
+    "codigoRegion": "16",
+    "categoria": "Ciudad",
+    "fuente": "CPAC2024/Base_urbanos_CPV24.csv"
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-25T05:55:29.445720Z",
+  "fuentes": [
+    {
+      "path": "docs/data-bd/Ciudades/Base_urbanos_CPV24.csv",
+      "sha256": "c8b937649ab560ded621aba90b75069869b1a1fafa5f0a1dc890cb0549260e62",
+      "rol": "entidades CPAC 2024"
+    },
+    {
+      "path": "pasa-el-dato-back/prisma/datasets/comunas.json",
+      "sha256": "c0b3e9981d3bf39a45f45888af16b08b1a604b12562dc2384027220dcac5d4b1",
+      "rol": "345 comunas y región por CUT"
+    },
+    {
+      "path": "pasa-el-dato-back/prisma/datasets/regiones.json",
+      "sha256": "0b1a8c07868d7911417c863274eda6bf397747ce1ed5c1cb306b990c8dd9c0a8",
+      "rol": "16 regiones"
+    }
+  ],
+  "filtros": {
+    "categoria": "Ciudad",
+    "excluir": [
+      "Pueblo",
+      "Aldea",
+      "Caserío",
+      "contenedores comunales"
+    ],
+    "contenedorComunalExcluido": "1",
+    "normalizacionCut": "zfill(5)",
+    "asociacion": "CUT"
+  },
+  "conteos": {
+    "regiones": 16,
+    "comunas": 345,
+    "filasBase": 848,
+    "entidadesCiudad": 271,
+    "entidadesConNombreUnico": 269,
+    "cutConCiudad": 235,
+    "cutSinCiudad": 110,
+    "mapeoEstados": {
+      "unica": 204,
+      "multiple": 31,
+      "sin_ciudad": 110
+    },
+    "descartes": {
+      "pueblo": 321,
+      "contenedorComunal": 256,
+      "otrasCategorias": 0
+    }
+  },
+  "salidas": [
+    {
+      "path": "pasa-el-dato-back/prisma/datasets/entidades-urbanas.json",
+      "sha256": "a7f69cded547dacdf3bbfdc274a0ad66017a281c264a58e3d9cdc3c3bc293a37",
+      "registros": 271
+    },
+    {
+      "path": "pasa-el-dato-back/prisma/datasets/mapeo-comunas-entidades.json",
+      "sha256": "551a8fef19e52be045203b174d4c5dafb354ccb1c92863a6f5bf68d2ab17baf9",
+      "registros": 345
+    }
+  ]
+}

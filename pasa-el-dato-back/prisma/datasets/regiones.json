@@ -1,0 +1,66 @@
+[
+  {
+    "codigoSubdere": "01",
+    "nombre": "Tarapacá"
+  },
+  {
+    "codigoSubdere": "02",
+    "nombre": "Antofagasta"
+  },
+  {
+    "codigoSubdere": "03",
+    "nombre": "Atacama"
+  },
+  {
+    "codigoSubdere": "04",
+    "nombre": "Coquimbo"
+  },
+  {
+    "codigoSubdere": "05",
+    "nombre": "Valparaíso"
+  },
+  {
+    "codigoSubdere": "06",
+    "nombre": "Libertador General Bernardo O'Higgins"
+  },
+  {
+    "codigoSubdere": "07",
+    "nombre": "Maule"
+  },
+  {
+    "codigoSubdere": "08",
+    "nombre": "Biobío"
+  },
+  {
+    "codigoSubdere": "09",
+    "nombre": "La Araucanía"
+  },
+  {
+    "codigoSubdere": "10",
+    "nombre": "Los Lagos"
+  },
+  {
+    "codigoSubdere": "11",
+    "nombre": "Aysén del General Carlos Ibáñez del Campo"
+  },
+  {
+    "codigoSubdere": "12",
+    "nombre": "Magallanes y de la Antártica Chilena"
+  },
+  {
+    "codigoSubdere": "13",
+    "nombre": "Metropolitana de Santiago"
+  },
+  {
+    "codigoSubdere": "14",
+    "nombre": "Los Ríos"
+  },
+  {
+    "codigoSubdere": "15",
+    "nombre": "Arica y Parinacota"
+  },
+  {
+    "codigoSubdere": "16",
+    "nombre": "Ñuble"
+  }
+]

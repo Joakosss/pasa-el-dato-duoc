@@ -260,6 +260,7 @@ export type UsuarioWhereInput = {
   rol_usuario?: Prisma.XOR<Prisma.RolUsuarioScalarRelationFilter, Prisma.RolUsuarioWhereInput>
   sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>
   cuenta?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
+  publicaciones?: Prisma.PublicacionListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -276,6 +277,7 @@ export type UsuarioOrderByWithRelationInput = {
   rol_usuario?: Prisma.RolUsuarioOrderByWithRelationInput
   sede?: Prisma.SedeOrderByWithRelationInput
   cuenta?: Prisma.CuentaOrderByWithRelationInput
+  publicaciones?: Prisma.PublicacionOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -295,6 +297,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   rol_usuario?: Prisma.XOR<Prisma.RolUsuarioScalarRelationFilter, Prisma.RolUsuarioWhereInput>
   sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>
   cuenta?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
+  publicaciones?: Prisma.PublicacionListRelationFilter
 }, "id_cuenta" | "run">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -339,6 +342,7 @@ export type UsuarioCreateInput = {
   rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -351,6 +355,7 @@ export type UsuarioUncheckedCreateInput = {
   fk_rol_usuario: number
   fk_sede: number
   fk_carrera: number
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUpdateInput = {
@@ -363,6 +368,7 @@ export type UsuarioUpdateInput = {
   rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -375,6 +381,7 @@ export type UsuarioUncheckedUpdateInput = {
   fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -470,6 +477,11 @@ export type UsuarioSumOrderByAggregateInput = {
   fk_rol_usuario?: Prisma.SortOrder
   fk_sede?: Prisma.SortOrder
   fk_carrera?: Prisma.SortOrder
+}
+
+export type UsuarioScalarRelationFilter = {
+  is?: Prisma.UsuarioWhereInput
+  isNot?: Prisma.UsuarioWhereInput
 }
 
 export type UsuarioCreateNestedOneWithoutCuentaInput = {
@@ -630,6 +642,20 @@ export type UsuarioUncheckedUpdateManyWithoutCarreraNestedInput = {
   deleteMany?: Prisma.UsuarioScalarWhereInput | Prisma.UsuarioScalarWhereInput[]
 }
 
+export type UsuarioCreateNestedOneWithoutPublicacionesInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutPublicacionesInput, Prisma.UsuarioUncheckedCreateWithoutPublicacionesInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutPublicacionesInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneRequiredWithoutPublicacionesNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutPublicacionesInput, Prisma.UsuarioUncheckedCreateWithoutPublicacionesInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutPublicacionesInput
+  upsert?: Prisma.UsuarioUpsertWithoutPublicacionesInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutPublicacionesInput, Prisma.UsuarioUpdateWithoutPublicacionesInput>, Prisma.UsuarioUncheckedUpdateWithoutPublicacionesInput>
+}
+
 export type UsuarioCreateWithoutCuentaInput = {
   run: string
   pNombre: string
@@ -639,6 +665,7 @@ export type UsuarioCreateWithoutCuentaInput = {
   carrera: Prisma.CarreraCreateNestedOneWithoutUsuariosInput
   rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutCuentaInput = {
@@ -650,6 +677,7 @@ export type UsuarioUncheckedCreateWithoutCuentaInput = {
   fk_rol_usuario: number
   fk_sede: number
   fk_carrera: number
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutCuentaInput = {
@@ -677,6 +705,7 @@ export type UsuarioUpdateWithoutCuentaInput = {
   carrera?: Prisma.CarreraUpdateOneRequiredWithoutUsuariosNestedInput
   rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutCuentaInput = {
@@ -688,6 +717,7 @@ export type UsuarioUncheckedUpdateWithoutCuentaInput = {
   fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutRol_usuarioInput = {
@@ -699,6 +729,7 @@ export type UsuarioCreateWithoutRol_usuarioInput = {
   carrera: Prisma.CarreraCreateNestedOneWithoutUsuariosInput
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutRol_usuarioInput = {
@@ -710,6 +741,7 @@ export type UsuarioUncheckedCreateWithoutRol_usuarioInput = {
   sApellido: string
   fk_sede: number
   fk_carrera: number
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutRol_usuarioInput = {
@@ -762,6 +794,7 @@ export type UsuarioCreateWithoutSedeInput = {
   carrera: Prisma.CarreraCreateNestedOneWithoutUsuariosInput
   rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutSedeInput = {
@@ -773,6 +806,7 @@ export type UsuarioUncheckedCreateWithoutSedeInput = {
   sApellido: string
   fk_rol_usuario: number
   fk_carrera: number
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutSedeInput = {
@@ -810,6 +844,7 @@ export type UsuarioCreateWithoutCarreraInput = {
   rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutCarreraInput = {
@@ -821,6 +856,7 @@ export type UsuarioUncheckedCreateWithoutCarreraInput = {
   sApellido: string
   fk_rol_usuario: number
   fk_sede: number
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutCarreraInput = {
@@ -849,6 +885,70 @@ export type UsuarioUpdateManyWithWhereWithoutCarreraInput = {
   data: Prisma.XOR<Prisma.UsuarioUpdateManyMutationInput, Prisma.UsuarioUncheckedUpdateManyWithoutCarreraInput>
 }
 
+export type UsuarioCreateWithoutPublicacionesInput = {
+  run: string
+  pNombre: string
+  sNombre?: string | null
+  pApellido: string
+  sApellido: string
+  carrera: Prisma.CarreraCreateNestedOneWithoutUsuariosInput
+  rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
+  sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
+  cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
+}
+
+export type UsuarioUncheckedCreateWithoutPublicacionesInput = {
+  id_cuenta: string
+  run: string
+  pNombre: string
+  sNombre?: string | null
+  pApellido: string
+  sApellido: string
+  fk_rol_usuario: number
+  fk_sede: number
+  fk_carrera: number
+}
+
+export type UsuarioCreateOrConnectWithoutPublicacionesInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutPublicacionesInput, Prisma.UsuarioUncheckedCreateWithoutPublicacionesInput>
+}
+
+export type UsuarioUpsertWithoutPublicacionesInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutPublicacionesInput, Prisma.UsuarioUncheckedUpdateWithoutPublicacionesInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutPublicacionesInput, Prisma.UsuarioUncheckedCreateWithoutPublicacionesInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutPublicacionesInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutPublicacionesInput, Prisma.UsuarioUncheckedUpdateWithoutPublicacionesInput>
+}
+
+export type UsuarioUpdateWithoutPublicacionesInput = {
+  run?: Prisma.StringFieldUpdateOperationsInput | string
+  pNombre?: Prisma.StringFieldUpdateOperationsInput | string
+  sNombre?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  sApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  carrera?: Prisma.CarreraUpdateOneRequiredWithoutUsuariosNestedInput
+  rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
+  sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
+  cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutPublicacionesInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  run?: Prisma.StringFieldUpdateOperationsInput | string
+  pNombre?: Prisma.StringFieldUpdateOperationsInput | string
+  sNombre?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  sApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
 export type UsuarioCreateManyRol_usuarioInput = {
   id_cuenta: string
   run: string
@@ -869,6 +969,7 @@ export type UsuarioUpdateWithoutRol_usuarioInput = {
   carrera?: Prisma.CarreraUpdateOneRequiredWithoutUsuariosNestedInput
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutRol_usuarioInput = {
@@ -880,6 +981,7 @@ export type UsuarioUncheckedUpdateWithoutRol_usuarioInput = {
   sApellido?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateManyWithoutRol_usuarioInput = {
@@ -913,6 +1015,7 @@ export type UsuarioUpdateWithoutSedeInput = {
   carrera?: Prisma.CarreraUpdateOneRequiredWithoutUsuariosNestedInput
   rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutSedeInput = {
@@ -924,6 +1027,7 @@ export type UsuarioUncheckedUpdateWithoutSedeInput = {
   sApellido?: Prisma.StringFieldUpdateOperationsInput | string
   fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateManyWithoutSedeInput = {
@@ -957,6 +1061,7 @@ export type UsuarioUpdateWithoutCarreraInput = {
   rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutCarreraInput = {
@@ -968,6 +1073,7 @@ export type UsuarioUncheckedUpdateWithoutCarreraInput = {
   sApellido?: Prisma.StringFieldUpdateOperationsInput | string
   fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateManyWithoutCarreraInput = {
@@ -981,6 +1087,35 @@ export type UsuarioUncheckedUpdateManyWithoutCarreraInput = {
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
+
+/**
+ * Count Type UsuarioCountOutputType
+ */
+
+export type UsuarioCountOutputType = {
+  publicaciones: number
+}
+
+export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  publicaciones?: boolean | UsuarioCountOutputTypeCountPublicacionesArgs
+}
+
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UsuarioCountOutputType
+   */
+  select?: Prisma.UsuarioCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountPublicacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PublicacionWhereInput
+}
 
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -997,6 +1132,8 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   rol_usuario?: boolean | Prisma.RolUsuarioDefaultArgs<ExtArgs>
   sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>
   cuenta?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
+  publicaciones?: boolean | Prisma.Usuario$publicacionesArgs<ExtArgs>
+  _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
 export type UsuarioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1049,6 +1186,8 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   rol_usuario?: boolean | Prisma.RolUsuarioDefaultArgs<ExtArgs>
   sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>
   cuenta?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
+  publicaciones?: boolean | Prisma.Usuario$publicacionesArgs<ExtArgs>
+  _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   carrera?: boolean | Prisma.CarreraDefaultArgs<ExtArgs>
@@ -1070,6 +1209,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     rol_usuario: Prisma.$RolUsuarioPayload<ExtArgs>
     sede: Prisma.$SedePayload<ExtArgs>
     cuenta: Prisma.$CuentaPayload<ExtArgs>
+    publicaciones: Prisma.$PublicacionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_cuenta: string
@@ -1479,6 +1619,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   rol_usuario<T extends Prisma.RolUsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RolUsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__RolUsuarioClient<runtime.Types.Result.GetResult<Prisma.$RolUsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   sede<T extends Prisma.SedeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SedeDefaultArgs<ExtArgs>>): Prisma.Prisma__SedeClient<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   cuenta<T extends Prisma.CuentaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CuentaDefaultArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  publicaciones<T extends Prisma.Usuario$publicacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$publicacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1915,6 +2056,30 @@ export type UsuarioDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Usuarios to delete.
    */
   limit?: number
+}
+
+/**
+ * Usuario.publicaciones
+ */
+export type Usuario$publicacionesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Publicacion
+   */
+  select?: Prisma.PublicacionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Publicacion
+   */
+  omit?: Prisma.PublicacionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PublicacionInclude<ExtArgs> | null
+  where?: Prisma.PublicacionWhereInput
+  orderBy?: Prisma.PublicacionOrderByWithRelationInput | Prisma.PublicacionOrderByWithRelationInput[]
+  cursor?: Prisma.PublicacionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PublicacionScalarFieldEnum | Prisma.PublicacionScalarFieldEnum[]
 }
 
 /**

@@ -54,12 +54,20 @@ export const ModelName = {
   Cuenta: 'Cuenta',
   RolUsuario: 'RolUsuario',
   Sede: 'Sede',
+  Region: 'Region',
+  Ciudad: 'Ciudad',
+  Comuna: 'Comuna',
   Escuela: 'Escuela',
   Carrera: 'Carrera',
   Usuario: 'Usuario',
   log_api: 'log_api',
   RefreshToken: 'RefreshToken',
-  AccessTokenRevocado: 'AccessTokenRevocado'
+  AccessTokenRevocado: 'AccessTokenRevocado',
+  TipoVenta: 'TipoVenta',
+  Categoria: 'Categoria',
+  EstadoPublicacion: 'EstadoPublicacion',
+  Publicacion: 'Publicacion',
+  ImagenPublicacion: 'ImagenPublicacion'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -111,10 +119,41 @@ export const SedeScalarFieldEnum = {
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
-  fk_modificado_por: 'fk_modificado_por'
+  fk_modificado_por: 'fk_modificado_por',
+  comunaId: 'comunaId'
 } as const
 
 export type SedeScalarFieldEnum = (typeof SedeScalarFieldEnum)[keyof typeof SedeScalarFieldEnum]
+
+
+export const RegionScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  codigoSubdere: 'codigoSubdere'
+} as const
+
+export type RegionScalarFieldEnum = (typeof RegionScalarFieldEnum)[keyof typeof RegionScalarFieldEnum]
+
+
+export const CiudadScalarFieldEnum = {
+  id: 'id',
+  idEntidad: 'idEntidad',
+  nombre: 'nombre',
+  regionId: 'regionId',
+  comunaId: 'comunaId'
+} as const
+
+export type CiudadScalarFieldEnum = (typeof CiudadScalarFieldEnum)[keyof typeof CiudadScalarFieldEnum]
+
+
+export const ComunaScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  codigoSubdere: 'codigoSubdere',
+  regionId: 'regionId'
+} as const
+
+export type ComunaScalarFieldEnum = (typeof ComunaScalarFieldEnum)[keyof typeof ComunaScalarFieldEnum]
 
 
 export const EscuelaScalarFieldEnum = {
@@ -181,6 +220,61 @@ export const AccessTokenRevocadoScalarFieldEnum = {
 } as const
 
 export type AccessTokenRevocadoScalarFieldEnum = (typeof AccessTokenRevocadoScalarFieldEnum)[keyof typeof AccessTokenRevocadoScalarFieldEnum]
+
+
+export const TipoVentaScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre'
+} as const
+
+export type TipoVentaScalarFieldEnum = (typeof TipoVentaScalarFieldEnum)[keyof typeof TipoVentaScalarFieldEnum]
+
+
+export const CategoriaScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre'
+} as const
+
+export type CategoriaScalarFieldEnum = (typeof CategoriaScalarFieldEnum)[keyof typeof CategoriaScalarFieldEnum]
+
+
+export const EstadoPublicacionScalarFieldEnum = {
+  id: 'id',
+  descripcion: 'descripcion'
+} as const
+
+export type EstadoPublicacionScalarFieldEnum = (typeof EstadoPublicacionScalarFieldEnum)[keyof typeof EstadoPublicacionScalarFieldEnum]
+
+
+export const PublicacionScalarFieldEnum = {
+  id: 'id',
+  titulo: 'titulo',
+  descripcion: 'descripcion',
+  precio: 'precio',
+  fk_estado_publicacion: 'fk_estado_publicacion',
+  fk_tipoventa: 'fk_tipoventa',
+  fk_categoria: 'fk_categoria',
+  fk_usuario: 'fk_usuario',
+  fk_sede: 'fk_sede',
+  fk_user_comprador: 'fk_user_comprador',
+  contador_vistas: 'contador_vistas',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  eliminado: 'eliminado',
+  fk_modificado_por: 'fk_modificado_por'
+} as const
+
+export type PublicacionScalarFieldEnum = (typeof PublicacionScalarFieldEnum)[keyof typeof PublicacionScalarFieldEnum]
+
+
+export const ImagenPublicacionScalarFieldEnum = {
+  idImagen: 'idImagen',
+  fk_publicacion: 'fk_publicacion',
+  url: 'url',
+  orden: 'orden'
+} as const
+
+export type ImagenPublicacionScalarFieldEnum = (typeof ImagenPublicacionScalarFieldEnum)[keyof typeof ImagenPublicacionScalarFieldEnum]
 
 
 export const SortOrder = {
