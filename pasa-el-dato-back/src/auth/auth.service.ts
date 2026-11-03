@@ -13,6 +13,10 @@ import {
 } from '../common/security/contrasena-hash.js';
 import { calcularHashRefreshToken, generarRefreshToken } from './refresh-token.js';
 import type { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
+import {
+  mensajeErrorContrasenaMvp,
+  validarContrasenaMvp,
+} from '../common/security/reglas-contrasena-mvp.js';
 
 // Datos que puede usar el flujo de autenticación sin exponer el hash.
 export interface UsuarioAutenticado {
@@ -332,6 +336,13 @@ export class AuthService {
     if (!contrasenaCorrecta) {
       // Mensaje genérico: no revelar si falló por “actual incorrecta”.
       throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    const validacionNueva = validarContrasenaMvp(entrada.dto.contrasenaNueva);
+    if (!validacionNueva.ok) {
+      throw new UnauthorizedException(
+        mensajeErrorContrasenaMvp(validacionNueva),
+      );
     }
 
     const nuevoHash = await generarHashContrasena(entrada.dto.contrasenaNueva);
