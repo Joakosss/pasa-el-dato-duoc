@@ -7,7 +7,7 @@ describe('CategoriaService', () => {
   let service: CategoriaService;
 
   const prismaFalso = {
-    categoria: { findMany: vi.fn() },
+    categoria: { findMany: vi.fn(), findUnique: vi.fn() },
   };
 
   beforeEach(async () => {
@@ -33,6 +33,32 @@ describe('CategoriaService', () => {
         nombre: true,
       },
       orderBy: [{ nombre: 'asc' }, { id: 'asc' }],
+    });
+  });
+
+  it('obtiene una categoría por id', async () => {
+    prismaFalso.categoria.findUnique.mockResolvedValueOnce({
+      id: 1,
+      nombre: 'Accesorios',
+    });
+
+    await expect(service.obtenerPorId(1)).resolves.toEqual({
+      id: 1,
+      nombre: 'Accesorios',
+    });
+
+    expect(prismaFalso.categoria.findUnique).toHaveBeenCalledWith({
+      where: { id: 1 },
+      select: { id: true, nombre: true },
+    });
+  });
+
+  it('lanza NotFoundException si la categoría no existe', async () => {
+    prismaFalso.categoria.findUnique.mockResolvedValueOnce(null);
+
+    await expect(service.obtenerPorId(999)).rejects.toMatchObject({
+      status: 404,
+      message: 'Categoría no encontrada',
     });
   });
 });
