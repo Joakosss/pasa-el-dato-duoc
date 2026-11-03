@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from 'expo-router';
+import { router, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -26,6 +26,8 @@ import {
   normalizarTelefonoChile,
   validarTelefonoChile,
 } from '@/lib/validators/telefono';
+import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
+import { useMisPublicacionesMomentaneoStore } from '@/stores/mis-publicaciones-momentaneo-store';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -99,6 +101,12 @@ function ItemInformativo({
 
 export default function PerfilScreen() {
   const accessToken = useSesionStore(selectAccessToken);
+  const cantidadFavoritosMomentaneo = useFavoritosMomentaneoStore(
+    (estado) => estado.idsPublicacionesFavoritasMomentaneo.length,
+  );
+  const cantidadMisPublicacionesMomentaneo = useMisPublicacionesMomentaneoStore(
+    (estado) => estado.idsMisPublicacionesMomentaneo.length,
+  );
   const [perfil, setPerfil] = useState<PerfilRespuesta | null>(null);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState<string | undefined>();
@@ -285,6 +293,52 @@ export default function PerfilScreen() {
           <ItemInformativo icono="map-marker-outline" etiqueta="Sede" valor={perfil.sede.nombre} />
           <ItemInformativo icono="school-outline" etiqueta="Carrera" valor={perfil.carrera.nombre} />
         </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ver mis publicaciones favoritas"
+          onPress={() => router.push('/favoritos' as Href)}
+          style={({ pressed }) => [styles.tarjetaFavoritos, pressed && styles.pressed]}>
+          <View style={styles.iconoFavoritos}>
+            <MaterialCommunityIcons name="heart" size={23} color={colors.error} />
+          </View>
+          <View style={styles.favoritosTexto}>
+            <Text style={styles.favoritosTitulo}>Mis favoritos</Text>
+            <Text style={styles.favoritosSubtitulo}>
+              {cantidadFavoritosMomentaneo === 0
+                ? 'Guarda publicaciones para verlas aquí.'
+                : `${cantidadFavoritosMomentaneo} ${
+                    cantidadFavoritosMomentaneo === 1
+                      ? 'publicación guardada'
+                      : 'publicaciones guardadas'
+                  }`}
+            </Text>
+          </View>
+          <MaterialCommunityIcons name="chevron-right" size={22} color={colors.navy} />
+        </Pressable>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ver mis publicaciones"
+          onPress={() => router.push('/mis-publicaciones' as Href)}
+          style={({ pressed }) => [styles.tarjetaPublicaciones, pressed && styles.pressed]}>
+          <View style={styles.iconoPublicaciones}>
+            <MaterialCommunityIcons name="storefront-outline" size={23} color={colors.navy} />
+          </View>
+          <View style={styles.favoritosTexto}>
+            <Text style={styles.favoritosTitulo}>Mis publicaciones</Text>
+            <Text style={styles.favoritosSubtitulo}>
+              {cantidadMisPublicacionesMomentaneo === 0
+                ? 'Publica algo para gestionarlo desde aquí.'
+                : `${cantidadMisPublicacionesMomentaneo} ${
+                    cantidadMisPublicacionesMomentaneo === 1
+                      ? 'publicación activa'
+                      : 'publicaciones activas'
+                  }`}
+            </Text>
+          </View>
+          <MaterialCommunityIcons name="chevron-right" size={22} color={colors.navy} />
+        </Pressable>
 
         <Pressable accessibilityRole="button" onPress={abrirEdicion} style={styles.botonPrimario}>
           <MaterialCommunityIcons color={colors.navy} name="pencil-outline" size={19} />
@@ -482,6 +536,45 @@ const styles = StyleSheet.create({
     padding: spacing.padMd,
   },
   tituloSeccion: { color: colors.navy, fontSize: 17, fontWeight: '700', marginBottom: 4 },
+  tarjetaFavoritos: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.gold,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.padSm,
+    padding: spacing.padMd,
+  },
+  iconoFavoritos: {
+    alignItems: 'center',
+    backgroundColor: '#fff1f2',
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  tarjetaPublicaciones: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.padSm,
+    padding: spacing.padMd,
+  },
+  iconoPublicaciones: {
+    alignItems: 'center',
+    backgroundColor: '#e6f4ff',
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  favoritosTexto: { flex: 1, gap: 2 },
+  favoritosTitulo: { color: colors.navy, fontSize: 16, fontWeight: '700' },
+  favoritosSubtitulo: { color: colors.muted, fontSize: 12, lineHeight: 17 },
   itemInformativo: {
     alignItems: 'flex-start',
     flexDirection: 'row',
@@ -594,4 +687,5 @@ const styles = StyleSheet.create({
   },
   opcionSedeTexto: { color: colors.navy, fontSize: 15 },
   cerrarSelector: { alignSelf: 'flex-end', marginTop: spacing.padMd, padding: 6 },
+  pressed: { opacity: 0.9 },
 });

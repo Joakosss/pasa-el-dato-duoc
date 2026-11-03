@@ -20,6 +20,7 @@ import {
   obtenerPublicacionParaEdicion,
   type PublicacionDetalle,
 } from '@/lib/api/publicaciones';
+import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -30,6 +31,12 @@ function precioClp(precio: number): string {
 export default function DetalleProductoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const accessToken = useSesionStore(selectAccessToken);
+  const esFavoritoMomentaneo = useFavoritosMomentaneoStore((estado) =>
+    id ? estado.esFavoritoMomentaneo(id) : false,
+  );
+  const alternarFavoritoMomentaneo = useFavoritosMomentaneoStore(
+    (estado) => estado.alternarFavoritoMomentaneo,
+  );
   const [publicacion, setPublicacion] = useState<PublicacionDetalle | null>(null);
   const [esPropietario, setEsPropietario] = useState(false);
   const [eliminando, setEliminando] = useState(false);
@@ -138,7 +145,23 @@ export default function DetalleProductoScreen() {
             </View>
           </View>
 
-          <Text style={styles.titulo}>{publicacion.titulo}</Text>
+          <View style={styles.tituloFila}>
+            <Text style={styles.titulo}>{publicacion.titulo}</Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                esFavoritoMomentaneo ? 'Quitar de favoritos' : 'Agregar a favoritos'
+              }
+              accessibilityState={{ selected: esFavoritoMomentaneo }}
+              onPress={() => alternarFavoritoMomentaneo(publicacion.id)}
+              style={styles.botonFavorito}>
+              <MaterialCommunityIcons
+                name={esFavoritoMomentaneo ? 'heart' : 'heart-outline'}
+                size={23}
+                color={esFavoritoMomentaneo ? colors.error : colors.navy}
+              />
+            </Pressable>
+          </View>
           <Text style={styles.precio}>{precioClp(publicacion.precio)}</Text>
 
           <View style={styles.meta}>
@@ -312,7 +335,18 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   etiquetaCategoriaTexto: { color: colors.card, fontSize: 11, fontWeight: '600' },
-  titulo: { color: colors.navy, fontSize: 20, fontWeight: '800', lineHeight: 26 },
+  tituloFila: { alignItems: 'flex-start', flexDirection: 'row', gap: spacing.padSm },
+  titulo: { color: colors.navy, flex: 1, fontSize: 20, fontWeight: '800', lineHeight: 26 },
+  botonFavorito: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: 20,
+    borderWidth: 1,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
   precio: { color: colors.navy, fontSize: 24, fontWeight: '900', marginTop: -8 },
   meta: {
     alignItems: 'center',

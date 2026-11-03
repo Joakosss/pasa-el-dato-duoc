@@ -4,6 +4,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { resolverUrlImagen, type PublicacionPublica } from '@/lib/api/publicaciones';
 import type { PublicacionFeed } from '@/lib/feed/publicaciones-placeholder';
+import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
 import { colors, spacing } from '@/theme';
 
 function esPublicacionReal(
@@ -30,6 +31,12 @@ export function PublicacionCard({
   const precio = publicacionReal
     ? `$${new Intl.NumberFormat('es-CL').format(publicacion.precio)}`
     : publicacion.precio;
+  const esFavoritoMomentaneo = useFavoritosMomentaneoStore((estado) =>
+    estado.esFavoritoMomentaneo(publicacion.id),
+  );
+  const alternarFavoritoMomentaneo = useFavoritosMomentaneoStore(
+    (estado) => estado.alternarFavoritoMomentaneo,
+  );
 
   return (
     <Pressable
@@ -54,6 +61,25 @@ export function PublicacionCard({
             {categoria}
           </Text>
         </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            esFavoritoMomentaneo ? 'Quitar de favoritos' : 'Agregar a favoritos'
+          }
+          accessibilityState={{ selected: esFavoritoMomentaneo }}
+          hitSlop={8}
+          onPress={(evento) => {
+            evento.stopPropagation();
+            alternarFavoritoMomentaneo(publicacion.id);
+          }}
+          style={styles.botonFavorito}>
+          <MaterialCommunityIcons
+            name={esFavoritoMomentaneo ? 'heart' : 'heart-outline'}
+            size={19}
+            color={esFavoritoMomentaneo ? colors.error : colors.navy}
+          />
+        </Pressable>
       </View>
 
       <View style={styles.cuerpo}>
@@ -97,6 +123,17 @@ const styles = StyleSheet.create({
     top: 8,
   },
   etiquetaCategoriaTexto: { color: colors.card, fontSize: 10, fontWeight: '600' },
+  botonFavorito: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: 16,
+    height: 32,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    width: 32,
+  },
   cuerpo: { gap: 3, padding: 10 },
   titulo: {
     color: colors.navy,

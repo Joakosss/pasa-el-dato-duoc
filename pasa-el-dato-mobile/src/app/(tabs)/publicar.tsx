@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -38,6 +38,7 @@ import {
   type CampoPublicacion,
   type ErroresPublicacion,
 } from '@/lib/validators/publicacion';
+import { useMisPublicacionesMomentaneoStore } from '@/stores/mis-publicaciones-momentaneo-store';
 import { selectAccessToken, selectSesion, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -131,9 +132,13 @@ function SelectorCatalogoModal({
 }
 
 export default function PublicarScreen() {
+  const { origen } = useLocalSearchParams<{ origen?: string }>();
   const accessToken = useSesionStore(selectAccessToken);
   const sesion = useSesionStore(selectSesion);
   const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
+  const agregarMiPublicacionMomentaneo = useMisPublicacionesMomentaneoStore(
+    (estado) => estado.agregarMiPublicacionMomentaneo,
+  );
   const scroll = useRef<ScrollView>(null);
 
   const [imagenes, setImagenes] = useState<ImagenFormulario[]>([]);
@@ -298,6 +303,7 @@ export default function PublicarScreen() {
         },
         accessToken,
       );
+      agregarMiPublicacionMomentaneo(publicacionCreada.id);
       limpiarFormulario();
       setPublicacionCreadaId(publicacionCreada.id);
       setPublicacionExitosa(true);
@@ -322,8 +328,29 @@ export default function PublicarScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.barra}>
-        <Text style={styles.titulo}>Publicar</Text>
-        <Text style={styles.subtitulo}>Ofrece tu producto o servicio a la comunidad Duoc</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Volver"
+          onPress={() => {
+            if (origen === 'mis-publicaciones') {
+              router.replace('/mis-publicaciones');
+              return;
+            }
+
+            if (router.canGoBack()) {
+              router.back();
+              return;
+            }
+
+            router.replace('/inicio');
+          }}
+          style={styles.volver}>
+          <MaterialCommunityIcons name="arrow-left" size={22} color={colors.navy} />
+        </Pressable>
+        <View style={styles.barraTexto}>
+          <Text style={styles.titulo}>Publicar</Text>
+          <Text style={styles.subtitulo}>Ofrece tu producto o servicio a la comunidad Duoc</Text>
+        </View>
       </View>
 
       <KeyboardAvoidingView
@@ -643,12 +670,22 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
   flex: { flex: 1 },
   barra: {
+    alignItems: 'center',
     backgroundColor: colors.card,
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.padSm,
     paddingHorizontal: spacing.padMd,
     paddingVertical: 10,
   },
+  volver: {
+    alignItems: 'center',
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  barraTexto: { flex: 1 },
   titulo: { color: colors.navy, fontSize: 18, fontWeight: '800' },
   subtitulo: { color: colors.muted, fontSize: 12, marginTop: 2 },
   contenido: {
