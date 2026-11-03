@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Req,
   Res,
@@ -15,6 +16,7 @@ import type { Request, Response } from 'express';
 import {
   ApiCookieAuth,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -23,6 +25,7 @@ import {
 import { AuthService, type UsuarioAutenticado } from './auth.service.js';
 import { JwtService } from '@nestjs/jwt';
 import { IniciarSesionDto } from './dto/iniciar-sesion.dto.js';
+import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
 import { AuthLogInterceptor } from './auth-log.interceptor.js';
 import { JwtAuthGuard, type SesionAutenticada } from './jwt-auth.guard.js';
 
@@ -106,6 +109,66 @@ export class AuthController {
 
     // Mismo criterio que en el login: cookies intactas y tokens en el cuerpo.
     return { accessToken, refreshToken };
+  }
+
+  @Patch('password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(AuthLogInterceptor)
+  @ApiOperation({
+    summary: 'Cambiar contraseña (requiere contraseña actual) y forzar re-login',
+    description:
+      'Actualiza la contraseña de la cuenta autenticada. Si la contraseña actual es incorrecta, responde 401 con mensaje genérico. Al completar el cambio, revoca todos los refresh tokens vigentes de la cuenta y revoca el access token actual (jti) si está presente, limpiando ambas cookies.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  @ApiNoContentResponse({ description: 'Contraseña actualizada. Se revocan sesiones y se limpian cookies.' })
+  @ApiUnauthorizedResponse({
+    description: 'Sesión inválida o credenciales inválidas',
+  })
+  async cambiarPassword(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Body() dto: CambiarContrasenaDto,
+    @Res({ passthrough: true }) respuesta: Response,
+  ): Promise<void> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    const accessToken = solicitud.cookies?.accessToken;
+    let accessJti: string | undefined;
+    let accessExp: number | undefined;
+    if (typeof accessToken === 'string' && accessToken) {
+      try {
+        const decodificado = this.jwtService.decode(accessToken) as
+          | { jti?: unknown; exp?: unknown }
+          | null;
+        if (decodificado) {
+          if (typeof decodificado.jti === 'string' && decodificado.jti) {
+            accessJti = decodificado.jti;
+          }
+          if (
+            typeof decodificado.exp === 'number' &&
+            Number.isFinite(decodificado.exp)
+          ) {
+            accessExp = decodificado.exp;
+          }
+        }
+      } catch {
+        // si falla decode, igual cambiamos contraseña; solo no persistimos jti.
+      }
+    }
+
+    await this.authService.cambiarContrasena({
+      idCuenta: user.idCuenta,
+      accessJti,
+      accessExp,
+      dto,
+    });
+
+    // Forzar re-login: limpiar cookies existentes.
+    this.limpiarCookies(respuesta);
   }
 
   @Post('logout')
