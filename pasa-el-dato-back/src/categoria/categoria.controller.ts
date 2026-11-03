@@ -1,5 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CategoriaRespuestaDto } from './dto/categoria-respuesta.dto.js';
 import { CategoriaService } from './categoria.service.js';
 
@@ -13,5 +19,16 @@ export class CategoriaController {
   @ApiOkResponse({ type: CategoriaRespuestaDto, isArray: true })
   listar(): Promise<CategoriaRespuestaDto[]> {
     return this.categoriaService.listar();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener una categoría por id' })
+  @ApiOkResponse({ type: CategoriaRespuestaDto })
+  @ApiNotFoundResponse({ description: 'Categoría no encontrada' })
+  @ApiBadRequestResponse({ description: 'Id inválido' })
+  obtenerPorId(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<CategoriaRespuestaDto> {
+    return this.categoriaService.obtenerPorId(id);
   }
 }
