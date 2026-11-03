@@ -1,8 +1,12 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useMemo, useState } from 'react';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
+  Modal,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,36 +15,162 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, spacing } from '@/theme';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
-import { filtrarPublicaciones } from '@/lib/feed/filtrar-publicaciones';
+import { ApiError } from '@/lib/api';
 import {
-  CATEGORIAS_FEED,
-  type NombreIcono,
-  type PublicacionFeed,
-} from '@/lib/feed/publicaciones-placeholder';
+  listarCategorias,
+  listarSedes,
+  listarTiposVenta,
+  type CategoriaCatalogo,
+  type SedeCatalogo,
+  type TipoVentaCatalogo,
+} from '@/lib/api/catalogos';
+import {
+  listarPublicaciones,
+  type PublicacionPublica,
+} from '@/lib/api/publicaciones';
+import { colors, spacing } from '@/theme';
 
-// Búsqueda: barra interactiva, filtros rápidos por categoría (mismo catálogo del
-// inicio) y resultados en grilla de dos columnas con la misma tarjeta del feed.
-// Los datos siguen siendo el placeholder del cliente: no hay contrato back de
-// publicaciones todavía. Cada tarjeta abre /producto/[id].
-const FILTRO_TODAS = { etiqueta: 'Todas', icono: 'view-grid-outline' } as const;
+const FILTRO_TODAS = { id: null, nombre: 'Todas' } as const;
 
-// Fila de la grilla: la última puede ser un relleno vacío para que una tarjeta
-// suelta no ocupe todo el ancho.
+interface FiltrosPublicacion {
+  categoriaId: number | null;
+  sedeId: number | null;
+  tipoVentaId: number | null;
+  precioMinimo: string;
+  precioMaximo: string;
+}
+
 interface FilaGrilla {
   clave: string;
-  publicacion: PublicacionFeed | null;
+  publicacion: PublicacionPublica | null;
+}
+
+const FILTROS_VACIOS: FiltrosPublicacion = {
+  categoriaId: null,
+  sedeId: null,
+  tipoVentaId: null,
+  precioMinimo: '',
+  precioMaximo: '',
+};
+
+function normalizar(valor: string): string {
+  return valor.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+}
+
+function monto(valor: string): number | null {
+  const digitos = valor.replace(/\D/g, '');
+  return digitos ? Number(digitos) : null;
+}
+
+function formatoPrecio(valor: string): string {
+  const precio = monto(valor);
+  return precio === null ? '' : new Intl.NumberFormat('es-CL').format(precio);
 }
 
 export default function BuscarScreen() {
-  const [texto, setTexto] = useState('');
-  const [categoriaId, setCategoriaId] = useState<string | null>(null);
+  const parametros = useLocalSearchParams<{ categoriaId?: string; q?: string; filtros?: string }>();
+  const [texto, setTexto] = useState(parametros.q ?? '');
+  const [filtros, setFiltros] = useState<FiltrosPublicacion>(FILTROS_VACIOS);
+  const [borradorFiltros, setBorradorFiltros] = useState<FiltrosPublicacion>(FILTROS_VACIOS);
+  const [modalFiltrosAbierto, setModalFiltrosAbierto] = useState(false);
+  const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
+  const [categorias, setCategorias] = useState<CategoriaCatalogo[]>([]);
+  const [sedes, setSedes] = useState<SedeCatalogo[]>([]);
+  const [tiposVenta, setTiposVenta] = useState<TipoVentaCatalogo[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [actualizando, setActualizando] = useState(false);
+  const [error, setError] = useState<string | undefined>();
 
-  const resultados = useMemo(
-    () => filtrarPublicaciones({ texto, categoriaId }),
-    [texto, categoriaId],
+  useEffect(() => {
+    const categoriaId = Number(parametros.categoriaId);
+    const categoriaValida =
+      Number.isInteger(categoriaId) && categoriaId > 0 ? categoriaId : null;
+
+    setTexto(parametros.q ?? '');
+    setFiltros((actual) => ({ ...actual, categoriaId: categoriaValida }));
+
+  }, [parametros.categoriaId, parametros.q]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (parametros.filtros !== '1') return;
+
+      setBorradorFiltros(filtros);
+      setModalFiltrosAbierto(true);
+      router.setParams({ filtros: undefined });
+    }, [filtros, parametros.filtros]),
   );
+
+  const cargarDatos = useCallback(async (esActualizacion = false) => {
+    if (esActualizacion) setActualizando(true);
+    else setCargando(true);
+
+    setError(undefined);
+    try {
+      const [publicacionesRespuesta, categoriasRespuesta, sedesRespuesta, tiposRespuesta] =
+        await Promise.all([
+          listarPublicaciones(),
+          listarCategorias(),
+          listarSedes(),
+          listarTiposVenta(),
+        ]);
+
+      setPublicaciones(publicacionesRespuesta);
+      setCategorias(categoriasRespuesta);
+      setSedes(sedesRespuesta);
+      setTiposVenta(tiposRespuesta);
+    } catch (causa: unknown) {
+      setError(
+        causa instanceof ApiError
+          ? causa.message
+          : 'No pudimos cargar las publicaciones. Reintenta.',
+      );
+    } finally {
+      setCargando(false);
+      setActualizando(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void cargarDatos();
+    }, [cargarDatos]),
+  );
+
+  const resultados = useMemo(() => {
+    const consulta = normalizar(texto.trim());
+    const precioMinimo = monto(filtros.precioMinimo);
+    const precioMaximo = monto(filtros.precioMaximo);
+
+    return publicaciones.filter((publicacion) => {
+      if (filtros.categoriaId !== null && publicacion.categoria.id !== filtros.categoriaId) {
+        return false;
+      }
+      if (filtros.sedeId !== null && publicacion.sede.id !== filtros.sedeId) {
+        return false;
+      }
+      if (
+        filtros.tipoVentaId !== null &&
+        publicacion.tipoVenta.id !== filtros.tipoVentaId
+      ) {
+        return false;
+      }
+      if (precioMinimo !== null && publicacion.precio < precioMinimo) return false;
+      if (precioMaximo !== null && publicacion.precio > precioMaximo) return false;
+      if (!consulta) return true;
+
+      return normalizar(
+        [
+          publicacion.titulo,
+          publicacion.descripcion,
+          publicacion.categoria.nombre,
+          publicacion.tipoVenta.nombre,
+          publicacion.sede.nombre,
+        ].join(' '),
+      ).includes(consulta);
+    });
+  }, [filtros, publicaciones, texto]);
 
   const filas = useMemo(() => {
     const items: FilaGrilla[] = resultados.map((publicacion) => ({
@@ -48,18 +178,39 @@ export default function BuscarScreen() {
       publicacion,
     }));
 
-    if (items.length % 2 === 1) {
-      items.push({ clave: 'relleno', publicacion: null });
-    }
-
+    if (items.length % 2 === 1) items.push({ clave: 'relleno', publicacion: null });
     return items;
   }, [resultados]);
 
-  const hayFiltros = texto.trim().length > 0 || categoriaId !== null;
+  const hayFiltros =
+    texto.trim().length > 0 ||
+    filtros.categoriaId !== null ||
+    filtros.sedeId !== null ||
+    filtros.tipoVentaId !== null ||
+    filtros.precioMinimo !== '' ||
+    filtros.precioMaximo !== '';
+
+  const abrirFiltros = () => {
+    setBorradorFiltros(filtros);
+    setModalFiltrosAbierto(true);
+  };
+
+  const aplicarFiltros = () => {
+    const minimo = monto(borradorFiltros.precioMinimo);
+    const maximo = monto(borradorFiltros.precioMaximo);
+
+    if (minimo !== null && maximo !== null && minimo > maximo) {
+      return;
+    }
+
+    setFiltros(borradorFiltros);
+    setModalFiltrosAbierto(false);
+  };
 
   const limpiar = () => {
     setTexto('');
-    setCategoriaId(null);
+    setFiltros(FILTROS_VACIOS);
+    setBorradorFiltros(FILTROS_VACIOS);
   };
 
   return (
@@ -67,11 +218,10 @@ export default function BuscarScreen() {
       <View style={styles.barra}>
         <View style={styles.buscador}>
           <MaterialCommunityIcons name="magnify" size={18} color={colors.muted} />
-
           <TextInput
             value={texto}
             onChangeText={setTexto}
-            placeholder="Buscar libros, electrónica, servicios..."
+            placeholder="Buscar por título, categoría, sede…"
             placeholderTextColor={colors.muted}
             autoCapitalize="none"
             autoCorrect={false}
@@ -80,21 +230,25 @@ export default function BuscarScreen() {
             accessibilityLabel="Buscar publicaciones"
             style={styles.input}
           />
-
           {texto.length > 0 ? (
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Limpiar búsqueda"
               onPress={() => setTexto('')}
-              style={({ pressed }) => [styles.limpiar, pressed && styles.pressed]}>
-              <MaterialCommunityIcons
-                name="close-circle"
-                size={18}
-                color={colors.muted}
-              />
+              style={styles.limpiar}>
+              <MaterialCommunityIcons name="close-circle" size={18} color={colors.muted} />
             </Pressable>
           ) : null}
         </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Abrir filtros"
+          onPress={abrirFiltros}
+          style={styles.botonFiltros}>
+          <MaterialCommunityIcons name="tune-variant" size={20} color={colors.gold} />
+          {hayFiltros ? <View style={styles.indicadorFiltro} /> : null}
+        </Pressable>
       </View>
 
       <ScrollView
@@ -103,19 +257,18 @@ export default function BuscarScreen() {
         style={styles.categoriasScroll}
         contentContainerStyle={styles.categorias}>
         <FiltroChip
-          etiqueta={FILTRO_TODAS.etiqueta}
-          icono={FILTRO_TODAS.icono}
-          activo={categoriaId === null}
-          onPress={() => setCategoriaId(null)}
+          etiqueta={FILTRO_TODAS.nombre}
+          activo={filtros.categoriaId === null}
+          onPress={() => setFiltros((actual) => ({ ...actual, categoriaId: null }))}
         />
-
-        {CATEGORIAS_FEED.map((categoria) => (
+        {categorias.map((categoria) => (
           <FiltroChip
             key={categoria.id}
-            etiqueta={categoria.etiqueta}
-            icono={categoria.icono}
-            activo={categoriaId === categoria.id}
-            onPress={() => setCategoriaId(categoria.id)}
+            etiqueta={categoria.nombre}
+            activo={filtros.categoriaId === categoria.id}
+            onPress={() =>
+              setFiltros((actual) => ({ ...actual, categoriaId: categoria.id }))
+            }
           />
         ))}
       </ScrollView>
@@ -123,72 +276,222 @@ export default function BuscarScreen() {
       <FlatList
         data={filas}
         keyExtractor={(fila) => fila.clave}
-        renderItem={({ item }) =>
-          item.publicacion ? (
-            <View style={styles.celda}>
-              <PublicacionCard publicacion={item.publicacion} />
-            </View>
-          ) : (
-            <View style={styles.celda} />
-          )
-        }
+        renderItem={({ item }) => (
+          <View style={styles.celda}>
+            {item.publicacion ? <PublicacionCard publicacion={item.publicacion} /> : null}
+          </View>
+        )}
         numColumns={2}
         columnWrapperStyle={styles.fila}
         contentContainerStyle={styles.contenido}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          <ResumenResultados
-            total={resultados.length}
-            hayFiltros={hayFiltros}
-            onLimpiar={limpiar}
+        refreshControl={
+          <RefreshControl
+            refreshing={actualizando}
+            onRefresh={() => void cargarDatos(true)}
+            tintColor={colors.navy}
           />
         }
+        ListHeaderComponent={
+          !cargando && !error ? (
+            <ResumenResultados
+              total={resultados.length}
+              hayFiltros={hayFiltros}
+              onLimpiar={limpiar}
+            />
+          ) : null
+        }
         ListEmptyComponent={
-          <SinResultados hayFiltros={hayFiltros} onLimpiar={limpiar} />
+          cargando ? (
+            <EstadoLista mensaje="Cargando publicaciones…" />
+          ) : error ? (
+            <EstadoLista mensaje={error} esError onReintentar={() => void cargarDatos()} />
+          ) : (
+            <SinResultados hayFiltros={hayFiltros} onLimpiar={limpiar} />
+          )
         }
       />
+
+      <Modal
+        visible={modalFiltrosAbierto}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setModalFiltrosAbierto(false)}>
+        <View style={styles.overlay}>
+          <View style={styles.modal}>
+            <View style={styles.modalEncabezado}>
+              <View>
+                <Text style={styles.modalTitulo}>Filtrar publicaciones</Text>
+                <Text style={styles.modalSubtitulo}>Todos los filtros son opcionales.</Text>
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Cerrar filtros"
+                onPress={() => setModalFiltrosAbierto(false)}
+                style={styles.cerrar}>
+                <MaterialCommunityIcons name="close" size={22} color={colors.navy} />
+              </Pressable>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <SeccionOpciones
+                titulo="Categoría"
+                opciones={categorias}
+                seleccionadoId={borradorFiltros.categoriaId}
+                onSeleccionar={(categoriaId) =>
+                  setBorradorFiltros((actual) => ({ ...actual, categoriaId }))
+                }
+              />
+              <SeccionOpciones
+                titulo="Sede"
+                opciones={sedes}
+                seleccionadoId={borradorFiltros.sedeId}
+                onSeleccionar={(sedeId) =>
+                  setBorradorFiltros((actual) => ({ ...actual, sedeId }))
+                }
+              />
+              <SeccionOpciones
+                titulo="Tipo de venta"
+                opciones={tiposVenta}
+                seleccionadoId={borradorFiltros.tipoVentaId}
+                onSeleccionar={(tipoVentaId) =>
+                  setBorradorFiltros((actual) => ({ ...actual, tipoVentaId }))
+                }
+              />
+
+              <Text style={styles.etiqueta}>Rango de precio</Text>
+              <View style={styles.rangoPrecio}>
+                <View style={styles.inputPrecio}>
+                  <Text style={styles.signoPeso}>$</Text>
+                  <TextInput
+                    value={borradorFiltros.precioMinimo}
+                    onChangeText={(precioMinimo) =>
+                      setBorradorFiltros((actual) => ({
+                        ...actual,
+                        precioMinimo: formatoPrecio(precioMinimo),
+                      }))
+                    }
+                    keyboardType="number-pad"
+                    placeholder="Mínimo"
+                    placeholderTextColor={colors.muted}
+                    style={styles.inputPrecioTexto}
+                  />
+                </View>
+                <Text style={styles.separadorRango}>—</Text>
+                <View style={styles.inputPrecio}>
+                  <Text style={styles.signoPeso}>$</Text>
+                  <TextInput
+                    value={borradorFiltros.precioMaximo}
+                    onChangeText={(precioMaximo) =>
+                      setBorradorFiltros((actual) => ({
+                        ...actual,
+                        precioMaximo: formatoPrecio(precioMaximo),
+                      }))
+                    }
+                    keyboardType="number-pad"
+                    placeholder="Máximo"
+                    placeholderTextColor={colors.muted}
+                    style={styles.inputPrecioTexto}
+                  />
+                </View>
+              </View>
+              {(() => {
+                const minimo = monto(borradorFiltros.precioMinimo);
+                const maximo = monto(borradorFiltros.precioMaximo);
+                return minimo !== null && maximo !== null && minimo > maximo ? (
+                  <Text style={styles.errorPrecio}>El precio mínimo no puede superar el máximo.</Text>
+                ) : null;
+              })()}
+            </ScrollView>
+
+            <View style={styles.accionesModal}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setBorradorFiltros(FILTROS_VACIOS)}
+                style={styles.botonLimpiar}>
+                <Text style={styles.botonLimpiarTexto}>Limpiar</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={aplicarFiltros}
+                style={styles.botonAplicar}>
+                <Text style={styles.botonAplicarTexto}>Aplicar filtros</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
 
-// Filtro rápido de categoría. Activo: fondo azul marino con acento dorado.
+function SeccionOpciones({
+  titulo,
+  opciones,
+  seleccionadoId,
+  onSeleccionar,
+}: {
+  titulo: string;
+  opciones: Array<{ id: number; nombre: string }>;
+  seleccionadoId: number | null;
+  onSeleccionar: (id: number | null) => void;
+}) {
+  return (
+    <View style={styles.seccionFiltro}>
+      <Text style={styles.etiqueta}>{titulo}</Text>
+      <View style={styles.opciones}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityState={{ selected: seleccionadoId === null }}
+          onPress={() => onSeleccionar(null)}
+          style={[styles.opcion, seleccionadoId === null && styles.opcionActiva]}>
+          <Text style={[styles.opcionTexto, seleccionadoId === null && styles.opcionTextoActiva]}>
+            Cualquiera
+          </Text>
+        </Pressable>
+        {opciones.map((opcion) => (
+          <Pressable
+            key={opcion.id}
+            accessibilityRole="button"
+            accessibilityState={{ selected: seleccionadoId === opcion.id }}
+            onPress={() => onSeleccionar(opcion.id)}
+            style={[styles.opcion, seleccionadoId === opcion.id && styles.opcionActiva]}>
+            <Text
+              style={[
+                styles.opcionTexto,
+                seleccionadoId === opcion.id && styles.opcionTextoActiva,
+              ]}>
+              {opcion.nombre}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function FiltroChip({
   etiqueta,
-  icono,
   activo,
   onPress,
 }: {
   etiqueta: string;
-  icono: NombreIcono;
   activo: boolean;
   onPress: () => void;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Filtrar por ${etiqueta}`}
       accessibilityState={{ selected: activo }}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.chip,
-        activo && styles.chipActivo,
-        pressed && styles.pressed,
-      ]}>
-      <MaterialCommunityIcons
-        name={icono}
-        size={15}
-        color={activo ? colors.gold : colors.navy}
-      />
-      <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>
-        {etiqueta}
-      </Text>
+      style={[styles.chip, activo && styles.chipActivo]}>
+      <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>{etiqueta}</Text>
     </Pressable>
   );
 }
 
-// Conteo de resultados y acceso directo a limpiar los criterios.
 function ResumenResultados({
   total,
   hayFiltros,
@@ -198,23 +501,14 @@ function ResumenResultados({
   hayFiltros: boolean;
   onLimpiar: () => void;
 }) {
-  if (total === 0) {
-    return null;
-  }
-
   return (
     <View style={styles.resumen}>
       <Text style={styles.resumenTexto}>
         {total} {total === 1 ? 'resultado' : 'resultados'}
       </Text>
-
       {hayFiltros ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Limpiar filtros"
-          onPress={onLimpiar}
-          style={({ pressed }) => [styles.limpiarFiltros, pressed && styles.pressed]}>
-          <MaterialCommunityIcons name="filter-variant" size={14} color={colors.navy} />
+        <Pressable accessibilityRole="button" onPress={onLimpiar} style={styles.limpiarFiltros}>
+          <MaterialCommunityIcons name="filter-variant-remove" size={15} color={colors.navy} />
           <Text style={styles.limpiarFiltrosTexto}>Limpiar</Text>
         </Pressable>
       ) : null}
@@ -222,7 +516,32 @@ function ResumenResultados({
   );
 }
 
-// Espejo del estado vacío de chats, con los criterios de búsqueda.
+function EstadoLista({
+  mensaje,
+  esError = false,
+  onReintentar,
+}: {
+  mensaje: string;
+  esError?: boolean;
+  onReintentar?: () => void;
+}) {
+  return (
+    <View style={styles.vacio}>
+      {esError ? (
+        <MaterialCommunityIcons name="alert-circle-outline" size={30} color={colors.error} />
+      ) : (
+        <ActivityIndicator color={colors.navy} />
+      )}
+      <Text style={[styles.vacioMensaje, esError && styles.errorTexto]}>{mensaje}</Text>
+      {onReintentar ? (
+        <Pressable accessibilityRole="button" onPress={onReintentar} style={styles.vacioBoton}>
+          <Text style={styles.vacioBotonTexto}>Reintentar</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
 function SinResultados({
   hayFiltros,
   onLimpiar,
@@ -235,19 +554,12 @@ function SinResultados({
       <View style={styles.vacioIcono}>
         <MaterialCommunityIcons name="magnify-close" size={26} color={colors.gold} />
       </View>
-
       <Text style={styles.vacioTitulo}>Sin resultados</Text>
       <Text style={styles.vacioMensaje}>
-        No encontramos publicaciones con esos criterios. Prueba con otra palabra
-        o cambia de categoría.
+        No encontramos publicaciones con esos criterios. Prueba con otros filtros.
       </Text>
-
       {hayFiltros ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Limpiar filtros y buscar de nuevo"
-          onPress={onLimpiar}
-          style={({ pressed }) => [styles.vacioBoton, pressed && styles.pressed]}>
+        <Pressable accessibilityRole="button" onPress={onLimpiar} style={styles.vacioBoton}>
           <Text style={styles.vacioBotonTexto}>Limpiar filtros</Text>
         </Pressable>
       ) : null}
@@ -256,151 +568,173 @@ function SinResultados({
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.surface,
-  },
+  safe: { flex: 1, backgroundColor: colors.surface },
   barra: {
-    paddingHorizontal: spacing.padMd,
-    paddingVertical: 10,
+    alignItems: 'center',
     backgroundColor: colors.card,
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: spacing.padMd,
+    paddingVertical: 10,
   },
   buscador: {
-    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
     gap: 8,
     minHeight: spacing.touchMin,
     paddingHorizontal: spacing.padSm,
+  },
+  input: { color: colors.navy, flex: 1, fontSize: 14, minWidth: 0, paddingVertical: 6 },
+  limpiar: { alignItems: 'center', height: 28, justifyContent: 'center', width: 28 },
+  botonFiltros: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: spacing.radiusMd,
+    height: spacing.touchMin,
+    justifyContent: 'center',
+    position: 'relative',
+    width: spacing.touchMin,
+  },
+  indicadorFiltro: {
+    backgroundColor: colors.gold,
+    borderColor: colors.card,
+    borderRadius: 5,
+    borderWidth: 1,
+    height: 10,
+    position: 'absolute',
+    right: 3,
+    top: 3,
+    width: 10,
+  },
+  categoriasScroll: { backgroundColor: colors.card, flexGrow: 0 },
+  categorias: { gap: 8, paddingBottom: spacing.padSm, paddingHorizontal: spacing.padMd },
+  chip: {
+    alignItems: 'center',
     backgroundColor: colors.card,
     borderColor: colors.border,
+    borderRadius: 999,
     borderWidth: 1,
-    borderRadius: spacing.radiusMd,
-  },
-  input: {
-    flex: 1,
-    minWidth: 0,
-    color: colors.navy,
-    fontSize: 14,
-    paddingVertical: 6,
-  },
-  limpiar: {
-    width: 28,
-    height: 28,
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  categoriasScroll: {
-    // La fila de filtros solo ocupa el alto de los chips.
-    flexGrow: 0,
-    backgroundColor: colors.card,
-  },
-  categorias: {
-    gap: 8,
-    paddingHorizontal: spacing.padMd,
-    paddingBottom: spacing.padSm,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
     minHeight: 36,
     paddingHorizontal: spacing.padSm,
-    backgroundColor: colors.card,
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 999,
   },
-  chipActivo: {
-    backgroundColor: colors.navy,
-    borderColor: colors.navy,
-  },
-  chipTexto: {
-    color: colors.navy,
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  chipTextoActivo: {
-    color: colors.gold,
-  },
+  chipActivo: { backgroundColor: colors.navy, borderColor: colors.navy },
+  chipTexto: { color: colors.navy, fontSize: 12, fontWeight: '600' },
+  chipTextoActivo: { color: colors.gold },
   contenido: {
+    gap: spacing.padMd,
+    paddingBottom: spacing.padLg,
     paddingHorizontal: spacing.padMd,
     paddingTop: spacing.padSm,
-    paddingBottom: spacing.padLg,
-    gap: spacing.padMd,
   },
-  fila: {
-    gap: spacing.padSm,
-  },
-  celda: {
-    flex: 1,
-  },
-  resumen: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.padSm,
-  },
-  resumenTexto: {
-    color: colors.muted,
-    fontSize: 13,
-  },
-  limpiarFiltros: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    minHeight: 32,
-    paddingLeft: 8,
-  },
-  limpiarFiltrosTexto: {
-    color: colors.navy,
-    fontSize: 13,
-    fontWeight: '700',
-  },
+  fila: { gap: spacing.padSm },
+  celda: { flex: 1 },
+  resumen: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  resumenTexto: { color: colors.muted, fontSize: 13 },
+  limpiarFiltros: { alignItems: 'center', flexDirection: 'row', gap: 4, minHeight: 32 },
+  limpiarFiltrosTexto: { color: colors.navy, fontSize: 13, fontWeight: '700' },
   vacio: {
     alignItems: 'center',
-    padding: spacing.padLg,
     backgroundColor: colors.card,
     borderColor: colors.border,
-    borderWidth: 1,
     borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    padding: spacing.padLg,
   },
   vacioIcono: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.navy,
     alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 28,
+    height: 56,
     justifyContent: 'center',
     marginBottom: spacing.padSm,
+    width: 56,
   },
-  vacioTitulo: {
-    color: colors.navy,
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  vacioMensaje: {
-    color: colors.muted,
-    fontSize: 13,
-    textAlign: 'center',
-    marginTop: 4,
-  },
+  vacioTitulo: { color: colors.navy, fontSize: 16, fontWeight: '800' },
+  vacioMensaje: { color: colors.muted, fontSize: 13, textAlign: 'center' },
+  errorTexto: { color: colors.error },
   vacioBoton: {
-    minHeight: spacing.touchMin,
-    paddingHorizontal: spacing.padMd,
-    marginTop: spacing.padLg,
+    alignItems: 'center',
     backgroundColor: colors.gold,
     borderRadius: spacing.radiusMd,
-    alignItems: 'center',
     justifyContent: 'center',
+    marginTop: spacing.padSm,
+    minHeight: spacing.touchMin,
+    paddingHorizontal: spacing.padMd,
   },
-  vacioBotonTexto: {
-    color: colors.navy,
-    fontSize: 14,
-    fontWeight: '700',
+  vacioBotonTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  overlay: {
+    backgroundColor: 'rgba(0,43,73,0.6)',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
-  pressed: {
-    opacity: 0.9,
+  modal: {
+    backgroundColor: colors.card,
+    borderTopLeftRadius: spacing.radiusLg,
+    borderTopRightRadius: spacing.radiusLg,
+    maxHeight: '88%',
+    padding: spacing.padLg,
   },
+  modalEncabezado: { alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.padMd },
+  modalTitulo: { color: colors.navy, fontSize: 20, fontWeight: '800' },
+  modalSubtitulo: { color: colors.muted, fontSize: 13, marginTop: 2 },
+  cerrar: { alignItems: 'center', height: 36, justifyContent: 'center', width: 36 },
+  seccionFiltro: { gap: 8, marginBottom: spacing.padLg },
+  etiqueta: { color: colors.navy, fontSize: 15, fontWeight: '700', marginBottom: 8 },
+  opciones: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  opcion: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingHorizontal: spacing.padSm,
+    paddingVertical: 8,
+  },
+  opcionActiva: { backgroundColor: colors.navy, borderColor: colors.navy },
+  opcionTexto: { color: colors.navy, fontSize: 13, fontWeight: '600' },
+  opcionTextoActiva: { color: colors.gold },
+  rangoPrecio: { alignItems: 'center', flexDirection: 'row', gap: 6 },
+  inputPrecio: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
+    minHeight: spacing.touchMin,
+    paddingHorizontal: spacing.padSm,
+  },
+  signoPeso: { color: colors.muted, fontWeight: '700' },
+  inputPrecioTexto: { color: colors.navy, flex: 1, fontSize: 14, paddingVertical: 6 },
+  separadorRango: { color: colors.muted },
+  errorPrecio: { color: colors.error, fontSize: 12, marginTop: -4 },
+  accionesModal: { flexDirection: 'row', gap: 10, marginTop: spacing.padMd },
+  botonLimpiar: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonLimpiarTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  botonAplicar: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    flex: 2,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonAplicarTexto: { color: colors.navy, fontSize: 14, fontWeight: '800' },
 });

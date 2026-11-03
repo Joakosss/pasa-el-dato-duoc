@@ -1,19 +1,36 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing } from '@/theme';
-import { Avatar } from '@/components/ui/Avatar';
+import { resolverUrlImagen, type PublicacionPublica } from '@/lib/api/publicaciones';
 import type { PublicacionFeed } from '@/lib/feed/publicaciones-placeholder';
+import { colors, spacing } from '@/theme';
 
-// Espejo del ProductCard web: imagen, etiqueta de categoría, título, precio y
-// vendedor. Sin imágenes reales todavía, la portada es un placeholder gráfico.
-// Toda la tarjeta abre el detalle de la publicación.
+function esPublicacionReal(
+  publicacion: PublicacionPublica | PublicacionFeed,
+): publicacion is PublicacionPublica {
+  return 'imagenes' in publicacion && 'tipoVenta' in publicacion;
+}
+
 export function PublicacionCard({
   publicacion,
 }: {
-  publicacion: PublicacionFeed;
+  publicacion: PublicacionPublica | PublicacionFeed;
 }) {
+  const publicacionReal = esPublicacionReal(publicacion);
+  const portada = publicacionReal
+    ? publicacion.imagenes
+        .slice()
+        .sort((primera, segunda) => primera.orden - segunda.orden)[0]
+    : undefined;
+  const categoria = publicacionReal ? publicacion.categoria.nombre : publicacion.categoria;
+  const detalle = publicacionReal
+    ? `${publicacion.tipoVenta.nombre} · ${publicacion.sede.nombre}`
+    : publicacion.detalle;
+  const precio = publicacionReal
+    ? `$${new Intl.NumberFormat('es-CL').format(publicacion.precio)}`
+    : publicacion.precio;
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -24,25 +41,19 @@ export function PublicacionCard({
           params: { id: publicacion.id },
         })
       }
-      style={({ pressed }) => [
-        styles.card,
-        publicacion.patrocinada ? styles.cardPatrocinada : null,
-        pressed && styles.pressed,
-      ]}>
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
       <View style={styles.portada}>
-        <MaterialCommunityIcons name="image-outline" size={26} color={colors.card} />
+        {portada ? (
+          <Image source={{ uri: resolverUrlImagen(portada.url) }} style={styles.imagen} />
+        ) : (
+          <MaterialCommunityIcons name="image-outline" size={26} color={colors.card} />
+        )}
 
         <View style={styles.etiquetaCategoria}>
           <Text style={styles.etiquetaCategoriaTexto} numberOfLines={1}>
-            {publicacion.categoria}
+            {categoria}
           </Text>
         </View>
-
-        {publicacion.patrocinada ? (
-          <View style={styles.etiquetaPatrocinada}>
-            <Text style={styles.etiquetaPatrocinadaTexto}>Patrocinado</Text>
-          </View>
-        ) : null}
       </View>
 
       <View style={styles.cuerpo}>
@@ -50,18 +61,11 @@ export function PublicacionCard({
           {publicacion.titulo}
         </Text>
         <Text style={styles.detalle} numberOfLines={1}>
-          {publicacion.detalle}
+          {detalle}
         </Text>
-
-        <View style={styles.pie}>
-          <Text style={styles.precio}>{publicacion.precio}</Text>
-          <View style={styles.vendedor}>
-            <Avatar nombre={publicacion.vendedor} tamano={18} />
-            <Text style={styles.vendedorNombre} numberOfLines={1}>
-              {publicacion.vendedor}
-            </Text>
-          </View>
-        </View>
+        <Text style={styles.precio}>
+          {precio}
+        </Text>
       </View>
     </Pressable>
   );
@@ -71,52 +75,29 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
     borderColor: colors.border,
-    borderWidth: 1,
     borderRadius: spacing.radiusLg,
+    borderWidth: 1,
     overflow: 'hidden',
   },
-  cardPatrocinada: {
-    borderColor: colors.gold,
-  },
   portada: {
-    height: 112,
-    backgroundColor: colors.border,
     alignItems: 'center',
+    backgroundColor: colors.border,
+    height: 112,
     justifyContent: 'center',
   },
+  imagen: { height: '100%', width: '100%' },
   etiquetaCategoria: {
-    position: 'absolute',
-    left: 8,
-    top: 8,
-    maxWidth: '72%',
     backgroundColor: colors.navy,
     borderRadius: 6,
+    left: 8,
+    maxWidth: '72%',
     paddingHorizontal: 6,
     paddingVertical: 2,
-  },
-  etiquetaCategoriaTexto: {
-    color: colors.card,
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  etiquetaPatrocinada: {
     position: 'absolute',
-    right: 8,
     top: 8,
-    backgroundColor: colors.gold,
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
   },
-  etiquetaPatrocinadaTexto: {
-    color: colors.navy,
-    fontSize: 10,
-    fontWeight: '800',
-  },
-  cuerpo: {
-    padding: 10,
-    gap: 3,
-  },
+  etiquetaCategoriaTexto: { color: colors.card, fontSize: 10, fontWeight: '600' },
+  cuerpo: { gap: 3, padding: 10 },
   titulo: {
     color: colors.navy,
     fontSize: 13,
@@ -124,34 +105,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     minHeight: 34,
   },
-  detalle: {
-    color: colors.muted,
-    fontSize: 11,
-  },
-  pie: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 6,
-    marginTop: 4,
-  },
-  precio: {
-    color: colors.navy,
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  vendedor: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    flexShrink: 1,
-  },
-  vendedorNombre: {
-    color: colors.muted,
-    fontSize: 10,
-    flexShrink: 1,
-  },
-  pressed: {
-    opacity: 0.9,
-  },
+  detalle: { color: colors.muted, fontSize: 11 },
+  precio: { color: colors.navy, fontSize: 15, fontWeight: '800', marginTop: 4 },
+  pressed: { opacity: 0.9 },
 });

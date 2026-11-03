@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing } from '@/theme';
 import {
@@ -8,20 +8,23 @@ import {
   PESO_MAX_IMAGEN_MB,
 } from '@/lib/validators/publicacion';
 
-// Foto o portada de la publicación. Simulador visual: todavía no hay selector
-// real de galería porque el almacenamiento de imágenes depende del contrato de
-// publicaciones. Se respetan las reglas de HU-PUB-01 (de 1 a 5 imágenes).
-// La primera imagen agregada hace de portada.
+export interface ImagenVistaPrevia {
+  id: string;
+  uri: string;
+}
+
 export function SelectorImagenes({
   imagenes,
   onAgregar,
   onQuitar,
   error,
+  deshabilitado = false,
 }: {
-  imagenes: readonly string[];
+  imagenes: readonly ImagenVistaPrevia[];
   onAgregar: () => void;
   onQuitar: (id: string) => void;
   error?: string;
+  deshabilitado?: boolean;
 }) {
   const [portada, ...resto] = imagenes;
   const puedeAgregar = imagenes.length < IMAGENES_MAX;
@@ -35,19 +38,17 @@ export function SelectorImagenes({
         </Text>
       </View>
 
-      {portada !== undefined ? (
+      {portada ? (
         <View style={[styles.portada, error ? styles.conError : null]}>
-          <MaterialCommunityIcons
-            name="image-outline"
-            size={38}
-            color={colors.card}
-          />
-          <Text style={styles.portadaTexto}>Portada</Text>
-
+          <Image source={{ uri: portada.uri }} style={styles.imagenPortada} />
+          <View style={styles.etiquetaPortada}>
+            <Text style={styles.portadaTexto}>Portada</Text>
+          </View>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Quitar portada"
-            onPress={() => onQuitar(portada)}
+            disabled={deshabilitado}
+            onPress={() => onQuitar(portada.id)}
             style={({ pressed }) => [styles.quitar, pressed && styles.pressed]}>
             <MaterialCommunityIcons name="close" size={15} color={colors.card} />
           </Pressable>
@@ -56,46 +57,36 @@ export function SelectorImagenes({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Agregar foto de portada"
+          disabled={deshabilitado}
           onPress={onAgregar}
           style={({ pressed }) => [
             styles.vacia,
             error ? styles.conError : null,
+            deshabilitado && styles.deshabilitado,
             pressed && styles.pressed,
           ]}>
-          <MaterialCommunityIcons
-            name="camera-plus-outline"
-            size={28}
-            color={colors.gold}
-          />
+          <MaterialCommunityIcons name="image-plus" size={28} color={colors.gold} />
           <Text style={styles.vaciaTitulo}>Agregar foto</Text>
-          <Text style={styles.vaciaTexto}>Toca para simular la portada</Text>
+          <Text style={styles.vaciaTexto}>Selecciona una imagen desde tu galería</Text>
         </Pressable>
       )}
 
       {imagenes.length > 0 ? (
         <View style={styles.miniaturas}>
-          {resto.map((id) => (
-            <View key={id} style={styles.miniatura}>
-              <MaterialCommunityIcons
-                name="image-outline"
-                size={18}
-                color={colors.card}
-              />
-
+          {resto.map((imagen) => (
+            <View key={imagen.id} style={styles.miniatura}>
+              <Image source={{ uri: imagen.uri }} style={styles.imagenMiniatura} />
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Quitar imagen"
-                onPress={() => onQuitar(id)}
+                disabled={deshabilitado}
+                onPress={() => onQuitar(imagen.id)}
                 style={({ pressed }) => [
                   styles.quitar,
                   styles.quitarMini,
                   pressed && styles.pressed,
                 ]}>
-                <MaterialCommunityIcons
-                  name="close"
-                  size={12}
-                  color={colors.card}
-                />
+                <MaterialCommunityIcons name="close" size={12} color={colors.card} />
               </Pressable>
             </View>
           ))}
@@ -104,9 +95,11 @@ export function SelectorImagenes({
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Agregar otra imagen"
+              disabled={deshabilitado}
               onPress={onAgregar}
               style={({ pressed }) => [
                 styles.agregarMini,
+                deshabilitado && styles.deshabilitado,
                 pressed && styles.pressed,
               ]}>
               <MaterialCommunityIcons name="plus" size={20} color={colors.navy} />
@@ -119,10 +112,6 @@ export function SelectorImagenes({
         Hasta {IMAGENES_MAX} imágenes · {FORMATOS_IMAGEN.join(', ')} · máx.{' '}
         {PESO_MAX_IMAGEN_MB} MB cada una
       </Text>
-      <Text style={styles.nota}>
-        Las fotos se cargarán desde tu galería cuando exista el contrato de
-        publicaciones.
-      </Text>
 
       {error ? (
         <Text accessibilityRole="alert" style={styles.error}>
@@ -134,117 +123,76 @@ export function SelectorImagenes({
 }
 
 const styles = StyleSheet.create({
-  bloque: {
-    gap: spacing.padSm,
-  },
-  encabezado: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  etiqueta: {
-    color: colors.navy,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  contador: {
-    color: colors.muted,
-    fontSize: 12,
-  },
+  bloque: { gap: spacing.padSm },
+  encabezado: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+  etiqueta: { color: colors.navy, fontSize: 14, fontWeight: '600' },
+  contador: { color: colors.muted, fontSize: 12 },
   portada: {
-    height: 200,
-    borderRadius: spacing.radiusLg,
     backgroundColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
     borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 2,
+    height: 200,
+    overflow: 'hidden',
   },
-  portadaTexto: {
-    color: colors.card,
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: 6,
+  imagenPortada: { height: '100%', width: '100%' },
+  etiquetaPortada: {
+    backgroundColor: 'rgba(0,43,73,0.78)',
+    bottom: 0,
+    left: 0,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    position: 'absolute',
+    right: 0,
   },
+  portadaTexto: { color: colors.card, fontSize: 13, fontWeight: '700' },
   vacia: {
-    height: 200,
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
     borderRadius: spacing.radiusLg,
-    backgroundColor: colors.card,
-    borderWidth: 2,
-    borderColor: colors.border,
     borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderWidth: 2,
     gap: 2,
+    height: 200,
+    justifyContent: 'center',
   },
-  vaciaTitulo: {
-    color: colors.navy,
-    fontSize: 14,
-    fontWeight: '700',
-    marginTop: 6,
-  },
-  vaciaTexto: {
-    color: colors.muted,
-    fontSize: 12,
-  },
-  miniaturas: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
+  vaciaTitulo: { color: colors.navy, fontSize: 14, fontWeight: '700', marginTop: 6 },
+  vaciaTexto: { color: colors.muted, fontSize: 12 },
+  miniaturas: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   miniatura: {
-    width: 64,
-    height: 64,
-    borderRadius: spacing.radiusSm,
     backgroundColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  agregarMini: {
-    width: 64,
-    height: 64,
     borderRadius: spacing.radiusSm,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
+    height: 64,
+    overflow: 'hidden',
+    width: 64,
+  },
+  imagenMiniatura: { height: '100%', width: '100%' },
+  agregarMini: {
     alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusSm,
+    borderWidth: 1,
+    height: 64,
     justifyContent: 'center',
+    width: 64,
   },
   quitar: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.navy,
     alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 12,
+    height: 24,
     justifyContent: 'center',
+    position: 'absolute',
+    right: 6,
+    top: 6,
+    width: 24,
   },
-  quitarMini: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    top: 2,
-    right: 2,
-  },
-  ayuda: {
-    color: colors.muted,
-    fontSize: 12,
-  },
-  nota: {
-    color: colors.muted,
-    fontSize: 12,
-  },
-  error: {
-    color: colors.error,
-    fontSize: 13,
-    marginTop: -4,
-  },
-  conError: {
-    borderColor: colors.error,
-  },
-  pressed: {
-    opacity: 0.9,
-  },
+  quitarMini: { borderRadius: 10, height: 20, right: 2, top: 2, width: 20 },
+  ayuda: { color: colors.muted, fontSize: 12 },
+  error: { color: colors.error, fontSize: 13, marginTop: -4 },
+  conError: { borderColor: colors.error },
+  deshabilitado: { opacity: 0.6 },
+  pressed: { opacity: 0.9 },
 });

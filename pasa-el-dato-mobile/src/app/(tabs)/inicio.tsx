@@ -1,15 +1,27 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from 'expo-router';
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { openBrowserAsync } from 'expo-web-browser';
 
 import { colors, spacing } from '@/theme';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
+import { ApiError } from '@/lib/api';
+import { listarCategorias, type CategoriaCatalogo } from '@/lib/api/catalogos';
 import {
-  CATEGORIAS_FEED,
-  PUBLICACIONES_FEED,
-} from '@/lib/feed/publicaciones-placeholder';
+  listarPublicaciones,
+  type PublicacionPublica,
+} from '@/lib/api/publicaciones';
 import { selectSesion, useSesionStore } from '@/stores/sesion-store';
 
 // Aviso institucional: mismo contenido y destino que el bloque web.
@@ -25,13 +37,48 @@ const ANUNCIO = {
 export default function InicioScreen() {
   const sesion = useSesionStore(selectSesion);
   const nombre = sesion?.nombreCompleto.trim().split(/\s+/)[0] ?? 'estudiante';
+  const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
+  const [categorias, setCategorias] = useState<CategoriaCatalogo[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [actualizando, setActualizando] = useState(false);
+  const [error, setError] = useState<string | undefined>();
+
+  const cargarPublicaciones = useCallback(async (esActualizacion = false) => {
+    if (esActualizacion) setActualizando(true);
+    else setCargando(true);
+
+    setError(undefined);
+    try {
+      const [publicacionesRespuesta, categoriasRespuesta] = await Promise.all([
+        listarPublicaciones(),
+        listarCategorias(),
+      ]);
+      setPublicaciones(publicacionesRespuesta);
+      setCategorias(categoriasRespuesta);
+    } catch (causa: unknown) {
+      setError(
+        causa instanceof ApiError
+          ? causa.message
+          : 'No pudimos cargar las publicaciones. Reintenta.',
+      );
+    } finally {
+      setCargando(false);
+      setActualizando(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void cargarPublicaciones();
+    }, [cargarPublicaciones]),
+  );
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <BarraSuperior nombre={nombre} />
 
       <FlatList
-        data={PUBLICACIONES_FEED}
+        data={publicaciones}
         keyExtractor={(publicacion) => publicacion.id}
         renderItem={({ item }) => (
           <View style={styles.celda}>
@@ -42,7 +89,40 @@ export default function InicioScreen() {
         columnWrapperStyle={styles.fila}
         contentContainerStyle={styles.contenido}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={<CabeceraFeed />}
+        refreshControl={
+          <RefreshControl
+            refreshing={actualizando}
+            onRefresh={() => void cargarPublicaciones(true)}
+            tintColor={colors.navy}
+          />
+        }
+        ListHeaderComponent={<CabeceraFeed categorias={categorias} />}
+        ListEmptyComponent={
+          cargando ? (
+            <View style={styles.estadoLista}>
+              <ActivityIndicator color={colors.navy} />
+              <Text style={styles.estadoListaTexto}>Cargando publicaciones…</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.estadoLista}>
+              <Text style={styles.errorLista}>{error}</Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => void cargarPublicaciones()}
+                style={styles.reintentar}>
+                <Text style={styles.reintentarTexto}>Reintentar</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.estadoLista}>
+              <MaterialCommunityIcons name="package-variant-closed" size={30} color={colors.gold} />
+              <Text style={styles.estadoListaTitulo}>Aún no hay publicaciones</Text>
+              <Text style={styles.estadoListaTexto}>
+                Sé la primera persona en publicar algo para la comunidad.
+              </Text>
+            </View>
+          )
+        }
         ListFooterComponent={<PieFeed />}
       />
     </SafeAreaView>
@@ -79,7 +159,7 @@ function BarraSuperior({ nombre }: { nombre: string }) {
 }
 
 // Contenido que viaja con el scroll: buscador, anuncio, categorías y título.
-function CabeceraFeed() {
+function CabeceraFeed({ categorias }: { categorias: CategoriaCatalogo[] }) {
   return (
     <View>
       <View style={styles.busqueda}>
@@ -97,7 +177,12 @@ function CabeceraFeed() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Filtros de búsqueda"
-          onPress={() => router.push('/buscar')}
+          onPress={() =>
+            router.push({
+              pathname: '/buscar',
+              params: { filtros: '1' },
+            })
+          }
           style={({ pressed }) => [styles.filtro, pressed && styles.pressed]}>
           <MaterialCommunityIcons name="tune-variant" size={18} color={colors.gold} />
         </Pressable>
@@ -123,19 +208,20 @@ function CabeceraFeed() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.categorias}>
-        {CATEGORIAS_FEED.map((categoria) => (
+        {categorias.map((categoria) => (
           <Pressable
             key={categoria.id}
             accessibilityRole="button"
-            accessibilityLabel={`Categoría ${categoria.etiqueta}`}
-            onPress={() => router.push('/buscar')}
+            accessibilityLabel={`Categoría ${categoria.nombre}`}
+            onPress={() =>
+              router.push({
+                pathname: '/buscar',
+                params: { categoriaId: String(categoria.id) },
+              })
+            }
             style={({ pressed }) => [styles.chip, pressed && styles.pressed]}>
-            <MaterialCommunityIcons
-              name={categoria.icono}
-              size={15}
-              color={colors.navy}
-            />
-            <Text style={styles.chipTexto}>{categoria.etiqueta}</Text>
+            <MaterialCommunityIcons name="tag-outline" size={15} color={colors.navy} />
+            <Text style={styles.chipTexto}>{categoria.nombre}</Text>
           </Pressable>
         ))}
       </ScrollView>
@@ -381,6 +467,28 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
+  estadoLista: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    marginTop: spacing.padMd,
+    padding: spacing.padLg,
+  },
+  estadoListaTitulo: { color: colors.navy, fontSize: 16, fontWeight: '800' },
+  estadoListaTexto: { color: colors.muted, fontSize: 13, textAlign: 'center' },
+  errorLista: { color: colors.error, fontSize: 13, textAlign: 'center' },
+  reintentar: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    justifyContent: 'center',
+    minHeight: 38,
+    paddingHorizontal: spacing.padMd,
+  },
+  reintentarTexto: { color: colors.navy, fontSize: 13, fontWeight: '700' },
   pressed: {
     opacity: 0.9,
   },

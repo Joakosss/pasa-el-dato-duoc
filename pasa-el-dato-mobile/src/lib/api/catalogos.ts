@@ -64,5 +64,5 @@ export function listarCategorias(): Promise<CategoriaCatalogo[]> {
 }
 
 export function listarTiposVenta(): Promise<TipoVentaCatalogo[]> {
-  return apiClient.get<TipoVentaCatalogo[]>('/tipos-venta');
+  return apiClient.get<TipoVentaCatalogo[]>('/tipoventas');
 }

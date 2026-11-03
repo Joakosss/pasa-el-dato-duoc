@@ -1,171 +1,264 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router, useLocalSearchParams } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, spacing } from '@/theme';
-import { PublicacionCard } from '@/components/feed/PublicacionCard';
 import { GaleriaProducto } from '@/components/producto/GaleriaProducto';
-import { TarjetaVendedor } from '@/components/producto/TarjetaVendedor';
+import { ApiError } from '@/lib/api';
 import {
-  buscarPublicacion,
-  publicacionesRelacionadas,
-} from '@/lib/feed/publicaciones-placeholder';
+  eliminarPublicacion,
+  obtenerPublicacion,
+  obtenerPublicacionParaEdicion,
+  type PublicacionDetalle,
+} from '@/lib/api/publicaciones';
+import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
+import { colors, spacing } from '@/theme';
 
-// Detalle de producto: espejo de la vista web product/[id] (galería, categoría,
-// título, precio, descripción, detalles, vendedor, acción y relacionadas).
-// Sin contrato back todavía: los datos vienen del placeholder del feed.
-const RELACIONADAS = 4;
+function precioClp(precio: number): string {
+  return `$${new Intl.NumberFormat('es-CL').format(precio)}`;
+}
 
 export default function DetalleProductoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const publicacion = buscarPublicacion(id);
+  const accessToken = useSesionStore(selectAccessToken);
+  const [publicacion, setPublicacion] = useState<PublicacionDetalle | null>(null);
+  const [esPropietario, setEsPropietario] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState<string | undefined>();
 
-  if (!publicacion) {
-    return (
-      <SafeAreaView style={styles.safe} edges={['top']}>
-        <Encabezado />
-        <View style={styles.vacio}>
-          <View style={styles.vacioIcono}>
-            <MaterialCommunityIcons
-              name="package-variant-closed-remove"
-              size={26}
-              color={colors.gold}
-            />
-          </View>
-          <Text style={styles.vacioTitulo}>Publicación no encontrada</Text>
-          <Text style={styles.vacioTexto}>
-            Puede que ya no esté disponible o que el enlace no sea válido.
-          </Text>
+  const cargarPublicacion = useCallback(async () => {
+    if (!id) {
+      setCargando(false);
+      setError('La publicación no es válida.');
+      return;
+    }
 
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Volver al inicio"
-            onPress={() => router.replace('/inicio')}
-            style={({ pressed }) => [styles.vacioBoton, pressed && styles.pressed]}>
-            <Text style={styles.vacioBotonTexto}>Volver al inicio</Text>
-          </Pressable>
-        </View>
-      </SafeAreaView>
-    );
-  }
+    setCargando(true);
+    setError(undefined);
 
-  const detalles = [
-    { etiqueta: 'Categoría', valor: publicacion.categoria },
-    { etiqueta: 'Tipo', valor: publicacion.tipo },
-    { etiqueta: 'Condición', valor: publicacion.condicion },
-    { etiqueta: 'Sede', valor: publicacion.sede },
-  ];
+    try {
+      setPublicacion(await obtenerPublicacion(id));
+    } catch (causa: unknown) {
+      if (causa instanceof ApiError && causa.status === 404) {
+        setError('Esta publicación ya no está disponible.');
+      } else {
+        setError(
+          causa instanceof ApiError
+            ? causa.message
+            : 'No pudimos cargar la publicación. Reintenta.',
+        );
+      }
+    } finally {
+      setCargando(false);
+    }
+  }, [id]);
 
-  const relacionadas = publicacionesRelacionadas(publicacion.id, RELACIONADAS);
-  // Dos filas de dos tarjetas: la grilla queda siempre completa.
-  const filas = [relacionadas.slice(0, 2), relacionadas.slice(2, 4)].filter(
-    (fila) => fila.length > 0,
+  useFocusEffect(
+    useCallback(() => {
+      void cargarPublicacion();
+    }, [cargarPublicacion]),
   );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!id || !accessToken) {
+        setEsPropietario(false);
+        return;
+      }
+
+      void obtenerPublicacionParaEdicion(id, accessToken)
+        .then(() => setEsPropietario(true))
+        .catch(() => setEsPropietario(false));
+    }, [accessToken, id]),
+  );
+
+  const confirmarEliminacion = () => {
+    if (!id || !accessToken || eliminando) return;
+
+    Alert.alert(
+      'Eliminar publicación',
+      'Esta acción eliminará la publicación y sus imágenes. No podrás deshacerla.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              setEliminando(true);
+              try {
+                await eliminarPublicacion(id, accessToken);
+                router.replace('/inicio');
+              } catch (causa: unknown) {
+                Alert.alert('No se pudo eliminar', causa instanceof ApiError ? causa.message : 'Reintenta más tarde.');
+              } finally {
+                setEliminando(false);
+              }
+            })();
+          },
+        },
+      ],
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <Encabezado />
 
-      <ScrollView
-        contentContainerStyle={styles.contenido}
-        showsVerticalScrollIndicator={false}>
-        <GaleriaProducto />
-
-        <View style={styles.etiquetas}>
-          <View style={styles.etiquetaCategoria}>
-            <Text style={styles.etiquetaCategoriaTexto}>
-              {publicacion.categoria}
-            </Text>
-          </View>
-          {publicacion.patrocinada ? (
-            <View style={styles.etiquetaPatrocinada}>
-              <Text style={styles.etiquetaPatrocinadaTexto}>Patrocinado</Text>
-            </View>
-          ) : null}
-        </View>
-
-        <Text style={styles.titulo}>{publicacion.titulo}</Text>
-        <Text style={styles.precio}>{publicacion.precio}</Text>
-
-        <View style={styles.meta}>
-          <Text style={styles.metaTexto}>{publicacion.condicion}</Text>
-          <Text style={styles.metaSeparador}>|</Text>
-          <Text style={styles.metaTexto}>{publicacion.tipo}</Text>
-          <Text style={styles.metaSeparador}>|</Text>
-          <Text style={styles.metaTexto}>Sede {publicacion.sede}</Text>
-        </View>
-
-        <Text style={styles.seccionTitulo}>Descripción</Text>
-        <Text style={styles.descripcion}>{publicacion.descripcion}</Text>
-
-        <View style={styles.detalles}>
-          <Text style={styles.detallesTitulo}>Detalles del producto</Text>
-          <View style={styles.detallesGrilla}>
-            {detalles.map((detalle) => (
-              <View key={detalle.etiqueta} style={styles.detalleItem}>
-                <Text style={styles.detalleEtiqueta}>{detalle.etiqueta}</Text>
-                <Text style={styles.detalleValor}>{detalle.valor}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        <TarjetaVendedor
-          nombre={publicacion.vendedor}
-          sede={publicacion.sede}
+      {cargando ? (
+        <EstadoPantalla icono="package-variant-closed" titulo="Cargando publicación…" />
+      ) : error || !publicacion ? (
+        <EstadoPantalla
+          icono="package-variant-closed-remove"
+          titulo={error ?? 'Publicación no encontrada'}
+          texto="Puede que ya no esté disponible o que el enlace no sea válido."
+          accion={error?.includes('no pudimos') ? () => void cargarPublicacion() : undefined}
         />
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.contenido}
+          showsVerticalScrollIndicator={false}>
+          <GaleriaProducto imagenes={publicacion.imagenes} />
 
-        <View style={styles.accion}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Contactar vendedor"
-            onPress={() => router.push('/chats')}
-            style={({ pressed }) => [styles.cta, pressed && styles.pressed]}>
-            <Text style={styles.ctaTexto}>Contactar vendedor</Text>
-          </Pressable>
-          <Text style={styles.ctaAyuda}>
-            Te redirigiremos al chat para coordinar el intercambio
-          </Text>
-        </View>
-
-        <View style={styles.seccionBarra}>
-          <Text style={styles.seccionTitulo}>Productos relacionados</Text>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Ver todas las publicaciones"
-            onPress={() => router.push('/buscar')}
-            style={({ pressed }) => [styles.verTodo, pressed && styles.pressed]}>
-            <Text style={styles.verTodoTexto}>Ver todo</Text>
-            <MaterialCommunityIcons
-              name="chevron-right"
-              size={14}
-              color={colors.navy}
-            />
-          </Pressable>
-        </View>
-
-        {filas.map((fila, indice) => (
-          <View key={`fila-${indice}`} style={styles.filaTarjetas}>
-            {fila.map((relacionada) => (
-              <View key={relacionada.id} style={styles.celda}>
-                <PublicacionCard publicacion={relacionada} />
-              </View>
-            ))}
+          <View style={styles.etiquetas}>
+            <View style={styles.etiquetaCategoria}>
+              <Text style={styles.etiquetaCategoriaTexto}>
+                {publicacion.categoria.nombre}
+              </Text>
+            </View>
           </View>
-        ))}
-      </ScrollView>
+
+          <Text style={styles.titulo}>{publicacion.titulo}</Text>
+          <Text style={styles.precio}>{precioClp(publicacion.precio)}</Text>
+
+          <View style={styles.meta}>
+            <Text style={styles.metaTexto}>{publicacion.tipoVenta.nombre}</Text>
+            <Text style={styles.metaSeparador}>|</Text>
+            <Text style={styles.metaTexto}>Sede {publicacion.sede.nombre}</Text>
+          </View>
+
+          <Text style={styles.seccionTitulo}>Descripción</Text>
+          <Text style={styles.descripcion}>{publicacion.descripcion}</Text>
+
+          <View style={styles.detalles}>
+            <Text style={styles.detallesTitulo}>Detalles de la publicación</Text>
+            <View style={styles.detallesGrilla}>
+              <Detalle etiqueta="Categoría" valor={publicacion.categoria.nombre} />
+              <Detalle etiqueta="Tipo de venta" valor={publicacion.tipoVenta.nombre} />
+              <Detalle etiqueta="Sede" valor={publicacion.sede.nombre} />
+            </View>
+          </View>
+
+          {esPropietario ? (
+            <View style={styles.accionesPropietario}>
+              <Text style={styles.accionTitulo}>Gestiona tu publicación</Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() =>
+                  router.push({ pathname: '/producto/editar/[id]', params: { id: publicacion.id } })
+                }
+                style={({ pressed }) => [styles.botonEditar, pressed && styles.pressed]}>
+                <MaterialCommunityIcons name="pencil-outline" size={18} color={colors.navy} />
+                <Text style={styles.botonEditarTexto}>Editar publicación</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ disabled: eliminando, busy: eliminando }}
+                disabled={eliminando}
+                onPress={confirmarEliminacion}
+                style={({ pressed }) => [
+                  styles.botonEliminar,
+                  eliminando && styles.deshabilitado,
+                  pressed && styles.pressed,
+                ]}>
+                {eliminando ? (
+                  <ActivityIndicator color={colors.error} size="small" />
+                ) : (
+                  <>
+                    <MaterialCommunityIcons name="trash-can-outline" size={18} color={colors.error} />
+                    <Text style={styles.botonEliminarTexto}>Eliminar publicación</Text>
+                  </>
+                )}
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.accion}>
+              <Text style={styles.accionTitulo}>¿Te interesa esta publicación?</Text>
+              <Text style={styles.accionTexto}>
+                La mensajería estará disponible próximamente para coordinar el intercambio.
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
 
-// Barra superior con el regreso: la ruta vive fuera de (tabs), sin menú.
+function Detalle({ etiqueta, valor }: { etiqueta: string; valor: string }) {
+  return (
+    <View style={styles.detalleItem}>
+      <Text style={styles.detalleEtiqueta}>{etiqueta}</Text>
+      <Text style={styles.detalleValor}>{valor}</Text>
+    </View>
+  );
+}
+
+function EstadoPantalla({
+  icono,
+  titulo,
+  texto,
+  accion,
+}: {
+  icono: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  titulo: string;
+  texto?: string;
+  accion?: () => void;
+}) {
+  return (
+    <View style={styles.vacio}>
+      <View style={styles.vacioIcono}>
+        <MaterialCommunityIcons name={icono} size={26} color={colors.gold} />
+      </View>
+      <Text style={styles.vacioTitulo}>{titulo}</Text>
+      {texto ? <Text style={styles.vacioTexto}>{texto}</Text> : null}
+
+      {accion ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={accion}
+          style={({ pressed }) => [styles.vacioBoton, pressed && styles.pressed]}>
+          <Text style={styles.vacioBotonTexto}>Reintentar</Text>
+        </Pressable>
+      ) : (
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.replace('/inicio')}
+          style={({ pressed }) => [styles.vacioBoton, pressed && styles.pressed]}>
+          <Text style={styles.vacioBotonTexto}>Volver al inicio</Text>
+        </Pressable>
+      )}
+    </View>
+  );
+}
+
 function Encabezado() {
   const volver = () => {
     if (router.canGoBack()) {
       router.back();
       return;
     }
+
     router.replace('/inicio');
   };
 
@@ -176,11 +269,7 @@ function Encabezado() {
         accessibilityLabel="Volver"
         onPress={volver}
         style={({ pressed }) => [styles.volver, pressed && styles.pressed]}>
-        <MaterialCommunityIcons
-          name="arrow-left"
-          size={22}
-          color={colors.navy}
-        />
+        <MaterialCommunityIcons name="arrow-left" size={22} color={colors.navy} />
       </Pressable>
       <Text style={styles.barraTitulo} numberOfLines={1}>
         Detalle del producto
@@ -190,221 +279,129 @@ function Encabezado() {
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.surface,
-  },
+  safe: { flex: 1, backgroundColor: colors.surface },
   barra: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.padSm,
-    paddingHorizontal: spacing.padMd,
-    paddingVertical: 10,
     backgroundColor: colors.card,
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.padSm,
+    paddingHorizontal: spacing.padMd,
+    paddingVertical: 10,
   },
   volver: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     alignItems: 'center',
+    borderRadius: 18,
+    height: 36,
     justifyContent: 'center',
+    width: 36,
   },
-  barraTitulo: {
-    flexShrink: 1,
-    color: colors.navy,
-    fontSize: 16,
-    fontWeight: '800',
-  },
+  barraTitulo: { color: colors.navy, flexShrink: 1, fontSize: 16, fontWeight: '800' },
   contenido: {
+    gap: spacing.padMd,
+    paddingBottom: spacing.padLg,
     paddingHorizontal: spacing.padMd,
     paddingTop: spacing.padMd,
-    paddingBottom: spacing.padLg,
-    gap: spacing.padMd,
   },
-  etiquetas: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
+  etiquetas: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   etiquetaCategoria: {
     backgroundColor: colors.navy,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  etiquetaCategoriaTexto: {
-    color: colors.card,
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  etiquetaPatrocinada: {
-    backgroundColor: colors.gold,
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  etiquetaPatrocinadaTexto: {
-    color: colors.navy,
-    fontSize: 11,
-    fontWeight: '800',
-  },
-  titulo: {
-    color: colors.navy,
-    fontSize: 20,
-    fontWeight: '800',
-    lineHeight: 26,
-  },
-  precio: {
-    color: colors.navy,
-    fontSize: 24,
-    fontWeight: '900',
-    marginTop: -8,
-  },
+  etiquetaCategoriaTexto: { color: colors.card, fontSize: 11, fontWeight: '600' },
+  titulo: { color: colors.navy, fontSize: 20, fontWeight: '800', lineHeight: 26 },
+  precio: { color: colors.navy, fontSize: 24, fontWeight: '900', marginTop: -8 },
   meta: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
     marginTop: -8,
   },
-  metaTexto: {
-    color: colors.muted,
-    fontSize: 13,
-  },
-  metaSeparador: {
-    color: colors.muted,
-    fontSize: 13,
-  },
-  seccionTitulo: {
-    color: colors.navy,
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  descripcion: {
-    color: colors.muted,
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: -8,
-  },
+  metaTexto: { color: colors.muted, fontSize: 13 },
+  metaSeparador: { color: colors.muted, fontSize: 13 },
+  seccionTitulo: { color: colors.navy, fontSize: 16, fontWeight: '800' },
+  descripcion: { color: colors.muted, fontSize: 14, lineHeight: 20, marginTop: -8 },
   detalles: {
-    padding: spacing.padMd,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.card,
     borderColor: colors.border,
-    borderWidth: 1,
     borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    padding: spacing.padMd,
   },
-  detallesTitulo: {
-    color: colors.navy,
-    fontSize: 14,
-    fontWeight: '700',
-    marginBottom: spacing.padSm,
-  },
-  detallesGrilla: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    rowGap: 8,
-  },
-  detalleItem: {
-    width: '50%',
-    gap: 2,
-  },
-  detalleEtiqueta: {
-    color: colors.muted,
-    fontSize: 12,
-  },
-  detalleValor: {
-    color: colors.navy,
-    fontSize: 14,
-    fontWeight: '600',
-  },
+  detallesTitulo: { color: colors.navy, fontSize: 14, fontWeight: '700', marginBottom: spacing.padSm },
+  detallesGrilla: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 8 },
+  detalleItem: { gap: 2, width: '50%' },
+  detalleEtiqueta: { color: colors.muted, fontSize: 12 },
+  detalleValor: { color: colors.navy, fontSize: 14, fontWeight: '600' },
   accion: {
-    gap: 6,
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusLg,
+    gap: 4,
+    padding: spacing.padMd,
   },
-  cta: {
-    minHeight: spacing.touchMin + 4,
+  accionTitulo: { color: colors.navy, fontSize: 15, fontWeight: '800' },
+  accionTexto: { color: colors.navy, fontSize: 13, lineHeight: 18 },
+  accionesPropietario: {
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    padding: spacing.padMd,
+  },
+  botonEditar: {
+    alignItems: 'center',
     backgroundColor: colors.gold,
     borderRadius: spacing.radiusMd,
-    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 8,
     justifyContent: 'center',
+    minHeight: spacing.touchMin,
   },
-  ctaTexto: {
-    color: colors.navy,
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  ctaAyuda: {
-    color: colors.muted,
-    fontSize: 12,
-    textAlign: 'center',
-  },
-  seccionBarra: {
-    flexDirection: 'row',
+  botonEditarTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  botonEliminar: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  verTodo: {
+    borderColor: colors.error,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    minHeight: 32,
-    paddingLeft: 8,
+    gap: 8,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
   },
-  verTodoTexto: {
-    color: colors.navy,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  filaTarjetas: {
-    flexDirection: 'row',
-    gap: spacing.padSm,
-    marginTop: -4,
-  },
-  celda: {
-    flex: 1,
-  },
+  botonEliminarTexto: { color: colors.error, fontSize: 14, fontWeight: '700' },
+  deshabilitado: { opacity: 0.7 },
   vacio: {
-    flex: 1,
     alignItems: 'center',
+    flex: 1,
+    gap: 4,
     justifyContent: 'center',
     padding: spacing.padLg,
-    gap: 4,
   },
   vacioIcono: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.navy,
     alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 28,
+    height: 56,
     justifyContent: 'center',
     marginBottom: spacing.padSm,
+    width: 56,
   },
-  vacioTitulo: {
-    color: colors.navy,
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  vacioTexto: {
-    color: colors.muted,
-    fontSize: 13,
-    textAlign: 'center',
-  },
+  vacioTitulo: { color: colors.navy, fontSize: 16, fontWeight: '800', textAlign: 'center' },
+  vacioTexto: { color: colors.muted, fontSize: 13, textAlign: 'center' },
   vacioBoton: {
-    minHeight: spacing.touchMin,
-    paddingHorizontal: spacing.padMd,
-    marginTop: spacing.padLg,
+    alignItems: 'center',
     backgroundColor: colors.gold,
     borderRadius: spacing.radiusMd,
-    alignItems: 'center',
     justifyContent: 'center',
+    marginTop: spacing.padLg,
+    minHeight: spacing.touchMin,
+    paddingHorizontal: spacing.padMd,
   },
-  vacioBotonTexto: {
-    color: colors.navy,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  pressed: {
-    opacity: 0.9,
-  },
+  vacioBotonTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  pressed: { opacity: 0.9 },
 });

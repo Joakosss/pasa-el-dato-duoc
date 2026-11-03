@@ -13,6 +13,19 @@ export class ApiError extends Error {
 export interface RequestOptions extends RequestInit {
   query?: Record<string, string | number | boolean | undefined>;
   accessToken?: string | null;
+  esMultipart?: boolean;
+}
+
+function esFormData(valor: unknown): valor is FormData {
+  if (typeof valor !== 'object' || valor === null) return false;
+
+  if (typeof FormData !== 'undefined' && valor instanceof FormData) return true;
+
+  return (
+    'append' in valor &&
+    typeof valor.append === 'function' &&
+    Object.prototype.toString.call(valor) === '[object FormData]'
+  );
 }
 
 export class HttpClient {
@@ -33,10 +46,10 @@ export class HttpClient {
   }
 
   private async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-    const { query, accessToken, ...init } = options;
+    const { query, accessToken, esMultipart = false, ...init } = options;
 
     const headers = new Headers(init.headers ?? {});
-    if (!headers.has("Content-Type") && init.body) {
+    if (!headers.has("Content-Type") && init.body && !esMultipart && !esFormData(init.body)) {
       headers.set("Content-Type", "application/json");
     }
     if (accessToken) {
@@ -71,7 +84,25 @@ export class HttpClient {
     return this.request<T>(path, {
       ...options,
       method: "POST",
-      body: data === undefined ? undefined : JSON.stringify(data),
+      body: data === undefined ? undefined : esFormData(data) ? data : JSON.stringify(data),
+    });
+  }
+
+  postFormData<T>(path: string, data: FormData, options?: RequestOptions): Promise<T> {
+    return this.request<T>(path, {
+      ...options,
+      method: "POST",
+      body: data,
+      esMultipart: true,
+    });
+  }
+
+  patchFormData<T>(path: string, data: FormData, options?: RequestOptions): Promise<T> {
+    return this.request<T>(path, {
+      ...options,
+      method: "PATCH",
+      body: data,
+      esMultipart: true,
     });
   }
 
