@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ApiError } from '@/lib/api';
+import { cambiarContrasena } from '@/lib/api/auth';
 import { type SedeCatalogo, listarSedes } from '@/lib/api/catalogos';
 import {
   actualizarPerfil,
@@ -27,7 +28,6 @@ import {
   validarTelefonoChile,
 } from '@/lib/validators/telefono';
 import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
-import { useMisPublicacionesMomentaneoStore } from '@/stores/mis-publicaciones-momentaneo-store';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -104,14 +104,18 @@ export default function PerfilScreen() {
   const cantidadFavoritosMomentaneo = useFavoritosMomentaneoStore(
     (estado) => estado.idsPublicacionesFavoritasMomentaneo.length,
   );
-  const cantidadMisPublicacionesMomentaneo = useMisPublicacionesMomentaneoStore(
-    (estado) => estado.idsMisPublicacionesMomentaneo.length,
-  );
   const [perfil, setPerfil] = useState<PerfilRespuesta | null>(null);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState<string | undefined>();
   const [modalEdicionAbierto, setModalEdicionAbierto] = useState(false);
   const [modalSedesAbierto, setModalSedesAbierto] = useState(false);
+  const [modalContrasenaAbierto, setModalContrasenaAbierto] = useState(false);
+  const [contrasenaActual, setContrasenaActual] = useState('');
+  const [contrasenaNueva, setContrasenaNueva] = useState('');
+  const [confirmacionContrasena, setConfirmacionContrasena] = useState('');
+  const [errorContrasena, setErrorContrasena] = useState<string | undefined>();
+  const [cambiandoContrasena, setCambiandoContrasena] = useState(false);
+  const [cambioContrasenaExitoso, setCambioContrasenaExitoso] = useState(false);
   const [formulario, setFormulario] = useState<FormularioPerfil>({
     pNombre: '',
     sNombre: '',
@@ -230,6 +234,65 @@ export default function PerfilScreen() {
     }
   };
 
+  const abrirCambioContrasena = () => {
+    setContrasenaActual('');
+    setContrasenaNueva('');
+    setConfirmacionContrasena('');
+    setErrorContrasena(undefined);
+    setModalContrasenaAbierto(true);
+  };
+
+  const guardarContrasena = async () => {
+    if (!accessToken || cambiandoContrasena) return;
+
+    if (!contrasenaActual) {
+      setErrorContrasena('Ingresa tu contraseña actual.');
+      return;
+    }
+
+    if (
+      contrasenaNueva.length < 8 ||
+      contrasenaNueva.length > 72 ||
+      contrasenaNueva.trim() !== contrasenaNueva
+    ) {
+      setErrorContrasena(
+        'La nueva contraseña debe tener entre 8 y 72 caracteres y no tener espacios al inicio o al final.',
+      );
+      return;
+    }
+
+    if (contrasenaNueva !== confirmacionContrasena) {
+      setErrorContrasena('Las contraseñas nuevas no coinciden.');
+      return;
+    }
+
+    if (contrasenaActual === contrasenaNueva) {
+      setErrorContrasena('La nueva contraseña debe ser distinta de la actual.');
+      return;
+    }
+
+    setCambiandoContrasena(true);
+    setErrorContrasena(undefined);
+
+    try {
+      await cambiarContrasena(
+        {
+          contrasenaActual,
+          contrasenaNueva,
+        },
+        accessToken,
+      );
+      setModalContrasenaAbierto(false);
+      setCambioContrasenaExitoso(true);
+    } catch (error: unknown) {
+      setErrorContrasena(
+        mensajeError(error, 'No pudimos cambiar tu contraseña. Verifica tu contraseña actual.'),
+      );
+    } finally {
+      setCambiandoContrasena(false);
+    }
+  };
+
   const sedeSeleccionada =
     sedes.find((sede) => sede.id === formulario.sedeId)?.nombre ?? perfil?.sede.nombre;
 
@@ -328,13 +391,7 @@ export default function PerfilScreen() {
           <View style={styles.favoritosTexto}>
             <Text style={styles.favoritosTitulo}>Mis publicaciones</Text>
             <Text style={styles.favoritosSubtitulo}>
-              {cantidadMisPublicacionesMomentaneo === 0
-                ? 'Publica algo para gestionarlo desde aquí.'
-                : `${cantidadMisPublicacionesMomentaneo} ${
-                    cantidadMisPublicacionesMomentaneo === 1
-                      ? 'publicación activa'
-                      : 'publicaciones activas'
-                  }`}
+              Revisa, edita o elimina las publicaciones de tu cuenta.
             </Text>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={22} color={colors.navy} />
@@ -345,11 +402,42 @@ export default function PerfilScreen() {
           <Text style={styles.botonPrimarioTexto}>Editar perfil</Text>
         </Pressable>
 
+        <Pressable
+          accessibilityRole="button"
+          onPress={abrirCambioContrasena}
+          style={styles.botonSecundario}>
+          <MaterialCommunityIcons color={colors.navy} name="lock-reset" size={19} />
+          <Text style={styles.botonSecundarioTexto}>Cambiar contraseña</Text>
+        </Pressable>
+
         <Pressable accessibilityRole="button" onPress={cerrarSesion} style={styles.botonSecundario}>
           <MaterialCommunityIcons color={colors.error} name="logout" size={19} />
           <Text style={styles.botonCerrarTexto}>Cerrar sesión</Text>
         </Pressable>
       </ScrollView>
+
+      <Modal visible={cambioContrasenaExitoso} transparent animationType="fade">
+        <View style={styles.overlay}>
+          <View style={styles.modalConfirmacion}>
+            <View style={styles.iconoConfirmacion}>
+              <MaterialCommunityIcons name="check" size={36} color={colors.navy} />
+            </View>
+            <Text style={styles.modalTitulo}>Contraseña actualizada</Text>
+            <Text style={styles.modalTextoConfirmacion}>
+              Tu contraseña fue cambiada correctamente. Por seguridad, debes iniciar sesión nuevamente.
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                setCambioContrasenaExitoso(false);
+                cerrarSesion();
+              }}
+              style={styles.botonPrimario}>
+              <Text style={styles.botonPrimarioTexto}>Ir a iniciar sesión</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         visible={modalEdicionAbierto}
@@ -440,6 +528,108 @@ export default function PerfilScreen() {
                   ) : (
                     <Text numberOfLines={1} style={styles.botonPrimarioTexto}>
                       Guardar
+                    </Text>
+                  )}
+                </Pressable>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={modalContrasenaAbierto}
+        animationType="slide"
+        transparent
+        onRequestClose={() => !cambiandoContrasena && setModalContrasenaAbierto(false)}>
+        <View style={styles.overlay}>
+          <View style={styles.modal}>
+            <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+              <View style={styles.modalCabeceraSeguridad}>
+                <View style={styles.iconoSeguridad}>
+                  <MaterialCommunityIcons name="lock-reset" size={25} color={colors.gold} />
+                </View>
+                <View style={styles.modalCabeceraTexto}>
+                  <Text style={styles.modalTitulo}>Cambiar contraseña</Text>
+                  <Text style={styles.modalSubtitulo}>
+                    Por seguridad, se cerrarán todas tus sesiones al guardar el cambio.
+                  </Text>
+                </View>
+              </View>
+
+              <Text style={styles.etiquetaCampo}>Contraseña actual</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoComplete="current-password"
+                editable={!cambiandoContrasena}
+                onChangeText={(valor) => {
+                  setContrasenaActual(valor);
+                  setErrorContrasena(undefined);
+                }}
+                secureTextEntry
+                value={contrasenaActual}
+                style={styles.input}
+              />
+
+              <Text style={styles.etiquetaCampo}>Nueva contraseña</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoComplete="new-password"
+                editable={!cambiandoContrasena}
+                onChangeText={(valor) => {
+                  setContrasenaNueva(valor);
+                  setErrorContrasena(undefined);
+                }}
+                placeholder="Entre 8 y 72 caracteres"
+                placeholderTextColor={colors.muted}
+                secureTextEntry
+                value={contrasenaNueva}
+                style={styles.input}
+              />
+
+              <Text style={styles.etiquetaCampo}>Confirmar nueva contraseña</Text>
+              <TextInput
+                autoCapitalize="none"
+                autoComplete="new-password"
+                editable={!cambiandoContrasena}
+                onChangeText={(valor) => {
+                  setConfirmacionContrasena(valor);
+                  setErrorContrasena(undefined);
+                }}
+                secureTextEntry
+                value={confirmacionContrasena}
+                style={styles.input}
+              />
+
+              <Text style={styles.ayudaContrasena}>
+                La contraseña no puede contener espacios al inicio ni al final.
+              </Text>
+
+              {errorContrasena ? (
+                <Text accessibilityRole="alert" style={styles.errorTexto}>
+                  {errorContrasena}
+                </Text>
+              ) : null}
+
+              <View style={styles.accionesModal}>
+                <Pressable
+                  accessibilityRole="button"
+                  disabled={cambiandoContrasena}
+                  onPress={() => setModalContrasenaAbierto(false)}
+                  style={styles.botonCancelar}>
+                  <Text style={styles.botonCancelarTexto}>Cancelar</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ busy: cambiandoContrasena, disabled: cambiandoContrasena }}
+                  disabled={cambiandoContrasena}
+                  onPress={() => void guardarContrasena()}
+                  style={[styles.botonPrimario, styles.botonGuardar, cambiandoContrasena && styles.botonDeshabilitado]}>
+                  {cambiandoContrasena ? (
+                    <ActivityIndicator color={colors.navy} size="small" />
+                  ) : (
+                    <Text numberOfLines={1} style={styles.botonPrimarioTexto}>
+                      Confirmar
                     </Text>
                   )}
                 </Pressable>
@@ -606,6 +796,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.padMd,
   },
   botonPrimarioTexto: { color: colors.navy, fontSize: 16, fontWeight: '700' },
+  botonSecundarioTexto: { color: colors.navy, fontSize: 16, fontWeight: '700' },
   botonSecundario: {
     alignItems: 'center',
     borderColor: colors.border,
@@ -641,6 +832,36 @@ const styles = StyleSheet.create({
     padding: spacing.padLg,
   },
   modalTitulo: { color: colors.navy, fontSize: 20, fontWeight: '700', marginBottom: spacing.padMd },
+  modalCabeceraSeguridad: { alignItems: 'center', flexDirection: 'row', gap: spacing.padSm },
+  iconoSeguridad: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  modalCabeceraTexto: { flex: 1 },
+  modalSubtitulo: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: -8, marginBottom: spacing.padMd },
+  ayudaContrasena: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: 8 },
+  modalConfirmacion: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padMd,
+    padding: spacing.padLg,
+  },
+  iconoConfirmacion: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: 34,
+    height: 68,
+    justifyContent: 'center',
+    width: 68,
+  },
+  modalTextoConfirmacion: { color: colors.muted, fontSize: 14, lineHeight: 20, textAlign: 'center' },
   etiquetaCampo: { color: colors.navy, fontSize: 14, fontWeight: '600', marginBottom: 5, marginTop: 8 },
   input: {
     backgroundColor: colors.inputBg,

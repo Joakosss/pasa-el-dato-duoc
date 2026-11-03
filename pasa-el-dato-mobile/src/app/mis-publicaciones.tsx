@@ -15,10 +15,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
 import { ApiError } from '@/lib/api';
 import {
-  listarPublicaciones,
+  listarMisPublicaciones,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
-import { useMisPublicacionesMomentaneoStore } from '@/stores/mis-publicaciones-momentaneo-store';
+import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
 interface FilaGrilla {
@@ -27,22 +27,33 @@ interface FilaGrilla {
 }
 
 export default function MisPublicacionesScreen() {
-  const idsMisPublicacionesMomentaneo = useMisPublicacionesMomentaneoStore(
-    (estado) => estado.idsMisPublicacionesMomentaneo,
-  );
+  const accessToken = useSesionStore(selectAccessToken);
+  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
   const cargarPublicaciones = useCallback(async (esActualizacion = false) => {
+    if (!accessToken) {
+      setError('Tu sesión no está disponible. Inicia sesión nuevamente.');
+      setCargando(false);
+      return;
+    }
+
     if (esActualizacion) setActualizando(true);
     else setCargando(true);
 
     setError(undefined);
     try {
-      setPublicaciones(await listarPublicaciones());
+      setPublicaciones(await listarMisPublicaciones(accessToken));
     } catch (causa: unknown) {
+      if (causa instanceof ApiError && causa.status === 401) {
+        cerrarSesion();
+        router.replace('/auth/login');
+        return;
+      }
+
       setError(
         causa instanceof ApiError
           ? causa.message
@@ -52,7 +63,7 @@ export default function MisPublicacionesScreen() {
       setCargando(false);
       setActualizando(false);
     }
-  }, []);
+  }, [accessToken, cerrarSesion]);
 
   useFocusEffect(
     useCallback(() => {
@@ -60,23 +71,15 @@ export default function MisPublicacionesScreen() {
     }, [cargarPublicaciones]),
   );
 
-  const misPublicaciones = useMemo(
-    () =>
-      publicaciones.filter((publicacion) =>
-        idsMisPublicacionesMomentaneo.includes(publicacion.id),
-      ),
-    [idsMisPublicacionesMomentaneo, publicaciones],
-  );
-
   const filas = useMemo(() => {
-    const items: FilaGrilla[] = misPublicaciones.map((publicacion) => ({
+    const items: FilaGrilla[] = publicaciones.map((publicacion) => ({
       clave: publicacion.id,
       publicacion,
     }));
 
     if (items.length % 2 === 1) items.push({ clave: 'relleno', publicacion: null });
     return items;
-  }, [misPublicaciones]);
+  }, [publicaciones]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -91,8 +94,8 @@ export default function MisPublicacionesScreen() {
         <View style={styles.barraTexto}>
           <Text style={styles.titulo}>Mis publicaciones</Text>
           <Text style={styles.subtitulo}>
-            {misPublicaciones.length}{' '}
-            {misPublicaciones.length === 1 ? 'publicación activa' : 'publicaciones activas'}
+            {publicaciones.length}{' '}
+            {publicaciones.length === 1 ? 'publicación activa' : 'publicaciones activas'}
           </Text>
         </View>
         <Pressable
@@ -128,11 +131,11 @@ export default function MisPublicacionesScreen() {
           />
         }
         ListHeaderComponent={
-          !cargando && !error && misPublicaciones.length > 0 ? (
+          !cargando && !error && publicaciones.length > 0 ? (
             <View style={styles.aviso}>
               <MaterialCommunityIcons name="information-outline" size={18} color={colors.navy} />
               <Text style={styles.avisoTexto}>
-                Gestiona cada publicación desde su detalle para editarla o eliminarla.
+                Abre una publicación para editarla o eliminarla.
               </Text>
             </View>
           ) : null
@@ -151,7 +154,7 @@ export default function MisPublicacionesScreen() {
           ) : (
             <Estado
               icono="storefront-outline"
-              titulo="Aún no has publicado"
+              titulo="Aún no tienes publicaciones"
               mensaje="Crea tu primera publicación y aparecerá aquí para que puedas gestionarla."
               accion={() =>
                 router.push({
@@ -186,7 +189,11 @@ function Estado({
   return (
     <View style={styles.estado}>
       <View style={styles.iconoEstado}>
-        <MaterialCommunityIcons name={icono} size={30} color={esError ? colors.error : colors.gold} />
+        <MaterialCommunityIcons
+          name={icono}
+          size={30}
+          color={esError ? colors.error : colors.gold}
+        />
       </View>
       <Text style={[styles.estadoTitulo, esError && styles.estadoError]}>{titulo}</Text>
       {mensaje ? <Text style={styles.estadoMensaje}>{mensaje}</Text> : null}
@@ -211,12 +218,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.padMd,
     paddingVertical: 10,
   },
-  volver: {
-    alignItems: 'center',
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
+  volver: { alignItems: 'center', height: 36, justifyContent: 'center', width: 36 },
   barraTexto: { flex: 1 },
   titulo: { color: colors.navy, fontSize: 18, fontWeight: '800' },
   subtitulo: { color: colors.muted, fontSize: 12, marginTop: 1 },

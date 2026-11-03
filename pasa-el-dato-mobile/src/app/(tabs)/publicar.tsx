@@ -38,7 +38,6 @@ import {
   type CampoPublicacion,
   type ErroresPublicacion,
 } from '@/lib/validators/publicacion';
-import { useMisPublicacionesMomentaneoStore } from '@/stores/mis-publicaciones-momentaneo-store';
 import { selectAccessToken, selectSesion, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -136,9 +135,6 @@ export default function PublicarScreen() {
   const accessToken = useSesionStore(selectAccessToken);
   const sesion = useSesionStore(selectSesion);
   const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
-  const agregarMiPublicacionMomentaneo = useMisPublicacionesMomentaneoStore(
-    (estado) => estado.agregarMiPublicacionMomentaneo,
-  );
   const scroll = useRef<ScrollView>(null);
 
   const [imagenes, setImagenes] = useState<ImagenFormulario[]>([]);
@@ -303,7 +299,6 @@ export default function PublicarScreen() {
         },
         accessToken,
       );
-      agregarMiPublicacionMomentaneo(publicacionCreada.id);
       limpiarFormulario();
       setPublicacionCreadaId(publicacionCreada.id);
       setPublicacionExitosa(true);

@@ -116,6 +116,12 @@ export function listarPublicaciones(): Promise<PublicacionPublica[]> {
   return apiClient.get<PublicacionPublica[]>('/publicaciones');
 }
 
+export function listarMisPublicaciones(
+  accessToken: string,
+): Promise<PublicacionPublica[]> {
+  return apiClient.get<PublicacionPublica[]>('/publicaciones/me', { accessToken });
+}
+
 export function obtenerPublicacion(id: string): Promise<PublicacionDetalle> {
   return apiClient.get<PublicacionDetalle>(`/publicaciones/${encodeURIComponent(id)}`);
 }
