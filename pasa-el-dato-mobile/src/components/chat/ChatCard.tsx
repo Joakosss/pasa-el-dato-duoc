@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing } from '@/theme';
 import { Avatar } from '@/components/ui/Avatar';
@@ -43,12 +44,21 @@ export function ChatCard({ chat }: { chat: ChatFeed }) {
   const deVenta = esChatDeVenta(chat);
 
   return (
-    <View
-      style={[
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`Abrir chat sobre ${chat.productoTitulo}`}
+      onPress={() =>
+        router.push({
+          pathname: '/chat/[id]',
+          params: { id: chat.id },
+        })
+      }
+      style={({ pressed }) => [
         styles.tarjeta,
         estado === 'pendiente' ? styles.tarjetaPendiente : null,
         estado === 'vendido' ? styles.tarjetaVendida : null,
         deVenta ? styles.tarjetaDeVenta : null,
+        pressed && styles.pressed,
       ]}>
       <Avatar nombre={chat.productoTitulo} tamano={44} />
 
@@ -85,7 +95,7 @@ export function ChatCard({ chat }: { chat: ChatFeed }) {
           <Text style={styles.badgeVendidoTexto}>Vendido</Text>
         </View>
       ) : null}
-    </View>
+    </Pressable>
   );
 }
 
@@ -188,4 +198,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
   },
+  pressed: { opacity: 0.9 },
 });

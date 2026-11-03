@@ -22,6 +22,7 @@ import {
   listarPublicaciones,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
+import { PUBLICACIONES_DEMOSTRACION_MOMENTANEO } from '@/lib/feed/publicaciones-demostracion-momentaneo';
 import { selectSesion, useSesionStore } from '@/stores/sesion-store';
 
 // Aviso institucional: mismo contenido y destino que el bloque web.
@@ -53,7 +54,10 @@ export default function InicioScreen() {
         listarPublicaciones(),
         listarCategorias(),
       ]);
-      setPublicaciones(publicacionesRespuesta);
+      setPublicaciones([
+        ...PUBLICACIONES_DEMOSTRACION_MOMENTANEO,
+        ...publicacionesRespuesta,
+      ]);
       setCategorias(categoriasRespuesta);
     } catch (causa: unknown) {
       setError(

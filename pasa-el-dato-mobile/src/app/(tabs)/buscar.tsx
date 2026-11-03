@@ -29,6 +29,7 @@ import {
   listarPublicaciones,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
+import { PUBLICACIONES_DEMOSTRACION_MOMENTANEO } from '@/lib/feed/publicaciones-demostracion-momentaneo';
 import { colors, spacing } from '@/theme';
 
 const FILTRO_TODAS = { id: null, nombre: 'Todas' } as const;
@@ -116,7 +117,10 @@ export default function BuscarScreen() {
           listarTiposVenta(),
         ]);
 
-      setPublicaciones(publicacionesRespuesta);
+      setPublicaciones([
+        ...PUBLICACIONES_DEMOSTRACION_MOMENTANEO,
+        ...publicacionesRespuesta,
+      ]);
       setCategorias(categoriasRespuesta);
       setSedes(sedesRespuesta);
       setTiposVenta(tiposRespuesta);

@@ -20,6 +20,7 @@ import {
   obtenerPublicacionParaEdicion,
   type PublicacionDetalle,
 } from '@/lib/api/publicaciones';
+import { obtenerPublicacionDemostracionMomentaneo } from '@/lib/feed/publicaciones-demostracion-momentaneo';
 import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
@@ -53,6 +54,14 @@ export default function DetalleProductoScreen() {
     setCargando(true);
     setError(undefined);
 
+    const publicacionDemostracionMomentaneo =
+      obtenerPublicacionDemostracionMomentaneo(id);
+    if (publicacionDemostracionMomentaneo) {
+      setPublicacion(publicacionDemostracionMomentaneo);
+      setCargando(false);
+      return;
+    }
+
     try {
       setPublicacion(await obtenerPublicacion(id));
     } catch (causa: unknown) {
@@ -78,12 +87,12 @@ export default function DetalleProductoScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      if (!id || !accessToken) {
-        setEsPropietario(false);
-        return;
-      }
+    if (!id || !accessToken || obtenerPublicacionDemostracionMomentaneo(id)) {
+      setEsPropietario(false);
+      return;
+    }
 
-      void obtenerPublicacionParaEdicion(id, accessToken)
+    void obtenerPublicacionParaEdicion(id, accessToken)
         .then(() => setEsPropietario(true))
         .catch(() => setEsPropietario(false));
     }, [accessToken, id]),
@@ -215,12 +224,27 @@ export default function DetalleProductoScreen() {
               </Pressable>
             </View>
           ) : (
-            <View style={styles.accion}>
-              <Text style={styles.accionTitulo}>¿Te interesa esta publicación?</Text>
-              <Text style={styles.accionTexto}>
-                La mensajería estará disponible próximamente para coordinar el intercambio.
-              </Text>
-            </View>
+            <>
+              <View style={styles.accion}>
+                <Text style={styles.accionTitulo}>¿Te interesa esta publicación?</Text>
+                <Text style={styles.accionTexto}>
+                  La mensajería estará disponible próximamente para coordinar el intercambio.
+                </Text>
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Reportar publicación"
+                onPress={() =>
+                  router.push({
+                    pathname: '/reporte/publicacion/[id]',
+                    params: { id: publicacion.id },
+                  })
+                }
+                style={({ pressed }) => [styles.botonReportar, pressed && styles.pressed]}>
+                <MaterialCommunityIcons name="flag-outline" size={18} color={colors.error} />
+                <Text style={styles.botonReportarTexto}>Reportar publicación</Text>
+              </Pressable>
+            </>
           )}
         </ScrollView>
       )}
@@ -409,6 +433,17 @@ const styles = StyleSheet.create({
   },
   botonEliminarTexto: { color: colors.error, fontSize: 14, fontWeight: '700' },
   deshabilitado: { opacity: 0.7 },
+  botonReportar: {
+    alignItems: 'center',
+    borderColor: colors.error,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 7,
+    justifyContent: 'center',
+    minHeight: 42,
+  },
+  botonReportarTexto: { color: colors.error, fontSize: 13, fontWeight: '700' },
   vacio: {
     alignItems: 'center',
     flex: 1,
