@@ -358,29 +358,19 @@ export class PublicacionService {
   async eliminarPublicacion(
     idPublicacion: string,
     idCuenta: string,
-    almacenamiento: AlmacenamientoImagenesService,
+    _almacenamiento: AlmacenamientoImagenesService,
   ): Promise<void> {
     const existente = await this.asegurarPublicacionPropiaNoEliminada({
       idPublicacion,
       idCuenta,
     });
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.imagenPublicacion.deleteMany({
-        where: { fk_publicacion: existente.id },
-      });
-
-      // Soft delete (campo `eliminado` ya existe y se usa en el resto del módulo).
-      await tx.publicacion.update({
-        where: { id: existente.id },
-        data: { eliminado: true },
-      });
+    // HU-PUB-03-BE03: eliminación lógica solamente.
+    // No se borran físicamente registros (imagenes) ni archivos.
+    await this.prisma.publicacion.update({
+      where: { id: existente.id },
+      data: { eliminado: true },
     });
-
-    // Mejor esfuerzo: eliminar archivos físicos una vez persistido el soft delete.
-    await Promise.all(
-      existente.urlsImagenes.map((url) => this.eliminarImagenPorUrl(url, almacenamiento)),
-    ).catch(() => undefined);
   }
 
   private async eliminarImagenPorUrl(

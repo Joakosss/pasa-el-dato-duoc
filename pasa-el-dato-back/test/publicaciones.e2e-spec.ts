@@ -1024,7 +1024,7 @@ describe('Publicaciones (e2e)', () => {
     );
   });
 
-  it('E28: elimina 204 una publicación propia no eliminada (soft delete) y borra imágenes', async () => {
+  it('E28: elimina 204 una publicación propia no eliminada (soft delete) y mantiene imágenes', async () => {
     if (categoriaExistenteId === null) {
       throw new Error('La prueba requiere al menos una categoría existente');
     }
@@ -1056,7 +1056,7 @@ describe('Publicaciones (e2e)', () => {
       select: { idImagen: true },
     });
 
-    expect(imagenesDespues).toHaveLength(0);
+    expect(imagenesDespues).toHaveLength(imagenesAntes.length);
   });
 
   it('E29: responde 404 al eliminar una publicación inexistente o ya eliminada', async () => {
