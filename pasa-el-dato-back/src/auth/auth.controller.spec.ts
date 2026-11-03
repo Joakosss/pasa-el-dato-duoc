@@ -224,4 +224,22 @@ describe('AuthController: login y renovación', () => {
     expect(operacion?.responses).toHaveProperty('401');
     expect(operacion?.responses).toHaveProperty('403');
   });
+
+  it('documenta en Swagger el cambio de contraseña y la cookie accessToken', () => {
+    const configuracion = new DocumentBuilder()
+      .addCookieAuth('accessToken', { type: 'apiKey' }, 'accessToken')
+      .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
+      .build();
+    const documento = SwaggerModule.createDocument(app, configuracion);
+    const operacion = documento.paths['/api/auth/password']?.patch;
+
+    expect(operacion).toBeDefined();
+    // Swagger puede ordenar el array de security en forma distinta según metadata interna.
+    expect(operacion?.security).toEqual([
+      { refreshToken: [] },
+      { accessToken: [] },
+    ]);
+    expect(operacion?.responses).toHaveProperty('204');
+    expect(operacion?.responses).toHaveProperty('401');
+  });
 });

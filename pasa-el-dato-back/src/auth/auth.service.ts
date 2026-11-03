@@ -7,8 +7,12 @@ import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'node:crypto';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { IniciarSesionDto } from './dto/iniciar-sesion.dto.js';
-import { verificarContrasena } from '../common/security/contrasena-hash.js';
+import {
+  generarHashContrasena,
+  verificarContrasena,
+} from '../common/security/contrasena-hash.js';
 import { calcularHashRefreshToken, generarRefreshToken } from './refresh-token.js';
+import type { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
 
 // Datos que puede usar el flujo de autenticación sin exponer el hash.
 export interface UsuarioAutenticado {
@@ -299,6 +303,87 @@ export class AuthService {
       accessToken,
       refreshToken: nuevo.token,
     };
+  }
+
+  async cambiarContrasena(entrada: {
+    idCuenta: string;
+    accessJti?: string;
+    accessExp?: number;
+    dto: CambiarContrasenaDto;
+  }): Promise<void> {
+    const cuenta = await this.prisma.cuenta.findUnique({
+      where: { id_cuenta: entrada.idCuenta },
+      select: {
+        claveHash: true,
+      },
+    });
+
+    if (!cuenta) {
+      // No revelar si existe o no: sesión inválida se maneja por guard,
+      // pero este fallback mantiene el mismo criterio.
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    const contrasenaCorrecta = await verificarContrasena(
+      entrada.dto.contrasenaActual,
+      cuenta.claveHash,
+    );
+
+    if (!contrasenaCorrecta) {
+      // Mensaje genérico: no revelar si falló por “actual incorrecta”.
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    const nuevoHash = await generarHashContrasena(entrada.dto.contrasenaNueva);
+    const ahora = new Date();
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.cuenta.update({
+        where: { id_cuenta: entrada.idCuenta },
+        data: {
+          claveHash: nuevoHash,
+          fechaModificacion: ahora,
+        },
+      });
+
+      // Forzar re-login: revocar TODOS los refresh tokens vigentes de la cuenta.
+      await tx.refreshToken.updateMany({
+        where: {
+          fk_cuenta: entrada.idCuenta,
+          fechaRevocacion: null,
+          fechaExpiracion: { gt: ahora },
+        },
+        data: { fechaRevocacion: ahora },
+      });
+
+      // Revocar el access token actual si viene un jti.
+      if (typeof entrada.accessJti === 'string' && entrada.accessJti) {
+        let fechaExpiracion: Date;
+        if (
+          typeof entrada.accessExp === 'number' &&
+          Number.isFinite(entrada.accessExp) &&
+          entrada.accessExp > 0
+        ) {
+          fechaExpiracion = new Date(entrada.accessExp * 1000);
+        } else {
+          const ttl = Number(process.env.JWT_ACCESS_TTL_SECONDS);
+          fechaExpiracion =
+            Number.isInteger(ttl) && ttl > 0
+              ? new Date(ahora.getTime() + ttl * 1000)
+              : ahora;
+        }
+
+        await tx.accessTokenRevocado.upsert({
+          where: { jti: entrada.accessJti },
+          update: {},
+          create: {
+            jti: entrada.accessJti,
+            fk_cuenta: entrada.idCuenta,
+            fechaExpiracion,
+          },
+        });
+      }
+    });
   }
 
   async cerrarSesion(datos: {
