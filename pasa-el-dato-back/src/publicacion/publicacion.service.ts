@@ -132,6 +132,7 @@ export class PublicacionService {
         tipoVenta: { select: { id: true, nombre: true } },
         categoria: { select: { id: true, nombre: true } },
         eliminado: true,
+        estadoPublicacion: { select: { descripcion: true } },
         imagenes: {
           select: {
             idImagen: true,
@@ -144,6 +145,12 @@ export class PublicacionService {
     });
 
     if (publicacion === null || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    // Regla MVP de visibilidad:
+    // Público (detalle) solo ve "En curso". Pausada/Vendida se ocultan como 404.
+    if (publicacion.estadoPublicacion.descripcion !== 'En curso') {
       throw new NotFoundException('Publicación no encontrada');
     }
 
@@ -174,7 +181,7 @@ export class PublicacionService {
 
   async listarPublicaciones(): Promise<PublicacionListaRespuestaDto[]> {
     const publicaciones = await this.prisma.publicacion.findMany({
-      where: { eliminado: false },
+      where: { eliminado: false, estadoPublicacion: { descripcion: 'En curso' } },
       orderBy: { fechaCreacion: 'desc' },
       select: {
         id: true,
