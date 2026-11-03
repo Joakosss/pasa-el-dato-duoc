@@ -1,4 +1,9 @@
-import { BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AlmacenamientoImagenesService, ImagenAlmacenada } from './almacenamiento-imagenes.service.js';
 import { PublicacionService } from './publicacion.service.js';
@@ -63,6 +68,9 @@ function crearPrismaMock() {
       findFirst: vi.fn(),
     },
     publicacion: {
+      findUnique: vi.fn(),
+      findFirst: vi.fn(),
+      update: vi.fn(),
       create: vi.fn(),
     },
     imagenPublicacion: {
@@ -186,6 +194,76 @@ describe('PublicacionService', () => {
       expect(prismaMock.estadoPublicacion.findFirst).toHaveBeenCalledWith({
         where: { descripcion: 'En curso' },
         select: { id: true, descripcion: true },
+      });
+    });
+  });
+
+  describe('eliminarPublicacion', () => {
+    const almacenamiento = {} as unknown as AlmacenamientoImagenesService;
+
+    it('D1: lanza 404 cuando la publicación no existe', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.eliminarPublicacion('pub-uuid', 'cuenta-uuid', almacenamiento),
+      ).rejects.toBeInstanceOf(NotFoundException);
+
+      await expect(
+        service.eliminarPublicacion('pub-uuid', 'cuenta-uuid', almacenamiento),
+      ).rejects.toThrow('Publicación no encontrada');
+    });
+
+    it('D2: lanza 404 cuando la publicación ya está eliminada', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-uuid',
+        eliminado: true,
+        imagenes: [],
+      });
+
+      await expect(
+        service.eliminarPublicacion('pub-uuid', 'cuenta-uuid', almacenamiento),
+      ).rejects.toBeInstanceOf(NotFoundException);
+
+      await expect(
+        service.eliminarPublicacion('pub-uuid', 'cuenta-uuid', almacenamiento),
+      ).rejects.toThrow('Publicación no encontrada');
+    });
+
+    it('D3: lanza 403 cuando la publicación pertenece a otro usuario', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-otro',
+        eliminado: false,
+        imagenes: [],
+      });
+
+      await expect(
+        service.eliminarPublicacion('pub-uuid', 'cuenta-uuid', almacenamiento),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+
+      await expect(
+        service.eliminarPublicacion('pub-uuid', 'cuenta-uuid', almacenamiento),
+      ).rejects.toThrow('No tiene permisos para eliminar esta publicación');
+    });
+
+    it('D4: marca eliminado=true cuando la publicación es propia y no está eliminada', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-uuid',
+        eliminado: false,
+        imagenes: [{ url: '/api/uploads/img-1.png' }],
+      });
+
+      prismaMock.publicacion.update.mockResolvedValue({ id: 'pub-uuid' });
+
+      await expect(
+        service.eliminarPublicacion('pub-uuid', 'cuenta-uuid', almacenamiento),
+      ).resolves.toBeUndefined();
+
+      expect(prismaMock.publicacion.update).toHaveBeenCalledWith({
+        where: { id: 'pub-uuid' },
+        data: { eliminado: true },
       });
     });
   });

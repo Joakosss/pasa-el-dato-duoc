@@ -990,4 +990,147 @@ describe('Publicaciones (e2e)', () => {
     expect(imagenesDespues).toHaveLength(2);
     expect(imagenesDespues).toEqual(imagenesAntes);
   });
+
+  it('E26: responde 401 al eliminar sin autenticación', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${creacion.body.id}`)
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('E27: responde 403 al intentar eliminar una publicación de otro usuario', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAccesoOtroUsuario)
+      .expect(403);
+
+    expect(respuesta.body.message).toBe(
+      'No tiene permisos para eliminar esta publicación',
+    );
+  });
+
+  it('E28: elimina 204 una publicación propia no eliminada (soft delete) y mantiene imágenes', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const imagenesAntes = await prisma.imagenPublicacion.findMany({
+      where: { fk_publicacion: creacion.body.id },
+      select: { idImagen: true },
+    });
+    expect(imagenesAntes.length).toBeGreaterThan(0);
+
+    await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .expect(204);
+
+    const publicacionDespues = await prisma.publicacion.findUnique({
+      where: { id: creacion.body.id },
+      select: { eliminado: true },
+    });
+
+    expect(publicacionDespues).not.toBeNull();
+    expect(publicacionDespues?.eliminado).toBe(true);
+
+    const imagenesDespues = await prisma.imagenPublicacion.findMany({
+      where: { fk_publicacion: creacion.body.id },
+      select: { idImagen: true },
+    });
+
+    expect(imagenesDespues).toHaveLength(imagenesAntes.length);
+  });
+
+  it('E29: responde 404 al eliminar una publicación inexistente o ya eliminada', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${randomUUID()}`)
+      .set('Cookie', cookieAcceso)
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Publicación no encontrada');
+  });
+
+  it('E30: GET /publicaciones lista solo publicaciones visibles (eliminado=false)', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacionVisible = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacionVisible.body.id);
+
+    const creacionEliminada = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacionEliminada.body.id);
+
+    await prisma.publicacion.update({
+      where: { id: creacionEliminada.body.id },
+      data: { eliminado: true },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/publicaciones')
+      .expect(200);
+
+    const ids: string[] = respuesta.body.map((p: { id: string }) => p.id);
+    expect(ids).toContain(creacionVisible.body.id);
+    expect(ids).not.toContain(creacionEliminada.body.id);
+  });
+
+  it('E31: GET /publicaciones/:id responde 404 si la publicación está eliminada', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    await prisma.publicacion.update({
+      where: { id: creacion.body.id },
+      data: { eliminado: true },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}`)
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Publicación no encontrada');
+  });
+
+  it('E32: GET /publicaciones/:id obtiene 200 el detalle si la publicación está visible', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}`)
+      .expect(200);
+
+    expect(respuesta.body).toMatchObject({
+      id: creacion.body.id,
+      titulo: 'Notebook Lenovo ThinkPad',
+      descripcion: 'Notebook en buen estado, 16 GB de RAM y disco de 512 GB.',
+      precio: 150000,
+      imagenes: expect.any(Array),
+    });
+  });
 });
