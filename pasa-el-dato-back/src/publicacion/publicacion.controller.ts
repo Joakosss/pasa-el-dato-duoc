@@ -31,6 +31,7 @@ import {
 import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js';
 import { AlmacenamientoImagenesService } from './almacenamiento-imagenes.service.js';
 import { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.js';
+import { CambiarEstadoPublicacionDto } from './dto/cambiar-estado-publicacion.dto.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
 import { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
@@ -241,6 +242,47 @@ export class PublicacionController {
       user.idCuenta,
       this.almacenamientoImagenesService,
     );
+  }
+
+  @Patch(':id/estado')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Cambiar estado de publicación propia no eliminada' })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', example: 'pub-uuid' },
+        estado: {
+          type: 'object',
+          properties: {
+            id: { type: 'number', example: 1 },
+            descripcion: { type: 'string', example: 'Pausada' },
+          },
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'No tiene permisos para cambiar el estado de esta publicación',
+  })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async cambiarEstado(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Body() dto: CambiarEstadoPublicacionDto,
+  ): Promise<{ id: string; estado: { id: number; descripcion: string } }> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicacionService.cambiarEstadoPublicacion({
+      idPublicacion: id,
+      idCuenta: user.idCuenta,
+      estadoDescripcion: dto.estado,
+    });
   }
 
   @Patch(':id')
