@@ -70,6 +70,23 @@ export class PublicacionController {
     return this.publicacionService.listarPublicaciones();
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Listar publicaciones propias (excluye eliminado=true)' })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: [PublicacionListaRespuestaDto] })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  async listarMisPublicaciones(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<PublicacionListaRespuestaDto[]> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicacionService.listarPublicacionesDeCuenta(user.idCuenta);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary:

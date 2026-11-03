@@ -58,6 +58,7 @@ const sesion: SesionAutenticada = {
 function crearControlador() {
   const serviceMock = {
     crearPublicacion: vi.fn().mockResolvedValue(respuestaOk),
+    listarPublicacionesDeCuenta: vi.fn().mockResolvedValue([]),
   } as unknown as PublicacionService;
 
   const almacenamientoMock = {} as AlmacenamientoImagenesService;
@@ -75,6 +76,54 @@ function req(
 }
 
 // --- pruebas ----------------------------------------------------------------
+
+describe('PublicacionController.listarMisPublicaciones', () => {
+  let controller: PublicacionController;
+  let serviceMock: {
+    listarPublicacionesDeCuenta: ReturnType<typeof vi.fn>;
+  };
+
+  beforeEach(() => {
+    const c = crearControlador();
+    controller = c.controller;
+    serviceMock = c.serviceMock as unknown as typeof serviceMock;
+  });
+
+  it('lista publicaciones de la cuenta autenticada', async () => {
+    serviceMock.listarPublicacionesDeCuenta.mockResolvedValueOnce([
+      {
+        id: 'uuid-pub',
+        titulo: 'Notebook Lenovo ThinkPad',
+        descripcion:
+          'Notebook en buen estado, 16 GB de RAM y disco de 512 GB.',
+        precio: 150000,
+        estado: { id: 1, descripcion: 'En curso' },
+        sede: { id: 1, nombre: 'Puente Alto' },
+        tipoVenta: { id: 1, nombre: 'Producto' },
+        categoria: { id: 1, nombre: 'Electrónica' },
+        imagenes: [
+          { idImagen: 'uuid-img', url: '/api/uploads/uuid.png', orden: 1 },
+        ],
+      },
+    ]);
+
+    const resultado = await controller.listarMisPublicaciones(
+      { user: sesion } as never,
+    );
+
+    expect(serviceMock.listarPublicacionesDeCuenta).toHaveBeenCalledWith(
+      'cuenta-uuid',
+    );
+    expect(resultado).toHaveLength(1);
+    expect(resultado[0]?.id).toBe('uuid-pub');
+  });
+
+  it('sin sesión lanza 401', async () => {
+    await expect(
+      controller.listarMisPublicaciones({} as never),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+});
 
 describe('PublicacionController.crear', () => {
   let controller: PublicacionController;

@@ -191,6 +191,47 @@ export class PublicacionService {
       },
     });
 
+    return this.toListaRespuesta(publicaciones);
+  }
+
+  async listarPublicacionesDeCuenta(
+    idCuenta: string,
+  ): Promise<PublicacionListaRespuestaDto[]> {
+    const publicaciones = await this.prisma.publicacion.findMany({
+      where: { eliminado: false, fk_usuario: idCuenta },
+      orderBy: { fechaCreacion: 'desc' },
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        estadoPublicacion: { select: { id: true, descripcion: true } },
+        sede: { select: { id: true, nombre: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        imagenes: {
+          select: { idImagen: true, url: true, orden: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    return this.toListaRespuesta(publicaciones);
+  }
+
+  private toListaRespuesta(
+    publicaciones: Array<{
+      id: string;
+      titulo: string;
+      descripcion: string;
+      precio: number;
+      estadoPublicacion: { id: number; descripcion: string };
+      sede: { id: number; nombre: string };
+      tipoVenta: { id: number; nombre: string };
+      categoria: { id: number; nombre: string };
+      imagenes: Array<{ idImagen: string; url: string; orden: number }>;
+    }>,
+  ): PublicacionListaRespuestaDto[] {
     return publicaciones.map((p) => ({
       id: p.id,
       titulo: p.titulo,
