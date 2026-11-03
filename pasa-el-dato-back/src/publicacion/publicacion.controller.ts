@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -20,6 +21,7 @@ import {
   ApiConsumes,
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -320,6 +322,30 @@ export class PublicacionController {
       id,
       dto,
       archivos,
+      user.idCuenta,
+      this.almacenamientoImagenesService,
+    );
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Eliminar (soft delete) publicación propia no eliminada' })
+  @ApiCookieAuth('accessToken')
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({ description: 'No tiene permisos para eliminar esta publicación' })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async eliminar(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<void> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    await this.publicacionService.eliminarPublicacion(
+      id,
       user.idCuenta,
       this.almacenamientoImagenesService,
     );

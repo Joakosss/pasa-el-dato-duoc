@@ -990,4 +990,81 @@ describe('Publicaciones (e2e)', () => {
     expect(imagenesDespues).toHaveLength(2);
     expect(imagenesDespues).toEqual(imagenesAntes);
   });
+
+  it('E26: responde 401 al eliminar sin autenticación', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${creacion.body.id}`)
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('E27: responde 403 al intentar eliminar una publicación de otro usuario', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const respuesta = await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAccesoOtroUsuario)
+      .expect(403);
+
+    expect(respuesta.body.message).toBe(
+      'No tiene permisos para eliminar esta publicación',
+    );
+  });
+
+  it('E28: elimina 204 una publicación propia no eliminada (soft delete) y borra imágenes', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    const imagenesAntes = await prisma.imagenPublicacion.findMany({
+      where: { fk_publicacion: creacion.body.id },
+      select: { idImagen: true },
+    });
+    expect(imagenesAntes.length).toBeGreaterThan(0);
+
+    await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', cookieAcceso)
+      .expect(204);
+
+    const publicacionDespues = await prisma.publicacion.findUnique({
+      where: { id: creacion.body.id },
+      select: { eliminado: true },
+    });
+
+    expect(publicacionDespues).not.toBeNull();
+    expect(publicacionDespues?.eliminado).toBe(true);
+
+    const imagenesDespues = await prisma.imagenPublicacion.findMany({
+      where: { fk_publicacion: creacion.body.id },
+      select: { idImagen: true },
+    });
+
+    expect(imagenesDespues).toHaveLength(0);
+  });
+
+  it('E29: responde 404 al eliminar una publicación inexistente o ya eliminada', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .delete(`/api/publicaciones/${randomUUID()}`)
+      .set('Cookie', cookieAcceso)
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Publicación no encontrada');
+  });
 });

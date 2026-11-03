@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -321,6 +322,65 @@ export class PublicacionService {
     ).catch(() => undefined);
 
     return resultado;
+  }
+
+  private async asegurarPublicacionPropiaNoEliminada(entrada: {
+    idPublicacion: string;
+    idCuenta: string;
+  }): Promise<{ id: string; urlsImagenes: string[] }> {
+    const existente = await this.prisma.publicacion.findUnique({
+      where: { id: entrada.idPublicacion },
+      select: {
+        id: true,
+        fk_usuario: true,
+        eliminado: true,
+        imagenes: {
+          select: { url: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    if (existente === null || existente.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    if (existente.fk_usuario !== entrada.idCuenta) {
+      throw new ForbiddenException('No tiene permisos para eliminar esta publicación');
+    }
+
+    return {
+      id: existente.id,
+      urlsImagenes: existente.imagenes.map((img) => img.url),
+    };
+  }
+
+  async eliminarPublicacion(
+    idPublicacion: string,
+    idCuenta: string,
+    almacenamiento: AlmacenamientoImagenesService,
+  ): Promise<void> {
+    const existente = await this.asegurarPublicacionPropiaNoEliminada({
+      idPublicacion,
+      idCuenta,
+    });
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.imagenPublicacion.deleteMany({
+        where: { fk_publicacion: existente.id },
+      });
+
+      // Soft delete (campo `eliminado` ya existe y se usa en el resto del módulo).
+      await tx.publicacion.update({
+        where: { id: existente.id },
+        data: { eliminado: true },
+      });
+    });
+
+    // Mejor esfuerzo: eliminar archivos físicos una vez persistido el soft delete.
+    await Promise.all(
+      existente.urlsImagenes.map((url) => this.eliminarImagenPorUrl(url, almacenamiento)),
+    ).catch(() => undefined);
   }
 
   private async eliminarImagenPorUrl(
