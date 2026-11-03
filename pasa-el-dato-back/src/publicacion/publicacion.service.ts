@@ -14,6 +14,7 @@ import type { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.
 import type { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import type { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
 import type { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
+import type { PublicacionListaRespuestaDto } from './dto/publicacion-lista-respuesta.dto.js';
 import type { ImagenRecibida } from './validar-imagenes.js';
 
 @Injectable()
@@ -114,6 +115,100 @@ export class PublicacionService {
     );
 
     return resultado;
+  }
+
+  async obtenerPublicacionDetalle(
+    idPublicacion: string,
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: idPublicacion },
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        sede: { select: { id: true, nombre: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        eliminado: true,
+        imagenes: {
+          select: {
+            idImagen: true,
+            url: true,
+            orden: true,
+          },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    if (publicacion === null || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    return {
+      id: publicacion.id,
+      titulo: publicacion.titulo,
+      descripcion: publicacion.descripcion,
+      precio: publicacion.precio,
+      sede: {
+        id: publicacion.sede.id,
+        nombre: publicacion.sede.nombre,
+      },
+      tipoVenta: {
+        id: publicacion.tipoVenta.id,
+        nombre: publicacion.tipoVenta.nombre,
+      },
+      categoria: {
+        id: publicacion.categoria.id,
+        nombre: publicacion.categoria.nombre,
+      },
+      imagenes: publicacion.imagenes.map((imagen) => ({
+        idImagen: imagen.idImagen,
+        url: imagen.url,
+        orden: imagen.orden,
+      })),
+    };
+  }
+
+  async listarPublicaciones(): Promise<PublicacionListaRespuestaDto[]> {
+    const publicaciones = await this.prisma.publicacion.findMany({
+      where: { eliminado: false },
+      orderBy: { fechaCreacion: 'desc' },
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        estadoPublicacion: { select: { id: true, descripcion: true } },
+        sede: { select: { id: true, nombre: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        imagenes: {
+          select: { idImagen: true, url: true, orden: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    return publicaciones.map((p) => ({
+      id: p.id,
+      titulo: p.titulo,
+      descripcion: p.descripcion,
+      precio: p.precio,
+      estado: {
+        id: p.estadoPublicacion.id,
+        descripcion: p.estadoPublicacion.descripcion,
+      },
+      sede: { id: p.sede.id, nombre: p.sede.nombre },
+      tipoVenta: { id: p.tipoVenta.id, nombre: p.tipoVenta.nombre },
+      categoria: { id: p.categoria.id, nombre: p.categoria.nombre },
+      imagenes: p.imagenes.map((img) => ({
+        idImagen: img.idImagen,
+        url: img.url,
+        orden: img.orden,
+      })),
+    }));
   }
 
   async obtenerPublicacionParaEdicion(

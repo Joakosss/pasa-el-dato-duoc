@@ -34,6 +34,7 @@ import { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
 import { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
+import { PublicacionListaRespuestaDto } from './dto/publicacion-lista-respuesta.dto.js';
 import {
   CAMPO_IMAGENES,
   CANTIDAD_MAXIMA_IMAGENES,
@@ -58,6 +59,29 @@ export class PublicacionController {
     private readonly publicacionService: PublicacionService,
     private readonly almacenamientoImagenesService: AlmacenamientoImagenesService,
   ) {}
+
+  @Get()
+  @ApiOperation({
+    summary:
+      'Listar publicaciones visibles (excluye automáticamente eliminado=true)',
+  })
+  @ApiOkResponse({ type: [PublicacionListaRespuestaDto] })
+  async listar(): Promise<PublicacionListaRespuestaDto[]> {
+    return this.publicacionService.listarPublicaciones();
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary:
+      'Obtener detalle de publicación visible (404 si eliminado=true)',
+  })
+  @ApiOkResponse({ type: PublicacionEdicionRespuestaDto })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async obtenerDetalle(
+    @Param('id') id: string,
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    return this.publicacionService.obtenerPublicacionDetalle(id);
+  }
 
   @Get(':id/edicion')
   @UseGuards(JwtAuthGuard)
