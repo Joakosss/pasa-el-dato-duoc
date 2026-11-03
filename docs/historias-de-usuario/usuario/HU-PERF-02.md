@@ -1,5 +1,8 @@
 # HU-PERF-02 — Actualizar mi perfil
 
+> Nota: HU-PERF-03 (“Mi cuenta”) fue unificada en el MVP con la consulta `GET /api/perfil/me` (HU-PERF-01),
+> ya que el DTO de perfil incluye datos base de cuenta (correo, teléfono) sin exponer información sensible.
+
 **Como** usuario autenticado  
 **quiero** actualizar mi teléfono y mi sede  
 **para** mantener vigentes mis datos de contacto y ubicación dentro de la plataforma.
