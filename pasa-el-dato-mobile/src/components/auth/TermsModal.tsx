@@ -1,5 +1,6 @@
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { TermsContent } from '@/components/legal/TermsContent';
 import { colors, spacing } from '@/theme';
 
 interface Props {
@@ -8,18 +9,14 @@ interface Props {
   onAceptar: () => void;
 }
 
-// Modal estático. Sin TermsContent completo web.
 export function TermsModal({ abierto, onCerrar, onAceptar }: Props) {
   return (
     <Modal visible={abierto} transparent animationType="fade" onRequestClose={onCerrar}>
       <View style={styles.overlay}>
         <View style={styles.caja}>
           <Text style={styles.titulo}>Términos y Condiciones</Text>
-          <ScrollView style={styles.body} showsVerticalScrollIndicator={false}>
-            <Text style={styles.texto}>
-              Piloto gráfico. Aquí irá el resumen de términos. De momento solo valida apertura,
-              cierre y aceptación visual.
-            </Text>
+          <ScrollView style={styles.body} contentContainerStyle={styles.bodyContenido}>
+            <TermsContent />
           </ScrollView>
           <View style={styles.pie}>
             <Pressable accessibilityRole="button" onPress={onCerrar} style={[styles.btn, styles.sec]}>
@@ -59,8 +56,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  body: { padding: spacing.padLg },
-  texto: { color: colors.navy, fontSize: 14 },
+  body: { flexGrow: 0 },
+  bodyContenido: { padding: spacing.padLg, paddingTop: 0 },
   pie: {
     flexDirection: 'row',
     justifyContent: 'flex-end',

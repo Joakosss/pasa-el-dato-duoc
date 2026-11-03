@@ -9,12 +9,16 @@ interface Props {
   clave: string;
   confirmacion: string;
   aceptaTerminos: boolean;
-  onClaveChange: (v: string) => void;
-  onConfirmacionChange: (v: string) => void;
+  errorClave?: string;
+  errorConfirmacion?: string;
+  errorTerminos?: string;
+  errorRegistro?: string;
+  deshabilitado?: boolean;
+  onClaveChange: (valor: string) => void;
+  onConfirmacionChange: (valor: string) => void;
   onAbrirTerminos: () => void;
 }
 
-// Espejo gráfico de StepClave web. Modal se inyecta desde register (T8).
 export function StepClaveGrafico({
   run,
   correo,
@@ -22,6 +26,11 @@ export function StepClaveGrafico({
   clave,
   confirmacion,
   aceptaTerminos,
+  errorClave,
+  errorConfirmacion,
+  errorTerminos,
+  errorRegistro,
+  deshabilitado = false,
   onClaveChange,
   onConfirmacionChange,
   onAbrirTerminos,
@@ -44,18 +53,64 @@ export function StepClaveGrafico({
       </View>
 
       <Text style={styles.label}>Contraseña</Text>
-      <TextInput value={clave} onChangeText={onClaveChange} placeholder="Mínimo 8 caracteres" placeholderTextColor={colors.muted} secureTextEntry style={styles.input} />
-      <Text style={styles.label}>Confirmar contraseña</Text>
-      <TextInput value={confirmacion} onChangeText={onConfirmacionChange} placeholder="Repite tu contraseña" placeholderTextColor={colors.muted} secureTextEntry style={styles.input} />
+      <TextInput
+        value={clave}
+        onChangeText={onClaveChange}
+        placeholder="Mínimo 6 caracteres"
+        placeholderTextColor={colors.muted}
+        secureTextEntry
+        editable={!deshabilitado}
+        autoCapitalize="none"
+        autoComplete="new-password"
+        style={[styles.input, errorClave ? styles.inputError : null]}
+      />
+      {errorClave ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {errorClave}
+        </Text>
+      ) : null}
 
-      <Pressable accessibilityRole="checkbox" onPress={onAbrirTerminos} style={styles.checkRow}>
-        <View style={[styles.check, aceptaTerminos && styles.checkOn]}>
+      <Text style={styles.label}>Confirmar contraseña</Text>
+      <TextInput
+        value={confirmacion}
+        onChangeText={onConfirmacionChange}
+        placeholder="Repite tu contraseña"
+        placeholderTextColor={colors.muted}
+        secureTextEntry
+        editable={!deshabilitado}
+        autoCapitalize="none"
+        autoComplete="new-password"
+        style={[styles.input, errorConfirmacion ? styles.inputError : null]}
+      />
+      {errorConfirmacion ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {errorConfirmacion}
+        </Text>
+      ) : null}
+
+      <Pressable
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: aceptaTerminos, disabled: deshabilitado }}
+        disabled={deshabilitado}
+        onPress={onAbrirTerminos}
+        style={styles.checkRow}>
+        <View style={[styles.check, aceptaTerminos && styles.checkOn, errorTerminos && styles.checkError]}>
           {aceptaTerminos ? <Text style={styles.checkText}>✓</Text> : null}
         </View>
         <Text style={styles.checkLabel}>
           Acepto los <Text style={styles.link}>términos y condiciones</Text>
         </Text>
       </Pressable>
+      {errorTerminos ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {errorTerminos}
+        </Text>
+      ) : null}
+      {errorRegistro ? (
+        <Text accessibilityRole="alert" style={styles.errorRegistro}>
+          {errorRegistro}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -81,6 +136,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.padMd,
     color: colors.navy,
   },
+  inputError: { borderColor: colors.error },
+  error: { color: colors.error, fontSize: 13, marginTop: -4 },
+  errorRegistro: {
+    backgroundColor: '#fef2f2',
+    borderColor: colors.error,
+    borderWidth: 1,
+    borderRadius: spacing.radiusSm,
+    color: colors.error,
+    fontSize: 14,
+    padding: spacing.padMd,
+  },
   checkRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 4 },
   check: {
     width: 22,
@@ -93,6 +159,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   checkOn: { backgroundColor: colors.navy, borderColor: colors.navy },
+  checkError: { borderColor: colors.error },
   checkText: { color: colors.gold, fontWeight: '800' },
   checkLabel: { color: colors.navy, fontSize: 14 },
   link: { fontWeight: '700', textDecorationLine: 'underline' },

@@ -5,23 +5,45 @@ import { colors, spacing } from '@/theme';
 interface Props {
   run: string;
   correo: string;
-  onRunChange: (v: string) => void;
-  onCorreoChange: (v: string) => void;
+  errorRun?: string;
+  errorCorreo?: string;
+  deshabilitado?: boolean;
+  onRunChange: (valor: string) => void;
+  onRunBlur?: () => void;
+  onCorreoChange: (valor: string) => void;
 }
 
-// Espejo gráfico de StepCuenta web. Sin debounce, sin validación back.
-export function StepCuentaGrafico({ run, correo, onRunChange, onCorreoChange }: Props) {
+export function StepCuentaGrafico({
+  run,
+  correo,
+  errorRun,
+  errorCorreo,
+  deshabilitado = false,
+  onRunChange,
+  onRunBlur,
+  onCorreoChange,
+}: Props) {
   return (
     <View style={styles.col}>
       <Text style={styles.label}>RUT</Text>
       <TextInput
         value={run}
         onChangeText={onRunChange}
-        placeholder="12.345.678-5"
+        onBlur={onRunBlur}
+        placeholder="12345678-5"
         placeholderTextColor={colors.muted}
-        autoCapitalize="none"
-        style={styles.input}
+        autoCapitalize="characters"
+        autoCorrect={false}
+        editable={!deshabilitado}
+        maxLength={10}
+        style={[styles.input, errorRun ? styles.inputError : null]}
       />
+      {errorRun ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {errorRun}
+        </Text>
+      ) : null}
+
       <Text style={styles.label}>Correo institucional</Text>
       <TextInput
         value={correo}
@@ -30,8 +52,16 @@ export function StepCuentaGrafico({ run, correo, onRunChange, onCorreoChange }: 
         placeholderTextColor={colors.muted}
         keyboardType="email-address"
         autoCapitalize="none"
-        style={styles.input}
+        autoCorrect={false}
+        autoComplete="email"
+        editable={!deshabilitado}
+        style={[styles.input, errorCorreo ? styles.inputError : null]}
       />
+      {errorCorreo ? (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {errorCorreo}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -47,5 +77,13 @@ const styles = StyleSheet.create({
     minHeight: spacing.touchMin,
     paddingHorizontal: spacing.padMd,
     color: colors.navy,
+  },
+  inputError: {
+    borderColor: colors.error,
+  },
+  error: {
+    color: colors.error,
+    fontSize: 13,
+    marginTop: -4,
   },
 });

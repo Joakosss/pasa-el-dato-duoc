@@ -1,5 +1,9 @@
 const CORREO_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-export const DOMINIO_PERMITIDO = "@duocuc.cl";
+export const DOMINIOS_INSTITUCIONALES = [
+  '@duocuc.cl',
+  '@profesor.duoc.cl',
+  '@duoc.cl',
+] as const;
 
 export interface ValidacionCorreo {
   ok: boolean;
@@ -13,14 +17,21 @@ export function normalizarCorreo(valor: string): string {
 
 export function validarCorreoDuoc(valor: string): ValidacionCorreo {
   const normalizado = normalizarCorreo(valor);
+
   if (!normalizado) {
-    return { ok: false, error: "Ingresa tu correo." };
+    return { ok: false, error: 'Ingresa tu correo.' };
   }
+
   if (!CORREO_RE.test(normalizado)) {
-    return { ok: false, error: "Correo inválido." };
+    return { ok: false, error: 'Correo inválido.' };
   }
-  if (!normalizado.endsWith(DOMINIO_PERMITIDO)) {
-    return { ok: false, error: `Solo correos ${DOMINIO_PERMITIDO}.` };
+
+  if (!DOMINIOS_INSTITUCIONALES.some((dominio) => normalizado.endsWith(dominio))) {
+    return {
+      ok: false,
+      error: 'El correo debe ser institucional Duoc UC (@duocuc.cl)',
+    };
   }
+
   return { ok: true, normalizado };
 }
