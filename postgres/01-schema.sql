@@ -1,10 +1,13 @@
 -- 01-schema.sql — EXPORTACIÓN DOCUMENTAL DEL ESQUEMA (NO SE EJECUTA)
--- Este archivo ya no se monta en docker-entrypoint-initdb.d (HU-UBI-01, T-03).
+-- Este archivo ya no se monta en docker-entrypoint-initdb.d.
 -- Fuente de verdad del esquema: pasa-el-dato-back/prisma/schema.prisma y
--- pasa-el-dato-back/prisma/migrations. La BD se inicializa únicamente con
---   podman compose exec -T back pnpm db:migrate:deploy
+-- pasa-el-dato-back/prisma/migrations.
+-- La BD se crea/actualiza únicamente con Prisma:
+--   podman compose exec back pnpm db:migrate:deploy
+-- Contenido generado desde schema.prisma (incluye todos los modelos y las
+-- migraciones vigentes: baseline, access_token_revocado y ubicación fase A).
 -- Regenerar este archivo con, desde la raíz del repo:
---   podman compose exec -T back pnpm db:schema:sql > postgres/01-schema.sql 2>/dev/null
+--   podman compose exec -T back pnpm db:schema:sql > postgres/01-schema.sql
 
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";

@@ -11,12 +11,12 @@ export class ComunaController {
 
   @Get()
   @ApiOperation({
-    summary: 'Listar las comunas de una ciudad (ciudadId obligatorio)',
+    summary: 'Listar comunas por región o por ciudad',
   })
   @ApiOkResponse({ type: ComunaRespuestaDto, isArray: true })
   listar(
     @Query() consulta: ListarComunasQueryDto,
   ): Promise<ComunaRespuestaDto[]> {
-    return this.comunaService.listar(consulta.ciudadId);
+    return this.comunaService.listar(consulta);
   }
 }

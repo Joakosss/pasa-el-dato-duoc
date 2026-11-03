@@ -27,6 +27,7 @@ describe('Perfil propio (e2e)', () => {
   let correoA: string;
   let runA: string;
   let sedeId: number;
+  let sedeAlternaId: number;
   let carreraId: number;
 
   const contrasena = 'clave-temporal-perfil';
@@ -81,14 +82,20 @@ describe('Perfil propio (e2e)', () => {
     prisma = modulo.get(PrismaService);
     jwtService = modulo.get(JwtService);
 
-    const [sede, carrera] = await Promise.all([
-      prisma.sede.findFirst({ where: { activa: true }, select: { id: true } }),
+    const [sedes, carrera] = await Promise.all([
+      prisma.sede.findMany({
+        where: { activa: true, eliminado: false },
+        select: { id: true },
+        orderBy: { id: 'asc' },
+        take: 2,
+      }),
       prisma.carrera.findFirst({ select: { id: true } }),
     ]);
-    if (!sede || !carrera) {
-      throw new Error('Se requiere sede y carrera existentes');
+    if (sedes.length < 2 || !carrera) {
+      throw new Error('Se requieren al menos dos sedes activas y una carrera existente');
     }
-    sedeId = sede.id;
+    sedeId = sedes[0].id;
+    sedeAlternaId = sedes[1].id;
     carreraId = carrera.id;
 
     const cuentaA = await registrarCuenta('a');
@@ -147,9 +154,167 @@ describe('Perfil propio (e2e)', () => {
     expect(JSON.stringify(respuesta.body)).not.toContain('token');
   });
 
+  it('PATCH P1: 200 actualiza teléfono y sede del perfil propio autenticado', async () => {
+    const cookieAcceso = await iniciarSesion(correoA);
+    const sedeAlterna = await prisma.sede.findUniqueOrThrow({
+      where: { id: sedeAlternaId },
+      select: { nombre: true },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', cookieAcceso)
+      .send({
+        telefono: '+56987654321',
+        sedeId: sedeAlternaId,
+      })
+      .expect(200);
+
+    expect(respuesta.body).toEqual({
+      run: runA,
+      pNombre: 'Prueba',
+      sNombre: null,
+      pApellido: 'Perfil',
+      sApellido: 'a',
+      correo: correoA,
+      telefono: '87654321',
+      sede: { nombre: sedeAlterna.nombre },
+      carrera: { nombre: expect.any(String) },
+      rol: { descripcion: 'Estudiante' },
+    });
+
+    const persistido = await prisma.cuenta.findUniqueOrThrow({
+      where: { correo: correoA },
+      select: {
+        telefono: true,
+        usuario: {
+          select: {
+            fk_sede: true,
+          },
+        },
+      },
+    });
+
+    expect(persistido).toEqual({
+      telefono: '87654321',
+      usuario: {
+        fk_sede: sedeAlternaId,
+      },
+    });
+  });
+
+  it('PATCH P1.1: 200 actualiza solo teléfono', async () => {
+    const cookieAcceso = await iniciarSesion(correoA);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', cookieAcceso)
+      .send({
+        telefono: '12345678',
+      })
+      .expect(200);
+
+    expect(respuesta.body.telefono).toBe('12345678');
+  });
+
+  it('PATCH P1.2: 200 actualiza solo sedeId', async () => {
+    const cookieAcceso = await iniciarSesion(correoA);
+    const sedeOriginal = await prisma.cuenta.findUniqueOrThrow({
+      where: { correo: correoA },
+      select: {
+        usuario: {
+          select: { fk_sede: true },
+        },
+      },
+    });
+    const sedeDestinoId =
+      sedeOriginal.usuario?.fk_sede === sedeId ? sedeAlternaId : sedeId;
+    const sedeDestino = await prisma.sede.findUniqueOrThrow({
+      where: { id: sedeDestinoId },
+      select: { nombre: true },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', cookieAcceso)
+      .send({
+        sedeId: sedeDestinoId,
+      })
+      .expect(200);
+
+    expect(respuesta.body.sede).toEqual({ nombre: sedeDestino.nombre });
+
+    const persistido = await prisma.cuenta.findUniqueOrThrow({
+      where: { correo: correoA },
+      select: {
+        telefono: true,
+        usuario: {
+          select: {
+            fk_sede: true,
+          },
+        },
+      },
+    });
+
+    expect(persistido).toEqual({
+      telefono: '12345678',
+      usuario: {
+        fk_sede: sedeDestinoId,
+      },
+    });
+  });
+
+  it('PATCH P1.3: 400 con payload vacío y sin mutaciones', async () => {
+    const cookieAcceso = await iniciarSesion(correoA);
+    const antes = await prisma.cuenta.findUniqueOrThrow({
+      where: { correo: correoA },
+      select: {
+        telefono: true,
+        usuario: {
+          select: {
+            fk_sede: true,
+          },
+        },
+      },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', cookieAcceso)
+      .send({})
+      .expect(400);
+
+    expect(respuesta.body.message).toBe(
+      'Debe enviar al menos un campo para actualizar',
+    );
+
+    const despues = await prisma.cuenta.findUniqueOrThrow({
+      where: { correo: correoA },
+      select: {
+        telefono: true,
+        usuario: {
+          select: {
+            fk_sede: true,
+          },
+        },
+      },
+    });
+
+    expect(despues).toEqual(antes);
+  });
+
   it('E2: 401 sin cookie', async () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/perfil/me')
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('PATCH P2: 401 sin cookie', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .send({ telefono: '12345678' })
       .expect(401);
 
     expect(respuesta.body.message).toBe('Sesión inválida');
@@ -159,6 +324,16 @@ describe('Perfil propio (e2e)', () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/perfil/me')
       .set('Cookie', 'accessToken=token-invalido')
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('PATCH P3: 401 con token inválido', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', 'accessToken=token-invalido')
+      .send({ telefono: '12345678' })
       .expect(401);
 
     expect(respuesta.body.message).toBe('Sesión inválida');
@@ -178,6 +353,21 @@ describe('Perfil propio (e2e)', () => {
     expect(respuesta.body.message).toBe('Sesión inválida');
   });
 
+  it('PATCH P4: 401 con token expirado', async () => {
+    const expirado = await jwtService.signAsync(
+      { sub: idCuentaA, rolId: 1, jti: randomUUID() },
+      { expiresIn: -10 },
+    );
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', `accessToken=${expirado}`)
+      .send({ telefono: '12345678' })
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
   it('E5: 401 con jti revocado por logout', async () => {
     const cookieAcceso = await iniciarSesion(correoA);
 
@@ -190,6 +380,23 @@ describe('Perfil propio (e2e)', () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/perfil/me')
       .set('Cookie', cookieAcceso)
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('PATCH P5: 401 con jti revocado por logout', async () => {
+    const cookieAcceso = await iniciarSesion(correoA);
+
+    await request(app.getHttpServer())
+      .post('/api/auth/logout')
+      .set('Cookie', cookieAcceso)
+      .expect(200);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', cookieAcceso)
+      .send({ telefono: '12345678' })
       .expect(401);
 
     expect(respuesta.body.message).toBe('Sesión inválida');
@@ -221,6 +428,32 @@ describe('Perfil propio (e2e)', () => {
     expect(respuesta.body.message).toBe('Sesión inválida');
   });
 
+  it('PATCH P6: 401 con cuenta bloqueada', async () => {
+    const { correo } = await registrarCuenta('bloqueada-patch');
+    const cuenta = await prisma.cuenta.findUniqueOrThrow({
+      where: { correo },
+      select: { id_cuenta: true },
+    });
+    await prisma.cuenta.update({
+      where: { id_cuenta: cuenta.id_cuenta },
+      data: { bloqueado: true },
+    });
+
+    const token = await jwtService.signAsync({
+      sub: cuenta.id_cuenta,
+      rolId: 1,
+      jti: randomUUID(),
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', `accessToken=${token}`)
+      .send({ telefono: '12345678' })
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
   it('E7: 401 con cuenta sin usuario asociado', async () => {
     // Cuenta creada directamente en PostgreSQL, sin fila USUARIO.
     const cuentaSinUsuario = await prisma.cuenta.create({
@@ -241,6 +474,31 @@ describe('Perfil propio (e2e)', () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/perfil/me')
       .set('Cookie', `accessToken=${token}`)
+      .expect(401);
+
+    expect(respuesta.body.message).toBe('Sesión inválida');
+  });
+
+  it('PATCH P7: 401 con cuenta sin usuario asociado', async () => {
+    const cuentaSinUsuario = await prisma.cuenta.create({
+      data: {
+        correo: `perfil.e2e.sinusuario.patch.${randomUUID()}@duocuc.cl`,
+        claveHash: 'hash-de-prueba',
+        telefono: '91234567',
+      },
+      select: { id_cuenta: true },
+    });
+
+    const token = await jwtService.signAsync({
+      sub: cuentaSinUsuario.id_cuenta,
+      rolId: 1,
+      jti: randomUUID(),
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/perfil/me')
+      .set('Cookie', `accessToken=${token}`)
+      .send({ telefono: '12345678' })
       .expect(401);
 
     expect(respuesta.body.message).toBe('Sesión inválida');
@@ -269,6 +527,34 @@ describe('Perfil propio (e2e)', () => {
 
     expect(respuestaB.body.correo).toBe(cuentaB.correo);
     expect(respuestaB.body.run).toBe(cuentaB.run);
+  });
+
+  it('PATCH P8: aislamiento, cada sesión actualiza solo su propio perfil', async () => {
+    const cuentaB = await registrarCuenta('b-patch');
+    const cookieA = await iniciarSesion(correoA);
+    const cookieB = await iniciarSesion(cuentaB.correo);
+
+    const [respuestaA, respuestaB] = await Promise.all([
+      request(app.getHttpServer())
+        .patch('/api/perfil/me')
+        .set('Cookie', cookieA)
+        .send({ telefono: '11112222' })
+        .expect(200),
+      request(app.getHttpServer())
+        .patch('/api/perfil/me')
+        .set('Cookie', cookieB)
+        .send({ telefono: '33334444' })
+        .expect(200),
+    ]);
+
+    expect(respuestaA.body.correo).toBe(correoA);
+    expect(respuestaA.body.telefono).toBe('11112222');
+    expect(respuestaA.body.correo).not.toBe(cuentaB.correo);
+    expect(respuestaA.body.run).not.toBe(cuentaB.run);
+
+    expect(respuestaB.body.correo).toBe(cuentaB.correo);
+    expect(respuestaB.body.run).toBe(cuentaB.run);
+    expect(respuestaB.body.telefono).toBe('33334444');
   });
 
   it('E9: la consulta no muta datos de cuenta ni usuario', async () => {

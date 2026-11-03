@@ -55,6 +55,41 @@ export async function ejecutarSeedDev(): Promise<void> {
         data: { nombre: 'Carrera de prueba', fk_escuela: escuela.id },
       });
     }
+
+    // Catálogos de publicación (HU-PUB-01, T-02).
+    // skipDuplicates usa los índices unique de cada tabla.
+    await prisma.estadoPublicacion.createMany({
+      data: [
+        { descripcion: 'En curso' },
+        { descripcion: 'Pausado' },
+        { descripcion: 'Vendido' },
+      ],
+      skipDuplicates: true,
+    });
+
+    await prisma.tipoVenta.createMany({
+      data: [
+        { nombre: 'Producto' },
+        { nombre: 'Servicio' },
+      ],
+      skipDuplicates: true,
+    });
+
+    await prisma.categoria.createMany({
+      data: [
+        { nombre: 'Tecnología y accesorios' },
+        { nombre: 'Libros y material de estudio' },
+        { nombre: 'Insumos y materiales académicos' },
+        { nombre: 'Vestuario y accesorios' },
+        { nombre: 'Hogar y vida diaria' },
+        { nombre: 'Deportes y bienestar' },
+        { nombre: 'Servicios académicos' },
+        { nombre: 'Servicios técnicos y creativos' },
+        { nombre: 'Servicios personales y varios' },
+        { nombre: 'Otros' },
+      ],
+      skipDuplicates: true,
+    });
   } finally {
     await prisma.$disconnect();
   }

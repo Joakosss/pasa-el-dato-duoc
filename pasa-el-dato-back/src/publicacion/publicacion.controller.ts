@@ -1,0 +1,377 @@
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import type { Request } from 'express';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js';
+import { AlmacenamientoImagenesService } from './almacenamiento-imagenes.service.js';
+import { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.js';
+import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
+import { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
+import { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
+import { PublicacionListaRespuestaDto } from './dto/publicacion-lista-respuesta.dto.js';
+import {
+  CAMPO_IMAGENES,
+  CANTIDAD_MAXIMA_IMAGENES,
+  TAMANO_MAXIMO_IMAGEN_BYTES,
+  MIMES_IMAGEN_PERMITIDOS,
+} from './imagenes.constantes.js';
+import { PublicacionService } from './publicacion.service.js';
+import { traducirErrorMulter } from './errores-multer.js';
+import { asegurarCampoImagenes, type ImagenRecibida } from './validar-imagenes.js';
+
+// Los archivos de multer con memoryStorage tienen la misma forma que
+// ImagenRecibida pero son tipados por la plataforma como Express.Multer.File.
+// Se usa conversión explícita de tipo para evitar dependencia de @types/multer.
+function toImagenesRecibidas(archivos: unknown[]): ImagenRecibida[] {
+  return archivos as ImagenRecibida[];
+}
+
+@ApiTags('Publicaciones')
+@Controller('publicaciones')
+export class PublicacionController {
+  constructor(
+    private readonly publicacionService: PublicacionService,
+    private readonly almacenamientoImagenesService: AlmacenamientoImagenesService,
+  ) {}
+
+  @Get()
+  @ApiOperation({
+    summary:
+      'Listar publicaciones visibles (excluye automáticamente eliminado=true)',
+  })
+  @ApiOkResponse({ type: [PublicacionListaRespuestaDto] })
+  async listar(): Promise<PublicacionListaRespuestaDto[]> {
+    return this.publicacionService.listarPublicaciones();
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary:
+      'Obtener detalle de publicación visible (404 si eliminado=true)',
+  })
+  @ApiOkResponse({ type: PublicacionEdicionRespuestaDto })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async obtenerDetalle(
+    @Param('id') id: string,
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    return this.publicacionService.obtenerPublicacionDetalle(id);
+  }
+
+  @Get(':id/edicion')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Obtener publicación propia no eliminada para pre-edición' })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: PublicacionEdicionRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async obtenerParaEdicion(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicacionService.obtenerPublicacionParaEdicion(id, user.idCuenta);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FilesInterceptor(CAMPO_IMAGENES, CANTIDAD_MAXIMA_IMAGENES, {
+      storage: undefined, // memoryStorage por defecto: buffers en memoria
+      limits: { fileSize: TAMANO_MAXIMO_IMAGEN_BYTES },
+      fileFilter: (
+        _req: unknown,
+        file: unknown,
+        cb: (err: Error | null, acceptFile: boolean) => void,
+      ) => {
+        const f = file as { mimetype: string; originalname: string };
+        if (
+          MIMES_IMAGEN_PERMITIDOS.includes(
+            f.mimetype as (typeof MIMES_IMAGEN_PERMITIDOS)[number],
+          )
+        ) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              `Formato de imagen no permitido: ${f.originalname}`,
+            ),
+            false,
+          );
+        }
+      },
+    }),
+  )
+  @ApiOperation({ summary: 'Crear publicación con imágenes' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: [
+        'titulo',
+        'descripcion',
+        'precio',
+        'sedeId',
+        'tipoVentaId',
+        'categoriaId',
+        'imagenes',
+      ],
+      properties: {
+        titulo: {
+          type: 'string',
+          minLength: 5,
+          maxLength: 100,
+          example: 'Notebook Lenovo ThinkPad',
+        },
+        descripcion: {
+          type: 'string',
+          minLength: 20,
+          maxLength: 2000,
+          example: 'Notebook en buen estado, 16 GB de RAM y disco de 512 GB.',
+        },
+        precio: {
+          type: 'string',
+          example: '150000',
+          description: 'Entero en CLP enviado como texto en multipart/form-data',
+        },
+        sedeId: {
+          type: 'string',
+          example: '1',
+          description: 'Identificador de sede enviado como texto en multipart/form-data',
+        },
+        tipoVentaId: {
+          type: 'string',
+          example: '1',
+          description:
+            'Identificador de tipo de venta enviado como texto en multipart/form-data',
+        },
+        categoriaId: {
+          type: 'string',
+          example: '1',
+          description:
+            'Identificador de categoría enviado como texto en multipart/form-data',
+        },
+        imagenes: {
+          type: 'array',
+          minItems: 1,
+          maxItems: 5,
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCreatedResponse({ type: PublicacionCreadaRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  async crear(
+    @Req() solicitud: Request & { user?: SesionAutenticada; files?: unknown[] },
+    @Body() dto: CrearPublicacionDto,
+  ): Promise<PublicacionCreadaRespuestaDto> {
+    // El guard garantiza que user existe; el check explícito evita el tipo nullable.
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    // FilesInterceptor coloca los archivos en request.files.
+    // Traducir errores de multer que hayan pasado hasta aquí.
+    const archivosRaw = solicitud.files ?? [];
+    const archivos = toImagenesRecibidas(Array.isArray(archivosRaw) ? archivosRaw : []);
+
+    // Verifica que el campo sea exactamente CAMPO_IMAGENES.
+    try {
+      asegurarCampoImagenes(archivos);
+    } catch (err: unknown) {
+      throw traducirErrorMulter(err) as Error;
+    }
+
+    return this.publicacionService.crearPublicacion(
+      dto,
+      archivos,
+      user.idCuenta,
+      this.almacenamientoImagenesService,
+    );
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FilesInterceptor(CAMPO_IMAGENES, CANTIDAD_MAXIMA_IMAGENES, {
+      storage: undefined,
+      limits: { fileSize: TAMANO_MAXIMO_IMAGEN_BYTES },
+      fileFilter: (
+        _req: unknown,
+        file: unknown,
+        cb: (err: Error | null, acceptFile: boolean) => void,
+      ) => {
+        const f = file as { mimetype: string; originalname: string };
+        if (
+          MIMES_IMAGEN_PERMITIDOS.includes(
+            f.mimetype as (typeof MIMES_IMAGEN_PERMITIDOS)[number],
+          )
+        ) {
+          cb(null, true);
+        } else {
+          cb(
+            new BadRequestException(
+              `Formato de imagen no permitido: ${f.originalname}`,
+            ),
+            false,
+          );
+        }
+      },
+    }),
+  )
+  @ApiOperation({ summary: 'Actualizar publicación propia no eliminada con imágenes' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: [
+        'titulo',
+        'descripcion',
+        'precio',
+        'sedeId',
+        'tipoVentaId',
+        'categoriaId',
+      ],
+      properties: {
+        titulo: {
+          type: 'string',
+          minLength: 5,
+          maxLength: 100,
+          example: 'Notebook Lenovo ThinkPad (actualizado)',
+        },
+        descripcion: {
+          type: 'string',
+          minLength: 20,
+          maxLength: 2000,
+          example: 'Actualización de la descripción de la publicación.',
+        },
+        precio: {
+          type: 'string',
+          example: '120000',
+          description: 'Entero en CLP enviado como texto en multipart/form-data',
+        },
+        sedeId: {
+          type: 'string',
+          example: '1',
+          description: 'Identificador de sede enviado como texto en multipart/form-data',
+        },
+        tipoVentaId: {
+          type: 'string',
+          example: '1',
+          description:
+            'Identificador de tipo de venta enviado como texto en multipart/form-data',
+        },
+        categoriaId: {
+          type: 'string',
+          example: '1',
+          description:
+            'Identificador de categoría enviado como texto en multipart/form-data',
+        },
+        imagenes: {
+          type: 'array',
+          description:
+            'Opcional. Si se adjunta, reemplaza las imágenes de la publicación. Debe incluir entre 1 y 5 imágenes.',
+          minItems: 1,
+          maxItems: 5,
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
+        },
+      },
+    },
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: PublicacionEdicionRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async actualizar(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada; files?: unknown[] },
+    @Body() dto: ActualizarPublicacionDto,
+  ): Promise<PublicacionEdicionRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    const archivosRaw = solicitud.files ?? [];
+    const archivos = toImagenesRecibidas(Array.isArray(archivosRaw) ? archivosRaw : []);
+
+    if (archivos.length > 0) {
+      try {
+        asegurarCampoImagenes(archivos);
+      } catch (err: unknown) {
+        throw traducirErrorMulter(err) as Error;
+      }
+    }
+
+    return this.publicacionService.actualizarPublicacion(
+      id,
+      dto,
+      archivos,
+      user.idCuenta,
+      this.almacenamientoImagenesService,
+    );
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Eliminar (soft delete) publicación propia no eliminada' })
+  @ApiCookieAuth('accessToken')
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({ description: 'No tiene permisos para eliminar esta publicación' })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async eliminar(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<void> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    await this.publicacionService.eliminarPublicacion(
+      id,
+      user.idCuenta,
+      this.almacenamientoImagenesService,
+    );
+  }
+}

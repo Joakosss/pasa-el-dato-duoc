@@ -11,6 +11,6 @@ export class ComunaRespuestaDto {
   @ApiProperty({ example: '13201', description: 'Código SUBDERE de la comuna' })
   codigoSubdere: string;
 
-  @ApiProperty({ example: 1, description: 'Ciudad a la que pertenece' })
-  ciudadId: number;
+  @ApiProperty({ example: 13, description: 'Región a la que pertenece' })
+  regionId: number;
 }

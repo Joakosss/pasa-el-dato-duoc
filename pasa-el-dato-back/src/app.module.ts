@@ -12,6 +12,9 @@ import { PerfilModule } from './perfil/perfil.module.js';
 import { RegionModule } from './region/region.module.js';
 import { CiudadModule } from './ciudad/ciudad.module.js';
 import { ComunaModule } from './comuna/comuna.module.js';
+import { PublicacionModule } from './publicacion/publicacion.module.js';
+import { CategoriaModule } from './categoria/categoria.module.js';
+import { TipoVentaModule } from './tipo-venta/tipo-venta.module.js';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { ComunaModule } from './comuna/comuna.module.js';
     RegionModule,
     CiudadModule,
     ComunaModule,
+    PublicacionModule,
+    CategoriaModule,
+    TipoVentaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

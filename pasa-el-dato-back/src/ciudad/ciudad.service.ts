@@ -16,6 +16,7 @@ export class CiudadService {
       where: { regionId },
       select: {
         id: true,
+        idEntidad: true,
         nombre: true,
         regionId: true,
       },

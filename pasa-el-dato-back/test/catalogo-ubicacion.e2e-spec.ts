@@ -4,8 +4,6 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 
-// Contrato del catálogo territorial de la fase A de HU-UBI-01:
-// región → ciudad → comuna → sede, con filtros y errores 400/404.
 describe('Catálogo de ubicación (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
@@ -13,7 +11,10 @@ describe('Catálogo de ubicación (e2e)', () => {
   // Datos creados por esta prueba; se identifican por sus códigos.
   const codigoRegion = 'e2e-region-1';
   const codigoComuna = 'e2e-comuna-1';
+  const codigoComunaSinCiudad = 'e2e-comuna-2';
+  const idEntidadCiudad = 'e2e-ciudad-1';
   const nombreCiudad = 'Ciudad e2e catálogo';
+  const nombreCiudadSinComuna = 'Ciudad e2e sin comuna';
   const nombreSedeActiva = 'Sede e2e catálogo activa';
   const nombreSedeInactiva = 'Sede e2e catálogo inactiva';
   const nombreSedeEliminada = 'Sede e2e catálogo eliminada';
@@ -25,13 +26,18 @@ describe('Catálogo de ubicación (e2e)', () => {
 
   let regionId = 0;
   let ciudadId = 0;
+  let ciudadSinComunaId = 0;
   let comunaId = 0;
+  let comunaSinCiudadId = 0;
 
-  // Borra cualquier resto de ejecuciones anteriores antes de crear datos.
   async function limpiarDatosPrueba(): Promise<void> {
     await prisma.sede.deleteMany({ where: { nombre: { in: nombresSede } } });
-    await prisma.comuna.deleteMany({ where: { codigoSubdere: codigoComuna } });
-    await prisma.ciudad.deleteMany({ where: { nombre: nombreCiudad } });
+    await prisma.ciudad.deleteMany({
+      where: { nombre: { in: [nombreCiudad, nombreCiudadSinComuna] } },
+    });
+    await prisma.comuna.deleteMany({
+      where: { codigoSubdere: { in: [codigoComuna, codigoComunaSinCiudad] } },
+    });
     await prisma.region.deleteMany({ where: { codigoSubdere: codigoRegion } });
   }
 
@@ -41,7 +47,6 @@ describe('Catálogo de ubicación (e2e)', () => {
     }).compile();
 
     app = modulo.createNestApplication();
-    // Replica la configuración relevante de main.ts para validar y normalizar DTOs.
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.setGlobalPrefix('api');
     await app.init();
@@ -53,15 +58,41 @@ describe('Catálogo de ubicación (e2e)', () => {
     const region = await prisma.region.create({
       data: { nombre: 'Región e2e catálogo', codigoSubdere: codigoRegion },
     });
+
     const ciudad = await prisma.ciudad.create({
-      data: { nombre: nombreCiudad, regionId: region.id },
+      data: {
+        nombre: nombreCiudad,
+        idEntidad: idEntidadCiudad,
+        regionId: region.id,
+      },
     });
+
+    const ciudadSinComuna = await prisma.ciudad.create({
+      data: {
+        nombre: nombreCiudadSinComuna,
+        regionId: region.id,
+      },
+    });
+
     const comuna = await prisma.comuna.create({
       data: {
         nombre: 'Comuna e2e catálogo',
         codigoSubdere: codigoComuna,
-        ciudadId: ciudad.id,
+        regionId: region.id,
       },
+    });
+
+    const comunaSinCiudad = await prisma.comuna.create({
+      data: {
+        nombre: 'Comuna e2e sin ciudad',
+        codigoSubdere: codigoComunaSinCiudad,
+        regionId: region.id,
+      },
+    });
+
+    await prisma.ciudad.update({
+      where: { id: ciudad.id },
+      data: { comunaId: comuna.id },
     });
 
     await prisma.sede.createMany({
@@ -79,7 +110,9 @@ describe('Catálogo de ubicación (e2e)', () => {
 
     regionId = region.id;
     ciudadId = ciudad.id;
+    ciudadSinComunaId = ciudadSinComuna.id;
     comunaId = comuna.id;
+    comunaSinCiudadId = comunaSinCiudad.id;
   });
 
   afterAll(async () => {
@@ -123,7 +156,7 @@ describe('Catálogo de ubicación (e2e)', () => {
     expect(respuesta.body.message).toBe('Región no existe');
   });
 
-  it('GET /api/ciudades filtra por la región indicada', async () => {
+  it('GET /api/ciudades filtra por la región indicada e incluye idEntidad', async () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/ciudades')
       .query({ regionId })
@@ -134,19 +167,40 @@ describe('Catálogo de ubicación (e2e)', () => {
     );
     expect(ciudad).toMatchObject({
       id: ciudadId,
+      idEntidad: idEntidadCiudad,
       nombre: nombreCiudad,
       regionId,
     });
   });
 
-  it('GET /api/comunas sin ciudadId responde 400', async () => {
+  it('GET /api/comunas sin parámetros responde 400', async () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/comunas')
       .expect(400);
 
     expect(respuesta.body.message).toContain(
-      'ciudadId debe ser un número entero',
+      'Debe indicar exactamente uno de regionId o ciudadId',
     );
+  });
+
+  it('GET /api/comunas con ambos parámetros responde 400', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/comunas')
+      .query({ regionId, ciudadId })
+      .expect(400);
+
+    expect(respuesta.body.message).toContain(
+      'Debe indicar exactamente uno de regionId o ciudadId',
+    );
+  });
+
+  it('GET /api/comunas con regionId inexistente responde 404', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/comunas')
+      .query({ regionId: 999999 })
+      .expect(404);
+
+    expect(respuesta.body.message).toBe('Región no existe');
   });
 
   it('GET /api/comunas con ciudadId inexistente responde 404', async () => {
@@ -158,7 +212,37 @@ describe('Catálogo de ubicación (e2e)', () => {
     expect(respuesta.body.message).toBe('Ciudad no existe');
   });
 
-  it('GET /api/comunas filtra por la ciudad indicada', async () => {
+  it('GET /api/comunas con regionId devuelve todas las comunas de la región, incluida la que no tiene ciudad', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/comunas')
+      .query({ regionId })
+      .expect(200);
+
+    const ids = respuesta.body.map((item: { id: number }) => item.id);
+    expect(ids).toContain(comunaId);
+    expect(ids).toContain(comunaSinCiudadId);
+
+    const comuna = respuesta.body.find(
+      (item: { id: number }) => item.id === comunaId,
+    );
+    expect(comuna).toMatchObject({
+      id: comunaId,
+      nombre: 'Comuna e2e catálogo',
+      codigoSubdere: codigoComuna,
+      regionId,
+    });
+
+    const comunaSinCiudad = respuesta.body.find(
+      (item: { id: number }) => item.id === comunaSinCiudadId,
+    );
+    expect(comunaSinCiudad).toMatchObject({
+      id: comunaSinCiudadId,
+      nombre: 'Comuna e2e sin ciudad',
+      regionId,
+    });
+  });
+
+  it('GET /api/comunas con ciudadId devuelve la comuna asociada', async () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/comunas')
       .query({ ciudadId })
@@ -171,8 +255,18 @@ describe('Catálogo de ubicación (e2e)', () => {
       id: comunaId,
       nombre: 'Comuna e2e catálogo',
       codigoSubdere: codigoComuna,
-      ciudadId,
+      regionId,
     });
+  });
+
+  it('GET /api/comunas con ciudadId sin comuna asociada responde 200 con array vacío', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/comunas')
+      .query({ ciudadId: ciudadSinComunaId })
+      .expect(200);
+
+    expect(Array.isArray(respuesta.body)).toBe(true);
+    expect(respuesta.body).toHaveLength(0);
   });
 
   it('GET /api/sedes sin parámetros conserva el comportamiento histórico', async () => {
@@ -180,7 +274,6 @@ describe('Catálogo de ubicación (e2e)', () => {
       .get('/api/sedes')
       .expect(200);
 
-    // Sin filtros también aparecen sedes inactivas o eliminadas.
     const nombres = respuesta.body.map(
       (sede: { nombre: string }) => sede.nombre,
     );

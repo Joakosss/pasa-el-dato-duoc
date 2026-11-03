@@ -24,7 +24,9 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:schema:sql": "prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script",
-    "db:seed:dev": "pnpm build && node dist/seed/ejecutar-seed-dev.js"
+    "db:seed:dev": "pnpm build && node dist/seed/ejecutar-seed-dev.js",
+    "db:seed:territorial": "pnpm build && node dist/seed/ejecutar-seed-territorial.js",
+    "db:seed:sedes": "pnpm build && node dist/seed/ejecutar-seed-sedes.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",

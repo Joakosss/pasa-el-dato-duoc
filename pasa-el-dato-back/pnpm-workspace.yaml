@@ -2,6 +2,7 @@ allowBuilds:
   '@prisma/engines': true
   '@scarf/scarf': set this to true or false
   esbuild: false
-  msgpackr-extract: set this to true or false
+  msgpackr-extract: false
   prisma: false
-  workerd: set this to true or false
+  workerd: false
+  '@scarf/scarf': false
