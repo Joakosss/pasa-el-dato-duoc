@@ -12,11 +12,13 @@ import { afterAll, beforeAll, beforeEach, expect, it, vi } from 'vitest';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { AuthModule } from './auth.module.js';
 import { AuthService } from './auth.service.js';
+import { JwtAuthGuard } from './jwt-auth.guard.js';
 
 describe('AuthController: login y renovación', () => {
   let app: INestApplication;
   const iniciarSesion = vi.fn();
   const renovarSesion = vi.fn();
+  const cambiarContrasena = vi.fn();
   const crearLog = vi.fn().mockResolvedValue({});
 
   beforeAll(async () => {
@@ -31,7 +33,22 @@ describe('AuthController: login y renovación', () => {
       .overrideProvider(PrismaService)
       .useValue({ log_api: { create: crearLog } })
       .overrideProvider(AuthService)
-      .useValue({ iniciarSesion, renovarSesion })
+      .useValue({ iniciarSesion, renovarSesion, cambiarContrasena })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: (context: { switchToHttp: () => { getRequest: () => any } }) => {
+          const req = context.switchToHttp().getRequest();
+          const token = req.cookies?.accessToken;
+          if (typeof token === 'string' && token) {
+            req.user = {
+              idCuenta: 'uuid-cuenta',
+              rol: { id: 1, descripcion: 'Estudiante' },
+            };
+            return true;
+          }
+          return false;
+        },
+      })
       .compile();
 
     app = modulo.createNestApplication();
@@ -223,6 +240,49 @@ describe('AuthController: login y renovación', () => {
     expect(operacion?.responses).toHaveProperty('200');
     expect(operacion?.responses).toHaveProperty('401');
     expect(operacion?.responses).toHaveProperty('403');
+  });
+
+  it('cambia contraseña cuando hay sesión y limpia cookies', async () => {
+    cambiarContrasena.mockResolvedValueOnce(undefined);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch('/api/auth/password')
+      .set('Cookie', ['accessToken=jwt-de-prueba', 'refreshToken=refresh-de-prueba'])
+      .send({
+        contrasenaActual: 'clave-actual',
+        contrasenaNueva: 'clave-nueva-123',
+      })
+      .expect(204);
+
+    // No debe retornar body.
+    expect(respuesta.body).toEqual({});
+    // Debe limpiar cookies (clearCookie).
+    const setCookies = respuesta.headers['set-cookie'] as unknown as
+      | string[]
+      | undefined;
+    expect(setCookies).toBeDefined();
+    expect(setCookies?.join(';')).toContain('accessToken=');
+    expect(setCookies?.join(';')).toContain('refreshToken=');
+    expect(cambiarContrasena).toHaveBeenCalledWith({
+      idCuenta: 'uuid-cuenta',
+      accessJti: undefined,
+      accessExp: undefined,
+      dto: {
+        contrasenaActual: 'clave-actual',
+        contrasenaNueva: 'clave-nueva-123',
+      },
+    });
+  });
+
+  it('rechaza cambiar contraseña cuando no hay sesión', async () => {
+    await request(app.getHttpServer())
+      .patch('/api/auth/password')
+      .send({
+        contrasenaActual: 'clave-actual',
+        contrasenaNueva: 'clave-nueva-123',
+      })
+      // El guard en este spec falso devuelve false → Nest responde 403.
+      .expect(403);
   });
 
   it('documenta en Swagger el cambio de contraseña y la cookie accessToken', () => {
