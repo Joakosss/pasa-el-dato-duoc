@@ -56,3 +56,24 @@ Completa el ciclo de vida básico del MVP junto con HU-PUB-01 y HU-PUB-02.
 ## Estado
 
 `lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.
+
+## Subtareas
+### Backend (BE)
+- **HU-PUB-03-BE01**: Crear endpoint protegido `DELETE /api/v1/publicaciones/{id}` vinculando la acción a la sesión del usuario.
+- **HU-PUB-03-BE02**: Validar que la publicación exista, pertenezca al usuario autenticado (extraído del token) y no tenga `eliminado = true`.
+- **HU-PUB-03-BE03**: Aplicar eliminación lógica mediante la bandera `eliminado = true` en base de datos, omitiendo borrado físico de registros o imágenes.
+- **HU-PUB-03-BE04**: Configurar servicios de lectura, catálogo y búsquedas para filtrar y excluir automáticamente publicaciones con `eliminado = true`.
+- **HU-PUB-03-BE05**: Desarrollar pruebas unitarias e integración para validar borrado lógico, restricciones de propietario y manejo de errores (no encontrada, ajena o ya eliminada).
+
+### Frontend (FE)
+- **HU-PUB-03-FE01**: Agregar botón/opción "Eliminar publicación" visible únicamente para el propietario de la publicación.
+- **HU-PUB-03-FE02**: Crear modal/diálogo de confirmación que solicite la aprobación explícita antes de ejecutar el borrado.
+- **HU-PUB-03-FE03**: Gestionar la cancelación en el modal cerrándolo y conservando la vista y datos de la publicación sin cambios.
+- **HU-PUB-03-FE04**: Integrar la acción de eliminación con la API, deshabilitando botones y mostrando estado de carga durante el proceso.
+- **HU-PUB-03-FE05**: Desplegar notificación (*toast*) de confirmación de éxito y redirigir/remover la publicación del listado local sin recarga manual.
+- **HU-PUB-03-FE06**: Mostrar mensajes de error en la interfaz si el backend rechaza la solicitud (fallo de autorización, red o publicación no disponible).
+
+### Integración y QA (INT/QA)
+- **HU-PUB-03-INT01**: Definir y documentar el contrato OpenAPI/Swagger para el endpoint `DELETE /api/v1/publicaciones/{id}`.
+- **HU-PUB-03-INT02**: Ejecutar pruebas de seguridad para verificar que no se puedan eliminar publicaciones de terceros inyectando IDs ajenos.
+- **HU-PUB-03-INT03**: Realizar pruebas end-to-end (E2E) para escenarios de confirmación (verificando exclusión en catálogo/búsquedas) y cancelación del flujo.

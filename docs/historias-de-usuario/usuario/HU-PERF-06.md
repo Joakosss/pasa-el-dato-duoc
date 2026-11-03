@@ -57,6 +57,29 @@ Importante para seguridad y control de cuenta, pero no bloquea el flujo principa
 
 - Definir si el MVP implementa desactivación o eliminación lógica, y sus efectos sobre datos asociados.
 
+## Subtareas
+### Backend (BE)
+- **HU-PERF-06-BE01**: Definir decisión MVP: desactivación vs eliminación lógica (bandera/estado), y sus efectos sobre datos asociados (publicaciones, chat, etc.) sin borrado físico.
+- **HU-PERF-06-BE02**: Crear endpoint protegido para eliminar/desactivar cuenta propia (p. ej. `DELETE /api/v1/cuenta/me` o `POST /api/v1/cuenta/me/desactivar`), con confirmación explícita desde el front.
+- **HU-PERF-06-BE03**: Implementar regla: solo el usuario autenticado afecta su propia cuenta (vinculado a token) y rechazar sin sesión válida.
+- **HU-PERF-06-BE04**: Aplicar la desactivación/eliminación lógica según lo definido (sin borrado físico), y asegurar idempotencia (si ya está desactivada, no duplicar cambios).
+- **HU-PERF-06-BE05**: Bloquear autenticación de cuentas desactivadas/eliminadas lógicamente (ajustar flujo de login/guards según patrón existente).
+- **HU-PERF-06-BE06**: Invalidar sesión/refresh tokens y cualquier resto de sesión reutilizable tras operación exitosa (alineado a HU-AUTH-03).
+- **HU-PERF-06-BE07**: Pruebas unitarias e integración: confirmación requerida (a nivel de contrato), autenticación requerida, operación exitosa, login bloqueado posterior y limpieza de sesión.
+
+### Frontend (FE)
+- **HU-PERF-06-FE01**: Crear pantalla/sección “Eliminar o desactivar cuenta” en “Mi cuenta”, accesible solo autenticado.
+- **HU-PERF-06-FE02**: Implementar modal/diálogo de confirmación explícita (confirmar/cancelar) antes de llamar a la API.
+- **HU-PERF-06-FE03**: Manejar cancelación cerrando el modal sin efectuar cambios.
+- **HU-PERF-06-FE04**: Integrar acción con la API, mostrando loading/disabled y notificación de éxito.
+- **HU-PERF-06-FE05**: Tras éxito, limpiar estado local de sesión (store, cookies/localStorage según corresponda) y redirigir a pantalla pública/login.
+- **HU-PERF-06-FE06**: Manejar errores (no autenticado, red, rechazo backend) con mensajes adecuados.
+
+### Integración y QA (INT/QA)
+- **HU-PERF-06-INT01**: Definir y documentar contrato OpenAPI/Swagger del endpoint (operación elegida, confirmación, respuestas, errores).
+- **HU-PERF-06-INT02**: Pruebas de seguridad: verificar que no se pueda desactivar otra cuenta y que tras desactivación no se pueda reutilizar sesión.
+- **HU-PERF-06-INT03**: Pruebas E2E: cancelar no cambia nada; confirmar desactiva/elimina lógicamente; luego intentar login y verificar rechazo.
+
 ## Estado
 
 `borrador` — requiere decisión de “desactivar vs eliminar lógico” antes de pasar a `lista`.

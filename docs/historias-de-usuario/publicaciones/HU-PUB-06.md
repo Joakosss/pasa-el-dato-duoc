@@ -52,6 +52,26 @@ Punto de acceso para administrar el ciclo de vida; sin bloquear creación ni edi
 
 - Ninguna bloqueante para iniciar el flujo.
 
+## Subtareas
+### Backend (BE)
+- **HU-PUB-06-BE01**: Crear endpoint protegido `GET /api/v1/publicaciones/mias` (o equivalente), vinculando la consulta al usuario autenticado.
+- **HU-PUB-06-BE02**: Implementar filtro: retornar solo publicaciones del usuario con `eliminado = false`.
+- **HU-PUB-06-BE03**: Definir payload de lista “mis publicaciones” incluyendo: título, precio, estado, sede y una imagen representativa (y su regla de selección).
+- **HU-PUB-06-BE04**: Manejo de lista vacía: responder éxito con lista vacía (sin errores).
+- **HU-PUB-06-BE05**: Pruebas unitarias e integración: con publicaciones, sin publicaciones, con eliminadas (excluidas), y no autenticado (rechazo).
+
+### Frontend (FE)
+- **HU-PUB-06-FE01**: Crear vista/página “Mis publicaciones” accesible solo autenticado (guard/redirect según patrón existente).
+- **HU-PUB-06-FE02**: Integrar consumo del endpoint y renderizar tarjetas con campos requeridos (título, precio, estado, sede, imagen representativa).
+- **HU-PUB-06-FE03**: Implementar estado de lista vacía con mensaje UX (sin tratarlo como error).
+- **HU-PUB-06-FE04**: Al seleccionar una publicación, navegar al detalle y exponer acciones: editar (HU-PUB-02), eliminar (HU-PUB-03) y cambiar estado (HU-PUB-04).
+- **HU-PUB-06-FE05**: Manejar loading/error (skeleton, retry, mensajes de error) y refresco local tras acciones (p. ej. si se elimina o cambia estado).
+
+### Integración y QA (INT/QA)
+- **HU-PUB-06-INT01**: Definir y documentar contrato OpenAPI/Swagger del endpoint de “mis publicaciones”.
+- **HU-PUB-06-INT02**: Pruebas de seguridad: confirmar que el endpoint no permita enumerar publicaciones de otros usuarios (siempre ligado al token).
+- **HU-PUB-06-INT03**: Pruebas E2E del flujo: entrar a “mis publicaciones”, lista vacía, acceder a detalle y ejecutar acciones (editar/cambiar estado/eliminar) verificando actualización del listado.
+
 ## Estado
 
 `lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.

@@ -64,6 +64,27 @@ Cierra el ciclo de vida de la publicación tras CRUD básico; no bloquea crear/e
 - Catálogo definitivo de estados y reglas de visibilidad por estado (no bloquea explorar, bloquea especificar).
 - Relación entre estado inicial `Publicada` (HU-PUB-01) y “en curso”.
 
+## Subtareas
+### Backend (BE)
+- **HU-PUB-04-BE01**: Definir/implementar catálogo de estados permitidos para propietario (en curso, pausada, vendida) y su validación a nivel de servicio/DTO.
+- **HU-PUB-04-BE02**: Crear endpoint protegido para cambio de estado (p. ej. `PATCH /api/v1/publicaciones/{id}/estado` o equivalente), vinculando la acción a la sesión del usuario.
+- **HU-PUB-04-BE03**: Validar que la publicación exista, pertenezca al usuario autenticado (desde token), y no tenga `eliminado = true`.
+- **HU-PUB-04-BE04**: Rechazar estados inválidos o no asignables por propietario (código/razón coherente con el estándar de la API).
+- **HU-PUB-04-BE05**: Ajustar servicios/consultas del “flujo normal del marketplace” para aplicar reglas de visibilidad por estado (según decisión MVP pendiente) y asegurar consistencia con `eliminado = true`.
+- **HU-PUB-04-BE06**: Desarrollar pruebas unitarias e integración para: cambio válido, publicación ajena, no encontrada, eliminada y estado inválido.
+
+### Frontend (FE)
+- **HU-PUB-04-FE01**: Agregar UI de cambio de estado disponible solo para el propietario (en detalle y/o “mis publicaciones”): selector/botones (en curso/pausada/vendida).
+- **HU-PUB-04-FE02**: Implementar validación de UI para evitar estados no permitidos (alineado al catálogo definido) y mapear labels.
+- **HU-PUB-04-FE03**: Integrar la acción con la API (mutación), deshabilitando controles y mostrando estado de carga durante el cambio.
+- **HU-PUB-04-FE04**: Actualizar el estado en la vista (optimista o con refetch) y mostrar notificación (*toast*) de éxito.
+- **HU-PUB-04-FE05**: Manejar errores de API (no autorizado, ajena, eliminada/no existe, estado inválido, red) mostrando mensajes accionables.
+
+### Integración y QA (INT/QA)
+- **HU-PUB-04-INT01**: Definir y documentar el contrato OpenAPI/Swagger para el cambio de estado (path, payload, respuestas de éxito/error).
+- **HU-PUB-04-INT02**: Pruebas de seguridad: confirmar que no se pueda cambiar el estado de publicaciones de terceros (IDs ajenos) ni sin autenticación.
+- **HU-PUB-04-INT03**: Pruebas E2E de cambios de estado y verificación de reglas de visibilidad en “flujo normal” (según decisión final para pausada/vendida).
+
 ## Estado
 
 `requiere aclaración` — puede iniciar `explore` para levantar el modelo actual, pero la especificación necesita resolver los pendientes.
