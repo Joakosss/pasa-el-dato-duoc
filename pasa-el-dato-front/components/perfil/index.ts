@@ -1,4 +1,6 @@
 export { EditarPerfil } from "./EditarPerfil";
+export { CambiarContrasenaContenido } from "./CambiarContrasenaContenido";
+export { CambiarContrasenaFormulario } from "./CambiarContrasenaFormulario";
 export { MiPerfilContenido } from "./MiPerfilContenido";
 export { MisPublicacionesContenido } from "./MisPublicacionesContenido";
 export { PerfilDetalle } from "./PerfilDetalle";

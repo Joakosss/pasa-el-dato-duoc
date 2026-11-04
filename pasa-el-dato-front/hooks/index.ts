@@ -11,5 +11,6 @@ export { usePublicacionParaEdicion } from "./use-publicacion-para-edicion";
 export { usePropiedadPublicacion } from "./use-propiedad-publicacion";
 export { useUrlsImagenes } from "./use-urls-imagenes";
 export { usePerfil, useActualizarPerfil } from "./use-perfil";
+export { useCambiarContrasena } from "./use-cambiar-contrasena";
 export { useVerificarRun } from "./use-verificar-run";
 export { useVerificarCorreo } from "./use-verificar-correo";

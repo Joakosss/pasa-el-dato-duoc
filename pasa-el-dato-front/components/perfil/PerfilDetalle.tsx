@@ -78,6 +78,12 @@ export function PerfilDetalle({ perfil }: PerfilDetalleProps) {
           >
             Editar perfil
           </Link>
+          <Link
+            href={ROUTES.miPerfilSeguridad}
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:border-gold hover:bg-gold/10 focus:outline-none focus:ring-2 focus:ring-gold"
+          >
+            Cambiar contraseña
+          </Link>
         </div>
       </header>
 
@@ -145,6 +151,10 @@ export function PerfilDetalle({ perfil }: PerfilDetalleProps) {
               <Dato
                 etiqueta="Carrera"
                 valor={datoOpcional(perfil.carrera?.nombre)}
+              />
+              <Dato
+                etiqueta="Rol"
+                valor={datoOpcional(perfil.rol?.descripcion)}
               />
             </dl>
           </section>

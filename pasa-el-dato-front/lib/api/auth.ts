@@ -1,4 +1,5 @@
 import type {
+  CambiarContrasenaRequestDTO,
   IniciarSesionRequestDTO,
   UsuarioAutenticadoDTO,
 } from "@/domain/dtos/auth.dto";
@@ -15,4 +16,12 @@ export async function iniciarSesion(
 
 export async function cerrarSesionApi(): Promise<void> {
   return apiClient.post<void>("/auth/logout");
+}
+
+// PATCH /auth/password { contrasenaActual, contrasenaNueva } -> 204 sin cuerpo.
+// El back revoca sesiones y limpia cookies; el front debe forzar re-login.
+export async function cambiarContrasenaApi(
+  payload: CambiarContrasenaRequestDTO,
+): Promise<void> {
+  return apiClient.patch<void>("/auth/password", payload);
 }

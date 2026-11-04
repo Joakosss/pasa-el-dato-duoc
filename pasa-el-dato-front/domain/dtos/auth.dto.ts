@@ -4,6 +4,11 @@ export interface IniciarSesionRequestDTO {
   contrasena: string;
 }
 
+// Contrato front del PATCH /auth/password (espejo de CambiarContrasenaDto del back).
+export interface CambiarContrasenaRequestDTO {
+  contrasenaActual: string;
+  contrasenaNueva: string;
+}
 // Espejo de UsuarioAutenticado del back. Los tokens viajan solo en cookies
 // HttpOnly; el cuerpo trae solo la identidad segura.
 export interface UsuarioAutenticadoDTO {

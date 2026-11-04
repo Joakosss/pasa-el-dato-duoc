@@ -8,6 +8,7 @@ export const ROUTES = {
   miPerfil: "/miperfil",
   misPublicaciones: "/miperfil/publicaciones",
   miPerfilEditar: "/miperfil/editar",
+  miPerfilSeguridad: "/miperfil/seguridad",
   product: "/product/placeholder",
   chats: "/chats",
   publish: "/publicar",
