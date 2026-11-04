@@ -10,6 +10,7 @@ import {
 } from 'vitest';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { generarHashContrasena } from '../common/security/contrasena-hash.js';
+import type { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
 import { AuthService, type UsuarioAutenticado } from './auth.service.js';
 import { calcularHashRefreshToken } from './refresh-token.js';
 
@@ -582,5 +583,96 @@ describe('AuthService: búsqueda de cuenta', () => {
       status: 401,
     });
     expect(prismaFalso.refreshToken.create).not.toHaveBeenCalled();
+  });
+
+  describe('cambiarContrasena', () => {
+    const ahora = new Date('2026-11-03T12:00:00.000Z');
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(ahora);
+      // Para este bloque, $transaction debe ejecutar la operación contra tx mock.
+      prismaFalso.$transaction.mockImplementation(
+        (operacion: (tx: typeof prismaFalso & { accessTokenRevocado: unknown; }) => Promise<unknown>) =>
+          operacion({
+            ...prismaFalso,
+            cuenta: {
+              ...prismaFalso.cuenta,
+              update: vi.fn().mockResolvedValue({}),
+            },
+            refreshToken: {
+              ...prismaFalso.refreshToken,
+              updateMany: vi.fn().mockResolvedValue({ count: 2 }),
+            },
+            accessTokenRevocado: {
+              upsert: vi.fn().mockResolvedValue({}),
+            },
+          } as any),
+      );
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('rechaza si la contraseña actual no coincide (mensaje genérico)', async () => {
+      const claveHash = await generarHashContrasena('clave-real');
+      prismaFalso.cuenta.findUnique.mockResolvedValueOnce({ claveHash });
+
+      const dto: CambiarContrasenaDto = {
+        contrasenaActual: 'mala',
+        contrasenaNueva: 'clave-nueva-123',
+      };
+
+      await expect(
+        service.cambiarContrasena({
+          idCuenta: 'id-cuenta',
+          dto,
+        }),
+      ).rejects.toMatchObject({
+        message: 'Credenciales inválidas',
+        status: 401,
+      });
+    });
+
+    it('rechaza si la nueva contraseña no cumple reglas MVP', async () => {
+      const claveHash = await generarHashContrasena('clave-real');
+      prismaFalso.cuenta.findUnique.mockResolvedValueOnce({ claveHash });
+
+      const dto: CambiarContrasenaDto = {
+        contrasenaActual: 'clave-real',
+        contrasenaNueva: 'corta',
+      };
+
+      await expect(
+        service.cambiarContrasena({
+          idCuenta: 'id-cuenta',
+          dto,
+        }),
+      ).rejects.toMatchObject({
+        status: 401,
+      });
+    });
+
+    it('en éxito actualiza hash y revoca refresh tokens + access jti', async () => {
+      const claveHash = await generarHashContrasena('clave-real');
+      prismaFalso.cuenta.findUnique.mockResolvedValueOnce({ claveHash });
+
+      const dto: CambiarContrasenaDto = {
+        contrasenaActual: 'clave-real',
+        contrasenaNueva: 'clave-nueva-123',
+      };
+
+      await expect(
+        service.cambiarContrasena({
+          idCuenta: 'id-cuenta',
+          accessJti: 'jti-actual',
+          accessExp: Math.floor(ahora.getTime() / 1000) + 900,
+          dto,
+        }),
+      ).resolves.toBeUndefined();
+
+      expect(prismaFalso.$transaction).toHaveBeenCalled();
+    });
   });
 });
