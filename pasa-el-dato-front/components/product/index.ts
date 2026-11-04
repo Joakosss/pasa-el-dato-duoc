@@ -1,8 +1,10 @@
-export { ProductCard, type ProductCardDataMomentaneo, type CardSize } from "./ProductCard";
+export { ProductCard, type ProductCardData, type CardSize } from "./ProductCard";
 export { ProductCardSkeleton } from "./ProductCardSkeleton";
 export { ProductGrid } from "./ProductGrid";
 export { ProductGridSkeleton } from "./ProductGridSkeleton";
 export { FeaturedProducts } from "./FeaturedProducts";
+export { ProductDetail } from "./ProductDetail";
+export { RelatedProducts } from "./RelatedProducts";
 export { Pagination } from "./Pagination";
 export { ProductGallery } from "./ProductGallery";
 export { SellerCard } from "./SellerCard";

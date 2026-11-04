@@ -5,9 +5,9 @@ import Link from "next/link";
 
 export type CardSize = "1x1" | "2x2";
 
-// TODO[MOMENTANEO]: mock de UI sin contrato back. Reemplazar por model de dominio (Publicacion) cuando exista.
-export interface ProductCardDataMomentaneo {
+export interface ProductCardData {
   id: string;
+  imageUrl?: string;
   category?: string;
   title?: string;
   meta?: string;
@@ -18,7 +18,7 @@ export interface ProductCardDataMomentaneo {
   size?: CardSize;
 }
 
-export function ProductCard({ item }: { item: ProductCardDataMomentaneo }) {
+export function ProductCard({ item }: { item: ProductCardData }) {
   const large = item.size === "2x2" || (!item.size && item.featured);
   return (
     <Link
@@ -35,11 +35,26 @@ export function ProductCard({ item }: { item: ProductCardDataMomentaneo }) {
         </div>
       ) : null}
       <div className="relative">
-        <div
-          role="img"
-          aria-label="Imagen placeholder"
-          className={cn("w-full bg-gray-200", item.featured ? "h-full min-h-44" : "h-44")}
-        />
+        {item.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.imageUrl}
+            alt={item.title ?? "Imagen de la publicación"}
+            className={cn(
+              "w-full bg-gray-200 object-cover",
+              large ? "aspect-[2/1] md:aspect-square" : "h-44",
+            )}
+          />
+        ) : (
+          <div
+            role="img"
+            aria-label="Imagen no disponible"
+            className={cn(
+              "w-full bg-gray-200",
+              large ? "aspect-[2/1] md:aspect-square" : "h-44",
+            )}
+          />
+        )}
         {item.category ? (
           <span className="absolute left-2 top-2">
             <Badge variant="category">{item.category}</Badge>
@@ -65,14 +80,12 @@ export function ProductCard({ item }: { item: ProductCardDataMomentaneo }) {
           ) : (
             <div className="h-4 w-16 rounded bg-gray-100" aria-hidden="true" />
           )}
-          <div className="flex items-center gap-1">
-            <Avatar name={item.seller} size="sm" />
-            {item.seller ? (
+          {item.seller ? (
+            <div className="flex items-center gap-1">
+              <Avatar name={item.seller} size="sm" />
               <span className="text-xs text-gray-400">{item.seller}</span>
-            ) : (
-              <span className="h-3 w-10 rounded bg-gray-100" aria-hidden="true" />
-            )}
-          </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </Link>

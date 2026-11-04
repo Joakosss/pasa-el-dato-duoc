@@ -1,4 +1,10 @@
-import type { EscuelaId, CarreraId, SedeId } from "@/domain/types/common";
+import type {
+  EscuelaId,
+  CarreraId,
+  SedeId,
+  CategoriaId,
+  TipoVentaId,
+} from "@/domain/types/common";
 
 export interface EscuelaDTO {
   id: EscuelaId;
@@ -15,4 +21,14 @@ export interface SedeDTO {
   id: SedeId;
   nombre: string;
   activa: boolean;
+}
+
+export interface CategoriaDTO {
+  id: CategoriaId;
+  nombre: string;
+}
+
+export interface TipoVentaDTO {
+  id: TipoVentaId;
+  nombre: string;
 }

@@ -1,6 +1,6 @@
 import { MOSAIC_SEED } from "./constants";
 import { mulberry32 } from "./buildMosaicLayout";
-import type { ProductCardDataMomentaneo } from "@/components/product/ProductCard";
+import type { ProductCardData } from "@/components/product/ProductCard";
 
 export const SPONSOR_SEED = MOSAIC_SEED + 1;
 export const SPONSOR_OFFSET = 4;
@@ -8,14 +8,14 @@ export const SPONSOR_GAP = 6;
 export const SPONSOR_TAIL_MIN = 3;
 
 export function interleaveSponsored(
-  products: ProductCardDataMomentaneo[],
-  sponsored: ProductCardDataMomentaneo[],
+  products: ProductCardData[],
+  sponsored: ProductCardData[],
   options?: { seed?: number },
-): ProductCardDataMomentaneo[] {
+): ProductCardData[] {
   if (sponsored.length === 0) return [...products];
   if (products.length === 0) return [...sponsored];
   const rand = mulberry32(options?.seed ?? SPONSOR_SEED);
-  const mixed: ProductCardDataMomentaneo[] = [...products];
+  const mixed: ProductCardData[] = [...products];
   let pos = SPONSOR_OFFSET + Math.floor(rand() * 3);
   let i = 0;
   while (i < sponsored.length && pos < mixed.length - SPONSOR_TAIL_MIN) {

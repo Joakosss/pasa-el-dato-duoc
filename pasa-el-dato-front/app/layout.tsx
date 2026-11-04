@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-surface text-navy font-sans">
         <QueryProvider>
           <div className="flex flex-1 flex-col">{children}</div>
+          <Toaster position="top-right" richColors />
         </QueryProvider>
       </body>
     </html>

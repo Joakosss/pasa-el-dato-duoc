@@ -3,14 +3,15 @@
 import { cn } from "@/lib/utils/cn";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
-import type { BorradorPublicacionMomentaneo } from "@/lib/publicar/tiposMomentaneo";
+import type { BorradorPublicacion } from "@/lib/publicar/tipos";
 
 interface PublicarVistaPreviaProps {
-  borrador: BorradorPublicacionMomentaneo;
+  borrador: BorradorPublicacion;
+  urlsImagenes: string[];
   nombreCategoria: string;
   nombreSede: string;
   nombreVendedor: string;
-  tipoVentaFijo: string;
+  tipoVentaNombre: string;
   alElegirFoto: (indice: number) => void;
 }
 
@@ -20,19 +21,21 @@ function formatearPrecioCLP(valor: string): string | null {
   return `$${numero.toLocaleString("es-CL")}`;
 }
 
-// TODO[MOMENTANEO]: preview solo visual sin contrato back. Replica estructura /product/[id] con borrador local.
 export function PublicarVistaPrevia({
   borrador,
+  urlsImagenes,
   nombreCategoria,
   nombreSede,
   nombreVendedor,
-  tipoVentaFijo,
+  tipoVentaNombre,
   alElegirFoto,
 }: PublicarVistaPreviaProps) {
   const precio = formatearPrecioCLP(borrador.precio);
   const tieneTitulo = borrador.titulo.trim().length > 0;
   const tienePrecio = precio !== null;
   const tieneDescripcion = borrador.descripcion.trim().length > 0;
+  const urlActiva =
+    urlsImagenes[borrador.fotoActiva] ?? urlsImagenes[0] ?? null;
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-card">
@@ -46,51 +49,67 @@ export function PublicarVistaPrevia({
 
       <div className="p-4">
         <div className="mb-3">
-          <div
-            role="img"
-            aria-label={`Foto ${borrador.fotoActivaMomentaneo + 1} de muestra`}
-            className="flex h-56 w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-gold/60 bg-surface text-navy"
-          >
-            <svg
-              className="h-10 w-10 text-navy/40"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M4 16l4-4 4 4 4-6 4 4M4 20h16M4 20V6a1 1 0 011-1h14a1 1 0 011 1v14"
+          {urlActiva ? (
+            <div className="overflow-hidden rounded-xl border border-gray-200">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={urlActiva}
+                alt="Imagen principal de tu publicación"
+                className="h-56 w-full object-cover"
               />
-            </svg>
-            <span className="text-xs font-semibold">
-              Foto {borrador.fotoActivaMomentaneo + 1} (mock)
-            </span>
-            <span className="text-[11px] text-gray-400">
-              Toca una miniatura para interactuar
-            </span>
-          </div>
-          <div className="mt-2 flex gap-2" role="group" aria-label="Elegir foto de muestra">
-            {[0, 1, 2, 3].map((i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => alElegirFoto(i)}
-                aria-label={`Ver foto ${i + 1}`}
-                aria-pressed={i === borrador.fotoActivaMomentaneo}
-                className={cn(
-                  "flex h-14 flex-1 cursor-pointer items-center justify-center rounded-lg border-2 bg-gray-200 text-xs font-bold text-navy/50 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",
-                  i === borrador.fotoActivaMomentaneo
-                    ? "border-gold ring-2 ring-gold/40"
-                    : "border-gray-200 hover:border-gold",
-                )}
+            </div>
+          ) : (
+            <div
+              role="img"
+              aria-label="Sin imágenes seleccionadas"
+              className="flex h-56 w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-gold/60 bg-surface text-navy"
+            >
+              <svg
+                className="h-10 w-10 text-navy/40"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
               >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  d="M4 16l4-4 4 4 4-6 4 4M4 20h16M4 20V6a1 1 0 011-1h14a1 1 0 011 1v14"
+                />
+              </svg>
+              <span className="text-xs font-semibold">Sube una foto para verla aquí</span>
+              <span className="text-[11px] text-gray-400">
+                La primera imagen será la principal
+              </span>
+            </div>
+          )}
+          {urlsImagenes.length > 0 ? (
+            <div className="mt-2 flex gap-2" role="group" aria-label="Elegir foto principal">
+              {urlsImagenes.map((url, indice) => (
+                <button
+                  key={url}
+                  type="button"
+                  onClick={() => alElegirFoto(indice)}
+                  aria-label={`Ver foto ${indice + 1}`}
+                  aria-pressed={indice === borrador.fotoActiva}
+                  className={cn(
+                    "flex h-14 flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 bg-gray-200 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gold",
+                    indice === borrador.fotoActiva
+                      ? "border-gold ring-2 ring-gold/40"
+                      : "border-gray-200 hover:border-gold",
+                  )}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="mb-2">
@@ -114,8 +133,8 @@ export function PublicarVistaPrevia({
         )}
 
         <p className="mt-2 text-xs text-gray-500">
-          {nombreSede || "Elige tu sede →"} <span className="text-gray-300">|</span> {tipoVentaFijo}{" "}
-          <span className="text-gray-300">|</span> Borrador
+          {nombreSede || "Elige tu sede →"} <span className="text-gray-300">|</span>{" "}
+          {tipoVentaNombre}
         </p>
 
         <div className="mt-4">
@@ -141,15 +160,11 @@ export function PublicarVistaPrevia({
             </div>
             <div>
               <dt className="text-gray-400">Tipo</dt>
-              <dd className="font-medium text-navy">{tipoVentaFijo}</dd>
+              <dd className="font-medium text-navy">{tipoVentaNombre}</dd>
             </div>
             <div>
               <dt className="text-gray-400">Sede</dt>
               <dd className="font-medium text-navy">{nombreSede || "—"}</dd>
-            </div>
-            <div>
-              <dt className="text-gray-400">Estado</dt>
-              <dd className="font-medium text-navy">Borrador</dd>
             </div>
           </dl>
         </div>

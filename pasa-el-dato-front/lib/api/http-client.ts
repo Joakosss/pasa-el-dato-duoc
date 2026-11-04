@@ -33,15 +33,17 @@ export class HttpClient {
 
   private async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { query, ...init } = options;
+    const headers = new Headers(init.headers);
+    // FormData debe dejar que el navegador fije el Content-Type con boundary.
+    if (!(init.body instanceof FormData)) {
+      headers.set("Content-Type", "application/json");
+    }
     const res = await fetch(this.buildUrl(path, query), {
       // Las cookies HttpOnly del back (access/refresh) son cross-origin
       // (:3000 -> :3001); sin "include" el navegador no las guarda/envía.
       credentials: "include",
       ...init,
-      headers: {
-        "Content-Type": "application/json",
-        ...(init.headers ?? {}),
-      },
+      headers,
     });
 
     if (res.status === 204) return undefined as T;
@@ -49,9 +51,15 @@ export class HttpClient {
     const body: unknown = await res.json().catch(() => null);
 
     if (!res.ok) {
-      const message =
+      const rawMessage =
         typeof body === "object" && body !== null && "message" in body
-          ? String((body as { message: unknown }).message)
+          ? (body as { message: unknown }).message
+          : null;
+      // ValidationPipe del back puede devolver un array de mensajes.
+      const message = Array.isArray(rawMessage)
+        ? rawMessage.map(String).join(". ")
+        : rawMessage !== null
+          ? String(rawMessage)
           : `Request failed with status ${res.status}`;
       throw new ApiError(res.status, message, body);
     }
@@ -68,6 +76,30 @@ export class HttpClient {
       ...options,
       method: "POST",
       body: data === undefined ? undefined : JSON.stringify(data),
+    });
+  }
+
+  postForm<T>(
+    path: string,
+    formData: FormData,
+    options?: RequestOptions,
+  ): Promise<T> {
+    return this.request<T>(path, {
+      ...options,
+      method: "POST",
+      body: formData,
+    });
+  }
+
+  patchForm<T>(
+    path: string,
+    formData: FormData,
+    options?: RequestOptions,
+  ): Promise<T> {
+    return this.request<T>(path, {
+      ...options,
+      method: "PATCH",
+      body: formData,
     });
   }
 

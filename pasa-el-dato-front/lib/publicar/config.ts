@@ -1,4 +1,4 @@
-import type { TipoPublicacionMomentaneo } from "./tiposMomentaneo";
+import type { TipoPublicacion } from "./tipos";
 
 interface ConfigPublicacion {
   titulo: string;
@@ -6,18 +6,19 @@ interface ConfigPublicacion {
   placeholderTitulo: string;
   placeholderDescripcion: string;
   placeholderPrecio: string;
-  fkTipoVentaFijo: string;
+  tipoVentaNombre: "Producto" | "Servicio";
 }
 
-// TODO[MOMENTANEO]: copy y fk_tipoventa fijos por ruta sin contrato back. Ajustar cuando exista catálogo tipo_venta.
-export const CONFIG_PUBLICACION_MOMENTANEO: Record<TipoPublicacionMomentaneo, ConfigPublicacion> = {
+// Copy por ruta. El tipo de venta se resuelve por nombre contra GET /tipoventas
+// para no hardcodear ids del catálogo.
+export const CONFIG_PUBLICACION: Record<TipoPublicacion, ConfigPublicacion> = {
   producto: {
     titulo: "Vender producto",
     subtitulo: "Completa los datos y ve cómo se verá tu aviso.",
     placeholderTitulo: "Ej: Calculadora científica Casio",
     placeholderDescripcion: "Ej: Poco uso, incluye funda y manual…",
     placeholderPrecio: "Ej: 15000",
-    fkTipoVentaFijo: "venta",
+    tipoVentaNombre: "Producto",
   },
   servicio: {
     titulo: "Ofrecer servicio",
@@ -25,6 +26,6 @@ export const CONFIG_PUBLICACION_MOMENTANEO: Record<TipoPublicacionMomentaneo, Co
     placeholderTitulo: "Ej: Tutoría de cálculo I",
     placeholderDescripcion: "Ej: Clases online, 1 hora, material incluido…",
     placeholderPrecio: "Ej: 8000",
-    fkTipoVentaFijo: "servicio",
+    tipoVentaNombre: "Servicio",
   },
 };

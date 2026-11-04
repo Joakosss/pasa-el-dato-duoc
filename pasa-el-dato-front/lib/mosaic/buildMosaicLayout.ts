@@ -3,7 +3,7 @@ import {
   MOSAIC_SMALL_PER_LARGE,
   MOSAIC_TAIL_MIN,
 } from "./constants";
-import type { CardSize, ProductCardDataMomentaneo } from "@/components/product/ProductCard";
+import type { CardSize, ProductCardData } from "@/components/product/ProductCard";
 
 export function mulberry32(seed: number) {
   let a = seed >>> 0;
@@ -17,9 +17,9 @@ export function mulberry32(seed: number) {
 }
 
 export function buildMosaicLayout(
-  items: ProductCardDataMomentaneo[],
+  items: ProductCardData[],
   options?: { seed?: number },
-): ProductCardDataMomentaneo[] {
+): ProductCardData[] {
   const seed = options?.seed ?? MOSAIC_SEED;
   const rand = mulberry32(seed);
   // Offset inicial SMALL..SMALL+2: varía primer grande sin romper primera fila.

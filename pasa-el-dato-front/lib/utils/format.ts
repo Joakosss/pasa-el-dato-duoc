@@ -6,3 +6,7 @@ export function formatDate(value: Date | string): string {
     year: "numeric",
   }).format(date);
 }
+
+export function formatearPrecioCLP(precio: number): string {
+  return `$${precio.toLocaleString("es-CL")}`;
+}
