@@ -221,4 +221,21 @@ describe('Autenticación con PostgreSQL (e2e)', () => {
       ]),
     );
   }, 30_000);
+
+  it('rechaza iniciar sesión si la cuenta fue eliminada lógicamente', async () => {
+    const servidor = app.getHttpServer();
+
+    // Simula cierre de cuenta (sin borrado físico).
+    await prisma.cuenta.update({
+      where: { id_cuenta: idCuenta },
+      data: { eliminado: true },
+    });
+
+    const login = await request(servidor)
+      .post('/api/auth/login')
+      .send({ correo, contrasena })
+      .expect(403);
+
+    expect(login.body.message).toBe('Cuenta inactiva');
+  }, 30_000);
 });

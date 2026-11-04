@@ -133,6 +133,17 @@ export class PublicacionService {
         categoria: { select: { id: true, nombre: true } },
         eliminado: true,
         estadoPublicacion: { select: { descripcion: true } },
+        usuario: {
+          select: {
+            cuenta: {
+              select: {
+                aprobada: true,
+                bloqueado: true,
+                eliminado: true,
+              },
+            },
+          },
+        },
         imagenes: {
           select: {
             idImagen: true,
@@ -145,6 +156,16 @@ export class PublicacionService {
     });
 
     if (publicacion === null || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    // Regla MVP: si la cuenta del propietario está inactiva/bloqueada/eliminada,
+    // la publicación se oculta como 404 (sin filtrar información).
+    if (
+      publicacion.usuario.cuenta.bloqueado ||
+      publicacion.usuario.cuenta.eliminado ||
+      !publicacion.usuario.cuenta.aprobada
+    ) {
       throw new NotFoundException('Publicación no encontrada');
     }
 
@@ -181,7 +202,17 @@ export class PublicacionService {
 
   async listarPublicaciones(): Promise<PublicacionListaRespuestaDto[]> {
     const publicaciones = await this.prisma.publicacion.findMany({
-      where: { eliminado: false, estadoPublicacion: { descripcion: 'En curso' } },
+      where: {
+        eliminado: false,
+        estadoPublicacion: { descripcion: 'En curso' },
+        usuario: {
+          cuenta: {
+            eliminado: false,
+            bloqueado: false,
+            aprobada: true,
+          },
+        },
+      },
       orderBy: { fechaCreacion: 'desc' },
       select: {
         id: true,

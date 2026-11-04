@@ -410,7 +410,7 @@ describe('Perfil propio (e2e)', () => {
     });
     await prisma.cuenta.update({
       where: { id_cuenta: cuenta.id_cuenta },
-      data: { bloqueado: true },
+      data: { bloqueado: true, eliminado: false },
     });
 
     // JWT firmado manualmente: el login rechaza cuentas bloqueadas.
@@ -436,7 +436,7 @@ describe('Perfil propio (e2e)', () => {
     });
     await prisma.cuenta.update({
       where: { id_cuenta: cuenta.id_cuenta },
-      data: { bloqueado: true },
+      data: { bloqueado: true, eliminado: false },
     });
 
     const token = await jwtService.signAsync({
@@ -461,6 +461,7 @@ describe('Perfil propio (e2e)', () => {
         correo: `perfil.e2e.sinusuario.${randomUUID()}@duocuc.cl`,
         claveHash: 'hash-de-prueba',
         telefono: '91234567',
+        eliminado: false,
       },
       select: { id_cuenta: true },
     });
@@ -485,6 +486,7 @@ describe('Perfil propio (e2e)', () => {
         correo: `perfil.e2e.sinusuario.patch.${randomUUID()}@duocuc.cl`,
         claveHash: 'hash-de-prueba',
         telefono: '91234567',
+        eliminado: false,
       },
       select: { id_cuenta: true },
     });
