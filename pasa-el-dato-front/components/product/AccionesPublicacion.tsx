@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui";
 import { usePropiedadPublicacion } from "@/hooks/use-propiedad-publicacion";
 import { EliminarPublicacionModal } from "./EliminarPublicacionModal";
+import { EstadoPublicacionBotonera } from "./EstadoPublicacionBotonera";
 
 interface AccionesPublicacionProps {
   id: string;
@@ -29,6 +30,8 @@ export function AccionesPublicacion({ id }: AccionesPublicacionProps) {
   if (esPropia) {
     return (
       <>
+        <EstadoPublicacionBotonera publicacionId={id} />
+
         <div className="flex gap-3">
           <Link href={`/product/${id}/editar`} className={CLASE_ENLACE_SECUNDARIO}>
             Editar

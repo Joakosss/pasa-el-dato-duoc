@@ -5,6 +5,7 @@ export { useCarreras } from "./use-carreras";
 export { useCategorias } from "./use-categorias";
 export { useTipoventas } from "./use-tipoventas";
 export { usePublicaciones } from "./use-publicaciones";
+export { useMisPublicaciones } from "./use-mis-publicaciones";
 export { usePublicacion } from "./use-publicacion";
 export { usePublicacionParaEdicion } from "./use-publicacion-para-edicion";
 export { usePropiedadPublicacion } from "./use-propiedad-publicacion";

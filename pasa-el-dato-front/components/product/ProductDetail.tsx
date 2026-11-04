@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/config/constants";
 import { AccionesPublicacion } from "./AccionesPublicacion";
 import { usePublicacion } from "@/hooks/use-publicacion";
+import { usePublicacionParaEdicion } from "@/hooks/use-publicacion-para-edicion";
 import { formatearPrecioCLP } from "@/lib/utils/format";
 import { ProductGallery } from "./ProductGallery";
 import { RelatedProducts } from "./RelatedProducts";
@@ -42,8 +43,49 @@ function DetalleSkeleton() {
 }
 
 export function ProductDetail({ id }: ProductDetailProps) {
-  const { publicacion, isCargando, esNoEncontrada, error, reintentar } =
-    usePublicacion(id);
+  const {
+    publicacion: publicacionPublica,
+    isCargando: isCargandoPublica,
+    esNoEncontrada: noEncontradaPublica,
+    error: errorPublico,
+    reintentar: reintentarPublico,
+  } = usePublicacion(id);
+  // El detalle público solo existe en estado "En curso". Si da 404 y hay
+  // sesión, se intenta la vista de propietario (/edicion), que responde en
+  // cualquier estado no eliminado. Así el dueño siempre puede abrir y
+  // gestionar sus Pausadas/Vendidas.
+  const {
+    publicacion: publicacionPropia,
+    isCargando: isCargandoPropia,
+    esNoEncontrada: noEncontradaPropia,
+    esSesionInvalida: sesionInvalidaPropia,
+    consultaActiva: edicionActiva,
+    error: errorPropio,
+    reintentar: reintentarPropio,
+  } = usePublicacionParaEdicion(id, { enabled: noEncontradaPublica });
+
+  const publicacion = publicacionPublica ?? publicacionPropia;
+  const isCargando =
+    isCargandoPublica || (noEncontradaPublica && isCargandoPropia);
+  // Sin sesión la consulta de propietario nunca se activa: el 404 público
+  // es definitivo. Con sesión, solo es "no encontrada" si el propietario
+  // tampoco la ve (ajena, eliminada o sesión inválida).
+  const esNoEncontrada =
+    noEncontradaPublica &&
+    publicacion === null &&
+    !isCargandoPropia &&
+    (!edicionActiva ||
+      noEncontradaPropia ||
+      errorPropio !== null ||
+      sesionInvalidaPropia);
+  const error =
+    !esNoEncontrada && (errorPublico ?? errorPropio)
+      ? (errorPublico ?? errorPropio)
+      : null;
+  const reintentar = () => {
+    void reintentarPublico();
+    void reintentarPropio();
+  };
 
   if (isCargando && !publicacion) {
     return <DetalleSkeleton />;

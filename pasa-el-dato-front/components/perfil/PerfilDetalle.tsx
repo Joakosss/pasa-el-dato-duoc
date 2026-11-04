@@ -65,12 +65,20 @@ export function PerfilDetalle({ perfil }: PerfilDetalleProps) {
             Consulta los datos personales registrados en tu cuenta Duoc.
           </p>
         </div>
-        <Link
-          href={ROUTES.miPerfilEditar}
-          className="inline-flex shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:border-gold hover:bg-gold/10 focus:outline-none focus:ring-2 focus:ring-gold"
-        >
-          Editar perfil
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={ROUTES.misPublicaciones}
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:border-gold hover:bg-gold/10 focus:outline-none focus:ring-2 focus:ring-gold"
+          >
+            Mis publicaciones
+          </Link>
+          <Link
+            href={ROUTES.miPerfilEditar}
+            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:border-gold hover:bg-gold/10 focus:outline-none focus:ring-2 focus:ring-gold"
+          >
+            Editar perfil
+          </Link>
+        </div>
       </header>
 
       <section className="overflow-hidden rounded-2xl border border-gray-200 bg-card shadow-sm">

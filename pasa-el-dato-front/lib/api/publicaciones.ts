@@ -1,6 +1,9 @@
 import type {
   ActualizarPublicacionRequestDTO,
+  CambiarEstadoPublicacionRequestDTO,
+  CambioEstadoPublicacionDTO,
   CrearPublicacionRequestDTO,
+  EstadoPublicacionAsignable,
   PublicacionCreadaDTO,
   PublicacionDetalleDTO,
   PublicacionListaDTO,
@@ -10,6 +13,12 @@ import { apiClient } from "./index";
 // GET /publicaciones -> PublicacionListaDTO[] (no eliminadas, más recientes primero).
 export async function listarPublicaciones(): Promise<PublicacionListaDTO[]> {
   return apiClient.get<PublicacionListaDTO[]>("/publicaciones");
+}
+
+// GET /publicaciones/me -> solo publicaciones propias no eliminadas.
+// Requiere sesión válida (cookie accessToken).
+export async function listarMisPublicaciones(): Promise<PublicacionListaDTO[]> {
+  return apiClient.get<PublicacionListaDTO[]>("/publicaciones/me");
 }
 
 // GET /publicaciones/:id -> detalle público (404 si no existe o está eliminada).
@@ -74,6 +83,19 @@ export async function actualizarPublicacion(
   return apiClient.patchForm<PublicacionDetalleDTO>(
     `/publicaciones/${encodeURIComponent(id)}`,
     construirFormData(dto),
+  );
+}
+
+// PATCH /publicaciones/:id/estado (JSON, cookie accessToken).
+// Solo el propietario puede cambiar entre En curso, Pausada y Vendida.
+export async function cambiarEstadoPublicacion(
+  id: string,
+  estado: EstadoPublicacionAsignable,
+): Promise<CambioEstadoPublicacionDTO> {
+  const dto: CambiarEstadoPublicacionRequestDTO = { estado };
+  return apiClient.patch<CambioEstadoPublicacionDTO>(
+    `/publicaciones/${encodeURIComponent(id)}/estado`,
+    dto,
   );
 }
 
