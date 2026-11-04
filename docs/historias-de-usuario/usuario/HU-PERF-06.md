@@ -57,6 +57,47 @@ Importante para seguridad y control de cuenta, pero no bloquea el flujo principa
 
 - Definir si el MVP implementa desactivación o eliminación lógica, y sus efectos sobre datos asociados.
 
+## Decisión MVP (BE01)
+
+### Representación (sin borrado físico)
+
+En el backend ya existen banderas en `Cuenta` (Prisma):
+
+- **Desactivación (reversible)**: `Cuenta.aprobada=false`.
+- **Bloqueo (administrativo/seguridad)**: `Cuenta.bloqueado=true` (con `fechaBloqueo` y `motivoBloqueo`).
+- **Eliminación lógica (cierre definitivo sin borrar físicamente)**: `Cuenta.eliminado=true`.
+
+Prioridad recomendada al evaluar acceso:
+1) `bloqueado=true` (rechazar)
+2) `eliminado=true` (rechazar)
+3) `aprobada=false` (rechazar)
+
+### Efectos mínimos aplicados en el MVP
+
+#### Operación del usuario (endpoints)
+- Desactivar cuenta propia (reversible): `POST /api/cuenta/me/desactivar` con `{ confirmacion: true }`.
+- Eliminar lógicamente cuenta propia (cierre definitivo, sin borrado físico): `POST /api/cuenta/me/eliminar` con `{ confirmacion: true }`.
+
+Ambos endpoints:
+- Requieren sesión válida (JWT en cookie `accessToken`).
+- Son idempotentes.
+- Revocan sesiones (refresh tokens y access token actual cuando sea posible) y limpian cookies.
+
+#### Autenticación
+- Una cuenta con `eliminado=true` **no puede iniciar sesión** ni **renovar sesión**.
+- Para evitar filtrar motivos específicos, el backend responde con mensaje genérico de inactividad cuando corresponda.
+
+#### Publicaciones
+- Listado público (`listarPublicaciones`): solo muestra publicaciones con:
+  - `Publicacion.eliminado=false`
+  - estado “En curso”
+  - y cuyo propietario tenga `Cuenta.aprobada=true`, `Cuenta.bloqueado=false`, `Cuenta.eliminado=false`.
+- Detalle público (`obtenerPublicacionDetalle`): si la cuenta del propietario está inactiva/bloqueada/eliminada, se responde **404** (“Publicación no encontrada”) para no filtrar información.
+
+#### Chat (futuro / no implementado aún)
+- No se borra historial físicamente.
+- Regla esperada cuando exista backend de chat: impedir iniciar nuevos chats / enviar mensajes cuando la cuenta esté `eliminado=true` o `aprobada=false` (por definir en HU de chat).
+
 ## Subtareas
 ### Backend (BE)
 - **HU-PERF-06-BE01**: Definir decisión MVP: desactivación vs eliminación lógica (bandera/estado), y sus efectos sobre datos asociados (publicaciones, chat, etc.) sin borrado físico.

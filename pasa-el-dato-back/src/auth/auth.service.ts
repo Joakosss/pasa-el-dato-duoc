@@ -61,6 +61,7 @@ export class AuthService {
 
         aprobada: true,
         bloqueado: true,
+        eliminado: true,
 
         // Una cuenta puede existir temporalmente sin usuario asociado.
         usuario: {
@@ -107,6 +108,11 @@ export class AuthService {
     // Si además no está aprobada, prevalece el bloqueo.
     if (cuenta.bloqueado) {
       throw new ForbiddenException('Cuenta bloqueada');
+    }
+
+    if (cuenta.eliminado) {
+      // Mensaje genérico para no revelar el motivo exacto.
+      throw new ForbiddenException('Cuenta inactiva');
     }
 
     if (!cuenta.aprobada) {
@@ -224,6 +230,7 @@ export class AuthService {
       select: {
         aprobada: true,
         bloqueado: true,
+        eliminado: true,
         usuario: {
           select: {
             rol_usuario: {
@@ -257,6 +264,10 @@ export class AuthService {
     }
     if (cuenta.bloqueado) {
       throw new ForbiddenException('Cuenta bloqueada');
+    }
+    if (cuenta.eliminado) {
+      // Mensaje genérico para no revelar el motivo exacto.
+      throw new ForbiddenException('Cuenta inactiva');
     }
     if (!cuenta.aprobada) {
       throw new ForbiddenException('Cuenta inactiva');
