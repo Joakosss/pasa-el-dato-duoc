@@ -6,6 +6,7 @@ export const ROUTES = {
   register: "/register",
   dashboard: "/dashboard",
   miPerfil: "/miperfil",
+  miPerfilEditar: "/miperfil/editar",
   product: "/product/placeholder",
   chats: "/chats",
   publish: "/publicar",

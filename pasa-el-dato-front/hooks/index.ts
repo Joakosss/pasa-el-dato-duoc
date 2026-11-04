@@ -9,6 +9,6 @@ export { usePublicacion } from "./use-publicacion";
 export { usePublicacionParaEdicion } from "./use-publicacion-para-edicion";
 export { usePropiedadPublicacion } from "./use-propiedad-publicacion";
 export { useUrlsImagenes } from "./use-urls-imagenes";
-export { usePerfil } from "./use-perfil";
+export { usePerfil, useActualizarPerfil } from "./use-perfil";
 export { useVerificarRun } from "./use-verificar-run";
 export { useVerificarCorreo } from "./use-verificar-correo";

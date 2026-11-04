@@ -9,6 +9,7 @@ export type {
 } from "./cuenta.dto";
 export type { EscuelaDTO, CarreraDTO, SedeDTO } from "./catalogo.dto";
 export type {
+  ActualizarPerfilRequestDTO,
   PerfilCarreraDTO,
   PerfilRespuestaDTO,
   PerfilRolDTO,

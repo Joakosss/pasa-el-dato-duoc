@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Avatar } from "@/components/ui/Avatar";
+import { ROUTES } from "@/config/constants";
 import type { PerfilRespuestaDTO } from "@/domain/dtos";
 import { cn } from "@/lib/utils/cn";
 
@@ -56,11 +58,19 @@ export function PerfilDetalle({ perfil }: PerfilDetalleProps) {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-xl font-bold text-navy sm:text-2xl">Mi perfil</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Consulta los datos personales registrados en tu cuenta Duoc.
-        </p>
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-navy sm:text-2xl">Mi perfil</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Consulta los datos personales registrados en tu cuenta Duoc.
+          </p>
+        </div>
+        <Link
+          href={ROUTES.miPerfilEditar}
+          className="inline-flex shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-navy transition hover:border-gold hover:bg-gold/10 focus:outline-none focus:ring-2 focus:ring-gold"
+        >
+          Editar perfil
+        </Link>
       </header>
 
       <section className="overflow-hidden rounded-2xl border border-gray-200 bg-card shadow-sm">

@@ -15,6 +15,10 @@ interface SubirImagenesProps {
   onCambiar: (imagenes: File[]) => void;
   onSeleccionarActiva: (indice: number) => void;
   error?: string;
+  // Modo edición: fotos ya guardadas en la publicación.
+  urlsExistentes?: string[];
+  // Modo edición: descarta las fotos nuevas y vuelve a las actuales.
+  onDescartarNuevas?: () => void;
 }
 
 export function SubirImagenes({
@@ -24,9 +28,13 @@ export function SubirImagenes({
   onCambiar,
   onSeleccionarActiva,
   error,
+  urlsExistentes,
+  onDescartarNuevas,
 }: SubirImagenesProps) {
   const inputId = useId();
   const [errorLocal, setErrorLocal] = useState<string | null>(null);
+  const mostrarExistentes =
+    imagenes.length === 0 && (urlsExistentes?.length ?? 0) > 0;
 
   const alSeleccionar = (evento: ChangeEvent<HTMLInputElement>) => {
     const seleccionadas = Array.from(evento.target.files ?? []);
@@ -77,9 +85,40 @@ export function SubirImagenes({
         className="block w-full cursor-pointer rounded-xl border border-gray-200 bg-white text-sm text-navy file:mr-3 file:cursor-pointer file:rounded-l-xl file:border-0 file:bg-surface file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-navy hover:file:bg-gold/10"
       />
       <p className="text-xs text-gray-500">
-        De 1 a {CANTIDAD_MAXIMA_IMAGENES} imágenes (JPEG, PNG o WebP, máx.
-        5 MB). La primera será la principal.
+        {urlsExistentes !== undefined
+          ? "Si seleccionas fotos nuevas, reemplazarán todas las actuales."
+          : `De 1 a ${CANTIDAD_MAXIMA_IMAGENES} imágenes (JPEG, PNG o WebP, máx. 5 MB). La primera será la principal.`}
       </p>
+
+      {mostrarExistentes ? (
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-navy">Fotos actuales</span>
+          <div
+            className="grid grid-cols-4 gap-2"
+            role="group"
+            aria-label="Imágenes actuales"
+          >
+            {urlsExistentes?.map((url, indice) => (
+              <div
+                key={url}
+                className="relative overflow-hidden rounded-lg border-2 border-gray-200 bg-gray-200"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt={`Imagen actual ${indice + 1}`}
+                  className="h-16 w-full object-cover"
+                />
+                {indice === 0 ? (
+                  <span className="absolute left-1 top-1 rounded bg-navy/80 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                    Principal
+                  </span>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {urls.length > 0 ? (
         <div
@@ -119,6 +158,19 @@ export function SubirImagenes({
             </div>
           ))}
         </div>
+      ) : null}
+
+      {imagenes.length > 0 && onDescartarNuevas ? (
+        <button
+          type="button"
+          onClick={() => {
+            setErrorLocal(null);
+            onDescartarNuevas();
+          }}
+          className="cursor-pointer self-start text-xs font-medium text-navy underline transition hover:text-gold"
+        >
+          Descartar fotos nuevas y conservar las actuales
+        </button>
       ) : null}
 
       {mensajeError ? (

@@ -26,6 +26,8 @@ export interface ResultadoValidacion {
 
 interface OpcionesValidacion {
   tipoVentaId: number | null;
+  // En edición, no elegir fotos nuevas significa conservar las actuales.
+  permitirSinImagenes?: boolean;
 }
 
 // Espejo de las reglas de CrearPublicacionDto + validarImagenesRecibidas.
@@ -60,7 +62,9 @@ export function validarBorrador(
     errores.sedeId = "Selecciona una sede.";
   }
 
-  if (borrador.imagenes.length < CANTIDAD_MINIMA_IMAGENES) {
+  if (borrador.imagenes.length === 0 && opciones.permitirSinImagenes) {
+    // Conserva las imágenes actuales de la publicación.
+  } else if (borrador.imagenes.length < CANTIDAD_MINIMA_IMAGENES) {
     errores.imagenes = "Debes adjuntar al menos una imagen.";
   } else if (borrador.imagenes.length > CANTIDAD_MAXIMA_IMAGENES) {
     errores.imagenes = `Puedes adjuntar hasta ${CANTIDAD_MAXIMA_IMAGENES} imágenes.`;

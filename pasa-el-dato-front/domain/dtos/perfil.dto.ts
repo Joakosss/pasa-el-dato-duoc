@@ -13,6 +13,12 @@ export interface PerfilRolDTO {
   descripcion: string;
 }
 
+// PATCH /perfil/me: solo los campos editables de HU-PERF-02.
+export interface ActualizarPerfilRequestDTO {
+  telefono?: string;
+  sedeId?: number;
+}
+
 export interface PerfilRespuestaDTO {
   run: string;
   pNombre: string;
