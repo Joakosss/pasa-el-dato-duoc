@@ -138,6 +138,7 @@ export class ChatService {
     items: Array<{
       conversacionId: string;
       contraparteCuentaId: string;
+      estadoPublicacionAlCrear: string;
       publicacion: { id: string; estado: 'VISIBLE' | 'NO_DISPONIBLE'; titulo?: string };
       ultimoMensaje: null | { texto: string; enviadoEn: Date; emisorCuentaId: string };
       actividadEn: Date;
@@ -198,6 +199,7 @@ export class ChatService {
           publicacionId: 1,
           vendedorCuentaId: 1,
           compradorCuentaId: 1,
+          estadoPublicacionAlCrear: 1,
           actividadEn: 1,
           ultimoMensajeEn: 1,
         },
@@ -211,6 +213,7 @@ export class ChatService {
       compradorCuentaId: string;
       actividadEn: Date;
       ultimoMensajeEn: Date | null;
+      estadoPublicacionAlCrear: string;
     }>;
 
     const page = docs.slice(0, limit);
@@ -270,6 +273,7 @@ export class ChatService {
       return {
         conversacionId,
         contraparteCuentaId,
+        estadoPublicacionAlCrear: doc.estadoPublicacionAlCrear,
         publicacion,
         ultimoMensaje: ultimoMensajeDoc
           ? {

@@ -37,6 +37,12 @@ export class ConversacionListaItemDto {
   @ApiProperty()
   contraparteCuentaId!: string;
 
+  @ApiProperty({
+    description:
+      'Estado de la publicación al momento de crear la conversación (histórico).',
+  })
+  estadoPublicacionAlCrear!: string;
+
   @ApiProperty({ type: ConversacionPublicacionListaDto })
   publicacion!: ConversacionPublicacionListaDto;
 

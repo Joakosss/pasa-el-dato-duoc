@@ -97,6 +97,7 @@ export class ChatController {
       items: resultado.items.map((item) => ({
         conversacionId: item.conversacionId,
         contraparteCuentaId: item.contraparteCuentaId,
+        estadoPublicacionAlCrear: item.estadoPublicacionAlCrear,
         publicacion: item.publicacion,
         ultimoMensaje: item.ultimoMensaje ?? undefined,
         actividadEn: item.actividadEn,
