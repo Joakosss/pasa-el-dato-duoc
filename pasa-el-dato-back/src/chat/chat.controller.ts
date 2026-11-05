@@ -25,7 +25,9 @@ import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js'
 import { ChatService } from './chat.service.js';
 import { ConversacionCreadaRespuestaDto } from './dto/conversacion-creada-respuesta.dto.js';
 import { IniciarConversacionDto } from './dto/iniciar-conversacion.dto.js';
+import { ListaConversacionesRespuestaDto } from './dto/lista-conversaciones-respuesta.dto.js';
 import { ListaMensajesRespuestaDto } from './dto/lista-mensajes-respuesta.dto.js';
+import { ListarConversacionesQueryDto } from './dto/listar-conversaciones-query.dto.js';
 import { ListarMensajesQueryDto } from './dto/listar-mensajes-query.dto.js';
 import { MensajeRespuestaDto } from './dto/mensaje-respuesta.dto.js';
 
@@ -62,6 +64,45 @@ export class ChatController {
     respuesta.locals.authCuentaId = user.idCuenta;
 
     return resultado;
+  }
+
+  @Get('conversaciones')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Listar conversaciones del usuario autenticado',
+    description:
+      'Devuelve conversaciones ordenadas por actividad reciente. Paginado por cursor.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  @ApiOkResponse({ type: ListaConversacionesRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida.' })
+  async listarConversaciones(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Query() query: ListarConversacionesQueryDto,
+    @Res({ passthrough: true }) respuesta: Response,
+  ): Promise<ListaConversacionesRespuestaDto> {
+    const user = solicitud.user!;
+    const limit = query.limit ?? 20;
+
+    const resultado = await this.chatService.listarConversacionesPaginadas({
+      cuentaId: user.idCuenta,
+      cursor: query.cursor,
+      limit,
+    });
+
+    respuesta.locals.authCuentaId = user.idCuenta;
+
+    return {
+      items: resultado.items.map((item) => ({
+        conversacionId: item.conversacionId,
+        contraparteCuentaId: item.contraparteCuentaId,
+        publicacion: item.publicacion,
+        ultimoMensaje: item.ultimoMensaje ?? undefined,
+        actividadEn: item.actividadEn,
+      })),
+      nextCursor: resultado.nextCursor,
+    };
   }
 
   @Get('conversaciones/:id/mensajes')
