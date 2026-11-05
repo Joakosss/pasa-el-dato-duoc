@@ -81,3 +81,8 @@ export interface UpdateCuentaDTO {
   correo?: string;
   telefono?: string | null;
 }
+
+// POST /cuenta/me/desactivar { confirmacion: true } -> 204 sin cuerpo.
+export interface DesactivarCuentaRequestDTO {
+  confirmacion: true;
+}

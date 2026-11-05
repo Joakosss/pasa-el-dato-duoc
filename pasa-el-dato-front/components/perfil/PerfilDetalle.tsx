@@ -3,6 +3,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { ROUTES } from "@/config/constants";
 import type { PerfilRespuestaDTO } from "@/domain/dtos";
 import { cn } from "@/lib/utils/cn";
+import { DesactivarCuentaSeccion } from "./DesactivarCuentaSeccion";
 
 interface PerfilDetalleProps {
   perfil: PerfilRespuestaDTO;
@@ -160,6 +161,7 @@ export function PerfilDetalle({ perfil }: PerfilDetalleProps) {
           </section>
         </div>
       </section>
+      <DesactivarCuentaSeccion />
     </div>
   );
 }
