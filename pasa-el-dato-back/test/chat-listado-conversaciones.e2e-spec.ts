@@ -274,11 +274,28 @@ describe('Chat - listado de conversaciones (e2e)', () => {
       .set('Cookie', cookieComprador)
       .expect(200);
 
-    const ids = respuesta.body.items.map((x: { conversacionId: string }) => x.conversacionId);
+    const ids = respuesta.body.items.map(
+      (x: { conversacionId: string }) => x.conversacionId,
+    );
 
     expect(ids).toContain(conversacionA);
     expect(ids).toContain(conversacionB);
     expect(ids).not.toContain(conversacionTerceros);
+  });
+
+  it('incluye estadoPublicacionAlCrear', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/chat/conversaciones?limit=10')
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    const estados = respuesta.body.items.map(
+      (x: { estadoPublicacionAlCrear: string }) => x.estadoPublicacionAlCrear,
+    );
+
+    expect(estados.every((x: string) => typeof x === 'string' && x.length > 0)).toBe(
+      true,
+    );
   });
 
   it('ordena por actividad reciente (último mensaje)', async () => {

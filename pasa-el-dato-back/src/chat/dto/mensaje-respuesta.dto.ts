@@ -15,4 +15,14 @@ export class MensajeRespuestaDto {
 
   @ApiProperty({ description: 'Timestamp de envío.' })
   enviadoEn!: Date;
+
+  @ApiProperty({
+    description: 'Indica si el mensaje de la contraparte fue leído por el usuario.',
+  })
+  leido!: boolean;
+
+  @ApiProperty({
+    description: 'Indica si la contraparte leyó el mensaje enviado por el usuario.',
+  })
+  leidoPorContraparte!: boolean;
 }

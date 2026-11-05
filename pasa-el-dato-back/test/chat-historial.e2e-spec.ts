@@ -238,6 +238,80 @@ describe('Chat - historial paginado (e2e)', () => {
     }
   });
 
+  it('marca como leída de forma idempotente y reduce el contador', async () => {
+    const antes = await request(app.getHttpServer())
+      .get('/api/chat/conversaciones')
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    const conversacionAntes = antes.body.items.find(
+      (item: { conversacionId: string }) => item.conversacionId === conversacionId,
+    );
+    expect(conversacionAntes.noLeidosCount).toBe(5);
+
+    const marcada = await request(app.getHttpServer())
+      .post(`/api/chat/conversaciones/${conversacionId}/leer`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    expect(marcada.body.conversacionId).toBe(conversacionId);
+    expect(typeof marcada.body.leidoHastaMensajeId).toBe('string');
+
+    const repetida = await request(app.getHttpServer())
+      .post(`/api/chat/conversaciones/${conversacionId}/leer`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    expect(repetida.body.leidoHastaMensajeId).toBe(
+      marcada.body.leidoHastaMensajeId,
+    );
+
+    const despues = await request(app.getHttpServer())
+      .get('/api/chat/conversaciones')
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    const conversacionDespues = despues.body.items.find(
+      (item: { conversacionId: string }) => item.conversacionId === conversacionId,
+    );
+    expect(conversacionDespues.noLeidosCount).toBe(0);
+  });
+
+  it('rechaza marcar leído sin sesión y para un no participante', async () => {
+    await request(app.getHttpServer())
+      .post(`/api/chat/conversaciones/${conversacionId}/leer`)
+      .expect(401);
+
+    const respuesta = await request(app.getHttpServer())
+      .post(`/api/chat/conversaciones/${conversacionId}/leer`)
+      .set('Cookie', cookieTercero)
+      .expect(403);
+
+    expect(respuesta.body.message).toBe('No participa en esta conversación');
+  });
+
+  it('expone el estado de lectura desde la perspectiva del usuario', async () => {
+    await chatService.enviarMensaje({
+      conversacionId,
+      cuentaId: idCuentaComprador,
+      texto: 'mensaje-posterior-a-la-lectura',
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/chat/conversaciones/${conversacionId}/mensajes?limit=5`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    expect(respuesta.body.items).toHaveLength(5);
+
+    const mensajesNoLeidos = respuesta.body.items.filter(
+      (mensaje: { leido: boolean }) => !mensaje.leido,
+    );
+
+    expect(mensajesNoLeidos).toHaveLength(1);
+    expect(mensajesNoLeidos[0].leidoPorContraparte).toBe(true);
+  });
+
   it('400 con cursor inválido', async () => {
     const respuesta = await request(app.getHttpServer())
       .get(

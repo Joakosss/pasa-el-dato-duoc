@@ -98,7 +98,9 @@ export class ChatGateway {
 
       const respuesta: SincronizacionMensajesWsRespuesta = {
         conversacionId: dto.conversacionId,
-        items: resultado.items.reverse().map((mensaje) => this.mapearMensaje(mensaje)),
+        items: resultado.items
+          .reverse()
+          .map((item) => this.mapearMensaje(item)),
         nextCursor: resultado.nextCursor,
       };
 

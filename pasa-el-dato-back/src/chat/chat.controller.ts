@@ -26,6 +26,7 @@ import { ChatService } from './chat.service.js';
 import { ConversacionCreadaRespuestaDto } from './dto/conversacion-creada-respuesta.dto.js';
 import { IniciarConversacionDto } from './dto/iniciar-conversacion.dto.js';
 import { ListaConversacionesRespuestaDto } from './dto/lista-conversaciones-respuesta.dto.js';
+import { MarcarConversacionLeidaRespuestaDto } from './dto/marcar-conversacion-leida-respuesta.dto.js';
 import { ListaMensajesRespuestaDto } from './dto/lista-mensajes-respuesta.dto.js';
 import { ListarConversacionesQueryDto } from './dto/listar-conversaciones-query.dto.js';
 import { ListarMensajesQueryDto } from './dto/listar-mensajes-query.dto.js';
@@ -97,12 +98,44 @@ export class ChatController {
       items: resultado.items.map((item) => ({
         conversacionId: item.conversacionId,
         contraparteCuentaId: item.contraparteCuentaId,
+        estadoPublicacionAlCrear: item.estadoPublicacionAlCrear,
         publicacion: item.publicacion,
         ultimoMensaje: item.ultimoMensaje ?? undefined,
+        noLeidosCount: item.noLeidosCount,
         actividadEn: item.actividadEn,
       })),
       nextCursor: resultado.nextCursor,
     };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Marcar conversación como leída',
+    description:
+      'Marca como leídos, de forma idempotente, los mensajes de la contraparte al abrir la conversación.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiCookieAuth('refreshToken')
+  @ApiParam({ name: 'id', description: 'ID de la conversación (ObjectId).' })
+  @ApiOkResponse({ type: MarcarConversacionLeidaRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida.' })
+  @Post('conversaciones/:id/leer')
+  async marcarConversacionComoLeida(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Param('id') conversacionId: string,
+    @Res({ passthrough: true }) respuesta: Response,
+  ): Promise<MarcarConversacionLeidaRespuestaDto> {
+    const user = solicitud.user!;
+
+    const resultado = await this.chatService.marcarConversacionComoLeida({
+      conversacionId,
+      cuentaId: user.idCuenta,
+    });
+
+    respuesta.locals.authCuentaId = user.idCuenta;
+
+    return resultado;
   }
 
   @Get('conversaciones/:id/mensajes')
@@ -144,6 +177,8 @@ export class ChatController {
         dto.emisorCuentaId = doc.emisorCuentaId;
         dto.texto = doc.texto;
         dto.enviadoEn = doc.enviadoEn;
+        dto.leido = doc.leido;
+        dto.leidoPorContraparte = doc.leidoPorContraparte;
         return dto;
       }),
       nextCursor: resultado.nextCursor,

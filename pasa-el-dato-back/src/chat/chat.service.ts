@@ -138,8 +138,10 @@ export class ChatService {
     items: Array<{
       conversacionId: string;
       contraparteCuentaId: string;
+      estadoPublicacionAlCrear: string;
       publicacion: { id: string; estado: 'VISIBLE' | 'NO_DISPONIBLE'; titulo?: string };
       ultimoMensaje: null | { texto: string; enviadoEn: Date; emisorCuentaId: string };
+      noLeidosCount: number;
       actividadEn: Date;
     }>;
     nextCursor: string | null;
@@ -198,6 +200,9 @@ export class ChatService {
           publicacionId: 1,
           vendedorCuentaId: 1,
           compradorCuentaId: 1,
+          estadoPublicacionAlCrear: 1,
+          leidoHastaMensajeIdVendedor: 1,
+          leidoHastaMensajeIdComprador: 1,
           actividadEn: 1,
           ultimoMensajeEn: 1,
         },
@@ -211,6 +216,9 @@ export class ChatService {
       compradorCuentaId: string;
       actividadEn: Date;
       ultimoMensajeEn: Date | null;
+      estadoPublicacionAlCrear: string;
+      leidoHastaMensajeIdVendedor: Types.ObjectId | null;
+      leidoHastaMensajeIdComprador: Types.ObjectId | null;
     }>;
 
     const page = docs.slice(0, limit);
@@ -254,7 +262,7 @@ export class ChatService {
       }
     }
 
-    const items = page.map((doc) => {
+    const items = await Promise.all(page.map(async (doc) => {
       const conversacionId = String(doc._id);
       const contraparteCuentaId =
         doc.vendedorCuentaId === entrada.cuentaId
@@ -266,10 +274,15 @@ export class ChatService {
         ({ id: doc.publicacionId, estado: 'NO_DISPONIBLE' as const } as const);
 
       const ultimoMensajeDoc = ultimoPorConversacion.get(conversacionId);
+      const leidoHastaMensajeId =
+        doc.vendedorCuentaId === entrada.cuentaId
+          ? doc.leidoHastaMensajeIdVendedor
+          : doc.leidoHastaMensajeIdComprador;
 
       return {
         conversacionId,
         contraparteCuentaId,
+        estadoPublicacionAlCrear: doc.estadoPublicacionAlCrear,
         publicacion,
         ultimoMensaje: ultimoMensajeDoc
           ? {
@@ -278,9 +291,16 @@ export class ChatService {
               emisorCuentaId: ultimoMensajeDoc.emisorCuentaId,
             }
           : null,
+        noLeidosCount: await this.mensajeModel.countDocuments({
+          conversacionId: doc._id,
+          emisorCuentaId: { $ne: entrada.cuentaId },
+          ...(leidoHastaMensajeId
+            ? { _id: { $gt: leidoHastaMensajeId } }
+            : {}),
+        }),
         actividadEn: doc.actividadEn,
       };
-    });
+    }));
 
     const nextCursor = hasMore
       ? encodeCursor<CursorConversaciones>({
@@ -292,12 +312,58 @@ export class ChatService {
     return { items, nextCursor };
   }
 
+  async marcarConversacionComoLeida(entrada: {
+    conversacionId: string;
+    cuentaId: string;
+  }): Promise<{ conversacionId: string; leidoHastaMensajeId: string | null }> {
+    const conversacion = await this.asegurarParticipante(entrada);
+    const esVendedor = conversacion.vendedorCuentaId === entrada.cuentaId;
+    const campoLectura = esVendedor
+      ? 'leidoHastaMensajeIdVendedor'
+      : 'leidoHastaMensajeIdComprador';
+
+    const ultimoMensaje = await this.mensajeModel
+      .findOne({
+        conversacionId: conversacion._id,
+        emisorCuentaId: { $ne: entrada.cuentaId },
+      })
+      .sort({ _id: -1 })
+      .select({ _id: 1 });
+
+    const leidoHastaMensajeId = ultimoMensaje?._id
+      ? String(ultimoMensaje._id)
+      : null;
+
+    if (ultimoMensaje?._id) {
+      await this.conversationModel.updateOne(
+        { _id: conversacion._id },
+        { $set: { [campoLectura]: ultimoMensaje._id } },
+      );
+    }
+
+    return {
+      conversacionId: String(conversacion._id),
+      leidoHastaMensajeId,
+    };
+  }
+
   async listarMensajesPaginados(entrada: {
     conversacionId: string;
     cuentaId: string;
     cursor?: string;
     limit: number;
-  }): Promise<{ items: MensajeDocument[]; nextCursor: string | null }> {
+  }): Promise<{
+    items: Array<{
+      _id: unknown;
+      conversacionId: unknown;
+      emisorCuentaId: string;
+      texto: string;
+      enviadoEn: Date;
+      leido: boolean;
+      leidoPorContraparte: boolean;
+    }>;
+    nextCursor: string | null;
+  }> {
     const conversacion = await this.asegurarParticipante({
       conversacionId: entrada.conversacionId,
       cuentaId: entrada.cuentaId,
@@ -319,9 +385,39 @@ export class ChatService {
       .sort({ _id: -1 })
       .limit(entrada.limit);
 
+    const leidoHastaPropio =
+      conversacion.vendedorCuentaId === entrada.cuentaId
+        ? conversacion.leidoHastaMensajeIdVendedor
+        : conversacion.leidoHastaMensajeIdComprador;
+    const leidoHastaContraparte =
+      conversacion.vendedorCuentaId === entrada.cuentaId
+        ? conversacion.leidoHastaMensajeIdComprador
+        : conversacion.leidoHastaMensajeIdVendedor;
+
+    const estaHasta = (
+      mensaje: MensajeDocument,
+      hasta: Types.ObjectId | null,
+    ): boolean =>
+      hasta !== null &&
+      String(mensaje._id) <= String(hasta);
+
+    const items = docs.map((mensaje: MensajeDocument) => ({
+      _id: mensaje._id,
+      conversacionId: mensaje.conversacionId,
+      emisorCuentaId: mensaje.emisorCuentaId,
+      texto: mensaje.texto,
+      enviadoEn: mensaje.enviadoEn,
+      leido:
+        mensaje.emisorCuentaId === entrada.cuentaId ||
+        estaHasta(mensaje, leidoHastaPropio),
+      leidoPorContraparte:
+        mensaje.emisorCuentaId !== entrada.cuentaId ||
+        estaHasta(mensaje, leidoHastaContraparte),
+    }));
+
     const nextCursor = docs.length > 0 ? String(docs[docs.length - 1]._id) : null;
 
-    return { items: docs, nextCursor };
+    return { items, nextCursor };
   }
 
   async enviarMensaje(entrada: {

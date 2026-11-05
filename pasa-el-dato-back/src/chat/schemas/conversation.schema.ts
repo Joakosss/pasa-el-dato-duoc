@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { type HydratedDocument } from 'mongoose';
+import { type HydratedDocument, Types } from 'mongoose';
 
 export type ConversationDocument = HydratedDocument<Conversation>;
 
@@ -24,6 +24,12 @@ export class Conversation {
    */
   @Prop({ required: true })
   estadoPublicacionAlCrear!: string;
+
+  @Prop({ type: Types.ObjectId, default: null })
+  leidoHastaMensajeIdVendedor!: Types.ObjectId | null;
+
+  @Prop({ type: Types.ObjectId, default: null })
+  leidoHastaMensajeIdComprador!: Types.ObjectId | null;
 
   @Prop({ type: Date, default: null })
   ultimoMensajeEn!: Date | null;

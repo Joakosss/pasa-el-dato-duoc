@@ -37,11 +37,24 @@ export class ConversacionListaItemDto {
   @ApiProperty()
   contraparteCuentaId!: string;
 
+  @ApiProperty({
+    description:
+      'Estado de la publicación al momento de crear la conversación (histórico).',
+  })
+  estadoPublicacionAlCrear!: string;
+
   @ApiProperty({ type: ConversacionPublicacionListaDto })
   publicacion!: ConversacionPublicacionListaDto;
 
   @ApiProperty({ required: false, type: ConversacionUltimoMensajeDto })
   ultimoMensaje?: ConversacionUltimoMensajeDto;
+
+  @ApiProperty({
+    description:
+      'Cantidad de mensajes de la contraparte pendientes de lectura para el usuario autenticado.',
+    example: 2,
+  })
+  noLeidosCount!: number;
 
   @ApiProperty({
     required: false,
