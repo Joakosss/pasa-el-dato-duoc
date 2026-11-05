@@ -48,5 +48,55 @@ Aprobadas documentalmente (R.10, CU015 extendido) y base vigente:
 
 ### Backend (BE)
 
-- **HU-CHAT-04-BE01:** Definir modelo de estado de lectura (MVP) en MongoDB.  
-  Opciones a decidir (documentar decisión):\n  - A) En documento `conversaciones`: marca por cuenta (p. ej. `leidoHastaMensajeIdVendedor` / `leidoHastaMensajeIdComprador`).\n  - B) Colección `lecturas` (por `(conversacionId, cuentaId)`), con `leidoHastaMensajeId` y `actualizadoEn`.\n\n- **HU-CHAT-04-BE02:** Implementar comando “marcar como leído al abrir”.\n  - REST: `POST /api/chat/conversaciones/:id/leer` (idempotente)\n  - y/o evento WS: `chat:conversacionAbierta`.\n\n- **HU-CHAT-04-BE03:** Calcular y exponer “no leídos por conversación” en el listado (HU-CHAT-03):\n  - campo `noLeidosCount`.\n\n- **HU-CHAT-04-BE04:** Exponer en el historial el estado leído/no leído (mínimo viable):\n  - flag por mensaje desde el punto de vista del usuario autenticado.\n\n- **HU-CHAT-04-BE05:** DTOs + Swagger (si hay endpoint REST).\n\n- **HU-CHAT-04-BE06:** Pruebas e2e / integration:\n  - 401 sin sesión\n  - 403 no participante\n  - marcar leído idempotente\n  - conteo baja al abrir\n\n- **HU-CHAT-04-BE07:** Logging/auditoría con `log_api` (REST) y logging mínimo para WS.\n\n### Frontend (FE)\n\n- **HU-CHAT-04-FE01:** Al abrir conversación, disparar evento/endpoint de “marcar leído”.\n\n- **HU-CHAT-04-FE02:** Mostrar indicadores de leído/no leído en la vista de conversación.\n\n- **HU-CHAT-04-FE03:** Mostrar contador `noLeidosCount` en el listado de conversaciones.\n\n## Dependencias\n\n- HU-CHAT-02 (mensajes que se marcan como leídos).\n- HU-CHAT-03 (listado donde se muestra el contador de no leídos).\n- Infraestructura de chat inexistente hoy: MongoDB y Socket.IO se incorporan con el dominio.\n\n## Prioridad\n\n**Media**\n\nApoya decidir esperar o insistir en la transacción, pero no bloquea la mensajería básica. Va después de HU-CHAT-02.\n\n## Dudas pendientes\n\n- Ninguna bloqueante.\n\n## Estado\n\n`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.\n
+- **HU-CHAT-04-BE01:** Definir modelo de estado de lectura (MVP) en MongoDB.
+  Opciones a decidir (documentar decisión):
+  - A) En documento `conversaciones`: marca por cuenta (p. ej. `leidoHastaMensajeIdVendedor` / `leidoHastaMensajeIdComprador`).
+  - B) Colección `lecturas` (por `(conversacionId, cuentaId)`), con `leidoHastaMensajeId` y `actualizadoEn`.
+
+- **HU-CHAT-04-BE02:** Implementar comando “marcar como leído al abrir”.
+  - REST: `POST /api/chat/conversaciones/:id/leer` (idempotente)
+  - y/o evento WS: `chat:conversacionAbierta`.
+
+- **HU-CHAT-04-BE03:** Calcular y exponer “no leídos por conversación” en el listado (HU-CHAT-03):
+  - campo `noLeidosCount`.
+
+- **HU-CHAT-04-BE04:** Exponer en el historial el estado leído/no leído (mínimo viable):
+  - flag por mensaje desde el punto de vista del usuario autenticado.
+
+- **HU-CHAT-04-BE05:** DTOs + Swagger (si hay endpoint REST).
+
+- **HU-CHAT-04-BE06:** Pruebas e2e / integration:
+  - 401 sin sesión
+  - 403 no participante
+  - marcar leído idempotente
+  - conteo baja al abrir
+
+- **HU-CHAT-04-BE07:** Logging/auditoría con `log_api` (REST) y logging mínimo para WS.
+
+### Frontend (FE)
+
+- **HU-CHAT-04-FE01:** Al abrir conversación, disparar evento/endpoint de “marcar leído”.
+
+- **HU-CHAT-04-FE02:** Mostrar indicadores de leído/no leído en la vista de conversación.
+
+- **HU-CHAT-04-FE03:** Mostrar contador `noLeidosCount` en el listado de conversaciones.
+
+## Dependencias
+
+- HU-CHAT-02 (mensajes que se marcan como leídos).
+- HU-CHAT-03 (listado donde se muestra el contador de no leídos).
+- Infraestructura de chat inexistente hoy: MongoDB y Socket.IO se incorporan con el dominio.
+
+## Prioridad
+
+**Media**
+
+Apoya decidir esperar o insistir en la transacción, pero no bloquea la mensajería básica. Va después de HU-CHAT-02.
+
+## Dudas pendientes
+
+- Ninguna bloqueante.
+
+## Estado
+
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.

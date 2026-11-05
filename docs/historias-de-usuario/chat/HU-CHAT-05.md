@@ -46,18 +46,48 @@ Aprobadas documentalmente (R.15, CU015 extendido, alternativa 1):
 
 ### Backend (BE)
 
-- **HU-CHAT-05-BE01:** Definir fuente de verdad para la lista de palabras bloqueadas (dependencia con dominio administración).  
-  - Contrato esperado (tentativo): `GET /api/admin/palabras-bloqueadas` o recurso equivalente.  
+- **HU-CHAT-05-BE01:** Definir fuente de verdad para la lista de palabras bloqueadas (dependencia con dominio administración).
+  - Contrato esperado (tentativo): `GET /api/admin/palabras-bloqueadas` o recurso equivalente.
   - En tanto no exista, documentar mecanismo temporal de carga (archivo `.json` o env), evitando inventar administración.
 
-- **HU-CHAT-05-BE02:** Implementar servicio `FiltroPalabrasBloqueadasService` en backend de chat.  
+- **HU-CHAT-05-BE02:** Implementar servicio `FiltroPalabrasBloqueadasService` en backend de chat.
   - Cache / refresh: definir TTL o mecanismo de recarga.
 
-- **HU-CHAT-05-BE03:** Integrar filtro en el flujo de envío (HU-CHAT-02):  
+- **HU-CHAT-05-BE03:** Integrar filtro en el flujo de envío (HU-CHAT-02):
   - Si hay coincidencia exacta de palabra bloqueada → rechazar y NO persistir.
 
-- **HU-CHAT-05-BE04:** Definir contrato de error para “contenido no permitido”.  
-  - REST: 400/422 con message estandarizada.  
+- **HU-CHAT-05-BE04:** Definir contrato de error para “contenido no permitido”.
+  - REST: 400/422 con message estandarizada.
   - WS: evento ACK con error.
 
-- **HU-CHAT-05-BE05:** Pruebas e2e/integration:\n  - rechaza mensaje con palabra bloqueada\n  - permite mensaje sin palabras\n  - confirma que NO se persiste el bloqueado\n\n- **HU-CHAT-05-BE06:** Logging/auditoría: registrar rechazo por moderación (sin almacenar el texto completo en logs si no es necesario).\n\n### Frontend (FE)\n\n- **HU-CHAT-05-FE01:** Mostrar error de moderación al usuario sin perder el texto editado.\n\n- **HU-CHAT-05-FE02:** Reintento después de corrección.\n\n## Dependencias\n\n- HU-CHAT-02 (flujo de envío al que se integra el filtro).\n- Lista de palabras bloqueadas vigente: inexistente hoy; definida y mantenida en el dominio administración. Para el MVP de este módulo se requiere una lista operativa antes de especificar.\n\n## Prioridad\n\n**Media**\n\nRequerimiento solicitado (R.15) con impacto regulatorio; no bloquea la mensajería base si la lista no existe aún.\n\n## Dudas pendientes\n\n- Gestión de la lista de palabras bloqueadas: pertenece al dominio administración (quién la mantiene y cómo se actualiza). Este módulo la consume; se define en su dominio.\n\n## Estado\n\n`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`. Necesita una lista de palabras operativa proveniente del dominio administración.\n
+- **HU-CHAT-05-BE05:** Pruebas e2e/integration:
+  - rechaza mensaje con palabra bloqueada
+  - permite mensaje sin palabras
+  - confirma que NO se persiste el bloqueado
+
+- **HU-CHAT-05-BE06:** Logging/auditoría: registrar rechazo por moderación (sin almacenar el texto completo en logs si no es necesario).
+
+### Frontend (FE)
+
+- **HU-CHAT-05-FE01:** Mostrar error de moderación al usuario sin perder el texto editado.
+
+- **HU-CHAT-05-FE02:** Reintento después de corrección.
+
+## Dependencias
+
+- HU-CHAT-02 (flujo de envío al que se integra el filtro).
+- Lista de palabras bloqueadas vigente: inexistente hoy; definida y mantenida en el dominio administración. Para el MVP de este módulo se requiere una lista operativa antes de especificar.
+
+## Prioridad
+
+**Media**
+
+Requerimiento solicitado (R.15) con impacto regulatorio; no bloquea la mensajería base si la lista no existe aún.
+
+## Dudas pendientes
+
+- Gestión de la lista de palabras bloqueadas: pertenece al dominio administración (quién la mantiene y cómo se actualiza). Este módulo la consume; se define en su dominio.
+
+## Estado
+
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`. Necesita una lista de palabras operativa proveniente del dominio administración.
