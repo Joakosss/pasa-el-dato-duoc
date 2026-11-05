@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import type { Model } from 'mongoose';
+import type { Model, PipelineStage } from 'mongoose';
 import { isValidObjectId, Types } from 'mongoose';
 import { decodeCursor, encodeCursor } from '../common/pagination/cursor.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -183,7 +183,7 @@ export class ChatService {
     // Pipeline para:
     // - calcular actividadEn = ultimoMensajeEn || creadaEn
     // - ordenar y paginar
-    const pipeline: Record<string, unknown>[] = [
+    const pipeline: PipelineStage[] = [
       { $match: filter },
       {
         $addFields: {

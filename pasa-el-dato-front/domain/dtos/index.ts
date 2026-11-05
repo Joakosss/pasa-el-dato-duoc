@@ -18,3 +18,7 @@ export type {
 } from "./perfil.dto";
 export type { RegistroUsuarioBorrador, SnapshotsRegistro } from "./registro.dto";
 export { REGISTRO_USUARIO_INICIAL } from "./registro.dto";
+export type {
+  IniciarConversacionRequestDTO,
+  IniciarConversacionRespuestaDTO,
+} from "./chat.dto";

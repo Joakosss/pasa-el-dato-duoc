@@ -1,9 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui";
+import { ROUTES } from "@/config/constants";
+import { ApiError } from "@/lib/api";
+import { useIniciarConversacion } from "@/hooks/use-iniciar-conversacion";
 import { usePropiedadPublicacion } from "@/hooks/use-propiedad-publicacion";
+import { selectEstaAutenticado, useSesionStore } from "@/stores/sesion-store";
 import { EliminarPublicacionModal } from "./EliminarPublicacionModal";
 import { EstadoPublicacionBotonera } from "./EstadoPublicacionBotonera";
 
@@ -15,8 +21,12 @@ const CLASE_ENLACE_SECUNDARIO =
   "inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-8 py-3 text-sm font-semibold text-navy transition-colors hover:border-gold hover:bg-gold/10 focus:outline-none focus:ring-2 focus:ring-gold";
 
 export function AccionesPublicacion({ id }: AccionesPublicacionProps) {
+  const router = useRouter();
   const { esPropia, verificando } = usePropiedadPublicacion(id);
+  const estaAutenticado = useSesionStore(selectEstaAutenticado);
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [errorContacto, setErrorContacto] = useState<string | null>(null);
+  const iniciarConversacion = useIniciarConversacion();
 
   if (verificando) {
     return (
@@ -55,20 +65,56 @@ export function AccionesPublicacion({ id }: AccionesPublicacionProps) {
     );
   }
 
+  const contactar = () => {
+    if (iniciarConversacion.isPending) return;
+
+    if (!estaAutenticado) {
+      toast.error("Debes iniciar sesión para contactar al vendedor.");
+      router.replace(ROUTES.login);
+      return;
+    }
+
+    setErrorContacto(null);
+    iniciarConversacion.mutate(id, {
+      onSuccess: (respuesta) => {
+        router.push(`/chats/${respuesta.conversacionId}`);
+      },
+      onError: (err: unknown) => {
+        if (err instanceof ApiError && err.status === 401) {
+          toast.error("Tu sesión expiró. Inicia sesión nuevamente.");
+          router.replace(ROUTES.login);
+          return;
+        }
+
+        const mensaje =
+          err instanceof ApiError && err.message
+            ? err.message
+            : "No pudimos abrir el chat. Reintenta.";
+        setErrorContacto(mensaje);
+        toast.error(mensaje);
+      },
+    });
+  };
+
+  const enCurso = iniciarConversacion.isPending;
+
   return (
     <>
       <Button
         variant="primary"
         size="lg"
         className="w-full py-3.5"
-        disabled
-        title="El chat con el vendedor estará disponible próximamente"
+        disabled={enCurso}
+        aria-disabled={enCurso}
+        onClick={contactar}
       >
-        Contactar vendedor
+        {enCurso ? "Abriendo chat…" : "Contactar vendedor"}
       </Button>
-      <p className="mt-2 text-center text-xs text-gray-400">
-        El chat con el vendedor estará disponible próximamente.
-      </p>
+      {errorContacto ? (
+        <p role="alert" className="mt-2 text-center text-sm font-medium text-red-600">
+          {errorContacto}
+        </p>
+      ) : null}
     </>
   );
 }

@@ -15,3 +15,6 @@ export { useCambiarContrasena } from "./use-cambiar-contrasena";
 export { useDesactivarCuenta } from "./use-desactivar-cuenta";
 export { useVerificarRun } from "./use-verificar-run";
 export { useVerificarCorreo } from "./use-verificar-correo";
+export { useIniciarConversacion } from "./use-iniciar-conversacion";
+export { useHistorialMensajes } from "./use-historial-mensajes";
+export { useChatTiempoReal } from "./use-chat-tiempo-real";
