@@ -50,6 +50,13 @@ export class ConversacionListaItemDto {
   ultimoMensaje?: ConversacionUltimoMensajeDto;
 
   @ApiProperty({
+    description:
+      'Cantidad de mensajes de la contraparte pendientes de lectura para el usuario autenticado.',
+    example: 2,
+  })
+  noLeidosCount!: number;
+
+  @ApiProperty({
     required: false,
     description:
       'Fecha usada para ordenar el listado (ultimoMensajeEn fallback creadaEn).',
