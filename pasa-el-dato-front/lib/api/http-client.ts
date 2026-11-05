@@ -79,6 +79,14 @@ export class HttpClient {
     });
   }
 
+  patch<T>(path: string, data?: unknown, options?: RequestOptions): Promise<T> {
+    return this.request<T>(path, {
+      ...options,
+      method: "PATCH",
+      body: data === undefined ? undefined : JSON.stringify(data),
+    });
+  }
+
   delete<T>(path: string, options?: RequestOptions): Promise<T> {
     return this.request<T>(path, { ...options, method: "DELETE" });
   }
