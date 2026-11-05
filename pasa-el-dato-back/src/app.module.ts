@@ -16,6 +16,7 @@ import { ComunaModule } from './comuna/comuna.module.js';
 import { PublicacionModule } from './publicacion/publicacion.module.js';
 import { CategoriaModule } from './categoria/categoria.module.js';
 import { TipoVentaModule } from './tipo-venta/tipo-venta.module.js';
+import { ChatModule } from './chat/chat.module.js';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { TipoVentaModule } from './tipo-venta/tipo-venta.module.js';
     PublicacionModule,
     CategoriaModule,
     TipoVentaModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

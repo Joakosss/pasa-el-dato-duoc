@@ -64,6 +64,41 @@ Puerta de entrada del dominio chat (R.10). Sin conversaciones no hay mensajería
 
 - Ninguna bloqueante.
 
+## Subtareas
+
+### Backend (BE)
+- **HU-CHAT-01-BE01**: Definir modelo MVP de conversación en MongoDB (colección `conversaciones`) y sus índices (incluye unicidad por par de usuarios y publicación).
+- **HU-CHAT-01-BE02**: Integrar Mongo/Mongoose en backend (NestJS) para el dominio chat (sin Socket.IO aún): `ChatModule`, conexión `MONGO_URL`, schemas.
+- **HU-CHAT-01-BE03**: Implementar endpoint protegido para “Contactar vendedor”: crear o recuperar conversación (find-or-create/upsert idempotente).
+- **HU-CHAT-01-BE04**: Aplicar reglas de negocio sobre publicación:
+  - Rechazar si publicación no existe o no es visible.
+  - Rechazar si el usuario autenticado es el dueño.
+  - Rechazar si estado es “Pausada”.
+  - Permitir si estado es “Vendida” (con flag/metadata en la conversación).
+- **HU-CHAT-01-BE05**: DTO de respuesta + Swagger/OpenAPI (conversación creada vs recuperada).
+- **HU-CHAT-01-BE06**: Pruebas e2e:
+  - 401 sin sesión
+  - 404 publicación inexistente
+  - 409/403 si dueño intenta contactarse
+  - 400/409 si publicación pausada
+  - OK si vendida
+  - idempotencia: segunda llamada recupera la misma conversación
+- **HU-CHAT-01-BE07**: Alinear logging/auditoría con `log_api` (interceptor existente) para registrar `fk_cuenta` y ruta.
+
+### Frontend (FE)
+- **HU-CHAT-01-FE01**: Botón/acción “Contactar vendedor” en detalle de publicación:
+  - Requiere autenticación (redirigir/login o bloquear según patrón FE).
+  - Ocultar/inhabilitar si soy el dueño.
+- **HU-CHAT-01-FE02**: Consumir endpoint de conversación (crear/recuperar) con loading + manejo de errores.
+- **HU-CHAT-01-FE03**: Navegar a vista de conversación (`/chat/:conversacionId`) o placeholder hasta HU-CHAT-02/03.
+
+### Integración / Infra (INT)
+- **HU-CHAT-01-INT01**: Verificar compose/entorno para Mongo (conectividad desde backend, variables `MONGO_URL`, seed/init si aplica).
+- **HU-CHAT-01-INT02**: Definir contrato de errores (códigos/mensajes) para FE.
+
+### QA
+- **HU-CHAT-01-QA01**: Prueba manual: contacto desde publicación disponible, reintento (no duplica), dueño no puede, vendida sí, pausada no.
+
 ## Estado
 
 `lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.
