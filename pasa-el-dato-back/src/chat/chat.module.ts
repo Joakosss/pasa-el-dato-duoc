@@ -3,8 +3,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { ChatController } from './chat.controller.js';
+import { ChatGateway } from './chat.gateway.js';
 import { ChatService } from './chat.service.js';
 import { Conversation, ConversationSchema } from './schemas/conversation.schema.js';
+import { Mensaje, MensajeSchema } from './schemas/mensaje.schema.js';
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 
@@ -20,9 +22,10 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
     }),
     MongooseModule.forFeature([
       { name: Conversation.name, schema: ConversationSchema },
+      { name: Mensaje.name, schema: MensajeSchema },
     ]),
   ],
   controllers: [ChatController],
-  providers: [ChatService],
+  providers: [ChatGateway, ChatService],
 })
 export class ChatModule {}
