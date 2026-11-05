@@ -1,4 +1,9 @@
 # HU-CHAT-05 — Moderación de palabras bloqueadas en chat
+<!--
+SUBTAREAS (plan de implementación)
+- Estas subtareas NO cambian el alcance de la HU; solo detallan el trabajo esperado.
+- Formato: HU-CHAT-05-(BE|FE)XX para backend/frontend.
+-->
 
 **Como** participante de una conversación
 **quiero** que el sistema impida el envío de mensajes con palabras sensibles
@@ -37,21 +42,22 @@ Aprobadas documentalmente (R.15, CU015 extendido, alternativa 1):
 - El mensaje bloqueado no queda en el historial ni alcanza al destinatario.
 - Fuera de alcance de esta HU: el mismo filtro aplicado a publicaciones (se define en su dominio), la gestión de la lista de palabras bloqueadas (módulo administración) y el reporte de usuarios.
 
-## Dependencias
+## Subtareas
 
-- HU-CHAT-02 (flujo de envío al que se integra el filtro).
-- Lista de palabras bloqueadas vigente: inexistente hoy; definida y mantenida en el dominio administración. Para el MVP de este módulo se requiere una lista operativa antes de especificar.
+### Backend (BE)
 
-## Prioridad
+- **HU-CHAT-05-BE01:** Definir fuente de verdad para la lista de palabras bloqueadas (dependencia con dominio administración).  
+  - Contrato esperado (tentativo): `GET /api/admin/palabras-bloqueadas` o recurso equivalente.  
+  - En tanto no exista, documentar mecanismo temporal de carga (archivo `.json` o env), evitando inventar administración.
 
-**Media**
+- **HU-CHAT-05-BE02:** Implementar servicio `FiltroPalabrasBloqueadasService` en backend de chat.  
+  - Cache / refresh: definir TTL o mecanismo de recarga.
 
-Requerimiento solicitado (R.15) con impacto regulatorio; no bloquea la mensajería base si la lista no existe aún.
+- **HU-CHAT-05-BE03:** Integrar filtro en el flujo de envío (HU-CHAT-02):  
+  - Si hay coincidencia exacta de palabra bloqueada → rechazar y NO persistir.
 
-## Dudas pendientes
+- **HU-CHAT-05-BE04:** Definir contrato de error para “contenido no permitido”.  
+  - REST: 400/422 con message estandarizada.  
+  - WS: evento ACK con error.
 
-- Gestión de la lista de palabras bloqueadas: pertenece al dominio administración (quién la mantiene y cómo se actualiza). Este módulo la consume; se define en su dominio.
-
-## Estado
-
-`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`. Necesita una lista de palabras operativa proveniente del dominio administración.
+- **HU-CHAT-05-BE05:** Pruebas e2e/integration:\n  - rechaza mensaje con palabra bloqueada\n  - permite mensaje sin palabras\n  - confirma que NO se persiste el bloqueado\n\n- **HU-CHAT-05-BE06:** Logging/auditoría: registrar rechazo por moderación (sin almacenar el texto completo en logs si no es necesario).\n\n### Frontend (FE)\n\n- **HU-CHAT-05-FE01:** Mostrar error de moderación al usuario sin perder el texto editado.\n\n- **HU-CHAT-05-FE02:** Reintento después de corrección.\n\n## Dependencias\n\n- HU-CHAT-02 (flujo de envío al que se integra el filtro).\n- Lista de palabras bloqueadas vigente: inexistente hoy; definida y mantenida en el dominio administración. Para el MVP de este módulo se requiere una lista operativa antes de especificar.\n\n## Prioridad\n\n**Media**\n\nRequerimiento solicitado (R.15) con impacto regulatorio; no bloquea la mensajería base si la lista no existe aún.\n\n## Dudas pendientes\n\n- Gestión de la lista de palabras bloqueadas: pertenece al dominio administración (quién la mantiene y cómo se actualiza). Este módulo la consume; se define en su dominio.\n\n## Estado\n\n`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`. Necesita una lista de palabras operativa proveniente del dominio administración.\n

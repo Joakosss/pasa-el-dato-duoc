@@ -1,4 +1,9 @@
 # HU-CHAT-03 — Ver lista de mis conversaciones
+<!--
+SUBTAREAS (plan de implementación)
+- Estas subtareas NO cambian el alcance de la HU; solo detallan el trabajo esperado.
+- Formato: HU-CHAT-03-(BE|FE)XX para backend/frontend.
+-->
 
 **Como** usuario autenticado
 **quiero** ver el listado de mis conversaciones con su actividad reciente
@@ -43,6 +48,43 @@ Aprobadas documentalmente (R.10, CU015 extendido) y base vigente:
 - Listado paginado: 20 por página en web, 10 por página en móvil, alineado con catálogo y favoritos (decisión aprobada).
 - No se puede ocultar ni eliminar conversaciones desde el listado (decisión aprobada).
 - Fuera de alcance de esta HU: contadores de no leídos (HU-CHAT-04), envío de mensajes (HU-CHAT-02), eliminación u ocultamiento de conversaciones (decisión aprobada: no existe para el usuario).
+
+## Subtareas
+
+### Backend (BE)
+
+- **HU-CHAT-03-BE01:** Definir contrato del listado de conversaciones (campos mínimos) y criterios de ordenamiento.  
+  - Orden: `ultimoMensajeEn desc` (fallback `creadaEn desc`).
+
+- **HU-CHAT-03-BE02:** Implementar endpoint protegido de listado paginado:  
+  - `GET /api/chat/conversaciones?cursor=&limit=` (20 web / 10 mobile).  
+  - Filtra por conversaciones donde el usuario sea `vendedorCuentaId` o `compradorCuentaId`.
+
+- **HU-CHAT-03-BE03:** Enriquecer el listado con metadatos requeridos:  
+  - contraparte (id cuenta)  
+  - `publicacionId` + referencia de estado (sin romper si publicación ya no existe/visible)  
+  - último mensaje (texto + fecha) desde Mongo (`mensajes`) o denormalizado en `conversaciones`.
+
+- **HU-CHAT-03-BE04:** Definir estrategia para “publicación no disponible”:  
+  - mantener la conversación visible, pero exponer `estadoPublicacionAlCrear` + (opcional) snapshot mínimo del título/precio al crear, si se decide denormalizar.
+
+- **HU-CHAT-03-BE05:** DTOs + Swagger (OpenAPI) para el endpoint de listado.
+
+- **HU-CHAT-03-BE06:** Pruebas e2e:  
+  - 401 sin sesión  
+  - lista solo conversaciones propias  
+  - orden por actividad reciente  
+  - paginación
+
+- **HU-CHAT-03-BE07:** Logging/auditoría con `log_api` (fk_cuenta + ruta).
+
+### Frontend (FE)
+
+- **HU-CHAT-03-FE01:** Reemplazar mocks `Momentaneo` del listado (`ChatList`, `ChatCard`) por consumo del endpoint real.
+
+- **HU-CHAT-03-FE02:** Implementar paginación/infinite scroll respetando 20 web / 10 mobile.
+
+- **HU-CHAT-03-FE03:** Manejar estado vacío y redirección a login cuando no hay sesión.
 
 ## Dependencias
 
