@@ -11,6 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import type { Server, Socket } from 'socket.io';
 import { PrismaService } from '../prisma/prisma.service.js';
 import {
+  ConversacionAbiertaWsDto,
+  type ConversacionLeidaWsRespuesta,
   EnviarMensajeWsDto,
   type MensajeWsRespuesta,
   type SincronizacionMensajesWsRespuesta,
@@ -139,6 +141,29 @@ export class ChatGateway {
       );
 
       return respuesta;
+    } catch (error) {
+      throw this.convertirErrorWs(error);
+    }
+  }
+
+  @SubscribeMessage('chat:conversacionAbierta')
+  async conversacionAbierta(
+    @ConnectedSocket() cliente: SocketChat,
+    @MessageBody() dto: ConversacionAbiertaWsDto,
+  ): Promise<ConversacionLeidaWsRespuesta> {
+    const sesion = this.obtenerSesion(cliente);
+
+    try {
+      const resultado = await this.chatService.marcarConversacionComoLeida({
+        conversacionId: dto.conversacionId,
+        cuentaId: sesion.idCuenta,
+      });
+
+      this.logger.log(
+        `Cuenta ${sesion.idCuenta} marcó conversación ${dto.conversacionId} como leída (hasta ${resultado.leidoHastaMensajeId ?? 'null'})`,
+      );
+
+      return resultado;
     } catch (error) {
       throw this.convertirErrorWs(error);
     }
