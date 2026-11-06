@@ -284,6 +284,94 @@ describe('Chat Gateway - mensajería tiempo real (e2e)', () => {
     socket.close();
   }, 20_000);
 
+  it('rechaza mensajes bloqueados en cada intento y no los persiste', async () => {
+    const socket = io(`${baseUrl}/chat`, {
+      transports: ['polling'],
+      transportOptions: {
+        polling: {
+          extraHeaders: { Cookie: cookieComprador },
+        },
+      },
+    });
+
+    await esperarEvento(socket, 'connect', 5_000);
+
+    const textoBloqueado =
+      'Este texto contiene prohibida dentro de un mensaje largo';
+
+    const primerRechazo = esperarException(socket, 10_000);
+    socket.emit('chat:enviar_mensaje', {
+      conversacionId,
+      texto: textoBloqueado,
+    });
+
+    await expect(primerRechazo).resolves.toMatchObject({
+      status: 422,
+      message: 'Contenido no permitido',
+    });
+
+    const segundoRechazo = esperarException(socket, 10_000);
+    socket.emit('chat:enviar_mensaje', {
+      conversacionId,
+      texto: textoBloqueado,
+    });
+
+    await expect(segundoRechazo).resolves.toMatchObject({
+      status: 422,
+      message: 'Contenido no permitido',
+    });
+
+    const historial = await request(app.getHttpServer())
+      .get(`/api/chat/conversaciones/${conversacionId}/mensajes`)
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    expect(
+      historial.body.items.some(
+        (item: { texto: string }) => item.texto === textoBloqueado,
+      ),
+    ).toBe(false);
+
+    socket.close();
+  }, 20_000);
+
+  it('permite un mensaje corregido y lo persiste', async () => {
+    const socket = io(`${baseUrl}/chat`, {
+      transports: ['polling'],
+      transportOptions: {
+        polling: {
+          extraHeaders: { Cookie: cookieComprador },
+        },
+      },
+    });
+
+    await esperarEvento(socket, 'connect', 5_000);
+
+    const textoPermitido = `mensaje corregido ${randomUUID()}`;
+    const ack = await emitirConAck(socket, 'chat:enviar_mensaje', {
+      conversacionId,
+      texto: textoPermitido,
+    });
+
+    expect(ack).toMatchObject({
+      conversacionId,
+      texto: textoPermitido,
+    });
+
+    const historial = await request(app.getHttpServer())
+      .get(`/api/chat/conversaciones/${conversacionId}/mensajes`)
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    expect(
+      historial.body.items.some(
+        (item: { texto: string }) => item.texto === textoPermitido,
+      ),
+    ).toBe(true);
+
+    socket.close();
+  }, 20_000);
+
   it('emite chat:mensaje_nuevo a la room', async () => {
     const receptor = io(`${baseUrl}/chat`, {
       transports: ['polling'],
