@@ -268,6 +268,117 @@ describe('PublicacionService', () => {
     });
   });
 
+  describe('cambiarEstadoPublicacion', () => {
+    it('E1: lanza 404 cuando la publicación no existe', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.cambiarEstadoPublicacion({
+          idPublicacion: 'pub-uuid',
+          idCuenta: 'cuenta-uuid',
+          estadoDescripcion: 'Pausada',
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('E2: lanza 404 cuando la publicación está eliminada', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-uuid',
+        eliminado: true,
+      });
+
+      await expect(
+        service.cambiarEstadoPublicacion({
+          idPublicacion: 'pub-uuid',
+          idCuenta: 'cuenta-uuid',
+          estadoDescripcion: 'Pausada',
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('E3: lanza 403 cuando la publicación pertenece a otro usuario', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-otro',
+        eliminado: false,
+      });
+
+      await expect(
+        service.cambiarEstadoPublicacion({
+          idPublicacion: 'pub-uuid',
+          idCuenta: 'cuenta-uuid',
+          estadoDescripcion: 'Pausada',
+        }),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('E4: lanza 400 cuando el estado no es asignable por propietario', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-uuid',
+        eliminado: false,
+      });
+
+      await expect(
+        service.cambiarEstadoPublicacion({
+          idPublicacion: 'pub-uuid',
+          idCuenta: 'cuenta-uuid',
+          estadoDescripcion: 'Bloqueada',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('E5: lanza 400 cuando el estado permitido no existe en catálogo', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-uuid',
+        eliminado: false,
+      });
+
+      prismaMock.estadoPublicacion.findFirst.mockResolvedValue(null);
+
+      await expect(
+        service.cambiarEstadoPublicacion({
+          idPublicacion: 'pub-uuid',
+          idCuenta: 'cuenta-uuid',
+          estadoDescripcion: 'Pausada',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('E6: actualiza el fk_estado_publicacion cuando todo es válido', async () => {
+      prismaMock.publicacion.findUnique.mockResolvedValue({
+        id: 'pub-uuid',
+        fk_usuario: 'cuenta-uuid',
+        eliminado: false,
+      });
+
+      prismaMock.estadoPublicacion.findFirst.mockResolvedValue({
+        id: 2,
+        descripcion: 'Pausada',
+      });
+
+      prismaMock.publicacion.update.mockResolvedValue({ id: 'pub-uuid' });
+
+      await expect(
+        service.cambiarEstadoPublicacion({
+          idPublicacion: 'pub-uuid',
+          idCuenta: 'cuenta-uuid',
+          estadoDescripcion: 'Pausada',
+        }),
+      ).resolves.toEqual({
+        id: 'pub-uuid',
+        estado: { id: 2, descripcion: 'Pausada' },
+      });
+
+      expect(prismaMock.publicacion.update).toHaveBeenCalledWith({
+        where: { id: 'pub-uuid' },
+        data: { fk_estado_publicacion: 2 },
+      });
+    });
+  });
+
   describe('crearPublicacion', () => {
     const dto = {
       titulo: 'Notebook Lenovo ThinkPad',

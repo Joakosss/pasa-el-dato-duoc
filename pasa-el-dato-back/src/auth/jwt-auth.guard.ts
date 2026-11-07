@@ -70,6 +70,7 @@ export class JwtAuthGuard implements CanActivate {
       select: {
         aprobada: true,
         bloqueado: true,
+        eliminado: true,
         usuario: {
           select: {
             rol_usuario: {
@@ -83,6 +84,7 @@ export class JwtAuthGuard implements CanActivate {
     if (
       !cuenta ||
       cuenta.bloqueado ||
+      cuenta.eliminado ||
       !cuenta.aprobada ||
       !cuenta.usuario
     ) {

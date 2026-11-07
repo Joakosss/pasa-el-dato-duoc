@@ -16,6 +16,7 @@ import type { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-res
 import type { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
 import type { PublicacionListaRespuestaDto } from './dto/publicacion-lista-respuesta.dto.js';
 import type { ImagenRecibida } from './validar-imagenes.js';
+import { ESTADOS_PUBLICACION_ASIGNABLES_POR_PROPIETARIO } from './publicacion-estados.constantes.js';
 
 @Injectable()
 export class PublicacionService {
@@ -131,6 +132,18 @@ export class PublicacionService {
         tipoVenta: { select: { id: true, nombre: true } },
         categoria: { select: { id: true, nombre: true } },
         eliminado: true,
+        estadoPublicacion: { select: { descripcion: true } },
+        usuario: {
+          select: {
+            cuenta: {
+              select: {
+                aprobada: true,
+                bloqueado: true,
+                eliminado: true,
+              },
+            },
+          },
+        },
         imagenes: {
           select: {
             idImagen: true,
@@ -143,6 +156,22 @@ export class PublicacionService {
     });
 
     if (publicacion === null || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    // Regla MVP: si la cuenta del propietario está inactiva/bloqueada/eliminada,
+    // la publicación se oculta como 404 (sin filtrar información).
+    if (
+      publicacion.usuario.cuenta.bloqueado ||
+      publicacion.usuario.cuenta.eliminado ||
+      !publicacion.usuario.cuenta.aprobada
+    ) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    // Regla MVP de visibilidad:
+    // Público (detalle) solo ve "En curso". Pausada/Vendida se ocultan como 404.
+    if (publicacion.estadoPublicacion.descripcion !== 'En curso') {
       throw new NotFoundException('Publicación no encontrada');
     }
 
@@ -173,7 +202,17 @@ export class PublicacionService {
 
   async listarPublicaciones(): Promise<PublicacionListaRespuestaDto[]> {
     const publicaciones = await this.prisma.publicacion.findMany({
-      where: { eliminado: false },
+      where: {
+        eliminado: false,
+        estadoPublicacion: { descripcion: 'En curso' },
+        usuario: {
+          cuenta: {
+            eliminado: false,
+            bloqueado: false,
+            aprobada: true,
+          },
+        },
+      },
       orderBy: { fechaCreacion: 'desc' },
       select: {
         id: true,
@@ -597,5 +636,54 @@ export class PublicacionService {
     const estado = await this.obtenerEstadoInicialPublicacion();
 
     return { estado };
+  }
+
+  async cambiarEstadoPublicacion(entrada: {
+    idPublicacion: string;
+    idCuenta: string;
+    estadoDescripcion: string;
+  }): Promise<{ id: string; estado: { id: number; descripcion: string } }> {
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: entrada.idPublicacion },
+      select: {
+        id: true,
+        fk_usuario: true,
+        eliminado: true,
+      },
+    });
+
+    if (publicacion === null || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    if (publicacion.fk_usuario !== entrada.idCuenta) {
+      throw new ForbiddenException(
+        'No tiene permisos para cambiar el estado de esta publicación',
+      );
+    }
+
+    if (
+      !ESTADOS_PUBLICACION_ASIGNABLES_POR_PROPIETARIO.includes(
+        entrada.estadoDescripcion as (typeof ESTADOS_PUBLICACION_ASIGNABLES_POR_PROPIETARIO)[number],
+      )
+    ) {
+      throw new BadRequestException('Estado inválido o no asignable por propietario');
+    }
+
+    const estado = await this.prisma.estadoPublicacion.findFirst({
+      where: { descripcion: entrada.estadoDescripcion },
+      select: { id: true, descripcion: true },
+    });
+
+    if (estado === null) {
+      throw new BadRequestException('Estado inválido o no asignable por propietario');
+    }
+
+    await this.prisma.publicacion.update({
+      where: { id: publicacion.id },
+      data: { fk_estado_publicacion: estado.id },
+    });
+
+    return { id: publicacion.id, estado };
   }
 }
