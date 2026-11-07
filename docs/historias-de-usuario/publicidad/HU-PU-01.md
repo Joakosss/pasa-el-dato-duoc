@@ -46,6 +46,46 @@ Fuera de alcance de esta HU: aprobar o rechazar (HU-PU-02), edición (HU-PU-03) 
 
 Nota técnica de origen (no define diseño): no existe módulo de banners en el backend ni tablas en el `schema.prisma`; el MER del proyecto define `BANNER_PUBLICIDAD` y `BANNER_SEDE` como tablas de negocio.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-PU-01-BE01:** Definir modelos y persistencia (Prisma) para banners.  
+  - Modelos tentativos: `BannerPublicidad` y `BannerSede` (relación N:M con `Sede`).  
+  - Incluir patrón BASE (`eliminado`, `fechaCreacion`, `fechaModificacion`, `fk_modificado_por` según convención vigente).
+
+- **HU-PU-01-BE02:** Almacenamiento de imagen (1 archivo).  
+  - Reusar reglas/validador de imágenes de publicaciones: JPEG/PNG/WebP, máx 5MB.  
+  - Definir estrategia: reutilizar uploads existentes vs carpeta dedicada banners.
+
+- **HU-PU-01-BE03:** Endpoint para crear banner (marca autenticada y autorizada).  
+  - `POST /api/publicidad/banners` con multipart (imagen) + JSON (mensaje, inicio, fin, sedes).  
+  - Estado inicial: `PENDIENTE`.
+
+- **HU-PU-01-BE04:** Validaciones y errores.  
+  - Fechas inválidas (fin < inicio).  
+  - Sedes inexistentes/inactivas.  
+  - Faltan campos requeridos.  
+  - 401 sin sesión, 403 sin rol Marca/autorización.
+
+- **HU-PU-01-BE05:** DTOs + Swagger (incluyendo upload multipart).
+
+- **HU-PU-01-BE06:** Pruebas e2e.  
+  - Marca crea banner OK → queda pendiente.  
+  - Rechaza fechas inválidas.  
+  - Rechaza sin sedes / sin imagen / sin mensaje.  
+  - Rechaza sede inválida.
+
+- **HU-PU-01-BE07:** Auditoría/logging en `log_api` (creación por cuenta marca).
+
+### Frontend (FE)
+
+- **HU-PU-01-FE01:** Formulario “Crear banner”: imagen, mensaje, inicio/fin, selector de sedes.
+
+- **HU-PU-01-FE02:** Integración con `POST /api/publicidad/banners` (multipart) + manejo de errores.
+
+- **HU-PU-01-FE03:** Vista de estado del banner creado (pendiente/aprobado/rechazado).
+
 ## Dependencias
 
 - HU-MAR-01: cuenta de marca creada y autorizada por el administrador (decisión aprobada: el admin crea y autoriza las cuentas en un solo paso).

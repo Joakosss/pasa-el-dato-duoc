@@ -46,6 +46,45 @@ Aprobadas documentalmente (R.8 — la gestión de banners incluye editar) y mode
 
 Nota técnica de origen (no define diseño): CU018 no define la relación entre editar un banner ya aprobado y su aprobación; la decisión tomada cubre ese vacío.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-PU-03-BE01:** Endpoint marca para editar banner propio.  
+  - `PATCH /api/publicidad/banners/:id` (multipart opcional si se permite cambiar imagen).  
+  - Actualizar campos: imagen?, mensaje?, inicio/fin?, sedes?.
+
+- **HU-PU-03-BE02:** Reglas de estado al editar.  
+  - Si banner está `ACTIVO`, mantiene estado (no vuelve a revisión).  
+  - Si está `RECHAZADO`, al editar pasa a `PENDIENTE` (confirmar en spec; dejar toggle en config o feature-flag si queda duda).  
+  - Si está `PENDIENTE`, se mantiene pendiente.
+
+- **HU-PU-03-BE03:** Ajuste de sedes destinatarias.  
+  - Mantener asociaciones `BannerSede`: agregar nuevas, eliminar las removidas.
+
+- **HU-PU-03-BE04:** Validaciones y errores.  
+  - 403 si no es dueño.  
+  - 404 si no existe/eliminado.  
+  - Fechas inválidas, sedes inválidas.
+
+- **HU-PU-03-BE05:** DTOs + Swagger.
+
+- **HU-PU-03-BE06:** Pruebas e2e.  
+  - Dueño edita OK.  
+  - No dueño 403.  
+  - Edita activo sin volver a revisión.  
+  - Edita rechazado vuelve a pendiente (si se confirma).
+
+- **HU-PU-03-BE07:** Auditoría/logging en `log_api` (cuenta marca).
+
+### Frontend (FE)
+
+- **HU-PU-03-FE01:** Formulario editar banner (prellenado).
+
+- **HU-PU-03-FE02:** Integración con `PATCH /api/publicidad/banners/:id` (multipart si aplica).
+
+- **HU-PU-03-FE03:** UX: mostrar estado actual y reglas (activo no vuelve a revisión; rechazado vuelve a pendiente si aplica).
+
 ## Dependencias
 
 - HU-PU-01 (existencia del banner) y HU-MAR-01 (cuenta de marca).

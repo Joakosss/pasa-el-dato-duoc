@@ -33,6 +33,39 @@ Aprobadas documentalmente (R.8 — la gestión de banners incluye eliminar) y mo
 
 Nota técnica de origen (no define diseño): el mecanismo concreto de baja usa el patrón `eliminado` ya presente en las entidades del modelo; se definirá en design.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-PU-04-BE01:** Endpoint marca para eliminar banner propio (baja lógica).  
+  - `DELETE /api/publicidad/banners/:id`  
+  - Marcar `eliminado=true` y retirar de resultados públicos de inmediato.
+
+- **HU-PU-04-BE02:** Idempotencia.  
+  - Si ya está eliminado, responder OK sin duplicar acción.
+
+- **HU-PU-04-BE03:** Seguridad.  
+  - 403 si no es dueño.  
+  - 404 si no existe.
+
+- **HU-PU-04-BE04:** DTOs + Swagger.
+
+- **HU-PU-04-BE05:** Pruebas e2e.  
+  - Dueño elimina OK.  
+  - Repetir delete no falla.  
+  - No dueño 403.  
+  - Eliminado no aparece en listados.
+
+- **HU-PU-04-BE06:** Auditoría/logging en `log_api` (cuenta marca).
+
+### Frontend (FE)
+
+- **HU-PU-04-FE01:** Acción “Eliminar banner” con confirmación (modal).
+
+- **HU-PU-04-FE02:** Integración con `DELETE /api/publicidad/banners/:id` + refresco de listados.
+
+- **HU-PU-04-FE03:** UX: feedback y manejo de errores (403/404).
+
 ## Dependencias
 
 - HU-PU-01 (existencia del banner).

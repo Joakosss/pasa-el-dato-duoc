@@ -44,6 +44,48 @@ Aprobadas documentalmente (R.8, CU018 extendido):
 
 Nota técnica de origen (no define diseño): la decisión de aprobación requiere persistir el estado del banner (pendiente / activo / rechazado); el MER no lista de forma explícita ese estado en `BANNER_PUBLICIDAD`, se define en spec.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-PU-02-BE01:** Definir estados del banner y transición.  
+  - Estados sugeridos: `PENDIENTE`, `ACTIVO`, `RECHAZADO`.  
+  - Persistir estado + `motivoRechazo` (nullable) + `aprobadoEn`/`rechazadoEn`.
+
+- **HU-PU-02-BE02:** Endpoint admin para listar pendientes.  
+  - `GET /api/admin/publicidad/banners?estado=PENDIENTE` con paginación.
+
+- **HU-PU-02-BE03:** Endpoint admin aprobar banner.  
+  - `POST /api/admin/publicidad/banners/:id/aprobar`  
+  - Validar límite de 3 activos por marca (en la audiencia aplicable).
+
+- **HU-PU-02-BE04:** Endpoint admin rechazar banner con motivo.  
+  - `POST /api/admin/publicidad/banners/:id/rechazar` con `{ motivo }`.  
+  - Dejar en estado `RECHAZADO`.
+
+- **HU-PU-02-BE05:** Autorización y seguridad.  
+  - JWT guard + rol Admin.  
+  - 404 si banner no existe / eliminado.  
+  - 409/422 si límite de activos se viola al aprobar.
+
+- **HU-PU-02-BE06:** DTOs + Swagger (listar, aprobar, rechazar).
+
+- **HU-PU-02-BE07:** Pruebas e2e.  
+  - Lista pendientes.  
+  - Aprobar activa banner.  
+  - Rechazar exige motivo y deja estado correcto.  
+  - Rechaza aprobar cuando excede 3 activos.
+
+- **HU-PU-02-BE08:** Auditoría/logging en `log_api` (resolución por cuenta admin).
+
+### Frontend (FE)
+
+- **HU-PU-02-FE01:** Panel admin “Pendientes de aprobación”: tabla/listado con filtros.
+
+- **HU-PU-02-FE02:** Acciones “Aprobar” / “Rechazar” (modal con motivo).
+
+- **HU-PU-02-FE03:** Estado/feedback: actualizar listado tras resolución y mostrar errores (límite 3).
+
 ## Dependencias
 
 - HU-PU-01 (banners creados pendientes de resolución).

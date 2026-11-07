@@ -38,6 +38,44 @@ Aprobadas documentalmente (R.8, CU018 extendido) y decisiones del proyecto:
 
 Nota técnica de origen (no define diseño): el `schema.prisma` y el backend no tienen módulos de banners, por lo que la persistencia de sedes destinatarias y vigencias se define en spec (basado en las tablas `BANNER_PUBLICIDAD` y `BANNER_SEDE` del MER).
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-PU-05-BE01:** Query para obtener banners activos por sede del usuario autenticado.  
+  - `GET /api/publicidad/banners/activos?limit=&cursor=`  
+  - Filtrar por:
+    - estado `ACTIVO`
+    - sede del usuario
+    - `inicio <= now <= fin`
+    - `eliminado=false`
+
+- **HU-PU-05-BE02:** Definir payload/DTO de banner para front.  
+  - `id`, `imagenUrl`, `mensaje`, `inicio`, `fin`, `marca` (nombre), etc.
+
+- **HU-PU-05-BE03:** Paginación/orden.  
+  - Orden sugerido: más reciente o por prioridad (si existe).  
+  - Paginación por cursor.
+
+- **HU-PU-05-BE04:** Seguridad.  
+  - Requiere sesión.  
+  - 401 sin sesión.
+
+- **HU-PU-05-BE05:** DTOs + Swagger.
+
+- **HU-PU-05-BE06:** Pruebas e2e.  
+  - Solo banners de mi sede.  
+  - No muestra fuera de vigencia.  
+  - No muestra eliminados.
+
+### Frontend (FE)
+
+- **HU-PU-05-FE01:** Integrar API `GET /api/publicidad/banners/activos` para sede actual.
+
+- **HU-PU-05-FE02:** Adaptar el intercalado del mosaico para usar datos reales (reemplazar mock `interleaveSponsored`).
+
+- **HU-PU-05-FE03:** Actualizar al cambiar sede: refetch y re-render del mosaico.
+
 ## Dependencias
 
 - HU-PU-02 (banners aprobados y activos).
