@@ -18,6 +18,7 @@ import { CategoriaModule } from './categoria/categoria.module.js';
 import { TipoVentaModule } from './tipo-venta/tipo-venta.module.js';
 import { ChatModule } from './chat/chat.module.js';
 import { MarcaModule } from './marca/marca.module.js';
+import { PublicidadModule } from './publicidad/publicidad.module.js';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { MarcaModule } from './marca/marca.module.js';
     TipoVentaModule,
     ChatModule,
     MarcaModule,
+    PublicidadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

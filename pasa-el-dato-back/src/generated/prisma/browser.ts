@@ -103,6 +103,16 @@ export type EstadoPublicacion = Prisma.EstadoPublicacionModel
  */
 export type Publicacion = Prisma.PublicacionModel
 /**
+ * Model BannerPublicidad
+ * 
+ */
+export type BannerPublicidad = Prisma.BannerPublicidadModel
+/**
+ * Model BannerSede
+ * 
+ */
+export type BannerSede = Prisma.BannerSedeModel
+/**
  * Model ImagenPublicacion
  * 
  */

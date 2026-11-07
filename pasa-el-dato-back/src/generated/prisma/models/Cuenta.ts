@@ -248,6 +248,7 @@ export type CuentaWhereInput = {
   marca?: Prisma.XOR<Prisma.MarcaNullableScalarRelationFilter, Prisma.MarcaWhereInput> | null
   publicacionesCompradas?: Prisma.PublicacionListRelationFilter
   publicacionesModificadas?: Prisma.PublicacionListRelationFilter
+  bannersModificados?: Prisma.BannerPublicidadListRelationFilter
 }
 
 export type CuentaOrderByWithRelationInput = {
@@ -273,6 +274,7 @@ export type CuentaOrderByWithRelationInput = {
   marca?: Prisma.MarcaOrderByWithRelationInput
   publicacionesCompradas?: Prisma.PublicacionOrderByRelationAggregateInput
   publicacionesModificadas?: Prisma.PublicacionOrderByRelationAggregateInput
+  bannersModificados?: Prisma.BannerPublicidadOrderByRelationAggregateInput
 }
 
 export type CuentaWhereUniqueInput = Prisma.AtLeast<{
@@ -301,6 +303,7 @@ export type CuentaWhereUniqueInput = Prisma.AtLeast<{
   marca?: Prisma.XOR<Prisma.MarcaNullableScalarRelationFilter, Prisma.MarcaWhereInput> | null
   publicacionesCompradas?: Prisma.PublicacionListRelationFilter
   publicacionesModificadas?: Prisma.PublicacionListRelationFilter
+  bannersModificados?: Prisma.BannerPublicidadListRelationFilter
 }, "id_cuenta" | "correo">
 
 export type CuentaOrderByWithAggregationInput = {
@@ -361,6 +364,7 @@ export type CuentaCreateInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateInput = {
@@ -385,6 +389,7 @@ export type CuentaUncheckedCreateInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUpdateInput = {
@@ -409,6 +414,7 @@ export type CuentaUpdateInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateInput = {
@@ -433,6 +439,7 @@ export type CuentaUncheckedUpdateInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateManyInput = {
@@ -742,6 +749,22 @@ export type CuentaUpdateOneWithoutPublicacionesModificadasNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutPublicacionesModificadasInput, Prisma.CuentaUpdateWithoutPublicacionesModificadasInput>, Prisma.CuentaUncheckedUpdateWithoutPublicacionesModificadasInput>
 }
 
+export type CuentaCreateNestedOneWithoutBannersModificadosInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutBannersModificadosInput, Prisma.CuentaUncheckedCreateWithoutBannersModificadosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutBannersModificadosInput
+  connect?: Prisma.CuentaWhereUniqueInput
+}
+
+export type CuentaUpdateOneWithoutBannersModificadosNestedInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutBannersModificadosInput, Prisma.CuentaUncheckedCreateWithoutBannersModificadosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutBannersModificadosInput
+  upsert?: Prisma.CuentaUpsertWithoutBannersModificadosInput
+  disconnect?: Prisma.CuentaWhereInput | boolean
+  delete?: Prisma.CuentaWhereInput | boolean
+  connect?: Prisma.CuentaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutBannersModificadosInput, Prisma.CuentaUpdateWithoutBannersModificadosInput>, Prisma.CuentaUncheckedUpdateWithoutBannersModificadosInput>
+}
+
 export type CuentaCreateWithoutOther_cuentaInput = {
   id_cuenta?: string
   correo: string
@@ -763,6 +786,7 @@ export type CuentaCreateWithoutOther_cuentaInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
@@ -786,6 +810,7 @@ export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutOther_cuentaInput = {
@@ -814,6 +839,7 @@ export type CuentaCreateWithoutCuentaInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutCuentaInput = {
@@ -837,6 +863,7 @@ export type CuentaUncheckedCreateWithoutCuentaInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutCuentaInput = {
@@ -881,6 +908,7 @@ export type CuentaUpdateWithoutOther_cuentaInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
@@ -904,6 +932,7 @@ export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUpsertWithWhereUniqueWithoutCuentaInput = {
@@ -961,6 +990,7 @@ export type CuentaCreateWithoutMarcaInput = {
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutMarcaInput = {
@@ -984,6 +1014,7 @@ export type CuentaUncheckedCreateWithoutMarcaInput = {
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutMarcaInput = {
@@ -1023,6 +1054,7 @@ export type CuentaUpdateWithoutMarcaInput = {
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutMarcaInput = {
@@ -1046,6 +1078,7 @@ export type CuentaUncheckedUpdateWithoutMarcaInput = {
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateWithoutSedeInput = {
@@ -1069,6 +1102,7 @@ export type CuentaCreateWithoutSedeInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutSedeInput = {
@@ -1092,6 +1126,7 @@ export type CuentaUncheckedCreateWithoutSedeInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutSedeInput = {
@@ -1131,6 +1166,7 @@ export type CuentaUpdateWithoutSedeInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutSedeInput = {
@@ -1154,6 +1190,7 @@ export type CuentaUncheckedUpdateWithoutSedeInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateWithoutUsuarioInput = {
@@ -1177,6 +1214,7 @@ export type CuentaCreateWithoutUsuarioInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutUsuarioInput = {
@@ -1200,6 +1238,7 @@ export type CuentaUncheckedCreateWithoutUsuarioInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutUsuarioInput = {
@@ -1239,6 +1278,7 @@ export type CuentaUpdateWithoutUsuarioInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutUsuarioInput = {
@@ -1262,6 +1302,7 @@ export type CuentaUncheckedUpdateWithoutUsuarioInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateWithoutLog_apiInput = {
@@ -1285,6 +1326,7 @@ export type CuentaCreateWithoutLog_apiInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutLog_apiInput = {
@@ -1308,6 +1350,7 @@ export type CuentaUncheckedCreateWithoutLog_apiInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutLog_apiInput = {
@@ -1347,6 +1390,7 @@ export type CuentaUpdateWithoutLog_apiInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutLog_apiInput = {
@@ -1370,6 +1414,7 @@ export type CuentaUncheckedUpdateWithoutLog_apiInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateWithoutRefreshTokensInput = {
@@ -1393,6 +1438,7 @@ export type CuentaCreateWithoutRefreshTokensInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutRefreshTokensInput = {
@@ -1416,6 +1462,7 @@ export type CuentaUncheckedCreateWithoutRefreshTokensInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutRefreshTokensInput = {
@@ -1455,6 +1502,7 @@ export type CuentaUpdateWithoutRefreshTokensInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutRefreshTokensInput = {
@@ -1478,6 +1526,7 @@ export type CuentaUncheckedUpdateWithoutRefreshTokensInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateWithoutAccessTokensRevocadosInput = {
@@ -1501,6 +1550,7 @@ export type CuentaCreateWithoutAccessTokensRevocadosInput = {
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutAccessTokensRevocadosInput = {
@@ -1524,6 +1574,7 @@ export type CuentaUncheckedCreateWithoutAccessTokensRevocadosInput = {
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutAccessTokensRevocadosInput = {
@@ -1563,6 +1614,7 @@ export type CuentaUpdateWithoutAccessTokensRevocadosInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput = {
@@ -1586,6 +1638,7 @@ export type CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateWithoutPublicacionesCompradasInput = {
@@ -1609,6 +1662,7 @@ export type CuentaCreateWithoutPublicacionesCompradasInput = {
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutPublicacionesCompradasInput = {
@@ -1632,6 +1686,7 @@ export type CuentaUncheckedCreateWithoutPublicacionesCompradasInput = {
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutPublicacionesCompradasInput = {
@@ -1660,6 +1715,7 @@ export type CuentaCreateWithoutPublicacionesModificadasInput = {
   usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
   marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaUncheckedCreateWithoutPublicacionesModificadasInput = {
@@ -1683,6 +1739,7 @@ export type CuentaUncheckedCreateWithoutPublicacionesModificadasInput = {
   usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
   marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
 }
 
 export type CuentaCreateOrConnectWithoutPublicacionesModificadasInput = {
@@ -1722,6 +1779,7 @@ export type CuentaUpdateWithoutPublicacionesCompradasInput = {
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutPublicacionesCompradasInput = {
@@ -1745,6 +1803,7 @@ export type CuentaUncheckedUpdateWithoutPublicacionesCompradasInput = {
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUpsertWithoutPublicacionesModificadasInput = {
@@ -1779,6 +1838,7 @@ export type CuentaUpdateWithoutPublicacionesModificadasInput = {
   usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutPublicacionesModificadasInput = {
@@ -1802,6 +1862,119 @@ export type CuentaUncheckedUpdateWithoutPublicacionesModificadasInput = {
   usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
+}
+
+export type CuentaCreateWithoutBannersModificadosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
+  other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+}
+
+export type CuentaUncheckedCreateWithoutBannersModificadosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+}
+
+export type CuentaCreateOrConnectWithoutBannersModificadosInput = {
+  where: Prisma.CuentaWhereUniqueInput
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutBannersModificadosInput, Prisma.CuentaUncheckedCreateWithoutBannersModificadosInput>
+}
+
+export type CuentaUpsertWithoutBannersModificadosInput = {
+  update: Prisma.XOR<Prisma.CuentaUpdateWithoutBannersModificadosInput, Prisma.CuentaUncheckedUpdateWithoutBannersModificadosInput>
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutBannersModificadosInput, Prisma.CuentaUncheckedCreateWithoutBannersModificadosInput>
+  where?: Prisma.CuentaWhereInput
+}
+
+export type CuentaUpdateToOneWithWhereWithoutBannersModificadosInput = {
+  where?: Prisma.CuentaWhereInput
+  data: Prisma.XOR<Prisma.CuentaUpdateWithoutBannersModificadosInput, Prisma.CuentaUncheckedUpdateWithoutBannersModificadosInput>
+}
+
+export type CuentaUpdateWithoutBannersModificadosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
+  other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+}
+
+export type CuentaUncheckedUpdateWithoutBannersModificadosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaCreateManyCuentaInput = {
@@ -1839,6 +2012,7 @@ export type CuentaUpdateWithoutCuentaInput = {
   marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutCuentaInput = {
@@ -1862,6 +2036,7 @@ export type CuentaUncheckedUpdateWithoutCuentaInput = {
   marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
   publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
   publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
 }
 
 export type CuentaUncheckedUpdateManyWithoutCuentaInput = {
@@ -1891,6 +2066,7 @@ export type CuentaCountOutputType = {
   sede: number
   publicacionesCompradas: number
   publicacionesModificadas: number
+  bannersModificados: number
 }
 
 export type CuentaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1901,6 +2077,7 @@ export type CuentaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   sede?: boolean | CuentaCountOutputTypeCountSedeArgs
   publicacionesCompradas?: boolean | CuentaCountOutputTypeCountPublicacionesCompradasArgs
   publicacionesModificadas?: boolean | CuentaCountOutputTypeCountPublicacionesModificadasArgs
+  bannersModificados?: boolean | CuentaCountOutputTypeCountBannersModificadosArgs
 }
 
 /**
@@ -1962,6 +2139,13 @@ export type CuentaCountOutputTypeCountPublicacionesModificadasArgs<ExtArgs exten
   where?: Prisma.PublicacionWhereInput
 }
 
+/**
+ * CuentaCountOutputType without action
+ */
+export type CuentaCountOutputTypeCountBannersModificadosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BannerPublicidadWhereInput
+}
+
 
 export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_cuenta?: boolean
@@ -1986,6 +2170,7 @@ export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   marca?: boolean | Prisma.Cuenta$marcaArgs<ExtArgs>
   publicacionesCompradas?: boolean | Prisma.Cuenta$publicacionesCompradasArgs<ExtArgs>
   publicacionesModificadas?: boolean | Prisma.Cuenta$publicacionesModificadasArgs<ExtArgs>
+  bannersModificados?: boolean | Prisma.Cuenta$bannersModificadosArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["cuenta"]>
 
@@ -2048,6 +2233,7 @@ export type CuentaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   marca?: boolean | Prisma.Cuenta$marcaArgs<ExtArgs>
   publicacionesCompradas?: boolean | Prisma.Cuenta$publicacionesCompradasArgs<ExtArgs>
   publicacionesModificadas?: boolean | Prisma.Cuenta$publicacionesModificadasArgs<ExtArgs>
+  bannersModificados?: boolean | Prisma.Cuenta$bannersModificadosArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CuentaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2070,6 +2256,7 @@ export type $CuentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     marca: Prisma.$MarcaPayload<ExtArgs> | null
     publicacionesCompradas: Prisma.$PublicacionPayload<ExtArgs>[]
     publicacionesModificadas: Prisma.$PublicacionPayload<ExtArgs>[]
+    bannersModificados: Prisma.$BannerPublicidadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_cuenta: string
@@ -2488,6 +2675,7 @@ export interface Prisma__CuentaClient<T, Null = never, ExtArgs extends runtime.T
   marca<T extends Prisma.Cuenta$marcaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$marcaArgs<ExtArgs>>): Prisma.Prisma__MarcaClient<runtime.Types.Result.GetResult<Prisma.$MarcaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   publicacionesCompradas<T extends Prisma.Cuenta$publicacionesCompradasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$publicacionesCompradasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   publicacionesModificadas<T extends Prisma.Cuenta$publicacionesModificadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$publicacionesModificadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bannersModificados<T extends Prisma.Cuenta$bannersModificadosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$bannersModificadosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BannerPublicidadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3152,6 +3340,30 @@ export type Cuenta$publicacionesModificadasArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.PublicacionScalarFieldEnum | Prisma.PublicacionScalarFieldEnum[]
+}
+
+/**
+ * Cuenta.bannersModificados
+ */
+export type Cuenta$bannersModificadosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BannerPublicidad
+   */
+  select?: Prisma.BannerPublicidadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BannerPublicidad
+   */
+  omit?: Prisma.BannerPublicidadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BannerPublicidadInclude<ExtArgs> | null
+  where?: Prisma.BannerPublicidadWhereInput
+  orderBy?: Prisma.BannerPublicidadOrderByWithRelationInput | Prisma.BannerPublicidadOrderByWithRelationInput[]
+  cursor?: Prisma.BannerPublicidadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BannerPublicidadScalarFieldEnum | Prisma.BannerPublicidadScalarFieldEnum[]
 }
 
 /**

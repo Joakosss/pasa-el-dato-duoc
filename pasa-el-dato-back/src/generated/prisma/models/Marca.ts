@@ -159,12 +159,14 @@ export type MarcaWhereInput = {
   id_cuenta?: Prisma.UuidFilter<"Marca"> | string
   nombre?: Prisma.StringFilter<"Marca"> | string
   cuenta?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
+  banners?: Prisma.BannerPublicidadListRelationFilter
 }
 
 export type MarcaOrderByWithRelationInput = {
   id_cuenta?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
   cuenta?: Prisma.CuentaOrderByWithRelationInput
+  banners?: Prisma.BannerPublicidadOrderByRelationAggregateInput
 }
 
 export type MarcaWhereUniqueInput = Prisma.AtLeast<{
@@ -174,6 +176,7 @@ export type MarcaWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.MarcaWhereInput | Prisma.MarcaWhereInput[]
   nombre?: Prisma.StringFilter<"Marca"> | string
   cuenta?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
+  banners?: Prisma.BannerPublicidadListRelationFilter
 }, "id_cuenta">
 
 export type MarcaOrderByWithAggregationInput = {
@@ -195,21 +198,25 @@ export type MarcaScalarWhereWithAggregatesInput = {
 export type MarcaCreateInput = {
   nombre: string
   cuenta: Prisma.CuentaCreateNestedOneWithoutMarcaInput
+  banners?: Prisma.BannerPublicidadCreateNestedManyWithoutMarcaInput
 }
 
 export type MarcaUncheckedCreateInput = {
   id_cuenta: string
   nombre: string
+  banners?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutMarcaInput
 }
 
 export type MarcaUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutMarcaNestedInput
+  banners?: Prisma.BannerPublicidadUpdateManyWithoutMarcaNestedInput
 }
 
 export type MarcaUncheckedUpdateInput = {
   id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  banners?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutMarcaNestedInput
 }
 
 export type MarcaCreateManyInput = {
@@ -246,6 +253,11 @@ export type MarcaMinOrderByAggregateInput = {
   nombre?: Prisma.SortOrder
 }
 
+export type MarcaScalarRelationFilter = {
+  is?: Prisma.MarcaWhereInput
+  isNot?: Prisma.MarcaWhereInput
+}
+
 export type MarcaCreateNestedOneWithoutCuentaInput = {
   create?: Prisma.XOR<Prisma.MarcaCreateWithoutCuentaInput, Prisma.MarcaUncheckedCreateWithoutCuentaInput>
   connectOrCreate?: Prisma.MarcaCreateOrConnectWithoutCuentaInput
@@ -278,12 +290,28 @@ export type MarcaUncheckedUpdateOneWithoutCuentaNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MarcaUpdateToOneWithWhereWithoutCuentaInput, Prisma.MarcaUpdateWithoutCuentaInput>, Prisma.MarcaUncheckedUpdateWithoutCuentaInput>
 }
 
+export type MarcaCreateNestedOneWithoutBannersInput = {
+  create?: Prisma.XOR<Prisma.MarcaCreateWithoutBannersInput, Prisma.MarcaUncheckedCreateWithoutBannersInput>
+  connectOrCreate?: Prisma.MarcaCreateOrConnectWithoutBannersInput
+  connect?: Prisma.MarcaWhereUniqueInput
+}
+
+export type MarcaUpdateOneRequiredWithoutBannersNestedInput = {
+  create?: Prisma.XOR<Prisma.MarcaCreateWithoutBannersInput, Prisma.MarcaUncheckedCreateWithoutBannersInput>
+  connectOrCreate?: Prisma.MarcaCreateOrConnectWithoutBannersInput
+  upsert?: Prisma.MarcaUpsertWithoutBannersInput
+  connect?: Prisma.MarcaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MarcaUpdateToOneWithWhereWithoutBannersInput, Prisma.MarcaUpdateWithoutBannersInput>, Prisma.MarcaUncheckedUpdateWithoutBannersInput>
+}
+
 export type MarcaCreateWithoutCuentaInput = {
   nombre: string
+  banners?: Prisma.BannerPublicidadCreateNestedManyWithoutMarcaInput
 }
 
 export type MarcaUncheckedCreateWithoutCuentaInput = {
   nombre: string
+  banners?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutMarcaInput
 }
 
 export type MarcaCreateOrConnectWithoutCuentaInput = {
@@ -304,18 +332,87 @@ export type MarcaUpdateToOneWithWhereWithoutCuentaInput = {
 
 export type MarcaUpdateWithoutCuentaInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  banners?: Prisma.BannerPublicidadUpdateManyWithoutMarcaNestedInput
 }
 
 export type MarcaUncheckedUpdateWithoutCuentaInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  banners?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutMarcaNestedInput
 }
 
+export type MarcaCreateWithoutBannersInput = {
+  nombre: string
+  cuenta: Prisma.CuentaCreateNestedOneWithoutMarcaInput
+}
+
+export type MarcaUncheckedCreateWithoutBannersInput = {
+  id_cuenta: string
+  nombre: string
+}
+
+export type MarcaCreateOrConnectWithoutBannersInput = {
+  where: Prisma.MarcaWhereUniqueInput
+  create: Prisma.XOR<Prisma.MarcaCreateWithoutBannersInput, Prisma.MarcaUncheckedCreateWithoutBannersInput>
+}
+
+export type MarcaUpsertWithoutBannersInput = {
+  update: Prisma.XOR<Prisma.MarcaUpdateWithoutBannersInput, Prisma.MarcaUncheckedUpdateWithoutBannersInput>
+  create: Prisma.XOR<Prisma.MarcaCreateWithoutBannersInput, Prisma.MarcaUncheckedCreateWithoutBannersInput>
+  where?: Prisma.MarcaWhereInput
+}
+
+export type MarcaUpdateToOneWithWhereWithoutBannersInput = {
+  where?: Prisma.MarcaWhereInput
+  data: Prisma.XOR<Prisma.MarcaUpdateWithoutBannersInput, Prisma.MarcaUncheckedUpdateWithoutBannersInput>
+}
+
+export type MarcaUpdateWithoutBannersInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  cuenta?: Prisma.CuentaUpdateOneRequiredWithoutMarcaNestedInput
+}
+
+export type MarcaUncheckedUpdateWithoutBannersInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+
+/**
+ * Count Type MarcaCountOutputType
+ */
+
+export type MarcaCountOutputType = {
+  banners: number
+}
+
+export type MarcaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  banners?: boolean | MarcaCountOutputTypeCountBannersArgs
+}
+
+/**
+ * MarcaCountOutputType without action
+ */
+export type MarcaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MarcaCountOutputType
+   */
+  select?: Prisma.MarcaCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * MarcaCountOutputType without action
+ */
+export type MarcaCountOutputTypeCountBannersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BannerPublicidadWhereInput
+}
 
 
 export type MarcaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_cuenta?: boolean
   nombre?: boolean
   cuenta?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
+  banners?: boolean | Prisma.Marca$bannersArgs<ExtArgs>
+  _count?: boolean | Prisma.MarcaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["marca"]>
 
 export type MarcaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -338,6 +435,8 @@ export type MarcaSelectScalar = {
 export type MarcaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_cuenta" | "nombre", ExtArgs["result"]["marca"]>
 export type MarcaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
+  banners?: boolean | Prisma.Marca$bannersArgs<ExtArgs>
+  _count?: boolean | Prisma.MarcaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MarcaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
@@ -350,6 +449,7 @@ export type $MarcaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Marca"
   objects: {
     cuenta: Prisma.$CuentaPayload<ExtArgs>
+    banners: Prisma.$BannerPublicidadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_cuenta: string
@@ -749,6 +849,7 @@ readonly fields: MarcaFieldRefs;
 export interface Prisma__MarcaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   cuenta<T extends Prisma.CuentaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CuentaDefaultArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  banners<T extends Prisma.Marca$bannersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Marca$bannersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BannerPublicidadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1178,6 +1279,30 @@ export type MarcaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Marcas to delete.
    */
   limit?: number
+}
+
+/**
+ * Marca.banners
+ */
+export type Marca$bannersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BannerPublicidad
+   */
+  select?: Prisma.BannerPublicidadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BannerPublicidad
+   */
+  omit?: Prisma.BannerPublicidadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BannerPublicidadInclude<ExtArgs> | null
+  where?: Prisma.BannerPublicidadWhereInput
+  orderBy?: Prisma.BannerPublicidadOrderByWithRelationInput | Prisma.BannerPublicidadOrderByWithRelationInput[]
+  cursor?: Prisma.BannerPublicidadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BannerPublicidadScalarFieldEnum | Prisma.BannerPublicidadScalarFieldEnum[]
 }
 
 /**

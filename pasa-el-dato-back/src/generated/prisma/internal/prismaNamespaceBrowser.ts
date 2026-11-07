@@ -68,6 +68,8 @@ export const ModelName = {
   Categoria: 'Categoria',
   EstadoPublicacion: 'EstadoPublicacion',
   Publicacion: 'Publicacion',
+  BannerPublicidad: 'BannerPublicidad',
+  BannerSede: 'BannerSede',
   ImagenPublicacion: 'ImagenPublicacion'
 } as const
 
@@ -274,6 +276,31 @@ export const PublicacionScalarFieldEnum = {
 } as const
 
 export type PublicacionScalarFieldEnum = (typeof PublicacionScalarFieldEnum)[keyof typeof PublicacionScalarFieldEnum]
+
+
+export const BannerPublicidadScalarFieldEnum = {
+  id: 'id',
+  fk_marca: 'fk_marca',
+  imagen: 'imagen',
+  mensaje: 'mensaje',
+  fechaInicio: 'fechaInicio',
+  fechaFin: 'fechaFin',
+  estado: 'estado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  eliminado: 'eliminado',
+  fk_modificado_por: 'fk_modificado_por'
+} as const
+
+export type BannerPublicidadScalarFieldEnum = (typeof BannerPublicidadScalarFieldEnum)[keyof typeof BannerPublicidadScalarFieldEnum]
+
+
+export const BannerSedeScalarFieldEnum = {
+  fk_banner_publicidad: 'fk_banner_publicidad',
+  fk_sede: 'fk_sede'
+} as const
+
+export type BannerSedeScalarFieldEnum = (typeof BannerSedeScalarFieldEnum)[keyof typeof BannerSedeScalarFieldEnum]
 
 
 export const ImagenPublicacionScalarFieldEnum = {
