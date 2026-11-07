@@ -31,6 +31,7 @@ model Cuenta {
   publicacionesCompradas    Publicacion[] @relation("publicacionComprador")
   publicacionesModificadas  Publicacion[] @relation("publicacionModificadaPor")
   bannersModificados        BannerPublicidad[] @relation("bannerModificadoPor")
+  notificacionesMarca       NotificacionMarca[] @relation("notificacionMarcaCuenta")
 
   @@index([fk_modificado_por], map: "idx_cuenta_modificado_por")
   @@map("cuenta")
@@ -275,10 +276,14 @@ model BannerPublicidad {
   fechaModificacion DateTime               @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
   eliminado         Boolean                @default(false)
   fk_modificado_por String?                @db.Uuid
+  motivoRechazo    String?                @map("motivo_rechazo")
+  fechaAprobacion  DateTime?              @map("fecha_aprobacion") @db.Timestamptz(6)
+  fechaRechazo     DateTime?              @map("fecha_rechazo") @db.Timestamptz(6)
 
-  marca        Marca       @relation(fields: [fk_marca], references: [id_cuenta], onUpdate: NoAction)
-  modificadoPor Cuenta?    @relation("bannerModificadoPor", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction)
-  sedes        BannerSede[]
+  marca             Marca               @relation(fields: [fk_marca], references: [id_cuenta], onUpdate: NoAction)
+  modificadoPor     Cuenta?             @relation("bannerModificadoPor", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction)
+  sedes             BannerSede[]
+  notificaciones    NotificacionMarca[]
 
   @@index([fk_marca], map: "idx_banner_publicidad_marca")
   @@index([estado], map: "idx_banner_publicidad_estado")
@@ -297,6 +302,23 @@ model BannerSede {
   @@id([fk_banner_publicidad, fk_sede])
   @@index([fk_sede], map: "idx_banner_sede_sede")
   @@map("banner_sede")
+}
+
+model NotificacionMarca {
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fk_marca          String          @db.Uuid
+  fk_banner         String?         @db.Uuid
+  tipo              String
+  mensaje           String
+  leida             Boolean         @default(false)
+  fechaCreacion     DateTime        @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+
+  cuenta            Cuenta          @relation("notificacionMarcaCuenta", fields: [fk_marca], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
+  banner            BannerPublicidad? @relation(fields: [fk_banner], references: [id], onDelete: SetNull, onUpdate: NoAction)
+
+  @@index([fk_marca, leida], map: "idx_notificacion_marca_lectura")
+  @@index([fk_banner], map: "idx_notificacion_marca_banner")
+  @@map("notificacion_marca")
 }
 
 model ImagenPublicacion {

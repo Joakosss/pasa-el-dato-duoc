@@ -4,6 +4,8 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
   Post,
   Req,
   UnauthorizedException,
@@ -18,6 +20,7 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -32,6 +35,7 @@ import {
 } from '../publicacion/imagenes.constantes.js';
 import { AlmacenamientoImagenesService } from '../publicacion/almacenamiento-imagenes.service.js';
 import { CrearBannerPublicidadDto } from './dto/crear-banner-publicidad.dto.js';
+import { EditarBannerPublicidadDto } from './dto/editar-banner-publicidad.dto.js';
 import {
   CAMPO_IMAGEN_BANNER,
   validarImagenBanner,
@@ -52,6 +56,56 @@ export class PublicidadController {
     private readonly publicidadService: PublicidadService,
     private readonly almacenamientoImagenesService: AlmacenamientoImagenesService,
   ) {}
+
+  @Patch(':id')
+  @Roles('Marca')
+  @ApiOperation({
+    summary: 'Editar un banner publicitario propio',
+    description:
+      'Actualiza mensaje, vigencia y/o sedes. No permite cambiar la imagen en el MVP.',
+  })
+  @ApiBody({ type: EditarBannerPublicidadDto })
+  @ApiOkResponse({
+    description: 'Banner actualizado correctamente',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', format: 'uuid' },
+        imagen: { type: 'string' },
+        mensaje: { type: 'string' },
+        fechaInicio: { type: 'string', format: 'date-time' },
+        fechaFin: { type: 'string', format: 'date-time' },
+        estado: { type: 'string', enum: ['PENDIENTE', 'APROBADO', 'RECHAZADO'] },
+        sedes: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              nombre: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'La cuenta no corresponde a una marca o el banner no pertenece a la marca',
+  })
+  async editar(
+    @Param('id') id: string,
+    @Req()
+    solicitud: Request & { user?: SesionAutenticada },
+    @Body() dto: EditarBannerPublicidadDto,
+  ): Promise<BannerPublicidadCreado> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicidadService.editarBanner(id, dto, user.idCuenta);
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

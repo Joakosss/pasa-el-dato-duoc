@@ -194,14 +194,92 @@ describe('HU-PU-01 crear banner publicitario (e2e)', () => {
     await solicitudCrearBanner().field('sedes', '[]').expect(400);
   });
 
-  it('rechaza la creación sin imagen', async () => {
-    await request(app.getHttpServer())
-      .post('/api/publicidad/banners')
+  it('permite al dueño editar mensaje, vigencia y sedes', async () => {
+    const creado = await solicitudCrearBanner().expect(201);
+
+    const respuesta = await request(app.getHttpServer())
+      .patch(`/api/publicidad/banners/${creado.body.id}`)
       .set('Cookie', cookieMarca)
-      .field('mensaje', 'Mensaje válido para el banner')
-      .field('fechaInicio', '2026-12-01T00:00:00.000Z')
-      .field('fechaFin', '2026-12-31T23:59:59.000Z')
-      .field('sedes', JSON.stringify([idSedeActiva]))
+      .send({
+        mensaje: 'Mensaje actualizado para la comunidad Duoc UC',
+        fechaInicio: '2027-01-01T00:00:00.000Z',
+        fechaFin: '2027-01-31T23:59:59.000Z',
+        sedes: [idSedeActiva],
+      })
+      .expect(200);
+
+    expect(respuesta.body).toMatchObject({
+      id: creado.body.id,
+      mensaje: 'Mensaje actualizado para la comunidad Duoc UC',
+      estado: 'PENDIENTE',
+      sedes: [{ id: idSedeActiva }],
+    });
+
+    const banner = await prisma.bannerPublicidad.findUnique({
+      where: { id: creado.body.id },
+      select: {
+        mensaje: true,
+        fechaInicio: true,
+        fechaFin: true,
+        estado: true,
+        sedes: { select: { fk_sede: true } },
+      },
+    });
+
+    expect(banner).toMatchObject({
+      mensaje: 'Mensaje actualizado para la comunidad Duoc UC',
+      fechaInicio: new Date('2027-01-01T00:00:00.000Z'),
+      fechaFin: new Date('2027-01-31T23:59:59.000Z'),
+      estado: 'PENDIENTE',
+      sedes: [{ fk_sede: idSedeActiva }],
+    });
+  });
+
+  it('rechaza editar un banner con fechas inválidas', async () => {
+    const creado = await solicitudCrearBanner().expect(201);
+
+    await request(app.getHttpServer())
+      .patch(`/api/publicidad/banners/${creado.body.id}`)
+      .set('Cookie', cookieMarca)
+      .send({
+        fechaInicio: '2027-02-01T00:00:00.000Z',
+        fechaFin: '2027-01-01T00:00:00.000Z',
+      })
       .expect(400);
+  });
+
+  it('deniega editar un banner a una marca que no es dueña', async () => {
+    const creado = await solicitudCrearBanner().expect(201);
+    const correoOtraMarca = `otra-marca.${randomUUID()}@duocuc.cl`;
+    const contrasenaOtraMarca = 'otra-marca-e2e-123';
+
+    const cuenta = await prisma.cuenta.create({
+      data: {
+        correo: correoOtraMarca,
+        claveHash: await generarHashContrasena(contrasenaOtraMarca),
+        telefono: '12345678',
+        aprobada: true,
+        marca: { create: { nombre: 'Otra marca publicidad e2e' } },
+      },
+      select: { id_cuenta: true },
+    });
+
+    const respuestaLogin = await request(app.getHttpServer())
+      .post('/api/auth/login')
+      .send({ correo: correoOtraMarca, contrasena: contrasenaOtraMarca })
+      .expect(200);
+
+    const cookieOtraMarca = obtenerCookie(
+      respuestaLogin.headers['set-cookie'],
+      'accessToken',
+    );
+
+    await request(app.getHttpServer())
+      .patch(`/api/publicidad/banners/${creado.body.id}`)
+      .set('Cookie', cookieOtraMarca ?? '')
+      .send({ mensaje: 'Edición no autorizada' })
+      .expect(403);
+
+    await prisma.cuenta.delete({ where: { id_cuenta: cuenta.id_cuenta } });
   });
 });
