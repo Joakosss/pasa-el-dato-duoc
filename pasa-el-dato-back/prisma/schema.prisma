@@ -27,11 +27,21 @@ model Cuenta {
   accessTokensRevocados AccessTokenRevocado[]
   sede              Sede[]
   usuario           Usuario?
+  marca             Marca?
   publicacionesCompradas    Publicacion[] @relation("publicacionComprador")
   publicacionesModificadas  Publicacion[] @relation("publicacionModificadaPor")
 
   @@index([fk_modificado_por], map: "idx_cuenta_modificado_por")
   @@map("cuenta")
+}
+
+model Marca {
+  id_cuenta String @id @db.Uuid
+  nombre    String
+
+  cuenta Cuenta @relation(fields: [id_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("marca")
 }
 
 model RolUsuario {

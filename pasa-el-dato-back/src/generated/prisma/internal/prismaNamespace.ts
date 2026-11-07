@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Cuenta: 'Cuenta',
+  Marca: 'Marca',
   RolUsuario: 'RolUsuario',
   Sede: 'Sede',
   Region: 'Region',
@@ -429,7 +430,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "publicacion" | "imagenPublicacion"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "publicacion" | "imagenPublicacion"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -504,6 +505,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CuentaCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CuentaCountAggregateOutputType> | number
+        }
+      }
+    }
+    Marca: {
+      payload: Prisma.$MarcaPayload<ExtArgs>
+      fields: Prisma.MarcaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MarcaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MarcaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>
+        }
+        findFirst: {
+          args: Prisma.MarcaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MarcaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>
+        }
+        findMany: {
+          args: Prisma.MarcaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>[]
+        }
+        create: {
+          args: Prisma.MarcaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>
+        }
+        createMany: {
+          args: Prisma.MarcaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MarcaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>[]
+        }
+        delete: {
+          args: Prisma.MarcaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>
+        }
+        update: {
+          args: Prisma.MarcaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>
+        }
+        deleteMany: {
+          args: Prisma.MarcaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MarcaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MarcaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>[]
+        }
+        upsert: {
+          args: Prisma.MarcaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarcaPayload>
+        }
+        aggregate: {
+          args: Prisma.MarcaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarca>
+        }
+        groupBy: {
+          args: Prisma.MarcaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarcaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MarcaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarcaCountAggregateOutputType> | number
         }
       }
     }
@@ -1748,6 +1823,14 @@ export const CuentaScalarFieldEnum = {
 export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
 
 
+export const MarcaScalarFieldEnum = {
+  id_cuenta: 'id_cuenta',
+  nombre: 'nombre'
+} as const
+
+export type MarcaScalarFieldEnum = (typeof MarcaScalarFieldEnum)[keyof typeof MarcaScalarFieldEnum]
+
+
 export const RolUsuarioScalarFieldEnum = {
   id: 'id',
   descripcion: 'descripcion'
@@ -2179,6 +2262,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   cuenta?: Prisma.CuentaOmit
+  marca?: Prisma.MarcaOmit
   rolUsuario?: Prisma.RolUsuarioOmit
   sede?: Prisma.SedeOmit
   region?: Prisma.RegionOmit

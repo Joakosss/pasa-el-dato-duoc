@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Cuenta.js'
+export type * from './models/Marca.js'
 export type * from './models/RolUsuario.js'
 export type * from './models/Sede.js'
 export type * from './models/Region.js'
