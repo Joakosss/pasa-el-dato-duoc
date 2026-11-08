@@ -77,6 +77,9 @@ export class JwtAuthGuard implements CanActivate {
             },
           },
         },
+        marca: {
+          select: { id_cuenta: true },
+        },
       },
     });
 
@@ -85,17 +88,26 @@ export class JwtAuthGuard implements CanActivate {
       cuenta.bloqueado ||
       cuenta.eliminado ||
       !cuenta.aprobada ||
-      !cuenta.usuario
+      (!cuenta.usuario && !cuenta.marca)
     ) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    const rol = cuenta.usuario?.rol_usuario;
+    const rolMarca = cuenta.marca
+      ? await this.prisma.rolUsuario.findUnique({
+          where: { descripcion: 'Marca' },
+          select: { id: true, descripcion: true },
+        })
+      : null;
+
+    if (!rol && !rolMarca) {
       throw new UnauthorizedException('Sesión inválida');
     }
 
     const sesion: SesionAutenticada = {
       idCuenta: sub,
-      rol: {
-        id: cuenta.usuario.rol_usuario.id,
-        descripcion: cuenta.usuario.rol_usuario.descripcion,
-      },
+      rol: rol ?? rolMarca!,
     };
 
     solicitud.user = sesion;

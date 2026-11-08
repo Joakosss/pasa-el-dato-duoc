@@ -1,4 +1,3 @@
-import * as fsPromises from 'node:fs/promises';
 import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -10,6 +9,27 @@ import {
   obtenerDirectorioUploads,
 } from './almacenamiento-imagenes.service.js';
 import type { ImagenRecibida } from './validar-imagenes.js';
+
+// En ESM el namespace de un módulo nativo no es configurable: vi.spyOn
+// falla. Se sustituye rename por un simulador controlado que delega en el
+// original para que el resto del comportamiento real se conserve.
+const { renameMock, capturarRenameOriginal } = vi.hoisted(() => {
+  let original: undefined | ((origen: string, destino: string) => Promise<void>);
+  const mock = vi.fn();
+  return {
+    renameMock: mock,
+    capturarRenameOriginal: (mod: { rename: typeof original }) => {
+      original = mod.rename;
+      mock.mockImplementation(original!);
+    },
+  };
+});
+
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('node:fs/promises')>();
+  capturarRenameOriginal(mod);
+  return { ...mod, rename: renameMock };
+});
 
 const firmaPngValida = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -201,15 +221,17 @@ describe('AlmacenamientoImagenesService', () => {
       configurable: true,
     });
 
-    const renameOriginal = fsPromises.rename;
-    const renameSpy = vi.spyOn(fsPromises, 'rename');
+    const renameOriginal = renameMock.getMockImplementation() as (
+      origen: string,
+      destino: string,
+    ) => Promise<void>;
     let llamadas = 0;
-    renameSpy.mockImplementation(async (origen, destino) => {
+    renameMock.mockImplementation(async (origen, destino) => {
       llamadas += 1;
       if (llamadas === 2) {
         throw new Error('fallo de rename');
       }
-      return await renameOriginal(origen, destino);
+      return await renameOriginal(origen as string, destino as string);
     });
 
     await expect(
@@ -219,7 +241,9 @@ describe('AlmacenamientoImagenesService', () => {
       ),
     ).rejects.toBeInstanceOf(InternalServerErrorException);
 
-    renameSpy.mockRestore();
+    // Devuelve el comportamiento real para las pruebas siguientes.
+    renameMock.mockClear();
+    renameMock.mockImplementation(renameOriginal);
 
     const archivos = await readdir(directorio);
     expect(archivos).toEqual([]);

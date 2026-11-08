@@ -9,6 +9,7 @@ import type { Model, PipelineStage } from 'mongoose';
 import { isValidObjectId, Types } from 'mongoose';
 import { decodeCursor, encodeCursor } from '../common/pagination/cursor.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { FiltroPalabrasBloqueadasService } from './moderacion/filtro-palabras-bloqueadas.service.js';
 import {
   Conversation,
   type ConversationDocument,
@@ -24,6 +25,7 @@ type CursorConversaciones = {
 export class ChatService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly filtroPalabrasBloqueadas: FiltroPalabrasBloqueadasService,
     @InjectModel(Conversation.name)
     private readonly conversationModel: Model<ConversationDocument>,
     @InjectModel(Mensaje.name)
@@ -438,6 +440,12 @@ export class ChatService {
     }
 
     const conversacion = await this.asegurarParticipante({
+      conversacionId: entrada.conversacionId,
+      cuentaId: entrada.cuentaId,
+    });
+
+    this.filtroPalabrasBloqueadas.validarTexto({
+      texto,
       conversacionId: entrada.conversacionId,
       cuentaId: entrada.cuentaId,
     });

@@ -5,6 +5,7 @@ import { PrismaModule } from '../prisma/prisma.module.js';
 import { ChatController } from './chat.controller.js';
 import { ChatGateway } from './chat.gateway.js';
 import { ChatService } from './chat.service.js';
+import { FiltroPalabrasBloqueadasService } from './moderacion/filtro-palabras-bloqueadas.service.js';
 import { Conversation, ConversationSchema } from './schemas/conversation.schema.js';
 import { Mensaje, MensajeSchema } from './schemas/mensaje.schema.js';
 
@@ -26,6 +27,6 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
     ]),
   ],
   controllers: [ChatController],
-  providers: [ChatGateway, ChatService],
+  providers: [ChatGateway, ChatService, FiltroPalabrasBloqueadasService],
 })
 export class ChatModule {}

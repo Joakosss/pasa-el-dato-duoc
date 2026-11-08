@@ -47,6 +47,11 @@ export { Prisma }
  */
 export type Cuenta = Prisma.CuentaModel
 /**
+ * Model Marca
+ * 
+ */
+export type Marca = Prisma.MarcaModel
+/**
  * Model RolUsuario
  * 
  */
@@ -121,6 +126,21 @@ export type EstadoPublicacion = Prisma.EstadoPublicacionModel
  * 
  */
 export type Publicacion = Prisma.PublicacionModel
+/**
+ * Model BannerPublicidad
+ * 
+ */
+export type BannerPublicidad = Prisma.BannerPublicidadModel
+/**
+ * Model BannerSede
+ * 
+ */
+export type BannerSede = Prisma.BannerSedeModel
+/**
+ * Model NotificacionMarca
+ * 
+ */
+export type NotificacionMarca = Prisma.NotificacionMarcaModel
 /**
  * Model ImagenPublicacion
  * 

@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Cuenta.js'
+export type * from './models/Marca.js'
 export type * from './models/RolUsuario.js'
 export type * from './models/Sede.js'
 export type * from './models/Region.js'
@@ -24,5 +25,8 @@ export type * from './models/TipoVenta.js'
 export type * from './models/Categoria.js'
 export type * from './models/EstadoPublicacion.js'
 export type * from './models/Publicacion.js'
+export type * from './models/BannerPublicidad.js'
+export type * from './models/BannerSede.js'
+export type * from './models/NotificacionMarca.js'
 export type * from './models/ImagenPublicacion.js'
 export type * from './commonInputTypes.js'

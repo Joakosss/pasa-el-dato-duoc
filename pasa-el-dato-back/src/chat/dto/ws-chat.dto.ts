@@ -23,6 +23,16 @@ export class EnviarMensajeWsDto {
   texto!: string;
 }
 
+export class ConversacionAbiertaWsDto {
+  @IsString()
+  conversacionId!: string;
+}
+
+export interface ConversacionLeidaWsRespuesta {
+  conversacionId: string;
+  leidoHastaMensajeId: string | null;
+}
+
 export interface MensajeWsRespuesta {
   id: string;
   conversacionId: string;

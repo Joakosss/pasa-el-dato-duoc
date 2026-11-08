@@ -55,6 +55,29 @@ Fuera de alcance de esta HU: cambio de estado independiente En curso/Pausada (HU
 
 Nota técnica de origen (no define diseño): el modelo `publicacion` ya tiene el campo `fk_user_comprador` (nullable) en BD; no existe módulo de compras.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-COM-01-BE01:** Definir el contrato de cierre de venta y DTO de entrada con el identificador del comprador; coordinarlo con HU-PUB-04 para que “Vendida” no se asigne sin comprador.
+- **HU-COM-01-BE02:** Implementar el cierre como una única operación atómica que registre `fk_user_comprador` y cambie el estado a “Vendida”.
+- **HU-COM-01-BE03:** Validar sesión, existencia de la publicación, propiedad del vendedor, y que no esté eliminada ni vendida.
+- **HU-COM-01-BE04:** Validar que el comprador corresponda a un usuario registrado válido y sea distinto del vendedor.
+- **HU-COM-01-BE05:** Evitar cierres concurrentes o repetidos y asegurar que el comprador registrado no pueda cambiarse tras el cierre.
+- **HU-COM-01-BE06:** Incluir publicación, vendedor y comprador en la respuesta de consulta de una publicación vendida, con acceso para sus participantes según el contrato definido.
+- **HU-COM-01-BE07:** Documentar el contrato y respuestas de error en Swagger.
+- **HU-COM-01-BE08:** Añadir pruebas unitarias/e2e para cierre válido, autenticación, ownership, publicación inexistente/eliminada/vendida, comprador inválido o propio, repetición y consulta de la transacción.
+- **HU-COM-01-BE09:** Resolver en spec/design el mecanismo para identificar al comprador registrado; actualmente no se encontró un endpoint de búsqueda de usuarios disponible.
+
+### Frontend (FE)
+
+- **HU-COM-01-FE01:** Incorporar la acción de cerrar venta para el vendedor dueño, solo cuando la publicación sea finalizable.
+- **HU-COM-01-FE02:** Implementar la selección o identificación de un comprador registrado conforme al contrato que se defina; no asumir que ya existe API de búsqueda.
+- **HU-COM-01-FE03:** Añadir confirmación del cierre y enviar publicación y comprador en una sola solicitud.
+- **HU-COM-01-FE04:** Mostrar carga y evitar envíos duplicados mientras se procesa el cierre.
+- **HU-COM-01-FE05:** Actualizar la vista tras el cierre y presentar la transacción con publicación, vendedor y comprador.
+- **HU-COM-01-FE06:** Manejar errores de sesión, permisos, publicación no finalizable, comprador inválido o igual al vendedor, y venta ya cerrada, con feedback comprensible.
+
 ## Dependencias
 
 - HU-PUB-01 (crear publicación). HU-PUB-04 queda para En curso/Pausada; la asignación de "Vendida" pasa a ser el cierre de venta de esta HU (ajuste definido en reglas).

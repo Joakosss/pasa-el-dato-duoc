@@ -218,6 +218,7 @@ export type CarreraOrderByWithRelationInput = {
 
 export type CarreraWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  nombre_fk_escuela?: Prisma.CarreraNombreFk_escuelaCompoundUniqueInput
   AND?: Prisma.CarreraWhereInput | Prisma.CarreraWhereInput[]
   OR?: Prisma.CarreraWhereInput[]
   NOT?: Prisma.CarreraWhereInput | Prisma.CarreraWhereInput[]
@@ -225,7 +226,7 @@ export type CarreraWhereUniqueInput = Prisma.AtLeast<{
   fk_escuela?: Prisma.IntFilter<"Carrera"> | number
   escuela?: Prisma.XOR<Prisma.EscuelaScalarRelationFilter, Prisma.EscuelaWhereInput>
   usuarios?: Prisma.UsuarioListRelationFilter
-}, "id">
+}, "id" | "nombre_fk_escuela">
 
 export type CarreraOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -297,6 +298,11 @@ export type CarreraListRelationFilter = {
 
 export type CarreraOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type CarreraNombreFk_escuelaCompoundUniqueInput = {
+  nombre: string
+  fk_escuela: number
 }
 
 export type CarreraCountOrderByAggregateInput = {

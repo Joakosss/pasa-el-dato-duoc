@@ -10,5 +10,6 @@ import { PublicacionService } from './publicacion.service.js';
   imports: [PrismaModule, AuthModule],
   controllers: [PublicacionController],
   providers: [PublicacionService, AlmacenamientoImagenesService],
+  exports: [AlmacenamientoImagenesService],
 })
 export class PublicacionModule {}

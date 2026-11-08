@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Cuenta: 'Cuenta',
+  Marca: 'Marca',
   RolUsuario: 'RolUsuario',
   Sede: 'Sede',
   Region: 'Region',
@@ -67,6 +68,9 @@ export const ModelName = {
   Categoria: 'Categoria',
   EstadoPublicacion: 'EstadoPublicacion',
   Publicacion: 'Publicacion',
+  BannerPublicidad: 'BannerPublicidad',
+  BannerSede: 'BannerSede',
+  NotificacionMarca: 'NotificacionMarca',
   ImagenPublicacion: 'ImagenPublicacion'
 } as const
 
@@ -102,6 +106,14 @@ export const CuentaScalarFieldEnum = {
 } as const
 
 export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
+
+
+export const MarcaScalarFieldEnum = {
+  id_cuenta: 'id_cuenta',
+  nombre: 'nombre'
+} as const
+
+export type MarcaScalarFieldEnum = (typeof MarcaScalarFieldEnum)[keyof typeof MarcaScalarFieldEnum]
 
 
 export const RolUsuarioScalarFieldEnum = {
@@ -265,6 +277,47 @@ export const PublicacionScalarFieldEnum = {
 } as const
 
 export type PublicacionScalarFieldEnum = (typeof PublicacionScalarFieldEnum)[keyof typeof PublicacionScalarFieldEnum]
+
+
+export const BannerPublicidadScalarFieldEnum = {
+  id: 'id',
+  fk_marca: 'fk_marca',
+  imagen: 'imagen',
+  mensaje: 'mensaje',
+  fechaInicio: 'fechaInicio',
+  fechaFin: 'fechaFin',
+  estado: 'estado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  eliminado: 'eliminado',
+  fk_modificado_por: 'fk_modificado_por',
+  motivoRechazo: 'motivoRechazo',
+  fechaAprobacion: 'fechaAprobacion',
+  fechaRechazo: 'fechaRechazo'
+} as const
+
+export type BannerPublicidadScalarFieldEnum = (typeof BannerPublicidadScalarFieldEnum)[keyof typeof BannerPublicidadScalarFieldEnum]
+
+
+export const BannerSedeScalarFieldEnum = {
+  fk_banner_publicidad: 'fk_banner_publicidad',
+  fk_sede: 'fk_sede'
+} as const
+
+export type BannerSedeScalarFieldEnum = (typeof BannerSedeScalarFieldEnum)[keyof typeof BannerSedeScalarFieldEnum]
+
+
+export const NotificacionMarcaScalarFieldEnum = {
+  id: 'id',
+  fk_marca: 'fk_marca',
+  fk_banner: 'fk_banner',
+  tipo: 'tipo',
+  mensaje: 'mensaje',
+  leida: 'leida',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type NotificacionMarcaScalarFieldEnum = (typeof NotificacionMarcaScalarFieldEnum)[keyof typeof NotificacionMarcaScalarFieldEnum]
 
 
 export const ImagenPublicacionScalarFieldEnum = {

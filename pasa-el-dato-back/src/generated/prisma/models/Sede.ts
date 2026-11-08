@@ -248,6 +248,7 @@ export type SedeWhereInput = {
   comuna?: Prisma.XOR<Prisma.ComunaNullableScalarRelationFilter, Prisma.ComunaWhereInput> | null
   usuario?: Prisma.UsuarioListRelationFilter
   publicaciones?: Prisma.PublicacionListRelationFilter
+  banners?: Prisma.BannerSedeListRelationFilter
 }
 
 export type SedeOrderByWithRelationInput = {
@@ -263,6 +264,7 @@ export type SedeOrderByWithRelationInput = {
   comuna?: Prisma.ComunaOrderByWithRelationInput
   usuario?: Prisma.UsuarioOrderByRelationAggregateInput
   publicaciones?: Prisma.PublicacionOrderByRelationAggregateInput
+  banners?: Prisma.BannerSedeOrderByRelationAggregateInput
 }
 
 export type SedeWhereUniqueInput = Prisma.AtLeast<{
@@ -281,6 +283,7 @@ export type SedeWhereUniqueInput = Prisma.AtLeast<{
   comuna?: Prisma.XOR<Prisma.ComunaNullableScalarRelationFilter, Prisma.ComunaWhereInput> | null
   usuario?: Prisma.UsuarioListRelationFilter
   publicaciones?: Prisma.PublicacionListRelationFilter
+  banners?: Prisma.BannerSedeListRelationFilter
 }, "id" | "nombre">
 
 export type SedeOrderByWithAggregationInput = {
@@ -323,6 +326,7 @@ export type SedeCreateInput = {
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateInput = {
@@ -336,6 +340,7 @@ export type SedeUncheckedCreateInput = {
   comunaId?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUpdateInput = {
@@ -348,6 +353,7 @@ export type SedeUpdateInput = {
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateInput = {
@@ -361,6 +367,7 @@ export type SedeUncheckedUpdateInput = {
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeCreateManyInput = {
@@ -571,6 +578,20 @@ export type SedeUpdateOneRequiredWithoutPublicacionesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SedeUpdateToOneWithWhereWithoutPublicacionesInput, Prisma.SedeUpdateWithoutPublicacionesInput>, Prisma.SedeUncheckedUpdateWithoutPublicacionesInput>
 }
 
+export type SedeCreateNestedOneWithoutBannersInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutBannersInput, Prisma.SedeUncheckedCreateWithoutBannersInput>
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutBannersInput
+  connect?: Prisma.SedeWhereUniqueInput
+}
+
+export type SedeUpdateOneRequiredWithoutBannersNestedInput = {
+  create?: Prisma.XOR<Prisma.SedeCreateWithoutBannersInput, Prisma.SedeUncheckedCreateWithoutBannersInput>
+  connectOrCreate?: Prisma.SedeCreateOrConnectWithoutBannersInput
+  upsert?: Prisma.SedeUpsertWithoutBannersInput
+  connect?: Prisma.SedeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SedeUpdateToOneWithWhereWithoutBannersInput, Prisma.SedeUpdateWithoutBannersInput>, Prisma.SedeUncheckedUpdateWithoutBannersInput>
+}
+
 export type SedeCreateWithoutCuentaInput = {
   nombre: string
   activa?: boolean
@@ -580,6 +601,7 @@ export type SedeCreateWithoutCuentaInput = {
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateWithoutCuentaInput = {
@@ -592,6 +614,7 @@ export type SedeUncheckedCreateWithoutCuentaInput = {
   comunaId?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeCreateOrConnectWithoutCuentaInput = {
@@ -643,6 +666,7 @@ export type SedeCreateWithoutComunaInput = {
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateWithoutComunaInput = {
@@ -655,6 +679,7 @@ export type SedeUncheckedCreateWithoutComunaInput = {
   fk_modificado_por?: string | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeCreateOrConnectWithoutComunaInput = {
@@ -692,6 +717,7 @@ export type SedeCreateWithoutUsuarioInput = {
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateWithoutUsuarioInput = {
@@ -704,6 +730,7 @@ export type SedeUncheckedCreateWithoutUsuarioInput = {
   fk_modificado_por?: string | null
   comunaId?: number | null
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeCreateOrConnectWithoutUsuarioInput = {
@@ -731,6 +758,7 @@ export type SedeUpdateWithoutUsuarioInput = {
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateWithoutUsuarioInput = {
@@ -743,6 +771,7 @@ export type SedeUncheckedUpdateWithoutUsuarioInput = {
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeCreateWithoutPublicacionesInput = {
@@ -754,6 +783,7 @@ export type SedeCreateWithoutPublicacionesInput = {
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeCreateNestedManyWithoutSedeInput
 }
 
 export type SedeUncheckedCreateWithoutPublicacionesInput = {
@@ -766,6 +796,7 @@ export type SedeUncheckedCreateWithoutPublicacionesInput = {
   fk_modificado_por?: string | null
   comunaId?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
+  banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
 }
 
 export type SedeCreateOrConnectWithoutPublicacionesInput = {
@@ -793,6 +824,7 @@ export type SedeUpdateWithoutPublicacionesInput = {
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateWithoutPublicacionesInput = {
@@ -805,6 +837,73 @@ export type SedeUncheckedUpdateWithoutPublicacionesInput = {
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
+}
+
+export type SedeCreateWithoutBannersInput = {
+  nombre: string
+  activa?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
+  comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
+  usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
+}
+
+export type SedeUncheckedCreateWithoutBannersInput = {
+  id?: number
+  nombre: string
+  activa?: boolean
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  comunaId?: number | null
+  usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
+}
+
+export type SedeCreateOrConnectWithoutBannersInput = {
+  where: Prisma.SedeWhereUniqueInput
+  create: Prisma.XOR<Prisma.SedeCreateWithoutBannersInput, Prisma.SedeUncheckedCreateWithoutBannersInput>
+}
+
+export type SedeUpsertWithoutBannersInput = {
+  update: Prisma.XOR<Prisma.SedeUpdateWithoutBannersInput, Prisma.SedeUncheckedUpdateWithoutBannersInput>
+  create: Prisma.XOR<Prisma.SedeCreateWithoutBannersInput, Prisma.SedeUncheckedCreateWithoutBannersInput>
+  where?: Prisma.SedeWhereInput
+}
+
+export type SedeUpdateToOneWithWhereWithoutBannersInput = {
+  where?: Prisma.SedeWhereInput
+  data: Prisma.XOR<Prisma.SedeUpdateWithoutBannersInput, Prisma.SedeUncheckedUpdateWithoutBannersInput>
+}
+
+export type SedeUpdateWithoutBannersInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
+  comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
+  usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
+}
+
+export type SedeUncheckedUpdateWithoutBannersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeCreateManyCuentaInput = {
@@ -826,6 +925,7 @@ export type SedeUpdateWithoutCuentaInput = {
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateWithoutCuentaInput = {
@@ -838,6 +938,7 @@ export type SedeUncheckedUpdateWithoutCuentaInput = {
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateManyWithoutCuentaInput = {
@@ -869,6 +970,7 @@ export type SedeUpdateWithoutComunaInput = {
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateWithoutComunaInput = {
@@ -881,6 +983,7 @@ export type SedeUncheckedUpdateWithoutComunaInput = {
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
+  banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
 }
 
 export type SedeUncheckedUpdateManyWithoutComunaInput = {
@@ -901,11 +1004,13 @@ export type SedeUncheckedUpdateManyWithoutComunaInput = {
 export type SedeCountOutputType = {
   usuario: number
   publicaciones: number
+  banners: number
 }
 
 export type SedeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | SedeCountOutputTypeCountUsuarioArgs
   publicaciones?: boolean | SedeCountOutputTypeCountPublicacionesArgs
+  banners?: boolean | SedeCountOutputTypeCountBannersArgs
 }
 
 /**
@@ -932,6 +1037,13 @@ export type SedeCountOutputTypeCountPublicacionesArgs<ExtArgs extends runtime.Ty
   where?: Prisma.PublicacionWhereInput
 }
 
+/**
+ * SedeCountOutputType without action
+ */
+export type SedeCountOutputTypeCountBannersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BannerSedeWhereInput
+}
+
 
 export type SedeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -946,6 +1058,7 @@ export type SedeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
   usuario?: boolean | Prisma.Sede$usuarioArgs<ExtArgs>
   publicaciones?: boolean | Prisma.Sede$publicacionesArgs<ExtArgs>
+  banners?: boolean | Prisma.Sede$bannersArgs<ExtArgs>
   _count?: boolean | Prisma.SedeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["sede"]>
 
@@ -992,6 +1105,7 @@ export type SedeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
   usuario?: boolean | Prisma.Sede$usuarioArgs<ExtArgs>
   publicaciones?: boolean | Prisma.Sede$publicacionesArgs<ExtArgs>
+  banners?: boolean | Prisma.Sede$bannersArgs<ExtArgs>
   _count?: boolean | Prisma.SedeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SedeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1010,6 +1124,7 @@ export type $SedePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     comuna: Prisma.$ComunaPayload<ExtArgs> | null
     usuario: Prisma.$UsuarioPayload<ExtArgs>[]
     publicaciones: Prisma.$PublicacionPayload<ExtArgs>[]
+    banners: Prisma.$BannerSedePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1418,6 +1533,7 @@ export interface Prisma__SedeClient<T, Null = never, ExtArgs extends runtime.Typ
   comuna<T extends Prisma.Sede$comunaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$comunaArgs<ExtArgs>>): Prisma.Prisma__ComunaClient<runtime.Types.Result.GetResult<Prisma.$ComunaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   usuario<T extends Prisma.Sede$usuarioArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$usuarioArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   publicaciones<T extends Prisma.Sede$publicacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$publicacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  banners<T extends Prisma.Sede$bannersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Sede$bannersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BannerSedePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1939,6 +2055,30 @@ export type Sede$publicacionesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.PublicacionScalarFieldEnum | Prisma.PublicacionScalarFieldEnum[]
+}
+
+/**
+ * Sede.banners
+ */
+export type Sede$bannersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BannerSede
+   */
+  select?: Prisma.BannerSedeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BannerSede
+   */
+  omit?: Prisma.BannerSedeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BannerSedeInclude<ExtArgs> | null
+  where?: Prisma.BannerSedeWhereInput
+  orderBy?: Prisma.BannerSedeOrderByWithRelationInput | Prisma.BannerSedeOrderByWithRelationInput[]
+  cursor?: Prisma.BannerSedeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BannerSedeScalarFieldEnum | Prisma.BannerSedeScalarFieldEnum[]
 }
 
 /**
