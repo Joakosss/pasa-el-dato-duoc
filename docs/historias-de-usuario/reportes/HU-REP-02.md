@@ -10,13 +10,13 @@
   **cuando** describo el motivo y confirmo,
   **entonces** el sistema registra un reporte asociado al usuario reportado y a mí como reportante, en estado pendiente para revisión administrativa.
 
-- **Dado** que intento reportarme a sí mismo,
+- **Dado** que intento reportarme a mí mismo,
   **cuando** ejecuto el reporte,
   **entonces** el sistema rechaza la operación (CU012, curso alternativo 1).
 
 - **Dado** que ya tengo un reporte propio en curso contra ese mismo usuario,
   **cuando** intento reportarlo de nuevo,
-  **entonces** el sistema informa que ya existe un reporte propio en curso y no registra otro (análogo a la regla de HU-REP-01; confirmar).
+  **entonces** el sistema informa que ya existe un reporte propio en curso y no registra otro (regla análoga a la de HU-REP-01; decisión aprobada).
 
 - **Dado** que el usuario reportado no existe o ya está eliminado,
   **cuando** intento reportarlo,
@@ -36,6 +36,9 @@ Aprobadas documentalmente (R.5, CU012 extendido) y resoluciones del dominio admi
 
 - Solo un estudiante autenticado reporta usuarios.
 - No se puede reportar a sí mismo (CU012, alternativa 1).
+- El motivo se selecciona de un catálogo predefinido y los comentarios son texto libre (decisión aprobada; MER guarda motivos y comentarios separados).
+- El usuario reportado puede ser cualquier usuario registrado distinto de sí mismo (CU012 no acota rol; interpretación mantenida).
+- Sin límite de reportes por reportante en un periodo (decisión aprobada: no hay restricción anti-abuso, solo la regla de no duplicar el reporte propio en curso).
 - El reporte registra el motivo y comentarios, el reportado y el reportante (entidad `REPORTE_USUARIO` del MER: fk_reportado, fk_reportador, motivos, comentarios, fk_estado_reporte).
 - El reporte nace en estado "pendiente" y sigue el ciclo de administración ya decidido: pendiente → en_proceso (activado por el admin) → resuelto o descartado, con posibilidad de reapertura (HU-ADM-01). Las resoluciones posibles son el bloqueo, advertencia o descarte.
 - Fuera de alcance de esta HU: resoluciones y sanciones (HU-ADM-01), notificaciones, bloqueos automáticos.
@@ -57,10 +60,8 @@ R.5 es solicitud explícita; protege la convivencia en conversaciones y transacc
 
 ## Dudas pendientes
 
-1. **Motivo del reporte**: ¿lista predefinida de motivos (catálogo), texto libre, o lista + comentario? El MER guarda "motivos" y "comentarios" separados, lo que sugiere catálogo + comentarios. Confirmar (misma duda que HU-REP-01).
-2. ¿Se puede reportar a cualquier usuario del sistema (cualquier rol, incluyendo marca o administrador) o solo estudiantes? CU012 habla de "otro usuario" sin acotar rol; interpretación vigente: cualquier usuario registrado distinto de sí mismo. Confirmar.
-3. ¿Hay límite de reportes que un reportante puede levantar en un periodo (anti-abuso del botón reportar)? No está documentado.
+- Catálogo de motivos pendiente de gestión: definir quien lo mantiene en spec (opción natural: administración, alineado con ADM-05).
 
 ## Estado
 
-`requiere aclaración` — duda 1 define el formulario; dudas 2 y 3 acotan el alcance. Listo para `explore` en paralelo.
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.
