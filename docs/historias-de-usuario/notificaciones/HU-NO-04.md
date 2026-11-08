@@ -36,6 +36,26 @@ Aprobadas documentalmente (MER) y analogías de resolución vigente:
 
 Nota técnica de origen (no define diseño): `Notificaciones` administrativas (`notificacion_administracion` sobre el MER) no existen en el `schema.prisma` hoy.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-NO-04-BE01:** Definir contrato REST para listar avisos institucionales activos para la sede del usuario autenticado (p.ej. `GET /avisos-institucionales/activos`), filtrado por vigencia y sede.
+- **HU-NO-04-BE02:** Resolver fuente de sede del usuario (perfil/cuenta) y validar que el usuario tenga sede asignada; definir comportamiento si no tiene.
+- **HU-NO-04-BE03:** Implementar query Prisma: filtrar por `fecha_inicio <= now <= fecha_fin` y relación a sedes destinatarias; ordenar por fecha inicio desc (o prioridad si se define).
+- **HU-NO-04-BE04:** Validar sesión: rechazar sin autenticación (401).
+- **HU-NO-04-BE05:** Definir DTO de respuesta: id, mensaje, url/imagen, fechas vigencia, sedes (opcional) y campos mínimos para render.
+- **HU-NO-04-BE06:** Swagger: documentar endpoint, query params (si hay) y errores (401/422).
+- **HU-NO-04-BE07:** Pruebas e2e: con avisos activos/inactivos, cambio de sede refleja otros avisos, sin sede asignada, auth requerido.
+
+### Frontend (FE)
+
+- **HU-NO-04-FE01:** Incorporar sección/panel de “Avisos institucionales” visible solo para usuarios autenticados.
+- **HU-NO-04-FE02:** Consumir endpoint de avisos activos y renderizar listado/cards con mensaje e imagen.
+- **HU-NO-04-FE03:** Manejar estado vacío (sin avisos) sin errores.
+- **HU-NO-04-FE04:** Refrescar avisos al cambiar la sede en el perfil (escuchar evento o revalidación al volver).
+- **HU-NO-04-FE05:** Manejar errores: sesión expirada, usuario sin sede asignada, fallas de red.
+
 ## Dependencias
 
 - HU-NO-05 (la existencia de avisos institucionales).

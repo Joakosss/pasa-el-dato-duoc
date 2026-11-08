@@ -64,6 +64,27 @@ Fuera de alcance de esta HU: visualización de calificaciones y promedio en el p
 
 Nota técnica de origen (no define diseño): `Calificacion` no existe aún en el `schema.prisma`; el MER del proyecto la define como tabla de negocio con `puntaje`, `comentario`, `id_user_comprador`, `id_user_vendedor`, `id_publicacion` y campos `BASE`.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-CAL-01-BE01:** Definir contrato REST para registrar calificación desde una publicación vendida (DTO entrada: puntaje 1-5, comentario opcional); definir respuesta (id calificación + partes mínimas de la transacción).
+- **HU-CAL-01-BE02:** Modelar persistencia `Calificacion` en Prisma + migración (campos BASE, puntaje, comentario, fk_publicacion, fk_emisor, fk_receptor + índices).
+- **HU-CAL-01-BE03:** Validar sesión y participación en la transacción: solo comprador o vendedor de la publicación vendida puede calificar.
+- **HU-CAL-01-BE04:** Validar precondiciones: publicación existe, no eliminada, estado `Vendida`, comprador registrado, y calificación activada (HU-CAL-03).
+- **HU-CAL-01-BE05:** Evitar duplicados por dirección (única por publicación + emisor + receptor); definir idempotencia o error `409` según contrato.
+- **HU-CAL-01-BE06:** Validar campos: puntaje obligatorio 1..5 entero; comentario opcional con límite de caracteres (definir en spec).
+- **HU-CAL-01-BE07:** Documentar contrato y respuestas de error en Swagger (401/403/404/409/422).
+- **HU-CAL-01-BE08:** Añadir pruebas unitarias/e2e para: comprador califica, vendedor califica, sin activación, no participante, duplicado, puntaje/comentario inválidos.
+
+### Frontend (FE)
+
+- **HU-CAL-01-FE01:** Mostrar acción “Calificar” en la vista de publicación vendida solo si el usuario es participante y la calificación está activada.
+- **HU-CAL-01-FE02:** Implementar formulario de calificación (puntaje 1..5 + comentario opcional) con validación y límite de caracteres.
+- **HU-CAL-01-FE03:** Enviar la calificación al backend en una sola solicitud (loading + evitar doble submit).
+- **HU-CAL-01-FE04:** Manejar errores: sesión expirada, no participante, no activada, duplicado, publicación no vendida, validaciones de campos.
+- **HU-CAL-01-FE05:** Confirmar éxito y actualizar la UI (p.ej. estado “ya calificaste” por dirección).
+
 ## Dependencias
 
 - HU-CAL-03 (activación de la calificación por el vendedor).

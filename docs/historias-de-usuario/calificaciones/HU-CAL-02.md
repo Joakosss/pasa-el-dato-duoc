@@ -38,6 +38,25 @@ Fuera de alcance de esta HU: elaborar calificaciones (HU-CAL-01), responder cali
 
 Nota técnica de origen (no define diseño): `Calificacion` no existe aún en el `schema.prisma`; el MER del proyecto la define como tabla de negocio.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-CAL-02-BE01:** Definir contrato REST para consultar el resumen reputacional del usuario (promedio + total de calificaciones recibidas) en el perfil.
+- **HU-CAL-02-BE02:** Definir contrato REST para listar calificaciones recibidas (paginación cursor o page/pageSize), incluyendo puntaje, comentario (si existe), fecha y referencia mínima a la transacción (según lo permitido).
+- **HU-CAL-02-BE03:** Implementar queries Prisma eficientes: agregación (AVG/COUNT) y listado ordenado (fecha desc), evitando N+1.
+- **HU-CAL-02-BE04:** Exigir autenticación: solo usuarios autenticados pueden consultar reputación/calificaciones.
+- **HU-CAL-02-BE05:** Manejar caso sin calificaciones: responder sin promedio (p.ej. null) y total=0, sin error.
+- **HU-CAL-02-BE06:** Swagger: documentar endpoints, DTOs y errores (401/404).
+- **HU-CAL-02-BE07:** Pruebas unitarias/e2e: usuario con calificaciones, sin calificaciones, auth requerido, promedio actualizado tras nueva calificación (HU-CAL-01).
+
+### Frontend (FE)
+
+- **HU-CAL-02-FE01:** Extender la vista de perfil para mostrar promedio y total (solo autenticado; si no, redirigir a login).
+- **HU-CAL-02-FE02:** Implementar listado de calificaciones recibidas con paginación/carga incremental.
+- **HU-CAL-02-FE03:** Mostrar estado “sin calificaciones” cuando corresponda.
+- **HU-CAL-02-FE04:** Manejo de errores: sesión expirada, usuario/perfil inexistente, fallas de red.
+
 ## Dependencias
 
 - HU-CAL-01 (registro de calificaciones).

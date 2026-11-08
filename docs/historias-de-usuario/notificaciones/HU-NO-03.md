@@ -37,6 +37,27 @@ Aprobadas documentalmente (R.14, CU021) y resoluciones del proyecto:
 
 Nota técnica de origen (no define diseño): el patrón vigente `notificacion_marca` ya registra tipo, mensaje, flag `leida` y fecha para marcas; el historial de usuario sigue la misma semántica.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-NO-03-BE01:** Definir contrato REST para listar historial de notificaciones del usuario autenticado: `GET /notificaciones` con paginación (cursor o page/pageSize) y orden por fecha desc.
+- **HU-NO-03-BE02:** Definir DTO de respuesta: id, tipo, mensaje, leida, fecha y `dataJson` (metadata mínima para redirección: ids de chat/publicación/reporte según tipo).
+- **HU-NO-03-BE03:** Validar sesión: el historial es personal; solo devuelve notificaciones del usuario autenticado (401 si no hay sesión).
+- **HU-NO-03-BE04:** Implementar endpoint para marcar como leída: `PATCH /notificaciones/:id/leida` (idempotente), validando ownership.
+- **HU-NO-03-BE05:** (Opcional según contrato) Endpoint de detalle: `GET /notificaciones/:id` para recuperar data completa previa a redirección.
+- **HU-NO-03-BE06:** Asegurar consistencia: al abrir una notificación se marca como leída y queda persistida (CU021 paso 3).
+- **HU-NO-03-BE07:** Swagger: documentar endpoints, DTOs y errores (401/403/404/422).
+- **HU-NO-03-BE08:** Pruebas e2e: listado ordenado, paginación, distinguir leídas/no leídas, marcar como leída, no permitir acceso a notificación de otro usuario.
+
+### Frontend (FE)
+
+- **HU-NO-03-FE01:** Implementar pantalla “Notificaciones” con listado ordenado (más recientes primero) + estado vacío.
+- **HU-NO-03-FE02:** Diferenciar visualmente notificaciones no leídas vs leídas (badge/estilo).
+- **HU-NO-03-FE03:** Al click/abrir una notificación: (1) marcar como leída, (2) redirigir a la sección correspondiente según `tipo` y metadata (chat/publicación/reporte/admin).
+- **HU-NO-03-FE04:** Manejar paginación/carga incremental del historial.
+- **HU-NO-03-FE05:** Manejar errores: sesión expirada, notificación inexistente, fallo al marcar como leída (mantener UI consistente).
+
 ## Dependencias
 
 - HU-NO-01 (eventos que llenan el historial).

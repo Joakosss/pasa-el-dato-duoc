@@ -38,6 +38,37 @@ Aprobadas documentalmente (R.14, CU021 extendido) y eventos fijados por dominios
 
 Nota técnica de origen (no define diseño): el backend ya tiene el patrón `notificacion_marca` (registro con tipo, mensaje, flag `leida` y fecha) dirigido a marcas; no existe el módulo de notificaciones de usuario (R.14).
 
+## Subtareas
+
+> Nota: la HU está en `requiere aclaración` por el significado de “push” en web. Las subtareas separan **registro/historial in-app (MVP)** y **entrega por canales** para permitir avanzar incrementalmente.
+
+### Backend (BE)
+
+- **HU-NO-01-BE01:** Definir modelo `NotificacionUsuario` en Prisma + migración (id, fk_cuenta, tipo, mensaje, leida, dataJson opcional y campos BASE).
+- **HU-NO-01-BE02:** Definir catálogo de tipos (enum) alineado al catálogo de eventos vigente (chat nuevo mensaje, favorita vendida, reporte resuelto, advertencia admin, aviso admin, etc.).
+- **HU-NO-01-BE03:** Definir el “payload” mínimo (`dataJson`) por tipo para habilitar redirección (p.ej. `chatId`, `publicacionId`, `reporteId`, `adminSeccion`, etc.) y su contrato.
+- **HU-NO-01-BE04:** Implementar `NotificacionUsuarioService` para registrar notificaciones solo si la cuenta está activa (no bloqueada/eliminada) y según preferencia vigente (HU-NO-02).
+- **HU-NO-01-BE05:** Implementar deduplicación por evento cuando aplique (p.ej. evitar spam por múltiples mensajes: agrupar o colapsar por conversación + ventana de tiempo) y documentarlo en spec si se adopta.
+- **HU-NO-01-BE06:** Integrar emisión desde eventos fuente (hooks/llamadas desde dominios):
+  - chat: nuevo mensaje (HU-CHAT-02)
+  - compras/favoritos: favorita vendida (HU-COM-01, HU-FAV-01)
+  - administración/reportes: respuesta/resultado de reporte y advertencias/avisos (HU-ADM-01/02, HU-REP)
+- **HU-NO-01-BE07:** Implementar endpoint para crear/registrar la notificación (interno) y/o exponer endpoints públicos de historial/lectura en conjunto con HU-NO-03 (alinear para no duplicar contratos).
+- **HU-NO-01-BE08:** Definir estrategia de “entrega” por canales: (a) in-app (historial/centro), (b) email (integración), (c) push (app móvil / futuro); documentarlo en spec.
+- **HU-NO-01-BE09:** (Email) Definir interfaz/adaptador de envío (mock en MVP si no hay proveedor) y cola/retry (al menos diseño) para que el dominio no dependa directo del proveedor.
+- **HU-NO-01-BE10:** (Push) Definir integración futura: para web (si aplica) o app móvil (token device), sin implementarlo si no está aprobado; dejar ganchos en spec.
+- **HU-NO-01-BE11:** Swagger: documentar modelos/DTOs/endpoints y errores (401/403 cuando aplique).
+- **HU-NO-01-BE12:** Pruebas unitarias/e2e: creación por evento, no crear/entregar si cuenta bloqueada/eliminada, payload correcto por tipo, integración con HU-NO-02 y endpoints de HU-NO-03.
+
+### Frontend (FE)
+
+- **HU-NO-01-FE01:** (MVP) Agregar indicador de notificaciones (badge/ícono) visible globalmente para usuarios autenticados.
+- **HU-NO-01-FE02:** Implementar una vista/listado básico para historial (si HU-NO-03 aún no existe, usar carcasa con TODO[MOMENTANEO]).
+- **HU-NO-01-FE03:** Consumir `GET /notificaciones` (o el contrato final de HU-NO-03) y renderizar items (tipo, mensaje, fecha, estado leído).
+- **HU-NO-01-FE04:** Actualizar badge (cantidad no leída) al cargar app, al volver del chat y tras abrir historial.
+- **HU-NO-01-FE05:** Manejar sesión expirada / cuenta inactiva: redirigir o mostrar feedback.
+- **HU-NO-01-FE06:** Definir UX para notificación “toast/in-app” al ocurrir evento mientras el usuario navega (solo si el back soporta polling o websocket; si no, dejarlo como futuro en spec).
+
 ## Dependencias
 
 - Usuarios autenticados (módulo auth existente).

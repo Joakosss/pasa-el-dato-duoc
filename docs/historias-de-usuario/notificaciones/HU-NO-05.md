@@ -42,6 +42,33 @@ Analogías y decisiones del modelo vigente (sin CU de origen, creature desde el 
 
 Nota técnica de origen (no define diseño): el MER tiene la entidad pero sin ciclo de aprobación ni CU de origen; el patrón a implementar está ya cubierto por los banners (`banner_publicidad`, `banner_sede`, backend implementado con marca) y se re"use en spec.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-NO-05-BE01:** Definir persistencia en Prisma para avisos institucionales (`notificacion_administracion`) y relación a sedes (`notificacion_sede`) + migración, alineado al MER.
+- **HU-NO-05-BE02:** Reutilizar patrón de `publicidad` (banners): almacenamiento de imagen, validación de formato/tamaño (JPEG/PNG/WebP, máx 5MB) y DTOs.
+- **HU-NO-05-BE03:** Definir contrato REST admin para CRUD:
+  - `POST /admin/avisos-institucionales` (crear)
+  - `PATCH /admin/avisos-institucionales/:id` (editar)
+  - `DELETE /admin/avisos-institucionales/:id` (eliminar/soft-delete si aplica)
+  - `GET /admin/avisos-institucionales` (listar, con filtros por estado/vigencia/sede)
+  - `GET /admin/avisos-institucionales/:id` (detalle)
+- **HU-NO-05-BE04:** Validar sesión y rol administrador (401/403) siguiendo el patrón de controllers admin existentes.
+- **HU-NO-05-BE05:** Validaciones de negocio: mensaje requerido, imagen requerida, fechas válidas (fin >= inicio), al menos una sede válida; rechazar sedes inexistentes.
+- **HU-NO-05-BE06:** Lógica de “activo”: dentro de vigencia; al eliminar, deja de mostrarse inmediatamente (impacta HU-NO-04).
+- **HU-NO-05-BE07:** Manejar actualización de sedes destinatarias: agregar/quitar sedes actualiza relación efectiva.
+- **HU-NO-05-BE08:** Swagger: documentar endpoints admin, DTOs y errores (401/403/404/422).
+- **HU-NO-05-BE09:** Pruebas e2e: crear OK, validar fechas inválidas, sin sedes, sedes inválidas, editar mensaje/imagen/vigencia/sedes, eliminar y verificar que ya no aparece como activo para la sede.
+
+### Frontend (FE)
+
+- **HU-NO-05-FE01:** Crear UI admin para listado y gestión de avisos institucionales (similar a módulo publicidad admin si existe en front; si no, carcasa).
+- **HU-NO-05-FE02:** Formulario crear/editar: mensaje, imagen, fechas vigencia, selección de sedes (multi-select).
+- **HU-NO-05-FE03:** Validación client-side de fechas y campos requeridos; mostrar feedback de errores del backend.
+- **HU-NO-05-FE04:** Acciones: editar, eliminar con confirmación, y refresco de listado.
+- **HU-NO-05-FE05:** Manejar permisos: si no es admin, bloquear acceso/mostrar error.
+
 ## Dependencias
 
 - Rol administrador autenticado (módulo auth y roles).
