@@ -32,6 +32,9 @@ model Cuenta {
   publicacionesModificadas  Publicacion[] @relation("publicacionModificadaPor")
   bannersModificados        BannerPublicidad[] @relation("bannerModificadoPor")
   notificacionesMarca       NotificacionMarca[] @relation("notificacionMarcaCuenta")
+  reportesRecibidos         ReporteUsuario[] @relation("reporteUsuarioReportado")
+  reportesEmitidos          ReporteUsuario[] @relation("reporteUsuarioReportante")
+  reportesAsignados         ReporteUsuario[] @relation("reporteUsuarioAdminAsignado")
 
   @@index([fk_modificado_por], map: "idx_cuenta_modificado_por")
   @@map("cuenta")
@@ -333,4 +336,42 @@ model ImagenPublicacion {
   @@unique([fk_publicacion, orden], map: "ux_imagen_publicacion_publicacion_orden")
   @@index([fk_publicacion], map: "idx_imagen_publicacion_publicacion")
   @@map("imagen_publicacion")
+}
+
+enum EstadoReporteUsuario {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  DESCARTADO
+}
+
+enum ResolucionReporteUsuario {
+  BLOQUEO
+  ADVERTENCIA
+  DESCARTE
+}
+
+model ReporteUsuario {
+  id                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  descripcion       String
+  fk_reportado      String                  @db.Uuid
+  fk_reportante     String?                 @db.Uuid
+  estado            EstadoReporteUsuario    @default(PENDIENTE)
+  fk_admin_asignado String?                 @db.Uuid
+  fechaCreacion     DateTime                @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion DateTime                @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  fechaResolucion   DateTime?               @map("fecha_resolucion") @db.Timestamptz(6)
+  resolucion        ResolucionReporteUsuario?
+  mensajeAdvertencia String?                @map("mensaje_advertencia")
+  motivoBloqueo     String?                 @map("motivo_bloqueo")
+
+  reportado   Cuenta  @relation("reporteUsuarioReportado", fields: [fk_reportado], references: [id_cuenta], onUpdate: NoAction)
+  reportante  Cuenta? @relation("reporteUsuarioReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
+  adminAsignado Cuenta? @relation("reporteUsuarioAdminAsignado", fields: [fk_admin_asignado], references: [id_cuenta], onUpdate: NoAction)
+
+  @@index([estado, fechaCreacion], map: "idx_reporte_usuario_estado_fecha")
+  @@index([fk_reportado], map: "idx_reporte_usuario_reportado")
+  @@index([fk_reportante], map: "idx_reporte_usuario_reportante")
+  @@index([fk_admin_asignado], map: "idx_reporte_usuario_admin")
+  @@map("reporte_usuario")
 }

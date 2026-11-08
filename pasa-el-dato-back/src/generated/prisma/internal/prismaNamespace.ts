@@ -417,7 +417,8 @@ export const ModelName = {
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
-  ImagenPublicacion: 'ImagenPublicacion'
+  ImagenPublicacion: 'ImagenPublicacion',
+  ReporteUsuario: 'ReporteUsuario'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -433,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion" | "reporteUsuario"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1991,6 +1992,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReporteUsuario: {
+      payload: Prisma.$ReporteUsuarioPayload<ExtArgs>
+      fields: Prisma.ReporteUsuarioFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReporteUsuarioFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReporteUsuarioFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>
+        }
+        findFirst: {
+          args: Prisma.ReporteUsuarioFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReporteUsuarioFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>
+        }
+        findMany: {
+          args: Prisma.ReporteUsuarioFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>[]
+        }
+        create: {
+          args: Prisma.ReporteUsuarioCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>
+        }
+        createMany: {
+          args: Prisma.ReporteUsuarioCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReporteUsuarioCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>[]
+        }
+        delete: {
+          args: Prisma.ReporteUsuarioDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>
+        }
+        update: {
+          args: Prisma.ReporteUsuarioUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReporteUsuarioDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReporteUsuarioUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReporteUsuarioUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReporteUsuarioUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReporteUsuarioPayload>
+        }
+        aggregate: {
+          args: Prisma.ReporteUsuarioAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReporteUsuario>
+        }
+        groupBy: {
+          args: Prisma.ReporteUsuarioGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReporteUsuarioGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReporteUsuarioCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReporteUsuarioCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2270,6 +2345,24 @@ export const ImagenPublicacionScalarFieldEnum = {
 export type ImagenPublicacionScalarFieldEnum = (typeof ImagenPublicacionScalarFieldEnum)[keyof typeof ImagenPublicacionScalarFieldEnum]
 
 
+export const ReporteUsuarioScalarFieldEnum = {
+  id: 'id',
+  descripcion: 'descripcion',
+  fk_reportado: 'fk_reportado',
+  fk_reportante: 'fk_reportante',
+  estado: 'estado',
+  fk_admin_asignado: 'fk_admin_asignado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  fechaResolucion: 'fechaResolucion',
+  resolucion: 'resolucion',
+  mensajeAdvertencia: 'mensajeAdvertencia',
+  motivoBloqueo: 'motivoBloqueo'
+} as const
+
+export type ReporteUsuarioScalarFieldEnum = (typeof ReporteUsuarioScalarFieldEnum)[keyof typeof ReporteUsuarioScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2374,6 +2467,34 @@ export type EnumEstadoBannerPublicidadFieldRefInput<$PrismaModel> = FieldRefInpu
  * Reference to a field of type 'EstadoBannerPublicidad[]'
  */
 export type ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoBannerPublicidad[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EstadoReporteUsuario'
+ */
+export type EnumEstadoReporteUsuarioFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoReporteUsuario'>
+    
+
+
+/**
+ * Reference to a field of type 'EstadoReporteUsuario[]'
+ */
+export type ListEnumEstadoReporteUsuarioFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoReporteUsuario[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ResolucionReporteUsuario'
+ */
+export type EnumResolucionReporteUsuarioFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ResolucionReporteUsuario'>
+    
+
+
+/**
+ * Reference to a field of type 'ResolucionReporteUsuario[]'
+ */
+export type ListEnumResolucionReporteUsuarioFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ResolucionReporteUsuario[]'>
     
 
 
@@ -2562,6 +2683,7 @@ export type GlobalOmitConfig = {
   bannerSede?: Prisma.BannerSedeOmit
   notificacionMarca?: Prisma.NotificacionMarcaOmit
   imagenPublicacion?: Prisma.ImagenPublicacionOmit
+  reporteUsuario?: Prisma.ReporteUsuarioOmit
 }
 
 /* Types for Logging */

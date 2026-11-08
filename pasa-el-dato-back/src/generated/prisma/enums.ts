@@ -16,3 +16,22 @@ export const EstadoBannerPublicidad = {
 } as const
 
 export type EstadoBannerPublicidad = (typeof EstadoBannerPublicidad)[keyof typeof EstadoBannerPublicidad]
+
+
+export const EstadoReporteUsuario = {
+  PENDIENTE: 'PENDIENTE',
+  EN_PROCESO: 'EN_PROCESO',
+  RESUELTO: 'RESUELTO',
+  DESCARTADO: 'DESCARTADO'
+} as const
+
+export type EstadoReporteUsuario = (typeof EstadoReporteUsuario)[keyof typeof EstadoReporteUsuario]
+
+
+export const ResolucionReporteUsuario = {
+  BLOQUEO: 'BLOQUEO',
+  ADVERTENCIA: 'ADVERTENCIA',
+  DESCARTE: 'DESCARTE'
+} as const
+
+export type ResolucionReporteUsuario = (typeof ResolucionReporteUsuario)[keyof typeof ResolucionReporteUsuario]

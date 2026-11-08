@@ -71,7 +71,8 @@ export const ModelName = {
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
-  ImagenPublicacion: 'ImagenPublicacion'
+  ImagenPublicacion: 'ImagenPublicacion',
+  ReporteUsuario: 'ReporteUsuario'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -328,6 +329,24 @@ export const ImagenPublicacionScalarFieldEnum = {
 } as const
 
 export type ImagenPublicacionScalarFieldEnum = (typeof ImagenPublicacionScalarFieldEnum)[keyof typeof ImagenPublicacionScalarFieldEnum]
+
+
+export const ReporteUsuarioScalarFieldEnum = {
+  id: 'id',
+  descripcion: 'descripcion',
+  fk_reportado: 'fk_reportado',
+  fk_reportante: 'fk_reportante',
+  estado: 'estado',
+  fk_admin_asignado: 'fk_admin_asignado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  fechaResolucion: 'fechaResolucion',
+  resolucion: 'resolucion',
+  mensajeAdvertencia: 'mensajeAdvertencia',
+  motivoBloqueo: 'motivoBloqueo'
+} as const
+
+export type ReporteUsuarioScalarFieldEnum = (typeof ReporteUsuarioScalarFieldEnum)[keyof typeof ReporteUsuarioScalarFieldEnum]
 
 
 export const SortOrder = {
