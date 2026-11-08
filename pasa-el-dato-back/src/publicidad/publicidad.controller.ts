@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Req,
@@ -20,6 +22,8 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -56,6 +60,30 @@ export class PublicidadController {
     private readonly publicidadService: PublicidadService,
     private readonly almacenamientoImagenesService: AlmacenamientoImagenesService,
   ) {}
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Roles('Marca')
+  @ApiOperation({ summary: 'Eliminar (soft delete) un banner propio' })
+  @ApiNoContentResponse({
+    description: 'Banner eliminado lógicamente; repetir la solicitud es idempotente',
+  })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'La cuenta no corresponde a una marca o el banner no pertenece a la marca',
+  })
+  @ApiNotFoundResponse({ description: 'Banner no encontrado' })
+  async eliminar(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<void> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    await this.publicidadService.eliminarBanner(id, user.idCuenta);
+  }
 
   @Patch(':id')
   @Roles('Marca')

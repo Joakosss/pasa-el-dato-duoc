@@ -281,6 +281,46 @@ export class PublicidadService {
     });
   }
 
+  async eliminarBanner(id: string, idCuenta: string): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const banner = await tx.bannerPublicidad.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          fk_marca: true,
+          eliminado: true,
+        },
+      });
+
+      if (!banner) {
+        throw new NotFoundException('Banner no encontrado');
+      }
+
+      if (banner.fk_marca !== idCuenta) {
+        throw new ForbiddenException(
+          'No puede eliminar un banner que no le pertenece',
+        );
+      }
+
+      if (banner.eliminado) {
+        return;
+      }
+
+      await tx.bannerPublicidad.updateMany({
+        where: {
+          id: banner.id,
+          fk_marca: idCuenta,
+          eliminado: false,
+        },
+        data: {
+          eliminado: true,
+          fechaModificacion: new Date(),
+          fk_modificado_por: idCuenta,
+        },
+      });
+    });
+  }
+
   async listarBannersAdmin(
     estado: EstadoBannerPublicidad,
     page: number,

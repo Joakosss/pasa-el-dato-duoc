@@ -248,7 +248,59 @@ describe('HU-PU-01 crear banner publicitario (e2e)', () => {
       .expect(400);
   });
 
-  it('deniega editar un banner a una marca que no es dueña', async () => {
+  it('el dueño elimina su banner de forma lógica e idempotente y queda auditado', async () => {
+    const creado = await solicitudCrearBanner().expect(201);
+
+    await request(app.getHttpServer())
+      .delete(`/api/publicidad/banners/${creado.body.id}`)
+      .set('Cookie', cookieMarca)
+      .expect(204);
+
+    const eliminado = await prisma.bannerPublicidad.findUniqueOrThrow({
+      where: { id: creado.body.id },
+      select: {
+        eliminado: true,
+        fk_modificado_por: true,
+        fechaModificacion: true,
+      },
+    });
+
+    expect(eliminado).toMatchObject({
+      eliminado: true,
+      fk_modificado_por: idCuentaMarca,
+    });
+
+    const fechaModificacionInicial = eliminado.fechaModificacion;
+
+    await request(app.getHttpServer())
+      .delete(`/api/publicidad/banners/${creado.body.id}`)
+      .set('Cookie', cookieMarca)
+      .expect(204);
+
+    const eliminadoRepetido = await prisma.bannerPublicidad.findUniqueOrThrow({
+      where: { id: creado.body.id },
+      select: {
+        eliminado: true,
+        fk_modificado_por: true,
+        fechaModificacion: true,
+      },
+    });
+
+    expect(eliminadoRepetido).toEqual(eliminado);
+    expect(eliminadoRepetido.fechaModificacion).toEqual(fechaModificacionInicial);
+
+    const registrosAuditoria = await prisma.log_api.count({
+      where: {
+        fk_cuenta: idCuentaMarca,
+        metodo: 'DELETE',
+        ruta: `/api/publicidad/banners/${creado.body.id}`,
+        codigo_estado: 204,
+      },
+    });
+    expect(registrosAuditoria).toBeGreaterThanOrEqual(2);
+  });
+
+  it('deniega eliminar el banner de otra marca', async () => {
     const creado = await solicitudCrearBanner().expect(201);
     const correoOtraMarca = `otra-marca.${randomUUID()}@duocuc.cl`;
     const contrasenaOtraMarca = 'otra-marca-e2e-123';
@@ -264,22 +316,55 @@ describe('HU-PU-01 crear banner publicitario (e2e)', () => {
       select: { id_cuenta: true },
     });
 
-    const respuestaLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ correo: correoOtraMarca, contrasena: contrasenaOtraMarca })
-      .expect(200);
+    try {
+      const respuestaLogin = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({ correo: correoOtraMarca, contrasena: contrasenaOtraMarca })
+        .expect(200);
+      const cookieAjena = obtenerCookie(
+        respuestaLogin.headers['set-cookie'],
+        'accessToken',
+      );
+      if (!cookieAjena) {
+        throw new Error('No se recibió accessToken para la otra marca');
+      }
 
-    const cookieOtraMarca = obtenerCookie(
-      respuestaLogin.headers['set-cookie'],
-      'accessToken',
-    );
+      await request(app.getHttpServer())
+        .delete(`/api/publicidad/banners/${creado.body.id}`)
+        .set('Cookie', cookieAjena)
+        .expect(403);
+
+      await expect(
+        prisma.bannerPublicidad.findUniqueOrThrow({
+          where: { id: creado.body.id },
+          select: { eliminado: true },
+        }),
+      ).resolves.toEqual({ eliminado: false });
+    } finally {
+      await prisma.log_api.deleteMany({
+        where: { fk_cuenta: cuenta.id_cuenta },
+      });
+      await prisma.cuenta.delete({ where: { id_cuenta: cuenta.id_cuenta } });
+    }
+  });
+
+  it('responde 404 para un banner inexistente y 400 para un UUID inválido', async () => {
+    await request(app.getHttpServer())
+      .delete(`/api/publicidad/banners/${randomUUID()}`)
+      .set('Cookie', cookieMarca)
+      .expect(404);
 
     await request(app.getHttpServer())
-      .patch(`/api/publicidad/banners/${creado.body.id}`)
-      .set('Cookie', cookieOtraMarca ?? '')
-      .send({ mensaje: 'Edición no autorizada' })
-      .expect(403);
+      .delete('/api/publicidad/banners/no-es-uuid')
+      .set('Cookie', cookieMarca)
+      .expect(400);
+  });
 
-    await prisma.cuenta.delete({ where: { id_cuenta: cuenta.id_cuenta } });
+  it('rechaza eliminar un banner sin sesión', async () => {
+    const creado = await solicitudCrearBanner().expect(201);
+
+    await request(app.getHttpServer())
+      .delete(`/api/publicidad/banners/${creado.body.id}`)
+      .expect(401);
   });
 });
