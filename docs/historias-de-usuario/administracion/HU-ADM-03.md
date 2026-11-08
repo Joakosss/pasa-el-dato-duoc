@@ -47,6 +47,25 @@ Fuera de alcance de esta HU: la publicación misma (HU-PUB-01), la moderación y
 
 Nota técnica de origen (no define diseño): los módulos `categoria` y `tipo-venta` ya existen en el backend con endpoints de lectura (`GET`) y datos sembrados; el CRUD de escritura y los guard de admin no existen.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-ADM-03-BE01:** Definir contratos y DTOs de creación/edición para categorías y tipos de venta, con normalización y límites de nombre.
+- **HU-ADM-03-BE02:** Implementar endpoints administrativos para listar, crear y editar categorías y tipos de venta, protegiendo las escrituras con rol administrador.
+- **HU-ADM-03-BE03:** Implementar eliminación de categoría/tipo de venta solo cuando no esté en uso por publicaciones activas; devolver conflicto con información suficiente si requiere reasignación.
+- **HU-ADM-03-BE04:** Validar duplicados por tipo de catálogo y persistir cambios de forma consistente con el modelo actual.
+- **HU-ADM-03-BE05:** Documentar contratos, DTOs y errores en Swagger; agregar pruebas unitarias/e2e para permisos, CRUD, duplicados y eliminación de elementos en uso/libres.
+- **HU-ADM-03-BE06:** Definir en spec/design cómo se ejecuta la reasignación de publicaciones antes de eliminar un elemento en uso; no eliminarlo ni reasignar automáticamente sin una decisión.
+
+### Frontend (FE)
+
+- **HU-ADM-03-FE01:** Crear la interfaz administrativa para listar y gestionar categorías y tipos de venta.
+- **HU-ADM-03-FE02:** Implementar formularios de creación y edición con validación de nombre y errores de duplicado.
+- **HU-ADM-03-FE03:** Implementar eliminación con confirmación y presentación clara del conflicto cuando el catálogo aún esté asociado a publicaciones activas.
+- **HU-ADM-03-FE04:** Integrar las operaciones con la API y refrescar formularios/listados de catálogo después de cambios exitosos.
+- **HU-ADM-03-FE05:** Manejar estados de carga, vacío, éxito, error de autorización y errores de red, evitando ofrecer acciones no disponibles al no administrador.
+
 ## Dependencias
 
 - Catálogo de categorías y tipos de venta disponible (backend existe en su parte de lectura).

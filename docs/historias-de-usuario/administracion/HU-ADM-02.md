@@ -60,6 +60,28 @@ Fuera de alcance de esta HU: crear reportes de publicación (acción del estudia
 
 Nota técnica de origen (no define diseño): `ReportePublicacion` no existe en el `schema.prisma`; el MER lo define como tabla de negocio con motivo, comentarios y estado del reporte.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-ADM-02-BE01:** Definir el modelo/persistencia de reportes de publicación y sus estados, enlazados con publicación, reportante y administrador responsable.
+- **HU-ADM-02-BE02:** Crear endpoints protegidos para listar reportes pendientes y consultar su detalle, contexto y publicación asociada.
+- **HU-ADM-02-BE03:** Implementar acciones para tomar en revisión, reabrir y descartar un reporte sin alterar la publicación cuando se descarta.
+- **HU-ADM-02-BE04:** Implementar la resolución de retiro administrativo en una operación consistente: marcar la publicación eliminada, resolver el reporte y registrar el aviso al vendedor.
+- **HU-ADM-02-BE05:** Implementar advertencia al vendedor como resolución registrada, sin asumir entrega mediante notificación en esta HU.
+- **HU-ADM-02-BE06:** Validar rol administrador, transiciones permitidas, publicación existente y consistencia entre resolución y estado de la publicación.
+- **HU-ADM-02-BE07:** Registrar auditoría con acción, administrador, fecha y entidades afectadas; documentar DTOs/endpoints en Swagger y agregar pruebas unitarias/e2e.
+- **HU-ADM-02-BE08:** Verificar en pruebas que la publicación retirada deja de estar disponible en las consultas públicas y que las conversaciones existentes siguen las reglas definidas para ellas.
+
+### Frontend (FE)
+
+- **HU-ADM-02-FE01:** Crear la vista administrativa de reportes de publicación con listado, estado y publicación asociada.
+- **HU-ADM-02-FE02:** Mostrar detalle de publicación reportada y contexto del reporte para apoyar la revisión.
+- **HU-ADM-02-FE03:** Implementar acciones para tomar en revisión, retirar publicación, advertir al vendedor, descartar y reabrir según el estado.
+- **HU-ADM-02-FE04:** Solicitar confirmación antes del retiro y explicar que la acción retira la publicación del catálogo.
+- **HU-ADM-02-FE05:** Integrar las acciones con la API y refrescar listado/detalle luego de una resolución.
+- **HU-ADM-02-FE06:** Mostrar carga, estados vacíos y errores de permisos, conflictos de estado o red; distinguir aviso registrado de notificación entregada.
+
 ## Dependencias
 
 - Reportes de publicación entrantes: requiere el flujo de creación de reportes por estudiantes (CU011), sin HU aprobada aún. **Prerrequisito funcional pendiente.**

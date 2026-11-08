@@ -34,6 +34,25 @@ Aprobadas documentalmente (R.34, CU020 extendido, R.33):
 
 Nota técnica de origen (no define diseño): no existe módulo de métricas; el cálculo se apoya en las entidades vigentes (usuario, publicacion con fk_user_comprador y estado, reportes cuando existan). "Fechas" se sustenta en los campos `BASE` del modelo (fecha_creacion, fecha_modificacion).
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-ADM-04-BE01:** Definir el contrato de métricas y filtros por rango de fechas y sede, especificando límites y formato de fechas.
+- **HU-ADM-04-BE02:** Implementar un endpoint protegido por rol administrador que agregue usuarios activos, publicaciones por categoría/sede, transacciones cerradas y reportes resueltos.
+- **HU-ADM-04-BE03:** Aplicar los filtros solicitados en cada métrica y devolver valores agregados sin exponer datos personales innecesarios.
+- **HU-ADM-04-BE04:** Definir y documentar la regla para periodos/sedes sin datos y el formato de respuesta en Swagger.
+- **HU-ADM-04-BE05:** Agregar pruebas unitarias/e2e para autorización, filtros de fecha/sede, agrupaciones, cálculos de transacciones y reportes, y respuesta sin datos.
+- **HU-ADM-04-BE06:** Resolver en spec/design la estrategia bajo demanda o precalculada y la granularidad temporal de distribuciones.
+
+### Frontend (FE)
+
+- **HU-ADM-04-FE01:** Crear el dashboard administrativo con secciones para las métricas aprobadas.
+- **HU-ADM-04-FE02:** Implementar controles de filtro por periodo y sede, integrados con los catálogos disponibles.
+- **HU-ADM-04-FE03:** Consultar el endpoint al aplicar o cambiar filtros y actualizar las visualizaciones con la respuesta.
+- **HU-ADM-04-FE04:** Mostrar carga, ausencia de datos, errores de autorización y fallos de red con mensajes claros.
+- **HU-ADM-04-FE05:** Presentar métricas agregadas y distribuciones de manera accesible, sin añadir exportación u otras acciones fuera de alcance.
+
 ## Dependencias
 
 - Rol administrador autenticado (módulo auth existente).

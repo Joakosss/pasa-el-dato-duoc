@@ -38,6 +38,25 @@ Aprobadas documentalmente (R.15) y resoluciones previas del proyecto:
 
 Nota técnica de origen (no define diseño): no existe tabla o módulo de palabras bloqueadas; su persistencia se define en spec (PostgreSQL, consistente con el resto de la administración).
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-ADM-05-BE01:** Definir la persistencia PostgreSQL para la lista global de palabras bloqueadas, incluyendo unicidad y regla de comparación exacta.
+- **HU-ADM-05-BE02:** Crear endpoints protegidos por rol administrador para listar, agregar y eliminar palabras de la lista.
+- **HU-ADM-05-BE03:** Validar y normalizar entradas conforme a la coincidencia exacta aprobada; rechazar duplicados con un error de conflicto claro.
+- **HU-ADM-05-BE04:** Integrar una consulta/servicio compartido para que los filtros consumidores consulten los términos vigentes y los cambios se reflejen en envíos posteriores, sin modificar contenido histórico.
+- **HU-ADM-05-BE05:** Documentar contratos, DTOs y errores en Swagger; añadir pruebas unitarias/e2e para permisos, lista vacía, duplicados, eliminación y coincidencia exacta.
+- **HU-ADM-05-BE06:** Coordinar la integración con HU-CHAT-05 y con el flujo de validación de contenido de publicaciones cuando ese dominio esté implementado; no asumir consumidores inexistentes.
+
+### Frontend (FE)
+
+- **HU-ADM-05-FE01:** Crear una vista administrativa para consultar la lista global de palabras bloqueadas, incluyendo el estado vacío.
+- **HU-ADM-05-FE02:** Implementar formulario para agregar términos y mostrar errores de validación o duplicado.
+- **HU-ADM-05-FE03:** Permitir eliminar términos con confirmación y actualizar la lista tras la operación.
+- **HU-ADM-05-FE04:** Integrar listado, alta y eliminación con los endpoints administrativos.
+- **HU-ADM-05-FE05:** Mostrar carga, éxito, errores de autorización y fallos de red; no ofrecer acciones de edición ni moderación histórica fuera de alcance.
+
 ## Dependencias
 
 - HU-CHAT-05 (consumidor del filtro) y su dominio correspondiente en publicaciones cuando exista.
