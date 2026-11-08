@@ -24,6 +24,8 @@ export function useMisPublicaciones() {
 
   return {
     publicaciones: query.data ?? [],
+    // Permite distinguir "sin datos aún" de "lista vacía ya resuelta".
+    tieneDatos: query.data !== undefined,
     isCargando: query.isPending || query.isFetching,
     error:
       query.isError && !esSesionInvalida

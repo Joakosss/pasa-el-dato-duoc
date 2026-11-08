@@ -6,7 +6,8 @@ type BadgeVariant =
   | "promo"
   | "active"
   | "review"
-  | "reported";
+  | "reported"
+  | "unread";
 
 const VARIANTS: Record<BadgeVariant, string> = {
   category: "bg-navy text-white rounded-md text-xs font-medium",
@@ -15,17 +16,27 @@ const VARIANTS: Record<BadgeVariant, string> = {
   active: "bg-green-100 text-green-700 rounded-full text-xs font-medium",
   review: "bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium",
   reported: "bg-red-100 text-red-700 rounded-full text-xs font-medium",
+  unread: "bg-gold text-navy rounded-full text-xs font-bold min-w-5 justify-center",
 };
 
 interface BadgeProps {
   variant?: BadgeVariant;
   children: React.ReactNode;
   className?: string;
+  ariaLabel?: string;
 }
 
-export function Badge({ variant = "category", children, className }: BadgeProps) {
+export function Badge({
+  variant = "category",
+  children,
+  className,
+  ariaLabel,
+}: BadgeProps) {
   return (
-    <span className={cn("inline-flex items-center px-2 py-0.5", VARIANTS[variant], className)}>
+    <span
+      aria-label={ariaLabel}
+      className={cn("inline-flex items-center px-2 py-0.5", VARIANTS[variant], className)}
+    >
       {children}
     </span>
   );

@@ -9,6 +9,7 @@ import {
 
 // Historial paginado REST (desc en back). La UI invierte a asc para mostrar.
 // Cursor = id del último recibido; fin cuando nextCursor es null.
+// Al remontar se refresca para actualizar los flags de lectura.
 export function useHistorialMensajes(conversacionId: string | null) {
   const query = useInfiniteQuery({
     queryKey: ["chat", "mensajes", conversacionId],
@@ -22,6 +23,7 @@ export function useHistorialMensajes(conversacionId: string | null) {
     enabled: Boolean(conversacionId),
     staleTime: 10_000,
     retry: false,
+    refetchOnMount: "always",
     refetchOnWindowFocus: false,
   });
 

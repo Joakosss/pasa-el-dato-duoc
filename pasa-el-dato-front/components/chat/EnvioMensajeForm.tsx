@@ -52,7 +52,10 @@ export function EnvioMensajeForm({
         <textarea
           id="chat-mensaje"
           value={texto}
-          onChange={(e) => setTexto(e.target.value)}
+          onChange={(e) => {
+            setTexto(e.target.value);
+            if (error) setError(null);
+          }}
           rows={2}
           maxLength={2001}
           placeholder="Escribe un mensaje…"

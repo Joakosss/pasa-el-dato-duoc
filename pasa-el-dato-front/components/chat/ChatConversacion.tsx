@@ -11,6 +11,8 @@ import { ROUTES } from "@/config/constants";
 import { selectSesion, useSesionStore } from "@/stores/sesion-store";
 import { useChatTiempoReal } from "@/hooks/use-chat-tiempo-real";
 import { useHistorialMensajes } from "@/hooks/use-historial-mensajes";
+import { useLecturaConversacion } from "@/hooks/use-lectura-conversacion";
+import { estadoLecturaMensaje, normalizarMensajeWs } from "@/lib/chat/mensajes";
 import type { MensajeDTO } from "@/domain/dtos/chat.dto";
 
 function esObjectIdValido(id: string): boolean {
@@ -29,27 +31,59 @@ function ordenarAsc(mensajes: MensajeDTO[]): MensajeDTO[] {
 export function ChatConversacion({ conversacionId }: { conversacionId: string }) {
   const router = useRouter();
   const sesion = useSesionStore(selectSesion);
+  const idCuentaActual = sesion?.idCuenta;
   const idValido = esObjectIdValido(conversacionId);
   const listaRef = useRef<HTMLUListElement>(null);
 
   const historial = useHistorialMensajes(idValido ? conversacionId : null);
   const tiempoReal = useChatTiempoReal(idValido ? conversacionId : null);
 
-  useEffect(() => {
-    if (historial.esSesionInvalida) {
-      toast.error("Tu sesión expiró. Inicia sesión nuevamente.");
-      router.replace(ROUTES.login);
-    }
-  }, [historial.esSesionInvalida, router]);
-
   const mensajes = useMemo(() => {
     const baseDesc = historial.paginas.flatMap((p) => p.items);
     const baseAsc = [...baseDesc].reverse();
     const combinados = new Map<string, MensajeDTO>();
     for (const m of baseAsc) combinados.set(m.id, m);
-    for (const m of tiempoReal.mensajesEnVivo) combinados.set(m.id, m);
+    for (const m of tiempoReal.mensajesEnVivo) {
+      // El historial REST trae los flags de lectura; el WS no debe pisarlos.
+      if (combinados.has(m.id)) continue;
+      combinados.set(m.id, normalizarMensajeWs(m, idCuentaActual));
+    }
     return ordenarAsc([...combinados.values()]);
-  }, [historial.paginas, tiempoReal.mensajesEnVivo]);
+  }, [historial.paginas, tiempoReal.mensajesEnVivo, idCuentaActual]);
+
+  const ultimoMensajeRecibidoId = useMemo(() => {
+    for (let i = mensajes.length - 1; i >= 0; i -= 1) {
+      if (mensajes[i].emisorCuentaId !== idCuentaActual) {
+        return mensajes[i].id;
+      }
+    }
+    return null;
+  }, [mensajes, idCuentaActual]);
+
+  const lectura = useLecturaConversacion({
+    conversacionId: idValido ? conversacionId : null,
+    habilitado:
+      idValido &&
+      !historial.isCargando &&
+      !historial.error &&
+      !historial.esSesionInvalida &&
+      !historial.esProhibido &&
+      !historial.esNoEncontrada &&
+      !tiempoReal.sesionExpirada,
+    ultimoMensajeRecibidoId,
+  });
+
+  const sesionInvalida =
+    historial.esSesionInvalida ||
+    tiempoReal.sesionExpirada ||
+    lectura.esSesionInvalida;
+
+  useEffect(() => {
+    if (sesionInvalida) {
+      toast.error("Tu sesión expiró. Inicia sesión nuevamente.");
+      router.replace(ROUTES.login);
+    }
+  }, [sesionInvalida, router]);
 
   useEffect(() => {
     const el = listaRef.current;
@@ -178,13 +212,21 @@ export function ChatConversacion({ conversacionId }: { conversacionId: string })
           aria-label="Mensajes de la conversación"
           className="flex-1 space-y-2 overflow-y-auto p-3"
         >
-          {mensajes.map((mensaje) => (
-            <MensajeBurbuja
-              key={mensaje.id}
-              mensaje={mensaje}
-              esPropio={mensaje.emisorCuentaId === sesion?.idCuenta}
-            />
-          ))}
+          {mensajes.map((mensaje) => {
+            const esPropio = mensaje.emisorCuentaId === idCuentaActual;
+            return (
+              <MensajeBurbuja
+                key={mensaje.id}
+                mensaje={mensaje}
+                esPropio={esPropio}
+                estadoLectura={estadoLecturaMensaje(
+                  mensaje,
+                  idCuentaActual,
+                  lectura.leidoHastaMensajeId,
+                )}
+              />
+            );
+          })}
         </ul>
       )}
 

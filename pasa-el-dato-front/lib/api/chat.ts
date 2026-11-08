@@ -1,8 +1,11 @@
 import type {
   IniciarConversacionRequestDTO,
   IniciarConversacionRespuestaDTO,
+  ListaConversacionesDTO,
   ListaMensajesDTO,
+  ListarConversacionesQuery,
   ListarMensajesQuery,
+  MarcarConversacionLeidaRespuestaDTO,
 } from "@/domain/dtos/chat.dto";
 import { apiClient } from "./index";
 
@@ -19,6 +22,22 @@ export async function iniciarConversacionApi(
 }
 
 export const LIMITE_MENSAJES_WEB = 20;
+
+// GET /chat/conversaciones?cursor=&limit= -> { items, nextCursor }.
+// Solo conversaciones del usuario autenticado, ordenadas por actividad reciente.
+// Limit web = 20 (móvil = 10, fuera de este cliente).
+export const LIMITE_CONVERSACIONES_WEB = 20;
+
+export async function listarConversacionesApi(
+  query: ListarConversacionesQuery = {},
+): Promise<ListaConversacionesDTO> {
+  return apiClient.get<ListaConversacionesDTO>("/chat/conversaciones", {
+    query: {
+      cursor: query.cursor,
+      limit: query.limit ?? LIMITE_CONVERSACIONES_WEB,
+    },
+  });
+}
 
 // GET /chat/conversaciones/:id/mensajes?cursor=&limit= -> { items desc, nextCursor }.
 // Solo participantes. Cursor = id del último recibido; limit web = 20.
@@ -37,7 +56,20 @@ export async function listarMensajesApi(
   );
 }
 
-// Origen WS del namespace /chat derivado de NEXT_PUBLIC_API_URL (sin /api).
-export function obtenerOrigenChatSocket(apiUrl: string): string {
-  return new URL(apiUrl).origin;
+// POST /chat/conversaciones/:id/leer -> { conversacionId, leidoHastaMensajeId }.
+// Idempotente. Marca como leídos los mensajes de la contraparte al abrir.
+export async function marcarConversacionComoLeidaApi(
+  conversacionId: string,
+): Promise<MarcarConversacionLeidaRespuestaDTO> {
+  return apiClient.post<MarcarConversacionLeidaRespuestaDTO>(
+    `/chat/conversaciones/${encodeURIComponent(conversacionId)}/leer`,
+  );
 }
+
+// Ruta del engine Socket.IO bajo el mismo origen del front. Debe empezar con
+// /api para que el navegador envíe la cookie accessToken (Path=/api del back).
+// next.config.ts proxya esta ruta a /socket.io del back.
+export const RUTA_SOCKET_CHAT = "/api/socket.io";
+
+// Namespace del gateway de chat.
+export const NAMESPACE_CHAT = "/chat";
