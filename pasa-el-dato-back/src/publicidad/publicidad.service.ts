@@ -14,6 +14,7 @@ import type {
 import type { ImagenRecibida } from '../publicacion/validar-imagenes.js';
 import type { CrearBannerPublicidadDto } from './dto/crear-banner-publicidad.dto.js';
 import type { EditarBannerPublicidadDto } from './dto/editar-banner-publicidad.dto.js';
+import type { ListarBannersActivosRespuestaDto } from './dto/listar-banners-activos-respuesta.dto.js';
 import type { EstadoBannerPublicidad } from '../generated/prisma/enums.js';
 
 export interface BannerPublicidadCreado {
@@ -64,6 +65,60 @@ interface AdminBannerRow {
 @Injectable()
 export class PublicidadService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async listarBannersActivos(
+    idCuenta: string,
+    limit: number,
+    cursor?: string,
+  ): Promise<ListarBannersActivosRespuestaDto> {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_cuenta: idCuenta },
+      select: { fk_sede: true },
+    });
+
+    if (!usuario) {
+      throw new ForbiddenException(
+        'La cuenta no está asociada a un usuario con sede',
+      );
+    }
+
+    const ahora = new Date();
+    const banners = await this.prisma.bannerPublicidad.findMany({
+      where: {
+        eliminado: false,
+        estado: 'APROBADO',
+        fechaInicio: { lte: ahora },
+        fechaFin: { gte: ahora },
+        sedes: { some: { fk_sede: usuario.fk_sede } },
+      },
+      orderBy: [{ fechaCreacion: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+      select: {
+        id: true,
+        imagen: true,
+        mensaje: true,
+        fechaInicio: true,
+        fechaFin: true,
+        marca: { select: { nombre: true } },
+      },
+    });
+
+    const haySiguientePagina = banners.length > limit;
+    const items = haySiguientePagina ? banners.slice(0, limit) : banners;
+
+    return {
+      items: items.map((banner) => ({
+        id: banner.id,
+        imagenUrl: banner.imagen,
+        mensaje: banner.mensaje,
+        inicio: banner.fechaInicio,
+        fin: banner.fechaFin,
+        marcaNombre: banner.marca.nombre,
+      })),
+      nextCursor: haySiguientePagina ? (items.at(-1)?.id ?? null) : null,
+    };
+  }
 
   async crearBanner(
     dto: CrearBannerPublicidadDto,

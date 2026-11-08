@@ -3,12 +3,14 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -17,6 +19,7 @@ import {
 import type { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBadRequestResponse,
   ApiBody,
   ApiConsumes,
   ApiCookieAuth,
@@ -26,6 +29,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -40,6 +44,8 @@ import {
 import { AlmacenamientoImagenesService } from '../publicacion/almacenamiento-imagenes.service.js';
 import { CrearBannerPublicidadDto } from './dto/crear-banner-publicidad.dto.js';
 import { EditarBannerPublicidadDto } from './dto/editar-banner-publicidad.dto.js';
+import { ListarBannersActivosQueryDto } from './dto/listar-banners-activos.query.dto.js';
+import { ListarBannersActivosRespuestaDto } from './dto/listar-banners-activos-respuesta.dto.js';
 import {
   CAMPO_IMAGEN_BANNER,
   validarImagenBanner,
@@ -60,6 +66,45 @@ export class PublicidadController {
     private readonly publicidadService: PublicidadService,
     private readonly almacenamientoImagenesService: AlmacenamientoImagenesService,
   ) {}
+
+  @Get('activos')
+  @ApiOperation({
+    summary: 'Listar banners aprobados y vigentes de la sede del usuario',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Cantidad máxima de resultados (1-100, por defecto 20)',
+  })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    type: String,
+    format: 'uuid',
+    description: 'ID del último banner recibido en la página anterior',
+  })
+  @ApiOkResponse({ type: ListarBannersActivosRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'La cuenta autenticada no está asociada a un usuario con sede',
+  })
+  @ApiBadRequestResponse({ description: 'Parámetros de paginación inválidos' })
+  async listarActivos(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Query() query: ListarBannersActivosQueryDto,
+  ): Promise<ListarBannersActivosRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicidadService.listarBannersActivos(
+      user.idCuenta,
+      query.limit,
+      query.cursor,
+    );
+  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
