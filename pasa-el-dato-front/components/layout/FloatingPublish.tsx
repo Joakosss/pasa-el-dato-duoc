@@ -4,11 +4,17 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/config/constants";
-import { selectEstaAutenticado, useSesionStore } from "@/stores/sesion-store";
+import {
+  selectEstaAutenticado,
+  selectRol,
+  useSesionStore,
+} from "@/stores/sesion-store";
 
 export function FloatingPublish() {
   const pathname = usePathname();
   const estaAutenticado = useSesionStore(selectEstaAutenticado);
+  const rol = useSesionStore(selectRol);
+  const esMarca = rol?.descripcion.trim().toLowerCase() === "marca";
   // Solo cliente: evita flash/mismatch SSR antes de rehidratar zustand persist.
   const hidratado = useSyncExternalStore(
     () => () => {},
@@ -16,7 +22,7 @@ export function FloatingPublish() {
     () => false,
   );
 
-  if (!hidratado || !estaAutenticado) return null;
+  if (!hidratado || !estaAutenticado || esMarca) return null;
   if (pathname?.startsWith(ROUTES.publish)) return null;
 
   return (

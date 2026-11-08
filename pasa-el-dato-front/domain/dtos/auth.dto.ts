@@ -1,4 +1,5 @@
-// Contrato front del POST /auth/login (espejo de IniciarSesionDto del back).
+// Contrato front del POST /auth/login y /auth/login-marca
+// (espejo de IniciarSesionDto / IniciarSesionMarcaDto del back).
 export interface IniciarSesionRequestDTO {
   correo: string;
   contrasena: string;
@@ -9,9 +10,14 @@ export interface CambiarContrasenaRequestDTO {
   contrasenaActual: string;
   contrasenaNueva: string;
 }
-// Espejo de UsuarioAutenticado del back. Los tokens viajan solo en cookies
-// HttpOnly; el cuerpo trae solo la identidad segura.
-export interface UsuarioAutenticadoDTO {
+
+interface RolSesion {
+  id: number;
+  descripcion: string;
+}
+
+// Espejo de UsuarioAutenticado con cuenta de usuario (estudiante/admin).
+export interface SesionUsuarioDTO {
   idCuenta: string;
   correo: string;
   usuario: {
@@ -20,9 +26,20 @@ export interface UsuarioAutenticadoDTO {
     sNombre: string | null;
     pApellido: string;
     sApellido: string;
-    rol: {
-      id: number;
-      descripcion: string;
-    };
+    rol: RolSesion;
   };
 }
+
+// Espejo de UsuarioAutenticado con cuenta de marca (patrocinador).
+export interface SesionMarcaDTO {
+  idCuenta: string;
+  correo: string;
+  marca: {
+    nombre: string;
+    rol: RolSesion;
+  };
+}
+
+// Los tokens viajan solo en cookies HttpOnly; el cuerpo trae la identidad
+// segura. Una cuenta es usuario o marca, nunca ambas.
+export type UsuarioAutenticadoDTO = SesionUsuarioDTO | SesionMarcaDTO;

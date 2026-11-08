@@ -1,4 +1,5 @@
 import { ROUTES } from "@/config";
+import type { UsuarioAutenticadoDTO } from "@/domain/dtos/auth.dto";
 
 // Redirección post-login por rol. El criterio es `descripcion` porque
 // `rol_usuario.descripcion` es UNIQUE en el back mientras `id` es
@@ -19,4 +20,11 @@ interface RolSesion {
 export function resolverDestinoPorRol(rol: RolSesion): string {
   const clave = rol.descripcion.trim().toLowerCase();
   return DESTINO_POR_ROL[clave] ?? ROUTES.home;
+}
+
+// Redirección post-login según la identidad devuelta por el back:
+// cuenta de marca -> portal de publicidad; usuario -> destino por rol.
+export function resolverDestinoSesion(dto: UsuarioAutenticadoDTO): string {
+  if ("marca" in dto) return ROUTES.marca;
+  return resolverDestinoPorRol(dto.usuario.rol);
 }

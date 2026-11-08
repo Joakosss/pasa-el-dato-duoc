@@ -22,3 +22,4 @@ export { useHistorialMensajes } from "./use-historial-mensajes";
 export { useChatTiempoReal } from "./use-chat-tiempo-real";
 export { useDocumentoVisible } from "./use-documento-visible";
 export { useLecturaConversacion } from "./use-lectura-conversacion";
+export { useCrearMarcaAdmin } from "./use-crear-marca-admin";

@@ -14,6 +14,14 @@ export async function iniciarSesion(
   return apiClient.post<UsuarioAutenticadoDTO>("/auth/login", payload);
 }
 
+// POST /auth/login-marca { correo, contrasena } -> UsuarioAutenticado (200).
+// Correo comercial externo (sin exigir @duocuc.cl); mismas cookies HttpOnly.
+export async function iniciarSesionMarca(
+  payload: IniciarSesionRequestDTO,
+): Promise<UsuarioAutenticadoDTO> {
+  return apiClient.post<UsuarioAutenticadoDTO>("/auth/login-marca", payload);
+}
+
 export async function cerrarSesionApi(): Promise<void> {
   return apiClient.post<void>("/auth/logout");
 }

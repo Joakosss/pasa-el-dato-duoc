@@ -2,7 +2,10 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { UsuarioAutenticadoDTO } from "@/domain/dtos/auth.dto";
+import type {
+  SesionUsuarioDTO,
+  UsuarioAutenticadoDTO,
+} from "@/domain/dtos/auth.dto";
 
 // Sesión UI mínima y no sensible. Los tokens viajan solo en cookies HttpOnly
 // (credentials:"include" global); aquí nunca se guardan tokens, run ni claves.
@@ -23,7 +26,7 @@ interface SesionState {
 }
 
 function construirNombreCompleto(
-  usuario: UsuarioAutenticadoDTO["usuario"],
+  usuario: SesionUsuarioDTO["usuario"],
 ): string {
   return [usuario.pNombre, usuario.sNombre, usuario.pApellido, usuario.sApellido]
     .filter((parte): parte is string => Boolean(parte?.trim()))
@@ -36,15 +39,26 @@ export const useSesionStore = create<SesionState>()(
       sesion: null,
       iniciarSesion: (dto) =>
         set({
-          sesion: {
-            idCuenta: dto.idCuenta,
-            correo: dto.correo,
-            nombreCompleto: construirNombreCompleto(dto.usuario),
-            rol: {
-              id: dto.usuario.rol.id,
-              descripcion: dto.usuario.rol.descripcion,
-            },
-          },
+          sesion:
+            "usuario" in dto
+              ? {
+                  idCuenta: dto.idCuenta,
+                  correo: dto.correo,
+                  nombreCompleto: construirNombreCompleto(dto.usuario),
+                  rol: {
+                    id: dto.usuario.rol.id,
+                    descripcion: dto.usuario.rol.descripcion,
+                  },
+                }
+              : {
+                  idCuenta: dto.idCuenta,
+                  correo: dto.correo,
+                  nombreCompleto: dto.marca.nombre,
+                  rol: {
+                    id: dto.marca.rol.id,
+                    descripcion: dto.marca.rol.descripcion,
+                  },
+                },
         }),
       cerrarSesion: () => set({ sesion: null }),
     }),

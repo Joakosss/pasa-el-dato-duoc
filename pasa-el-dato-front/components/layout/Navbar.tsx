@@ -4,11 +4,18 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { APP_NAME, ROUTES } from "@/config/constants";
 import { LogoutConfirmModal } from "@/components/auth/LogoutConfirmModal";
-import { selectEstaAutenticado, useSesionStore } from "@/stores/sesion-store";
+import {
+  selectEstaAutenticado,
+  selectRol,
+  useSesionStore,
+} from "@/stores/sesion-store";
 import { SearchBar } from "./SearchBar";
 
 export function Navbar() {
   const estaAutenticado = useSesionStore(selectEstaAutenticado);
+  const rol = useSesionStore(selectRol);
+  // La marca no tiene "Mi perfil" de estudiante: su panel es /marca.
+  const esMarca = rol?.descripcion.trim().toLowerCase() === "marca";
   // Solo cliente: evita flash/mismatch SSR antes de rehidratar zustand persist.
   const hidratado = useSyncExternalStore(
     () => () => {},
@@ -128,12 +135,14 @@ export function Navbar() {
                 </div>
               ) : estaAutenticado ? (
                 <>
-                  <Link
-                    href={ROUTES.miPerfil}
-                    className="text-sm font-medium text-navy transition hover:text-gold"
-                  >
-                    Mi perfil
-                  </Link>
+                  {esMarca ? null : (
+                    <Link
+                      href={ROUTES.miPerfil}
+                      className="text-sm font-medium text-navy transition hover:text-gold"
+                    >
+                      Mi perfil
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={() => setModalAbierto(true)}
@@ -211,14 +220,16 @@ export function Navbar() {
                 >
                   {estaAutenticado ? (
                     <>
-                      <Link
-                        role="menuitem"
-                        href={ROUTES.miPerfil}
-                        onClick={cerrarMenu}
-                        className="block px-4 py-2 text-sm font-medium text-navy transition hover:bg-gold-hover/10 hover:text-navy hover:font-bold"
-                      >
-                        Mi perfil
-                      </Link>
+                      {esMarca ? null : (
+                        <Link
+                          role="menuitem"
+                          href={ROUTES.miPerfil}
+                          onClick={cerrarMenu}
+                          className="block px-4 py-2 text-sm font-medium text-navy transition hover:bg-gold-hover/10 hover:text-navy hover:font-bold"
+                        >
+                          Mi perfil
+                        </Link>
+                      )}
                       <button
                         role="menuitem"
                         type="button"

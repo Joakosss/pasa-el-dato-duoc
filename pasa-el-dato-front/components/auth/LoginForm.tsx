@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button, Input, PasswordInput } from "@/components/ui";
 import { ApiError } from "@/lib/api";
 import { iniciarSesion } from "@/lib/api/auth";
-import { resolverDestinoPorRol } from "@/lib/auth/destino-por-rol";
+import { resolverDestinoSesion } from "@/lib/auth/destino-por-rol";
 import { validarCorreoDuoc } from "@/lib/validators/correo";
 import { useSesionStore } from "@/stores/sesion-store";
 
@@ -24,7 +24,7 @@ export function LoginForm() {
     mutationFn: iniciarSesion,
     onSuccess: (dto) => {
       useSesionStore.getState().iniciarSesion(dto);
-      router.push(resolverDestinoPorRol(dto.usuario.rol));
+      router.push(resolverDestinoSesion(dto));
     },
     onError: (error: unknown) => {
       // 401 genérico para no revelar si falló el correo o la clave.

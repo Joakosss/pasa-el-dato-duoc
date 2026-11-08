@@ -22,3 +22,7 @@ export type {
   IniciarConversacionRequestDTO,
   IniciarConversacionRespuestaDTO,
 } from "./chat.dto";
+export type {
+  CrearMarcaAdminRequestDTO,
+  MarcaAdminCreadaDTO,
+} from "./marca.dto";
