@@ -69,15 +69,20 @@ describe('GET /api/auth/sesion', () => {
       rol: { id: 1, descripcion: 'Estudiante' },
     });
     expect(verificar).toHaveBeenCalledWith('jwt-vigente');
+    // El guard carga eliminado y marca (HU-MAR-01) además del rol.
     expect(buscarCuenta).toHaveBeenCalledWith({
       where: { id_cuenta: 'uuid-cuenta' },
       select: {
         aprobada: true,
         bloqueado: true,
+        eliminado: true,
         usuario: {
           select: {
             rol_usuario: { select: { id: true, descripcion: true } },
           },
+        },
+        marca: {
+          select: { id_cuenta: true },
         },
       },
     });

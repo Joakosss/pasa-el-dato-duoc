@@ -1,0 +1,125 @@
+[
+  {
+    "nombre": "Escuela de Administración y Negocios",
+    "carreras": [
+      { "nombre": "Ingeniería en Control de Gestión" },
+      { "nombre": "Ingeniería en Marketing Digital" },
+      { "nombre": "Auditoría y Análisis de Negocios" },
+      { "nombre": "Ingeniería en Gestión de Personas" },
+      { "nombre": "Auditoría" },
+      { "nombre": "Administración Pública" },
+      { "nombre": "Ingeniería en Gestión Logística" },
+      { "nombre": "Ingeniería en Comercio Exterior" },
+      { "nombre": "Ingeniería en Administración Mención Gestión de Personas" },
+      { "nombre": "Ingeniería en Administración Mención Innovación y Emprendimiento" },
+      { "nombre": "Ingeniería en Administración Mención Finanzas" },
+      { "nombre": "Contabilidad Tributaria" },
+      { "nombre": "Contabilidad General Mención Legislación Tributaria" },
+      { "nombre": "Comercio Exterior" },
+      { "nombre": "Administración de Empresas" },
+      { "nombre": "Técnico en Administración" },
+      { "nombre": "Técnico en Operaciones Logísticas" },
+      { "nombre": "Técnico en Gestión Logística" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Comunicación",
+    "carreras": [
+      { "nombre": "Comunicación Audiovisual" },
+      { "nombre": "Relaciones Públicas y Comunicación Organizacional" },
+      { "nombre": "Publicidad" },
+      { "nombre": "Animación Digital" },
+      { "nombre": "Ingeniería en Sonido" },
+      { "nombre": "Técnico Audiovisual" },
+      { "nombre": "Técnico en Trabajo Social" },
+      { "nombre": "Tecnología en Sonido e Iluminación" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Construcción",
+    "carreras": [
+      { "nombre": "Ingeniería en Administración de Seguridad Privada" },
+      { "nombre": "Ingeniería en Construcción" },
+      { "nombre": "Ingeniería en Prevención de Riesgos" },
+      { "nombre": "Técnico Modelador Proyectista" },
+      { "nombre": "Conservación y Restauración del Patrimonio" },
+      { "nombre": "Técnico en Construcción" },
+      { "nombre": "Técnico Topógrafo Geomático" },
+      { "nombre": "Técnico en Prevención de Riesgos Laborales" },
+      { "nombre": "Técnico en Prevención de Riesgos" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Diseño",
+    "carreras": [
+      { "nombre": "Ilustración para Contextos Globales" },
+      { "nombre": "Diseño Industrial e Innovación en Productos" },
+      { "nombre": "Diseño Gráfico" },
+      { "nombre": "Diseño de Vestuario" },
+      { "nombre": "Diseño de Ambientes" },
+      { "nombre": "Desarrollo y Diseño Web" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Gastronomía",
+    "carreras": [
+      { "nombre": "Gastronomía Internacional" },
+      { "nombre": "Gastronomía" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Informática y Telecomunicaciones",
+    "carreras": [
+      { "nombre": "Ingeniería en Informática" },
+      { "nombre": "Ingeniería en Ciberseguridad" },
+      { "nombre": "Ingeniería en Ciencia de Datos" },
+      { "nombre": "Ingeniería en Infraestructura Tecnológica" },
+      { "nombre": "Ingeniería en Desarrollo de Software" },
+      { "nombre": "Ingeniería en Redes y Telecomunicaciones" },
+      { "nombre": "Desarrollo de Aplicaciones" },
+      { "nombre": "Analista Programador Computacional" },
+      { "nombre": "Analista Programador" },
+      { "nombre": "Técnico de Redes y Telecomunicaciones" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Ingeniería y Recursos Naturales",
+    "carreras": [
+      { "nombre": "Ingeniería en Recursos Naturales y Sostenibilidad" },
+      { "nombre": "Ingeniería en Minas" },
+      { "nombre": "Ingeniería Industrial" },
+      { "nombre": "Ingeniería en Automatización y Control Industrial" },
+      { "nombre": "Ingeniería en Maquinaria y Vehículos Pesados" },
+      { "nombre": "Ingeniería en Mantenimiento Industrial" },
+      { "nombre": "Ingeniería en Electricidad y Automatización Industrial" },
+      { "nombre": "Ingeniería en Mecánica Automotriz y Autotrónica" },
+      { "nombre": "Ingeniería en Medio Ambiente" },
+      { "nombre": "Técnico en Desabolladura y Pintura Automotriz" },
+      { "nombre": "Técnico en Electricidad y Automatización Industrial" },
+      { "nombre": "Técnico en Mantenimiento Industrial" },
+      { "nombre": "Técnico en Electricidad y Energías Renovables" },
+      { "nombre": "Técnico en Control y Monitoreo Remoto de Procesos Mineros" },
+      { "nombre": "Técnico en Maquinaria y Vehículos Pesados" },
+      { "nombre": "Técnico en Mecánica Automotriz y Autotrónica" },
+      { "nombre": "Técnico Veterinario y Pecuario" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Salud y Bienestar",
+    "carreras": [
+      { "nombre": "Informática Biomédica" },
+      { "nombre": "Técnico en Laboratorio Clínico, Banco de Sangre e Imagenología" },
+      { "nombre": "Preparador Físico" },
+      { "nombre": "Técnico en Enfermería" },
+      { "nombre": "Técnico en Química y Farmacia" },
+      { "nombre": "Técnico en Odontología" }
+    ]
+  },
+  {
+    "nombre": "Escuela de Turismo y Hospitalidad",
+    "carreras": [
+      { "nombre": "Administración en Turismo y Hospitalidad" },
+      { "nombre": "Técnico en Turismo y Hospitalidad" }
+    ]
+  }
+]

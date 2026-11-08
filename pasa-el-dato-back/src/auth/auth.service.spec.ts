@@ -95,6 +95,7 @@ describe('AuthService: búsqueda de cuenta', () => {
     expect(resultado).toEqual(cuentaEncontrada);
 
     // Comprueba que la consulta solicite solamente los campos necesarios.
+    // La lógica de cuentas marca (HU-MAR-01) exige leer eliminado y marca.
     expect(prismaFalso.cuenta.findUnique).toHaveBeenCalledWith({
       where: {
         correo: 'alumno@duocuc.cl',
@@ -105,6 +106,7 @@ describe('AuthService: búsqueda de cuenta', () => {
         claveHash: true,
         aprobada: true,
         bloqueado: true,
+        eliminado: true,
         usuario: {
           select: {
             run: true,
@@ -118,6 +120,11 @@ describe('AuthService: búsqueda de cuenta', () => {
                 descripcion: true,
               },
             },
+          },
+        },
+        marca: {
+          select: {
+            nombre: true,
           },
         },
       },
@@ -440,14 +447,21 @@ describe('AuthService: búsqueda de cuenta', () => {
     ).resolves.toEqual(cuenta);
 
     // No se necesita leer la contraseña para renovar una sesión.
+    // La lógica de cuentas marca (HU-MAR-01) exige leer eliminado y marca.
     expect(prismaFalso.cuenta.findUnique).toHaveBeenCalledWith({
       where: { id_cuenta: 'id-cuenta' },
       select: {
         aprobada: true,
         bloqueado: true,
+        eliminado: true,
         usuario: {
           select: {
             rol_usuario: { select: { id: true } },
+          },
+        },
+        marca: {
+          select: {
+            id_cuenta: true,
           },
         },
       },

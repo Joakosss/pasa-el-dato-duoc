@@ -137,6 +137,11 @@ export type BannerPublicidad = Prisma.BannerPublicidadModel
  */
 export type BannerSede = Prisma.BannerSedeModel
 /**
+ * Model NotificacionMarca
+ * 
+ */
+export type NotificacionMarca = Prisma.NotificacionMarcaModel
+/**
  * Model ImagenPublicacion
  * 
  */

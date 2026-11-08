@@ -416,6 +416,7 @@ export const ModelName = {
   Publicacion: 'Publicacion',
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
+  NotificacionMarca: 'NotificacionMarca',
   ImagenPublicacion: 'ImagenPublicacion'
 } as const
 
@@ -432,7 +433,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "imagenPublicacion"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1842,6 +1843,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NotificacionMarca: {
+      payload: Prisma.$NotificacionMarcaPayload<ExtArgs>
+      fields: Prisma.NotificacionMarcaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotificacionMarcaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotificacionMarcaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>
+        }
+        findFirst: {
+          args: Prisma.NotificacionMarcaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotificacionMarcaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>
+        }
+        findMany: {
+          args: Prisma.NotificacionMarcaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>[]
+        }
+        create: {
+          args: Prisma.NotificacionMarcaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>
+        }
+        createMany: {
+          args: Prisma.NotificacionMarcaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotificacionMarcaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>[]
+        }
+        delete: {
+          args: Prisma.NotificacionMarcaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>
+        }
+        update: {
+          args: Prisma.NotificacionMarcaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>
+        }
+        deleteMany: {
+          args: Prisma.NotificacionMarcaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotificacionMarcaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotificacionMarcaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>[]
+        }
+        upsert: {
+          args: Prisma.NotificacionMarcaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionMarcaPayload>
+        }
+        aggregate: {
+          args: Prisma.NotificacionMarcaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificacionMarca>
+        }
+        groupBy: {
+          args: Prisma.NotificacionMarcaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificacionMarcaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotificacionMarcaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificacionMarcaCountAggregateOutputType> | number
+        }
+      }
+    }
     ImagenPublicacion: {
       payload: Prisma.$ImagenPublicacionPayload<ExtArgs>
       fields: Prisma.ImagenPublicacionFieldRefs
@@ -2155,7 +2230,10 @@ export const BannerPublicidadScalarFieldEnum = {
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
-  fk_modificado_por: 'fk_modificado_por'
+  fk_modificado_por: 'fk_modificado_por',
+  motivoRechazo: 'motivoRechazo',
+  fechaAprobacion: 'fechaAprobacion',
+  fechaRechazo: 'fechaRechazo'
 } as const
 
 export type BannerPublicidadScalarFieldEnum = (typeof BannerPublicidadScalarFieldEnum)[keyof typeof BannerPublicidadScalarFieldEnum]
@@ -2167,6 +2245,19 @@ export const BannerSedeScalarFieldEnum = {
 } as const
 
 export type BannerSedeScalarFieldEnum = (typeof BannerSedeScalarFieldEnum)[keyof typeof BannerSedeScalarFieldEnum]
+
+
+export const NotificacionMarcaScalarFieldEnum = {
+  id: 'id',
+  fk_marca: 'fk_marca',
+  fk_banner: 'fk_banner',
+  tipo: 'tipo',
+  mensaje: 'mensaje',
+  leida: 'leida',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type NotificacionMarcaScalarFieldEnum = (typeof NotificacionMarcaScalarFieldEnum)[keyof typeof NotificacionMarcaScalarFieldEnum]
 
 
 export const ImagenPublicacionScalarFieldEnum = {
@@ -2469,6 +2560,7 @@ export type GlobalOmitConfig = {
   publicacion?: Prisma.PublicacionOmit
   bannerPublicidad?: Prisma.BannerPublicidadOmit
   bannerSede?: Prisma.BannerSedeOmit
+  notificacionMarca?: Prisma.NotificacionMarcaOmit
   imagenPublicacion?: Prisma.ImagenPublicacionOmit
 }
 

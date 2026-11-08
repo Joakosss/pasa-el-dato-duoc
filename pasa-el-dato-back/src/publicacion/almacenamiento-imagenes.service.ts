@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { mkdir, rename, rm, writeFile } from 'node:fs/promises';
+import { mkdir, rename, rm, rmdir, writeFile } from 'node:fs/promises';
 import { basename, isAbsolute, join, relative, resolve } from 'node:path';
 import {
   BadRequestException,
@@ -101,10 +101,21 @@ export class AlmacenamientoImagenesService {
 
       const resultado = await operacion(imagenesAlmacenadas);
 
+      // El directorio tmp/<uuid> deja de tener razón de existir cuando la
+      // operación asociada termina bien; tmp/ padre se conserva.
+      await rm(dirTmpRequest, { recursive: true, force: true }).catch(
+        () => undefined,
+      );
+
       return { resultado, imagenes: imagenesAlmacenadas };
     } catch (error) {
       await this.eliminarArchivos(archivosTemporales, archivosFinales);
       await rm(dirTmpRequest, { recursive: true, force: true }).catch(() => undefined);
+
+      // Intento benigno de eliminar tmp/ si quedó vacío: un fallo deja el
+      // directorio de uploads sin rastro. Con solicitudes concurrentes
+      // tmp/ contiene subcarpetas ajenas y el rmdir benigno falla (ENOTEMPTY).
+      await rmdir(join(this.directorioUploads, 'tmp')).catch(() => undefined);
 
       if (
         error instanceof BadRequestException ||

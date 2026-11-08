@@ -119,7 +119,7 @@ model Comuna {
 
 model Escuela {
   id       Int       @id @default(autoincrement())
-  nombre   String
+  nombre   String    @unique
   carreras Carrera[]
 
   @@map("escuela")
@@ -132,6 +132,7 @@ model Carrera {
   escuela    Escuela   @relation(fields: [fk_escuela], references: [id], onDelete: NoAction, onUpdate: NoAction)
   usuarios   Usuario[]
 
+  @@unique([nombre, fk_escuela], map: "ux_carrera_nombre_escuela")
   @@index([fk_escuela], map: "idx_carrera_escuela")
   @@map("carrera")
 }
