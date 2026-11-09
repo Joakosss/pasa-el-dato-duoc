@@ -445,3 +445,11 @@ model ReporteUsuario {
   @@index([fk_admin_asignado], map: "idx_reporte_usuario_admin")
   @@map("reporte_usuario")
 }
+
+model PalabraBloqueada {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  termino       String   @unique
+  fechaCreacion DateTime @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+
+  @@map("palabra_bloqueada")
+}

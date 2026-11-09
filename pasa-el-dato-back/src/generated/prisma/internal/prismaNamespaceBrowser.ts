@@ -74,7 +74,8 @@ export const ModelName = {
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
   ImagenPublicacion: 'ImagenPublicacion',
-  ReporteUsuario: 'ReporteUsuario'
+  ReporteUsuario: 'ReporteUsuario',
+  PalabraBloqueada: 'PalabraBloqueada'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -382,6 +383,15 @@ export const ReporteUsuarioScalarFieldEnum = {
 } as const
 
 export type ReporteUsuarioScalarFieldEnum = (typeof ReporteUsuarioScalarFieldEnum)[keyof typeof ReporteUsuarioScalarFieldEnum]
+
+
+export const PalabraBloqueadaScalarFieldEnum = {
+  id: 'id',
+  termino: 'termino',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type PalabraBloqueadaScalarFieldEnum = (typeof PalabraBloqueadaScalarFieldEnum)[keyof typeof PalabraBloqueadaScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -420,7 +420,8 @@ export const ModelName = {
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
   ImagenPublicacion: 'ImagenPublicacion',
-  ReporteUsuario: 'ReporteUsuario'
+  ReporteUsuario: 'ReporteUsuario',
+  PalabraBloqueada: 'PalabraBloqueada'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -436,7 +437,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion" | "reporteUsuario"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion" | "reporteUsuario" | "palabraBloqueada"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2216,6 +2217,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PalabraBloqueada: {
+      payload: Prisma.$PalabraBloqueadaPayload<ExtArgs>
+      fields: Prisma.PalabraBloqueadaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PalabraBloqueadaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PalabraBloqueadaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>
+        }
+        findFirst: {
+          args: Prisma.PalabraBloqueadaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PalabraBloqueadaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>
+        }
+        findMany: {
+          args: Prisma.PalabraBloqueadaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>[]
+        }
+        create: {
+          args: Prisma.PalabraBloqueadaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>
+        }
+        createMany: {
+          args: Prisma.PalabraBloqueadaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PalabraBloqueadaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>[]
+        }
+        delete: {
+          args: Prisma.PalabraBloqueadaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>
+        }
+        update: {
+          args: Prisma.PalabraBloqueadaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>
+        }
+        deleteMany: {
+          args: Prisma.PalabraBloqueadaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PalabraBloqueadaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PalabraBloqueadaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>[]
+        }
+        upsert: {
+          args: Prisma.PalabraBloqueadaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PalabraBloqueadaPayload>
+        }
+        aggregate: {
+          args: Prisma.PalabraBloqueadaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePalabraBloqueada>
+        }
+        groupBy: {
+          args: Prisma.PalabraBloqueadaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PalabraBloqueadaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PalabraBloqueadaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PalabraBloqueadaCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2544,6 +2619,15 @@ export const ReporteUsuarioScalarFieldEnum = {
 } as const
 
 export type ReporteUsuarioScalarFieldEnum = (typeof ReporteUsuarioScalarFieldEnum)[keyof typeof ReporteUsuarioScalarFieldEnum]
+
+
+export const PalabraBloqueadaScalarFieldEnum = {
+  id: 'id',
+  termino: 'termino',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type PalabraBloqueadaScalarFieldEnum = (typeof PalabraBloqueadaScalarFieldEnum)[keyof typeof PalabraBloqueadaScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2911,6 +2995,7 @@ export type GlobalOmitConfig = {
   notificacionMarca?: Prisma.NotificacionMarcaOmit
   imagenPublicacion?: Prisma.ImagenPublicacionOmit
   reporteUsuario?: Prisma.ReporteUsuarioOmit
+  palabraBloqueada?: Prisma.PalabraBloqueadaOmit
 }
 
 /* Types for Logging */

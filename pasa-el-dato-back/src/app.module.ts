@@ -22,6 +22,7 @@ import { PublicidadModule } from './publicidad/publicidad.module.js';
 import { ReporteUsuarioModule } from './reporte-usuario/reporte-usuario.module.js';
 import { ReportePublicacionModule } from './reporte-publicacion/reporte-publicacion.module.js';
 import { MetricasAdminModule } from './metricas-admin/metricas-admin.module.js';
+import { PalabrasBloqueadasModule } from './palabras-bloqueadas/palabras-bloqueadas.module.js';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MetricasAdminModule } from './metricas-admin/metricas-admin.module.js';
     ReporteUsuarioModule,
     ReportePublicacionModule,
     MetricasAdminModule,
+    PalabrasBloqueadasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

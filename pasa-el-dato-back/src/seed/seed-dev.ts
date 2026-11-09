@@ -97,6 +97,21 @@ export async function ejecutarSeedDev(): Promise<void> {
       ],
       skipDuplicates: true,
     });
+
+    // HU-ADM-05: palabras bloqueadas (lista global).
+    // Se insertan normalizadas (minúsculas) y de forma idempotente.
+    await prisma.palabraBloqueada.createMany({
+      data: [
+        { termino: 'sexo' },
+        { termino: 'droga' },
+        { termino: 'drogas' },
+        { termino: 'alcohol' },
+        { termino: 'sustancias' },
+        { termino: 'pornografía' },
+        { termino: 'pornografia' },
+      ],
+      skipDuplicates: true,
+    });
   } finally {
     await prisma.$disconnect();
   }

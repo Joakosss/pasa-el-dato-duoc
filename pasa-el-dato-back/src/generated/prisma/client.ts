@@ -161,3 +161,8 @@ export type ImagenPublicacion = Prisma.ImagenPublicacionModel
  * 
  */
 export type ReporteUsuario = Prisma.ReporteUsuarioModel
+/**
+ * Model PalabraBloqueada
+ * 
+ */
+export type PalabraBloqueada = Prisma.PalabraBloqueadaModel
