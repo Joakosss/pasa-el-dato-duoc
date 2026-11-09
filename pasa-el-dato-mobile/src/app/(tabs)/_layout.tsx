@@ -2,14 +2,16 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Redirect, Tabs } from 'expo-router';
 import { Pressable, type View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { Ref } from 'react';
+import { useCallback, useEffect, useState, type Ref } from 'react';
 
-import { colors } from '@/theme';
+import { listarConversaciones } from '@/lib/chat/chat-api';
 import {
+  selectAccessToken,
   selectEstaAutenticado,
   selectHasHydrated,
   useSesionStore,
 } from '@/stores/sesion-store';
+import { colors } from '@/theme';
 
 // Grupo (tabs): menú inferior JS compacto estilo TikTok.
 // AUTH queda fuera y no lo muestra.
@@ -17,6 +19,37 @@ export default function TabsLayout() {
   const insets = useSafeAreaInsets();
   const hasHydrated = useSesionStore(selectHasHydrated);
   const estaAutenticado = useSesionStore(selectEstaAutenticado);
+  const accessToken = useSesionStore(selectAccessToken);
+  const [mensajesNoLeidos, setMensajesNoLeidos] = useState(0);
+
+  const cargarMensajesNoLeidos = useCallback(async () => {
+    if (!accessToken) {
+      setMensajesNoLeidos(0);
+      return;
+    }
+
+    try {
+      const respuesta = await listarConversaciones(accessToken);
+      setMensajesNoLeidos(
+        respuesta.items.reduce(
+          (total, conversacion) => total + conversacion.noLeidosCount,
+          0,
+        ),
+      );
+    } catch {
+      // Conserva el último contador visible ante un error de red temporal.
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    void Promise.resolve().then(cargarMensajesNoLeidos);
+
+    const intervalo = setInterval(() => {
+      void cargarMensajesNoLeidos();
+    }, 2_000);
+
+    return () => clearInterval(intervalo);
+  }, [cargarMensajesNoLeidos]);
 
   // Guarda de rutas: mientras no se lea el almacenamiento seguro no se decide
   // nada, para no expulsar al login a quien sí tiene sesión guardada.
@@ -89,6 +122,18 @@ export default function TabsLayout() {
         name="chats"
         options={{
           title: 'Chats',
+          tabBarBadge:
+            mensajesNoLeidos > 0
+              ? mensajesNoLeidos > 99
+                ? '99+'
+                : mensajesNoLeidos
+              : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.error,
+            color: colors.card,
+            fontSize: 10,
+            fontWeight: '700',
+          },
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="chat" size={23} color={color} />
           ),

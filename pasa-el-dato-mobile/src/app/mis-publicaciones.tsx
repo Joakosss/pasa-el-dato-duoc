@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Modal,
   Pressable,
   RefreshControl,
   StyleSheet,
@@ -15,7 +16,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
 import { ApiError } from '@/lib/api';
 import {
+  cambiarEstadoPublicacion,
   listarMisPublicaciones,
+  type EstadoPublicacionAsignable,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
@@ -32,6 +35,12 @@ export default function MisPublicacionesScreen() {
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
+  const [cambiandoEstadoId, setCambiandoEstadoId] = useState<string | null>(null);
+  const [cambioPendiente, setCambioPendiente] = useState<{
+    publicacion: PublicacionPublica;
+    estado: EstadoPublicacionAsignable;
+  } | null>(null);
+  const [resultadoCambio, setResultadoCambio] = useState<string | null>(null);
   const [error, setError] = useState<string | undefined>();
 
   const cargarPublicaciones = useCallback(async (esActualizacion = false) => {
@@ -70,6 +79,39 @@ export default function MisPublicacionesScreen() {
       void cargarPublicaciones();
     }, [cargarPublicaciones]),
   );
+
+  const confirmarCambioEstado = (
+    publicacion: PublicacionPublica,
+    estado: EstadoPublicacionAsignable,
+  ) => {
+    if (!accessToken || cambiandoEstadoId) return;
+    setCambioPendiente({ publicacion, estado });
+  };
+
+  const aplicarCambioEstado = async () => {
+    if (!accessToken || !cambioPendiente) return;
+
+    const { publicacion, estado } = cambioPendiente;
+    setCambiandoEstadoId(publicacion.id);
+
+    try {
+      await cambiarEstadoPublicacion(publicacion.id, estado, accessToken);
+      setCambioPendiente(null);
+      setResultadoCambio(
+        `"${publicacion.titulo}" ahora está ${estado.toLowerCase()}.`,
+      );
+      await cargarPublicaciones(true);
+    } catch (causa: unknown) {
+      setCambioPendiente(null);
+      setResultadoCambio(
+        causa instanceof ApiError
+          ? causa.message
+          : 'No pudimos cambiar el estado. Reintenta más tarde.',
+      );
+    } finally {
+      setCambiandoEstadoId(null);
+    }
+  };
 
   const filas = useMemo(() => {
     const items: FilaGrilla[] = publicaciones.map((publicacion) => ({
@@ -117,7 +159,16 @@ export default function MisPublicacionesScreen() {
         keyExtractor={(fila) => fila.clave}
         renderItem={({ item }) => (
           <View style={styles.celda}>
-            {item.publicacion ? <PublicacionCard publicacion={item.publicacion} /> : null}
+            {item.publicacion ? (
+              <>
+                <PublicacionCard publicacion={item.publicacion} />
+                <AccionesEstado
+                  publicacion={item.publicacion}
+                  cambiando={cambiandoEstadoId === item.publicacion.id}
+                  onCambiar={confirmarCambioEstado}
+                />
+              </>
+            ) : null}
           </View>
         )}
         numColumns={2}
@@ -167,7 +218,129 @@ export default function MisPublicacionesScreen() {
           )
         }
       />
+
+      <Modal
+        visible={cambioPendiente !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => !cambiandoEstadoId && setCambioPendiente(null)}>
+        <View style={styles.overlay}>
+          <View style={styles.modalEstado}>
+            <View style={styles.iconoModalEstado}>
+              <MaterialCommunityIcons
+                name={
+                  cambioPendiente?.estado === 'Vendido'
+                    ? 'tag-check-outline'
+                    : 'pause-circle-outline'
+                }
+                size={30}
+                color={colors.gold}
+              />
+            </View>
+            <Text style={styles.modalEstadoTitulo}>
+              {cambioPendiente?.estado === 'Vendido'
+                ? 'Marcar como vendida'
+                : `Cambiar a ${cambioPendiente?.estado.toLowerCase()}`}
+            </Text>
+            <Text style={styles.modalEstadoTexto}>
+              La publicación "{cambioPendiente?.publicacion.titulo}" quedará{' '}
+              {cambioPendiente?.estado.toLowerCase()}.
+            </Text>
+            <View style={styles.accionesModalEstado}>
+              <Pressable
+                accessibilityRole="button"
+                disabled={Boolean(cambiandoEstadoId)}
+                onPress={() => setCambioPendiente(null)}
+                style={styles.botonCancelarEstado}>
+                <Text style={styles.botonCancelarEstadoTexto}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ busy: Boolean(cambiandoEstadoId) }}
+                disabled={Boolean(cambiandoEstadoId)}
+                onPress={() => void aplicarCambioEstado()}
+                style={[styles.botonConfirmarEstado, cambiandoEstadoId && styles.deshabilitado]}>
+                {cambiandoEstadoId ? (
+                  <ActivityIndicator color={colors.navy} size="small" />
+                ) : (
+                  <Text style={styles.botonConfirmarEstadoTexto}>Confirmar</Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={resultadoCambio !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setResultadoCambio(null)}>
+        <View style={styles.overlay}>
+          <View style={styles.modalEstado}>
+            <View style={styles.iconoModalEstado}>
+              <MaterialCommunityIcons name="check-circle-outline" size={30} color={colors.gold} />
+            </View>
+            <Text style={styles.modalEstadoTitulo}>
+              {resultadoCambio?.startsWith('No pudimos') ||
+              resultadoCambio?.startsWith('Estado inválido')
+                ? 'No se pudo cambiar el estado'
+                : 'Estado actualizado'}
+            </Text>
+            <Text style={styles.modalEstadoTexto}>{resultadoCambio}</Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => setResultadoCambio(null)}
+              style={styles.botonConfirmarEstado}>
+              <Text style={styles.botonConfirmarEstadoTexto}>Entendido</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
+  );
+}
+
+function AccionesEstado({
+  publicacion,
+  cambiando,
+  onCambiar,
+}: {
+  publicacion: PublicacionPublica;
+  cambiando: boolean;
+  onCambiar: (
+    publicacion: PublicacionPublica,
+    estado: EstadoPublicacionAsignable,
+  ) => void;
+}) {
+  const estado = publicacion.estado?.descripcion ?? 'En curso';
+  const siguiente: EstadoPublicacionAsignable =
+    estado === 'En curso' ? 'Pausado' : 'En curso';
+  const etiqueta =
+    estado === 'En curso' ? 'Pausar' : 'Reactivar';
+
+  return (
+    <View style={styles.accionesEstado}>
+      <Text style={styles.estadoPublicacion}>Estado: {estado}</Text>
+      <View style={styles.botonesEstado}>
+        <Pressable
+          accessibilityRole="button"
+          disabled={cambiando}
+          onPress={() => onCambiar(publicacion, siguiente)}
+          style={[styles.botonEstadoSecundario, cambiando && styles.deshabilitado]}>
+          <Text style={styles.botonEstadoSecundarioTexto}>{etiqueta}</Text>
+        </Pressable>
+        {estado !== 'Vendido' ? (
+          <Pressable
+            accessibilityRole="button"
+            disabled={cambiando}
+            onPress={() => onCambiar(publicacion, 'Vendido')}
+            style={[styles.botonEstadoVendido, cambiando && styles.deshabilitado]}>
+            <Text style={styles.botonEstadoVendidoTexto}>Vendida</Text>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
   );
 }
 
@@ -232,7 +405,37 @@ const styles = StyleSheet.create({
   },
   contenido: { gap: spacing.padMd, padding: spacing.padMd },
   fila: { gap: spacing.padSm },
-  celda: { flex: 1 },
+  celda: { flex: 1, gap: 6 },
+  accionesEstado: {
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    gap: 6,
+    padding: 8,
+  },
+  estadoPublicacion: { color: colors.muted, fontSize: 11, fontWeight: '600' },
+  botonesEstado: { flexDirection: 'row', gap: 6 },
+  botonEstadoSecundario: {
+    alignItems: 'center',
+    borderColor: colors.navy,
+    borderRadius: spacing.radiusSm,
+    borderWidth: 1,
+    flex: 1,
+    minHeight: 34,
+    justifyContent: 'center',
+  },
+  botonEstadoSecundarioTexto: { color: colors.navy, fontSize: 12, fontWeight: '700' },
+  botonEstadoVendido: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusSm,
+    flex: 1,
+    minHeight: 34,
+    justifyContent: 'center',
+  },
+  botonEstadoVendidoTexto: { color: colors.navy, fontSize: 12, fontWeight: '700' },
+  deshabilitado: { opacity: 0.55 },
   aviso: {
     alignItems: 'center',
     backgroundColor: '#fff8dc',
@@ -275,4 +478,53 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.padMd,
   },
   botonEstadoTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  overlay: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,43,73,0.58)',
+    flex: 1,
+    justifyContent: 'center',
+    padding: spacing.padLg,
+  },
+  modalEstado: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    maxWidth: 380,
+    padding: spacing.padLg,
+    width: '100%',
+  },
+  iconoModalEstado: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 28,
+    height: 56,
+    justifyContent: 'center',
+    width: 56,
+  },
+  modalEstadoTitulo: { color: colors.navy, fontSize: 18, fontWeight: '800', textAlign: 'center' },
+  modalEstadoTexto: { color: colors.muted, fontSize: 14, lineHeight: 20, textAlign: 'center' },
+  accionesModalEstado: { flexDirection: 'row', gap: spacing.padSm, marginTop: spacing.padSm, width: '100%' },
+  botonCancelarEstado: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonCancelarEstadoTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  botonConfirmarEstado: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+    paddingHorizontal: spacing.padMd,
+  },
+  botonConfirmarEstadoTexto: { color: colors.navy, fontSize: 14, fontWeight: '800' },
 });

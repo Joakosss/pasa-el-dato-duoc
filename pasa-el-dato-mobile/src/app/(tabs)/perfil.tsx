@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ApiError } from '@/lib/api';
-import { cambiarContrasena } from '@/lib/api/auth';
+import { cambiarContrasena, cerrarSesionRemota } from '@/lib/api/auth';
 import { type SedeCatalogo, listarSedes } from '@/lib/api/catalogos';
 import {
   actualizarPerfil,
@@ -28,7 +28,10 @@ import {
   validarTelefonoChile,
 } from '@/lib/validators/telefono';
 import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
-import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
+import {
+  selectAccessToken,
+  useSesionStore,
+} from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
 interface FormularioPerfil {
@@ -130,9 +133,19 @@ export default function PerfilScreen() {
   const [errorEdicion, setErrorEdicion] = useState<string | undefined>();
   const [mensajeExito, setMensajeExito] = useState<string | undefined>();
 
-  const cerrarSesion = () => {
-    useSesionStore.getState().cerrarSesion();
-    router.replace('/auth/login');
+  const cerrarSesion = async () => {
+    const tokens = useSesionStore.getState().tokens;
+
+    try {
+      if (tokens) {
+        await cerrarSesionRemota(tokens.accessToken, tokens.refreshToken);
+      }
+    } catch {
+      // El cierre local debe completarse aunque no haya conexión.
+    } finally {
+      useSesionStore.getState().cerrarSesion();
+      router.replace('/auth/login');
+    }
   };
 
   const cargarPerfil = async () => {
@@ -149,7 +162,7 @@ export default function PerfilScreen() {
       setPerfil(await obtenerPerfil({ accessToken }));
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 401) {
-        cerrarSesion();
+        void cerrarSesion();
         return;
       }
 
@@ -224,7 +237,7 @@ export default function PerfilScreen() {
       setMensajeExito('Perfil actualizado correctamente.');
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 401) {
-        cerrarSesion();
+        void cerrarSesion();
         return;
       }
 
@@ -313,7 +326,7 @@ export default function PerfilScreen() {
         <Pressable accessibilityRole="button" onPress={() => void cargarPerfil()} style={styles.botonPrimario}>
           <Text style={styles.botonPrimarioTexto}>Reintentar</Text>
         </Pressable>
-        <Pressable accessibilityRole="button" onPress={cerrarSesion} style={styles.botonSecundario}>
+        <Pressable accessibilityRole="button" onPress={() => void cerrarSesion()} style={styles.botonSecundario}>
           <Text style={styles.botonCerrarTexto}>Cerrar sesión</Text>
         </Pressable>
       </SafeAreaView>
@@ -410,7 +423,7 @@ export default function PerfilScreen() {
           <Text style={styles.botonSecundarioTexto}>Cambiar contraseña</Text>
         </Pressable>
 
-        <Pressable accessibilityRole="button" onPress={cerrarSesion} style={styles.botonSecundario}>
+        <Pressable accessibilityRole="button" onPress={() => void cerrarSesion()} style={styles.botonSecundario}>
           <MaterialCommunityIcons color={colors.error} name="logout" size={19} />
           <Text style={styles.botonCerrarTexto}>Cerrar sesión</Text>
         </Pressable>
@@ -430,7 +443,7 @@ export default function PerfilScreen() {
               accessibilityRole="button"
               onPress={() => {
                 setCambioContrasenaExitoso(false);
-                cerrarSesion();
+                void cerrarSesion();
               }}
               style={styles.botonPrimario}>
               <Text style={styles.botonPrimarioTexto}>Ir a iniciar sesión</Text>

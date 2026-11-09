@@ -6,10 +6,22 @@ export interface CambiarContrasenaRequest {
   contrasenaNueva: string;
 }
 
+export interface RenovarSesionRespuesta {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface SesionRespuesta {
+  rol: {
+    id: number;
+    descripcion: string;
+  };
+}
+
 export async function iniciarSesion(
   payload: IniciarSesionRequestDTO,
 ): Promise<LoginResponseDTO> {
-  return apiClient.post<LoginResponseDTO>("/auth/login", payload);
+  return apiClient.post<LoginResponseDTO>('/mobile/auth/login', payload);
 }
 
 export function cambiarContrasena(
@@ -17,4 +29,27 @@ export function cambiarContrasena(
   accessToken: string,
 ): Promise<void> {
   return apiClient.patch<void>('/auth/password', payload, { accessToken });
+}
+
+export function renovarSesion(
+  refreshToken: string,
+): Promise<RenovarSesionRespuesta> {
+  return apiClient.post<RenovarSesionRespuesta>('/mobile/auth/refresh', {
+    refreshToken,
+  });
+}
+
+export function consultarSesion(accessToken: string): Promise<SesionRespuesta> {
+  return apiClient.get<SesionRespuesta>('/auth/sesion', { accessToken });
+}
+
+export function cerrarSesionRemota(
+  accessToken: string | null,
+  refreshToken: string,
+): Promise<void> {
+  return apiClient.post<void>(
+    '/mobile/auth/logout',
+    { refreshToken },
+    { accessToken },
+  );
 }

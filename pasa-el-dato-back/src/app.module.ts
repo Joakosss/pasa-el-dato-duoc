@@ -17,6 +17,7 @@ import { PublicacionModule } from './publicacion/publicacion.module.js';
 import { CategoriaModule } from './categoria/categoria.module.js';
 import { TipoVentaModule } from './tipo-venta/tipo-venta.module.js';
 import { ChatModule } from './chat/chat.module.js';
+import { MobileModule } from './mobile/mobile.module.js';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ChatModule } from './chat/chat.module.js';
     CategoriaModule,
     TipoVentaModule,
     ChatModule,
+    MobileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

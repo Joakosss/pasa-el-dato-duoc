@@ -1,23 +1,10 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing } from '@/theme';
 import { Avatar } from '@/components/ui/Avatar';
-import { esChatDeVenta, type ChatFeed } from '@/lib/chat/chats-placeholder';
+import type { ConversacionChat } from '@/lib/chat/chat-api';
+import { colors, spacing } from '@/theme';
 
-// Espejo del ChatCard web: avatar con las iniciales del producto, título,
-// contraparte (con marca dorada cuando el chat es de un producto propio),
-// último mensaje y estado a la derecha.
-type EstadoChat = 'pendiente' | 'vendido' | 'alDia';
-
-function estadoDeChat(chat: ChatFeed): EstadoChat {
-  if (chat.vendido) return 'vendido';
-  if (chat.noLeidos > 0) return 'pendiente';
-  return 'alDia';
-}
-
-// Meses cortos en es-CL, sin depender de Intl (comportamiento igual en
-// dispositivo y web).
 const MESES_CORTOS = [
   'ene',
   'feb',
@@ -39,60 +26,62 @@ function formatearFecha(iso: string): string {
   return `${fecha.getDate()} ${MESES_CORTOS[fecha.getMonth()] ?? ''}`.trim();
 }
 
-export function ChatCard({ chat }: { chat: ChatFeed }) {
-  const estado = estadoDeChat(chat);
-  const deVenta = esChatDeVenta(chat);
+export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
+  const tituloPublicacion =
+    conversacion.publicacion.titulo ?? 'Publicación no disponible';
+  const hayNoLeidos = conversacion.noLeidosCount > 0;
+  const noDisponible = conversacion.publicacion.estado === 'NO_DISPONIBLE';
+  const ultimoMensaje = conversacion.ultimoMensaje?.texto ?? 'Aún no hay mensajes';
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Abrir chat sobre ${chat.productoTitulo}`}
+      accessibilityLabel={`Abrir chat sobre ${tituloPublicacion}`}
       onPress={() =>
         router.push({
           pathname: '/chat/[id]',
-          params: { id: chat.id },
+          params: {
+            id: conversacion.conversacionId,
+            titulo: tituloPublicacion,
+            contraparteNombre: conversacion.contraparte.primerNombre,
+            estadoPublicacion: conversacion.publicacion.estado,
+          },
         })
       }
       style={({ pressed }) => [
         styles.tarjeta,
-        estado === 'pendiente' ? styles.tarjetaPendiente : null,
-        estado === 'vendido' ? styles.tarjetaVendida : null,
-        deVenta ? styles.tarjetaDeVenta : null,
+        hayNoLeidos ? styles.tarjetaPendiente : null,
+        noDisponible ? styles.tarjetaNoDisponible : null,
         pressed && styles.pressed,
       ]}>
-      <Avatar nombre={chat.productoTitulo} tamano={44} />
+      <Avatar nombre={tituloPublicacion} tamano={44} />
 
       <View style={styles.cuerpo}>
         <View style={styles.filaTitulo}>
           <Text style={styles.titulo} numberOfLines={1}>
-            {chat.productoTitulo}
+            {tituloPublicacion}
           </Text>
-          <Text style={styles.fecha}>{formatearFecha(chat.ultimaFecha)}</Text>
+          <Text style={styles.fecha}>{formatearFecha(conversacion.actividadEn)}</Text>
         </View>
 
-        <View style={styles.filaContraparte}>
-          {deVenta ? <View style={styles.punto} /> : null}
-          <Text
-            style={[styles.contraparte, deVenta ? styles.contraparteDeVenta : null]}
-            numberOfLines={1}>
-            {chat.contraparte}
-          </Text>
-        </View>
+        <Text style={styles.contraparte} numberOfLines={1}>
+          {conversacion.contraparte.primerNombre}
+        </Text>
 
         <Text style={styles.ultimoMensaje} numberOfLines={2}>
-          {chat.ultimoMensaje}
+          {ultimoMensaje}
         </Text>
       </View>
 
-      {estado === 'pendiente' ? (
+      {hayNoLeidos ? (
         <View style={styles.badgeNoLeidos}>
-          <Text style={styles.badgeNoLeidosTexto}>{chat.noLeidos}</Text>
+          <Text style={styles.badgeNoLeidosTexto}>{conversacion.noLeidosCount}</Text>
         </View>
       ) : null}
 
-      {estado === 'vendido' ? (
-        <View style={styles.badgeVendido}>
-          <Text style={styles.badgeVendidoTexto}>Vendido</Text>
+      {noDisponible ? (
+        <View style={styles.badgeNoDisponible}>
+          <Text style={styles.badgeNoDisponibleTexto}>No disponible</Text>
         </View>
       ) : null}
     </Pressable>
@@ -101,70 +90,47 @@ export function ChatCard({ chat }: { chat: ChatFeed }) {
 
 const styles = StyleSheet.create({
   tarjeta: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.padSm,
-    padding: spacing.padSm,
     backgroundColor: colors.card,
     borderColor: colors.border,
-    borderWidth: 1,
     borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: spacing.padSm,
+    padding: spacing.padSm,
   },
-  // Con mensajes sin leer el chat queda marcado con borde verde.
   tarjetaPendiente: {
     borderColor: colors.success,
   },
-  // Vendido: tarjeta atenuada, como en el diseño web.
-  tarjetaVendida: {
+  tarjetaNoDisponible: {
     backgroundColor: colors.surface,
     opacity: 0.7,
   },
-  // Producto propio: franja dorada izquierda.
-  tarjetaDeVenta: {
-    borderLeftColor: colors.gold,
-    borderLeftWidth: 4,
-  },
   cuerpo: {
     flex: 1,
-    minWidth: 0,
     gap: 2,
+    minWidth: 0,
   },
   filaTitulo: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: 'row',
     gap: 8,
+    justifyContent: 'space-between',
   },
   titulo: {
-    flexShrink: 1,
     color: colors.navy,
+    flexShrink: 1,
     fontSize: 14,
     fontWeight: '600',
   },
   fecha: {
-    flexShrink: 0,
     color: colors.muted,
+    flexShrink: 0,
     fontSize: 12,
-  },
-  filaContraparte: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  punto: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.gold,
   },
   contraparte: {
-    flexShrink: 1,
     color: colors.muted,
     fontSize: 12,
-  },
-  contraparteDeVenta: {
-    color: colors.navy,
-    fontWeight: '600',
   },
   ultimoMensaje: {
     color: colors.muted,
@@ -172,31 +138,33 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   badgeNoLeidos: {
-    flexShrink: 0,
-    minWidth: 22,
-    height: 22,
-    paddingHorizontal: 6,
-    borderRadius: 11,
-    backgroundColor: colors.success,
     alignItems: 'center',
+    backgroundColor: colors.success,
+    borderRadius: 11,
+    flexShrink: 0,
+    height: 22,
     justifyContent: 'center',
+    minWidth: 22,
+    paddingHorizontal: 6,
   },
   badgeNoLeidosTexto: {
     color: colors.card,
     fontSize: 11,
     fontWeight: '700',
   },
-  badgeVendido: {
+  badgeNoDisponible: {
+    backgroundColor: colors.error,
+    borderRadius: 999,
     flexShrink: 0,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 999,
-    backgroundColor: colors.error,
   },
-  badgeVendidoTexto: {
+  badgeNoDisponibleTexto: {
     color: colors.card,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
   },
-  pressed: { opacity: 0.9 },
+  pressed: {
+    opacity: 0.9,
+  },
 });

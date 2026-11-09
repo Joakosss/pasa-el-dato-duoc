@@ -35,6 +35,11 @@ interface CatalogoPublicacion {
   nombre: string;
 }
 
+interface EstadoPublicacionApi {
+  id: number;
+  descripcion: string;
+}
+
 interface ImagenPublicacionApi {
   idImagen: string;
   url: string;
@@ -53,10 +58,14 @@ interface PublicacionApiBase {
 }
 
 export interface PublicacionPublica extends PublicacionApiBase {
-  estado?: CatalogoPublicacion;
+  estado?: EstadoPublicacionApi;
 }
 
-export interface PublicacionDetalle extends PublicacionApiBase {}
+export interface PublicacionDetalle extends PublicacionApiBase {
+  vendedor?: {
+    primerNombre: string;
+  };
+}
 
 export type PublicacionEdicion = PublicacionDetalle;
 
@@ -123,7 +132,9 @@ export function listarMisPublicaciones(
 }
 
 export function obtenerPublicacion(id: string): Promise<PublicacionDetalle> {
-  return apiClient.get<PublicacionDetalle>(`/publicaciones/${encodeURIComponent(id)}`);
+  return apiClient.get<PublicacionDetalle>(
+    `/mobile/publicaciones/${encodeURIComponent(id)}`,
+  );
 }
 
 export function obtenerPublicacionParaEdicion(
@@ -143,6 +154,20 @@ export function crearPublicacion(
   return apiClient.postFormData<PublicacionCreada>('/publicaciones', crearFormData(datos), {
     accessToken,
   });
+}
+
+export type EstadoPublicacionAsignable = 'En curso' | 'Pausado' | 'Vendido';
+
+export function cambiarEstadoPublicacion(
+  id: string,
+  estado: EstadoPublicacionAsignable,
+  accessToken: string,
+): Promise<{ id: string; estado: EstadoPublicacionApi }> {
+  return apiClient.patch<{ id: string; estado: EstadoPublicacionApi }>(
+    `/mobile/publicaciones/${encodeURIComponent(id)}/estado`,
+    { estado },
+    { accessToken },
+  );
 }
 
 export function actualizarPublicacion(

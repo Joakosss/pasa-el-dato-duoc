@@ -188,6 +188,12 @@ export default function DetalleProductoScreen() {
               <Detalle etiqueta="Categoría" valor={publicacion.categoria.nombre} />
               <Detalle etiqueta="Tipo de venta" valor={publicacion.tipoVenta.nombre} />
               <Detalle etiqueta="Sede" valor={publicacion.sede.nombre} />
+              {!esPropietario && publicacion.vendedor ? (
+                <Detalle
+                  etiqueta="Vendido por"
+                  valor={publicacion.vendedor.primerNombre}
+                />
+              ) : null}
             </View>
           </View>
 
@@ -228,8 +234,34 @@ export default function DetalleProductoScreen() {
               <View style={styles.accion}>
                 <Text style={styles.accionTitulo}>¿Te interesa esta publicación?</Text>
                 <Text style={styles.accionTexto}>
-                  La mensajería estará disponible próximamente para coordinar el intercambio.
+                  Contacta a la persona vendedora para coordinar el intercambio.
                 </Text>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Enviar mensaje a la persona vendedora"
+                  onPress={() =>
+                    router.push({
+                      pathname: '/chat/nuevo',
+                      params: {
+                        publicacionId: publicacion.id,
+                        titulo: publicacion.titulo,
+                        vendedorNombre: publicacion.vendedor?.primerNombre ?? 'la persona vendedora',
+                      },
+                    })
+                  }
+                  style={({ pressed }) => [
+                    styles.botonChat,
+                    pressed && styles.pressed,
+                  ]}>
+                  <>
+                    <MaterialCommunityIcons
+                      name="message-text-outline"
+                      size={18}
+                      color={colors.navy}
+                    />
+                    <Text style={styles.botonChatTexto}>Enviar mensaje</Text>
+                  </>
+                </Pressable>
               </View>
               <Pressable
                 accessibilityRole="button"
@@ -403,6 +435,19 @@ const styles = StyleSheet.create({
   },
   accionTitulo: { color: colors.navy, fontSize: 15, fontWeight: '800' },
   accionTexto: { color: colors.navy, fontSize: 13, lineHeight: 18 },
+  botonChat: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.navy,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'center',
+    marginTop: spacing.padSm,
+    minHeight: spacing.touchMin,
+  },
+  botonChatTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
   accionesPropietario: {
     backgroundColor: colors.card,
     borderColor: colors.border,

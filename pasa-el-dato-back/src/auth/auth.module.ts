@@ -46,6 +46,6 @@ import { RolesGuard } from './roles.guard.js';
   providers: [AuthService, AuthLogInterceptor, JwtAuthGuard, RolesGuard],
   // JwtModule se exporta para que módulos que usen JwtAuthGuard
   // (p. ej. PerfilModule) puedan resolver JwtService.
-  exports: [JwtAuthGuard, RolesGuard, JwtModule],
+  exports: [AuthService, JwtAuthGuard, RolesGuard, JwtModule],
 })
 export class AuthModule {}

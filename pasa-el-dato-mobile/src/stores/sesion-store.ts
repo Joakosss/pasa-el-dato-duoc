@@ -29,6 +29,7 @@ interface SesionState {
   hasHydrated: boolean;
   marcarHidratado: () => void;
   iniciarSesion: (dto: LoginResponseDTO) => void;
+  renovarTokens: (tokens: TokensSesion) => void;
   cerrarSesion: () => void;
 }
 
@@ -69,6 +70,7 @@ export const useSesionStore = create<SesionState>()(
             refreshToken: dto.refreshToken,
           },
         }),
+      renovarTokens: (tokens) => set({ tokens }),
       cerrarSesion: () => {
         // Deja el estado en memoria vacío (sin tokens ni identidad)...
         set({ sesion: null, tokens: null });
