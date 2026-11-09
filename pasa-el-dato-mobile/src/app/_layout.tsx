@@ -6,7 +6,9 @@ import { useEffect } from 'react';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { ApiError } from '@/lib/api';
 import { consultarSesion, renovarSesion } from '@/lib/api/auth';
+import { crearSocketChat } from '@/lib/chat/chat-socket';
 import {
+  selectAccessToken,
   selectHasHydrated,
   selectSesion,
   useSesionStore,
@@ -19,6 +21,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const hasHydrated = useSesionStore(selectHasHydrated);
   const sesion = useSesionStore(selectSesion);
+  const accessToken = useSesionStore(selectAccessToken);
 
   useEffect(() => {
     if (!hasHydrated || !sesion) return;
@@ -58,6 +61,17 @@ export default function RootLayout() {
       cancelado = true;
     };
   }, [hasHydrated, sesion]);
+
+  useEffect(() => {
+    if (!hasHydrated || !accessToken) return;
+
+    const socketPresencia = crearSocketChat(accessToken);
+    void socketPresencia.conectar().catch(() => {
+      // La presencia es opcional: no interrumpe navegación ni Chat REST.
+    });
+
+    return () => socketPresencia.desconectar();
+  }, [accessToken, hasHydrated]);
 
   return (
     <>

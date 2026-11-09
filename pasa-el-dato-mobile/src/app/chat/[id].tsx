@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -15,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/Avatar';
+import { EstrellasMomentaneo } from '@/components/ui/EstrellasMomentaneo';
 import {
   enviarMensaje as enviarMensajeApi,
   listarMensajes,
@@ -25,6 +27,10 @@ import {
   crearSocketChat,
   type SocketChat,
 } from '@/lib/chat/chat-socket';
+import {
+  useEvaluacionesMomentaneoStore,
+  type RolEvaluacionMomentaneo,
+} from '@/stores/evaluaciones-momentaneo-store';
 import { selectAccessToken, selectSesion, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -49,15 +55,37 @@ function agregarMensajeSinDuplicados(
 }
 
 export default function ConversacionChatScreen() {
-  const { id, titulo, contraparteNombre } = useLocalSearchParams<{
+  const { id, titulo, contraparteNombre, contraparteCuentaId, contraparteEnLinea, publicacionId, rolEnTransaccion } = useLocalSearchParams<{
     id: string;
     titulo?: string;
     contraparteNombre?: string;
+    contraparteCuentaId?: string;
+    contraparteEnLinea?: string;
+    publicacionId?: string;
+    rolEnTransaccion?: RolEvaluacionMomentaneo;
   }>();
   const accessToken = useSesionStore(selectAccessToken);
   const sesion = useSesionStore(selectSesion);
   const [texto, setTexto] = useState('');
   const [mensajes, setMensajes] = useState<MensajeChat[]>([]);
+  const [estaEnLinea, setEstaEnLinea] = useState(contraparteEnLinea === 'true');
+  const [modalAccionesAbierto, setModalAccionesAbierto] = useState(false);
+  const [modalConfirmarVentaAbierto, setModalConfirmarVentaAbierto] = useState(false);
+  const [modalEvaluacionAbierto, setModalEvaluacionAbierto] = useState(false);
+  const [estrellasSeleccionadas, setEstrellasSeleccionadas] = useState(0);
+  const [comentarioEvaluacion, setComentarioEvaluacion] = useState('');
+  const publicacionesVendidasMomentaneo = useEvaluacionesMomentaneoStore(
+    (estado) => estado.publicacionesVendidasMomentaneo,
+  );
+  const evaluacionesMomentaneo = useEvaluacionesMomentaneoStore(
+    (estado) => estado.evaluacionesMomentaneo,
+  );
+  const marcarPublicacionVendidaMomentaneo = useEvaluacionesMomentaneoStore(
+    (estado) => estado.marcarPublicacionVendidaMomentaneo,
+  );
+  const guardarEvaluacionMomentaneo = useEvaluacionesMomentaneoStore(
+    (estado) => estado.guardarEvaluacionMomentaneo,
+  );
   const [cargando, setCargando] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +95,19 @@ export default function ConversacionChatScreen() {
   const conversacionId = id ?? '';
   const tituloPublicacion = titulo ?? 'Conversación';
   const nombreContraparte = contraparteNombre ?? 'Usuario';
+  // TODO[MOMENTANEO]: usar siempre publicacionId cuando el contrato mobile
+  // esté disponible en conversaciones ya abiertas. El respaldo mantiene
+  // visible el prototipo en chats cargados antes de la ampliación del contrato.
+  const idPublicacion = publicacionId ?? conversacionId;
+  const rolActualMomentaneo: RolEvaluacionMomentaneo =
+    rolEnTransaccion === 'vendedor' ? 'vendedor' : 'comprador';
+  const ventaConfirmadaMomentaneo =
+    Boolean(idPublicacion) && publicacionesVendidasMomentaneo[idPublicacion] === true;
+  const evaluacionPropiaMomentaneo = evaluacionesMomentaneo.find(
+    (evaluacion) =>
+      evaluacion.publicacionId === idPublicacion &&
+      evaluacion.rol === rolActualMomentaneo,
+  );
 
   const cargarHistorial = useCallback(async () => {
     if (!accessToken || !conversacionId) {
@@ -103,6 +144,11 @@ export default function ConversacionChatScreen() {
       if (mensaje.conversacionId !== conversacionId) return;
       setMensajes((actuales) => agregarMensajeSinDuplicados(actuales, mensaje));
     });
+    const quitarListenerPresencia = socket.alCambiarPresencia((presencia) => {
+      if (presencia.cuentaId === contraparteCuentaId) {
+        setEstaEnLinea(presencia.enLinea);
+      }
+    });
 
     void socket
       .conectar()
@@ -117,10 +163,29 @@ export default function ConversacionChatScreen() {
 
     return () => {
       quitarListener();
+      quitarListenerPresencia();
       socket.desconectar();
       socketRef.current = null;
     };
-  }, [accessToken, conversacionId]);
+  }, [accessToken, conversacionId, contraparteCuentaId]);
+
+  const abrirEvaluacion = () => {
+    setEstrellasSeleccionadas(evaluacionPropiaMomentaneo?.estrellas ?? 0);
+    setComentarioEvaluacion(evaluacionPropiaMomentaneo?.comentario ?? '');
+    setModalEvaluacionAbierto(true);
+  };
+
+  const guardarEvaluacion = () => {
+    if (!idPublicacion || estrellasSeleccionadas < 1) return;
+
+    guardarEvaluacionMomentaneo({
+      publicacionId: idPublicacion,
+      rol: rolActualMomentaneo,
+      estrellas: estrellasSeleccionadas,
+      comentario: comentarioEvaluacion,
+    });
+    setModalEvaluacionAbierto(false);
+  };
 
   const enviarMensaje = async () => {
     const contenido = texto.trim();
@@ -150,13 +215,26 @@ export default function ConversacionChatScreen() {
           <Text style={styles.barraTitulo} numberOfLines={1}>
             {nombreContraparte}
           </Text>
-          <Text style={styles.barraSubtitulo} numberOfLines={1}>
-            Conversación por {tituloPublicacion}
-          </Text>
+          <View style={styles.filaPresencia}>
+            <View
+              accessibilityLabel={estaEnLinea ? 'Usuario en línea' : 'Usuario desconectado'}
+              style={[
+                styles.indicadorPresencia,
+                estaEnLinea ? styles.indicadorPresenciaEnLinea : styles.indicadorPresenciaDesconectado,
+              ]}
+            />
+            <Text style={styles.barraSubtitulo} numberOfLines={1}>
+              {estaEnLinea ? 'En línea' : 'Desconectado'}
+            </Text>
+          </View>
         </View>
       </View>
 
-      <View style={styles.producto}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Abrir acciones de la conversación"
+        onPress={() => setModalAccionesAbierto(true)}
+        style={({ pressed }) => [styles.producto, pressed && styles.productoPresionado]}>
         <MaterialCommunityIcons name="tag-outline" size={18} color={colors.gold} />
         <View style={styles.productoTexto}>
           <Text style={styles.productoEtiqueta}>Conversación por</Text>
@@ -164,7 +242,43 @@ export default function ConversacionChatScreen() {
             {tituloPublicacion}
           </Text>
         </View>
-      </View>
+        <MaterialCommunityIcons name="dots-vertical" size={22} color={colors.gold} />
+      </Pressable>
+
+      {idPublicacion ? (
+        <View style={styles.tarjetaCierreVenta}>
+          <View style={styles.iconoCierreVenta}>
+            <MaterialCommunityIcons
+              name={ventaConfirmadaMomentaneo ? 'check-decagram-outline' : 'handshake-outline'}
+              size={22}
+              color={colors.gold}
+            />
+          </View>
+          <View style={styles.cierreVentaTexto}>
+            <Text style={styles.cierreVentaTitulo}>
+              {ventaConfirmadaMomentaneo ? 'Venta confirmada' : '¿Concretaron la venta?'}
+            </Text>
+            <Text style={styles.cierreVentaDescripcion}>
+              {ventaConfirmadaMomentaneo
+                ? 'Ambas partes pueden evaluar esta experiencia.'
+                : rolActualMomentaneo === 'vendedor'
+                  ? `Usa el menú de la publicación para marcarla como vendida a ${nombreContraparte}.`
+                  : 'El vendedor podrá confirmar la venta desde el menú de esta publicación.'}
+            </Text>
+          </View>
+          {ventaConfirmadaMomentaneo ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={abrirEvaluacion}
+              style={styles.botonEvaluar}>
+              <MaterialCommunityIcons name="star-outline" size={18} color={colors.navy} />
+              <Text style={styles.botonEvaluarTexto}>
+                {evaluacionPropiaMomentaneo ? 'Editar' : 'Evaluar'}
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
 
       <KeyboardAvoidingView
         style={styles.flex}
@@ -276,6 +390,141 @@ export default function ConversacionChatScreen() {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+
+      <Modal
+        visible={modalAccionesAbierto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalAccionesAbierto(false)}>
+        <View style={styles.overlay}>
+          <View style={styles.modalAcciones}>
+            <View style={styles.iconoModalEvaluacion}>
+              <MaterialCommunityIcons name="dots-horizontal-circle-outline" size={34} color={colors.gold} />
+            </View>
+            <Text style={styles.modalTituloEvaluacion}>Acciones de la conversación</Text>
+            <Text style={styles.modalTextoEvaluacion}>{tituloPublicacion}</Text>
+
+            {rolActualMomentaneo === 'vendedor' && !ventaConfirmadaMomentaneo ? (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  setModalAccionesAbierto(false);
+                  setModalConfirmarVentaAbierto(true);
+                }}
+                style={styles.accionMenuVender}>
+                <MaterialCommunityIcons name="tag-check-outline" size={20} color={colors.navy} />
+                <Text style={styles.accionMenuVenderTexto}>Marcar como vendido</Text>
+              </Pressable>
+            ) : null}
+
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => setModalAccionesAbierto(false)}
+              style={styles.accionMenuReportar}>
+              <MaterialCommunityIcons name="flag-outline" size={20} color={colors.error} />
+              <Text style={styles.accionMenuReportarTexto}>Reportar usuario</Text>
+            </Pressable>
+
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => setModalAccionesAbierto(false)}
+              style={styles.botonCerrarAcciones}>
+              <Text style={styles.botonCancelarEvaluacionTexto}>Cerrar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={modalConfirmarVentaAbierto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalConfirmarVentaAbierto(false)}>
+        <View style={styles.overlay}>
+          <View style={styles.modalAcciones}>
+            <View style={styles.iconoModalEvaluacion}>
+              <MaterialCommunityIcons name="tag-check-outline" size={34} color={colors.gold} />
+            </View>
+            <Text style={styles.modalTituloEvaluacion}>¿Confirmar venta?</Text>
+            <Text style={styles.modalTextoEvaluacion}>
+              Marcarás "{tituloPublicacion}" como vendida a {nombreContraparte}.
+            </Text>
+            <Text style={styles.modalTextoEvaluacion}>
+              Después ambos podrán evaluar la experiencia.
+            </Text>
+            <View style={styles.accionesEvaluacion}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setModalConfirmarVentaAbierto(false)}
+                style={styles.botonCancelarEvaluacion}>
+                <Text style={styles.botonCancelarEvaluacionTexto}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  marcarPublicacionVendidaMomentaneo(idPublicacion);
+                  setModalConfirmarVentaAbierto(false);
+                }}
+                style={styles.botonGuardarEvaluacion}>
+                <Text style={styles.botonGuardarEvaluacionTexto}>Confirmar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={modalEvaluacionAbierto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalEvaluacionAbierto(false)}>
+        <View style={styles.overlay}>
+          <View style={styles.modalEvaluacion}>
+            <View style={styles.iconoModalEvaluacion}>
+              <MaterialCommunityIcons name="star-circle-outline" size={34} color={colors.gold} />
+            </View>
+            <Text style={styles.modalTituloEvaluacion}>Evalúa a {nombreContraparte}</Text>
+            <Text style={styles.modalTextoEvaluacion}>
+              Tu calificación ayuda a fortalecer la comunidad.
+            </Text>
+            <Text style={styles.etiquetaEvaluacion}>Tu evaluación *</Text>
+            <EstrellasMomentaneo
+              valor={estrellasSeleccionadas}
+              editable
+              tamano={34}
+              onCambiar={setEstrellasSeleccionadas}
+            />
+            <Text style={styles.etiquetaEvaluacion}>Comentario (opcional)</Text>
+            <TextInput
+              value={comentarioEvaluacion}
+              onChangeText={setComentarioEvaluacion}
+              maxLength={500}
+              multiline
+              placeholder="Cuéntanos cómo fue tu experiencia…"
+              placeholderTextColor={colors.muted}
+              style={styles.inputComentario}
+            />
+            <View style={styles.accionesEvaluacion}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setModalEvaluacionAbierto(false)}
+                style={styles.botonCancelarEvaluacion}>
+                <Text style={styles.botonCancelarEvaluacionTexto}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                disabled={estrellasSeleccionadas < 1}
+                onPress={guardarEvaluacion}
+                style={[
+                  styles.botonGuardarEvaluacion,
+                  estrellasSeleccionadas < 1 && styles.botonEvaluacionDeshabilitado,
+                ]}>
+                <Text style={styles.botonGuardarEvaluacionTexto}>Guardar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -315,7 +564,63 @@ const styles = StyleSheet.create({
   volver: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
   barraInformacion: { flex: 1, minWidth: 0 },
   barraTitulo: { color: colors.navy, fontSize: 15, fontWeight: '800' },
-  barraSubtitulo: { color: colors.muted, fontSize: 11, marginTop: 1 },
+  filaPresencia: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 5,
+    marginTop: 2,
+  },
+  indicadorPresencia: {
+    borderRadius: 4,
+    height: 8,
+    width: 8,
+  },
+  indicadorPresenciaEnLinea: {
+    backgroundColor: colors.success,
+  },
+  indicadorPresenciaDesconectado: {
+    backgroundColor: colors.border,
+  },
+  barraSubtitulo: { color: colors.muted, fontSize: 11 },
+  tarjetaCierreVenta: {
+    alignItems: 'center',
+    backgroundColor: '#fff8dc',
+    borderBottomColor: colors.gold,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: spacing.padMd,
+    paddingVertical: 9,
+  },
+  iconoCierreVenta: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 18,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  cierreVentaTexto: { flex: 1 },
+  cierreVentaTitulo: { color: colors.navy, fontSize: 13, fontWeight: '800' },
+  cierreVentaDescripcion: { color: colors.muted, fontSize: 11, lineHeight: 15, marginTop: 1 },
+  botonVender: {
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusSm,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  botonVenderTexto: { color: colors.navy, fontSize: 12, fontWeight: '800' },
+  botonEvaluar: {
+    alignItems: 'center',
+    borderColor: colors.navy,
+    borderRadius: spacing.radiusSm,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 7,
+  },
+  botonEvaluarTexto: { color: colors.navy, fontSize: 12, fontWeight: '800' },
   producto: {
     alignItems: 'center',
     backgroundColor: colors.navy,
@@ -324,6 +629,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.padMd,
     paddingVertical: 9,
   },
+  productoPresionado: { opacity: 0.88 },
   productoTexto: { flex: 1, minWidth: 0 },
   productoEtiqueta: { color: 'rgba(255,255,255,0.72)', fontSize: 10 },
   productoTitulo: { color: colors.card, fontSize: 13, fontWeight: '700' },
@@ -391,4 +697,108 @@ const styles = StyleSheet.create({
     width: 44,
   },
   botonEnviarDeshabilitado: { opacity: 0.45 },
+  overlay: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,43,73,0.6)',
+    flex: 1,
+    justifyContent: 'center',
+    padding: spacing.padLg,
+  },
+  modalAcciones: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    maxWidth: 380,
+    padding: spacing.padLg,
+    width: '100%',
+  },
+  accionMenuVender: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    flexDirection: 'row',
+    gap: 9,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  accionMenuVenderTexto: { color: colors.navy, fontSize: 14, fontWeight: '800' },
+  accionMenuReportar: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    borderColor: colors.error,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 9,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  accionMenuReportarTexto: { color: colors.error, fontSize: 14, fontWeight: '800' },
+  botonCerrarAcciones: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  modalEvaluacion: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    maxWidth: 380,
+    padding: spacing.padLg,
+    width: '100%',
+  },
+  iconoModalEvaluacion: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 30,
+    height: 60,
+    justifyContent: 'center',
+    width: 60,
+  },
+  modalTituloEvaluacion: { color: colors.navy, fontSize: 19, fontWeight: '800', textAlign: 'center' },
+  modalTextoEvaluacion: { color: colors.muted, fontSize: 13, lineHeight: 18, textAlign: 'center' },
+  etiquetaEvaluacion: { alignSelf: 'flex-start', color: colors.navy, fontSize: 13, fontWeight: '700', marginTop: 4 },
+  inputComentario: {
+    alignSelf: 'stretch',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    color: colors.navy,
+    minHeight: 88,
+    padding: spacing.padSm,
+    textAlignVertical: 'top',
+  },
+  accionesEvaluacion: { flexDirection: 'row', gap: spacing.padSm, marginTop: spacing.padSm, width: '100%' },
+  botonCancelarEvaluacion: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonCancelarEvaluacionTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  botonGuardarEvaluacion: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonGuardarEvaluacionTexto: { color: colors.navy, fontSize: 14, fontWeight: '800' },
+  botonEvaluacionDeshabilitado: { opacity: 0.45 },
 });

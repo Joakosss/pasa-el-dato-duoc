@@ -50,6 +50,10 @@ export class ChatGateway {
   @WebSocketServer()
   private server!: Server;
 
+  // Presencia efímera por cuenta. Una cuenta permanece en línea mientras
+  // conserve al menos un socket autenticado (web o mobile).
+  private readonly socketsPorCuenta = new Map<string, Set<string>>();
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
@@ -60,6 +64,12 @@ export class ChatGateway {
     try {
       const sesion = await this.autenticar(cliente);
       cliente.data.sesion = sesion;
+      if (this.registrarConexion(sesion.idCuenta, cliente.id)) {
+        this.server.emit('chat:presencia', {
+          cuentaId: sesion.idCuenta,
+          enLinea: true,
+        });
+      }
       this.logger.log(`Conexión WS aceptada para cuenta ${sesion.idCuenta}`);
     } catch {
       this.logger.warn('Conexión WS rechazada por sesión inválida');
@@ -69,6 +79,13 @@ export class ChatGateway {
 
   handleDisconnect(cliente: SocketChat): void {
     const cuentaId = cliente.data.sesion?.idCuenta;
+    if (cuentaId && this.registrarDesconexion(cuentaId, cliente.id)) {
+      this.server.emit('chat:presencia', {
+        cuentaId,
+        enLinea: false,
+      });
+    }
+
     this.logger.log(
       cuentaId
         ? `Conexión WS cerrada para cuenta ${cuentaId}`
@@ -114,6 +131,10 @@ export class ChatGateway {
     } catch (error) {
       throw this.convertirErrorWs(error);
     }
+  }
+
+  estaEnLinea(cuentaId: string): boolean {
+    return (this.socketsPorCuenta.get(cuentaId)?.size ?? 0) > 0;
   }
 
   emitirMensajeNuevo(mensaje: {
@@ -236,6 +257,29 @@ export class ChatGateway {
     }
 
     return { idCuenta: payload.sub };
+  }
+
+  private registrarConexion(cuentaId: string, socketId: string): boolean {
+    const sockets = this.socketsPorCuenta.get(cuentaId) ?? new Set<string>();
+    const estabaDesconectada = sockets.size === 0;
+    sockets.add(socketId);
+    this.socketsPorCuenta.set(cuentaId, sockets);
+    return estabaDesconectada;
+  }
+
+  private registrarDesconexion(cuentaId: string, socketId: string): boolean {
+    const sockets = this.socketsPorCuenta.get(cuentaId);
+    if (!sockets) {
+      return false;
+    }
+
+    sockets.delete(socketId);
+    if (sockets.size === 0) {
+      this.socketsPorCuenta.delete(cuentaId);
+      return true;
+    }
+
+    return false;
   }
 
   private obtenerSesion(cliente: SocketChat): SesionWs {

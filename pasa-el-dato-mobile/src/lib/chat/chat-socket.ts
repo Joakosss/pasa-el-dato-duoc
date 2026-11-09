@@ -18,6 +18,9 @@ export interface SocketChat {
   enviarMensaje: (conversacionId: string, texto: string) => Promise<MensajeChat>;
   marcarComoLeida: (conversacionId: string) => Promise<ConversacionLeida>;
   alRecibirMensaje: (listener: (mensaje: MensajeChat) => void) => () => void;
+  alCambiarPresencia: (
+    listener: (presencia: { cuentaId: string; enLinea: boolean }) => void,
+  ) => () => void;
 }
 
 function obtenerUrlSocket(apiUrl: string): string {
@@ -147,6 +150,10 @@ export function crearSocketChat(accessToken: string): SocketChat {
 
       socket.on('chat:mensaje_nuevo', manejarMensaje);
       return () => socket.off('chat:mensaje_nuevo', manejarMensaje);
+    },
+    alCambiarPresencia: (listener) => {
+      socket.on('chat:presencia', listener);
+      return () => socket.off('chat:presencia', listener);
     },
   };
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
+import { ChatGateway } from '../../chat/chat.gateway.js';
 import { ChatService } from '../../chat/chat.service.js';
 
 @Injectable()
@@ -7,6 +8,7 @@ export class MobileChatService {
   constructor(
     private readonly chatService: ChatService,
     private readonly prisma: PrismaService,
+    private readonly chatGateway: ChatGateway,
   ) {}
 
   async iniciarConversacionConMensaje(entrada: {
@@ -50,8 +52,13 @@ export class MobileChatService {
     return {
       items: conMensajes.map((conversacion) => ({
         ...conversacion,
+        publicacionId: conversacion.publicacion.id,
+        rolEnTransaccion: conversacion.rolEnTransaccion,
         contraparte: {
           primerNombre: nombres.get(conversacion.contraparteCuentaId) ?? 'Usuario',
+          enLinea: this.chatGateway.estaEnLinea(
+            conversacion.contraparteCuentaId,
+          ),
         },
       })),
       nextCursor: resultado.nextCursor,

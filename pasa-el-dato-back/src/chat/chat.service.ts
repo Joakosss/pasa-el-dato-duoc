@@ -140,6 +140,7 @@ export class ChatService {
     items: Array<{
       conversacionId: string;
       contraparteCuentaId: string;
+      rolEnTransaccion: 'vendedor' | 'comprador';
       estadoPublicacionAlCrear: string;
       publicacion: { id: string; estado: 'VISIBLE' | 'NO_DISPONIBLE'; titulo?: string };
       ultimoMensaje: null | { texto: string; enviadoEn: Date; emisorCuentaId: string };
@@ -284,6 +285,10 @@ export class ChatService {
       return {
         conversacionId,
         contraparteCuentaId,
+        rolEnTransaccion:
+          doc.vendedorCuentaId === entrada.cuentaId
+            ? ('vendedor' as const)
+            : ('comprador' as const),
         estadoPublicacionAlCrear: doc.estadoPublicacionAlCrear,
         publicacion,
         ultimoMensaje: ultimoMensajeDoc

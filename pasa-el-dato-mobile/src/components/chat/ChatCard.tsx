@@ -44,6 +44,10 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
             id: conversacion.conversacionId,
             titulo: tituloPublicacion,
             contraparteNombre: conversacion.contraparte.primerNombre,
+            contraparteCuentaId: conversacion.contraparteCuentaId,
+            contraparteEnLinea: String(conversacion.contraparte.enLinea),
+            publicacionId: conversacion.publicacionId ?? conversacion.publicacion.id,
+            rolEnTransaccion: conversacion.rolEnTransaccion,
             estadoPublicacion: conversacion.publicacion.estado,
           },
         })
@@ -64,9 +68,23 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
           <Text style={styles.fecha}>{formatearFecha(conversacion.actividadEn)}</Text>
         </View>
 
-        <Text style={styles.contraparte} numberOfLines={1}>
-          {conversacion.contraparte.primerNombre}
-        </Text>
+        <View style={styles.filaContraparte}>
+          <View
+            accessibilityLabel={
+              conversacion.contraparte.enLinea ? 'Usuario en línea' : 'Usuario desconectado'
+            }
+            style={[
+              styles.indicadorConexion,
+              conversacion.contraparte.enLinea
+                ? styles.indicadorEnLinea
+                : styles.indicadorDesconectado,
+            ]}
+          />
+          <Text style={styles.contraparte} numberOfLines={1}>
+            {conversacion.contraparte.primerNombre}
+            {conversacion.contraparte.enLinea ? ' · En línea' : ''}
+          </Text>
+        </View>
 
         <Text style={styles.ultimoMensaje} numberOfLines={2}>
           {ultimoMensaje}
@@ -128,8 +146,25 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     fontSize: 12,
   },
+  filaContraparte: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 5,
+  },
+  indicadorConexion: {
+    borderRadius: 4,
+    height: 8,
+    width: 8,
+  },
+  indicadorEnLinea: {
+    backgroundColor: colors.success,
+  },
+  indicadorDesconectado: {
+    backgroundColor: colors.border,
+  },
   contraparte: {
     color: colors.muted,
+    flexShrink: 1,
     fontSize: 12,
   },
   ultimoMensaje: {

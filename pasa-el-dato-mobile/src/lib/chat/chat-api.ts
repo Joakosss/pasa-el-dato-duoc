@@ -14,9 +14,12 @@ export interface UltimoMensajeConversacion {
 
 export interface ConversacionChat {
   conversacionId: string;
+  publicacionId: string;
   contraparteCuentaId: string;
+  rolEnTransaccion: 'vendedor' | 'comprador';
   contraparte: {
     primerNombre: string;
+    enLinea: boolean;
   };
   estadoPublicacionAlCrear: string;
   publicacion: ConversacionPublicacion;

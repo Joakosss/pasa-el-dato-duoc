@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
+import { EstrellasMomentaneo } from '@/components/ui/EstrellasMomentaneo';
 import { ApiError } from '@/lib/api';
 import {
   cambiarEstadoPublicacion,
@@ -21,6 +22,9 @@ import {
   type EstadoPublicacionAsignable,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
+import {
+  useEvaluacionesMomentaneoStore,
+} from '@/stores/evaluaciones-momentaneo-store';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -32,6 +36,12 @@ interface FilaGrilla {
 export default function MisPublicacionesScreen() {
   const accessToken = useSesionStore(selectAccessToken);
   const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
+  const publicacionesVendidasMomentaneo = useEvaluacionesMomentaneoStore(
+    (estado) => estado.publicacionesVendidasMomentaneo,
+  );
+  const evaluacionesMomentaneo = useEvaluacionesMomentaneoStore(
+    (estado) => estado.evaluacionesMomentaneo,
+  );
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
@@ -162,6 +172,14 @@ export default function MisPublicacionesScreen() {
             {item.publicacion ? (
               <>
                 <PublicacionCard publicacion={item.publicacion} />
+                <ResumenVentaMomentaneo
+                  vendida={publicacionesVendidasMomentaneo[item.publicacion.id] === true}
+                  evaluacion={evaluacionesMomentaneo.find(
+                    (evaluacion) =>
+                      evaluacion.publicacionId === item.publicacion?.id &&
+                      evaluacion.rol === 'vendedor',
+                  )}
+                />
                 <AccionesEstado
                   publicacion={item.publicacion}
                   cambiando={cambiandoEstadoId === item.publicacion.id}
@@ -301,6 +319,33 @@ export default function MisPublicacionesScreen() {
   );
 }
 
+function ResumenVentaMomentaneo({
+  vendida,
+  evaluacion,
+}: {
+  vendida: boolean;
+  evaluacion?: { estrellas: number };
+}) {
+  if (!vendida) return null;
+
+  return (
+    <View style={styles.resumenVentaMomentaneo}>
+      <View style={styles.resumenVentaEncabezado}>
+        <MaterialCommunityIcons name="check-decagram-outline" size={17} color={colors.gold} />
+        <Text style={styles.resumenVentaTitulo}>Venta confirmada</Text>
+      </View>
+      {evaluacion ? (
+        <View style={styles.resumenEstrellas}>
+          <EstrellasMomentaneo valor={evaluacion.estrellas} tamano={17} />
+          <Text style={styles.resumenVentaTexto}>Evaluación enviada</Text>
+        </View>
+      ) : (
+        <Text style={styles.resumenVentaTexto}>Pendiente de tu evaluación</Text>
+      )}
+    </View>
+  );
+}
+
 function AccionesEstado({
   publicacion,
   cambiando,
@@ -406,6 +451,18 @@ const styles = StyleSheet.create({
   contenido: { gap: spacing.padMd, padding: spacing.padMd },
   fila: { gap: spacing.padSm },
   celda: { flex: 1, gap: 6 },
+  resumenVentaMomentaneo: {
+    backgroundColor: '#fff8dc',
+    borderColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    gap: 4,
+    padding: 8,
+  },
+  resumenVentaEncabezado: { alignItems: 'center', flexDirection: 'row', gap: 5 },
+  resumenVentaTitulo: { color: colors.navy, fontSize: 12, fontWeight: '800' },
+  resumenEstrellas: { alignItems: 'center', flexDirection: 'row', gap: 5 },
+  resumenVentaTexto: { color: colors.muted, fontSize: 11 },
   accionesEstado: {
     backgroundColor: colors.card,
     borderColor: colors.border,

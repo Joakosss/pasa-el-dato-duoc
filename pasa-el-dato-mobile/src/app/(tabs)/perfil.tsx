@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { EstrellasMomentaneo } from '@/components/ui/EstrellasMomentaneo';
 import { ApiError } from '@/lib/api';
 import { cambiarContrasena, cerrarSesionRemota } from '@/lib/api/auth';
 import { type SedeCatalogo, listarSedes } from '@/lib/api/catalogos';
@@ -28,6 +29,10 @@ import {
   validarTelefonoChile,
 } from '@/lib/validators/telefono';
 import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
+import {
+  obtenerPromedioEvaluacionesMomentaneo,
+  useEvaluacionesMomentaneoStore,
+} from '@/stores/evaluaciones-momentaneo-store';
 import {
   selectAccessToken,
   useSesionStore,
@@ -106,6 +111,9 @@ export default function PerfilScreen() {
   const accessToken = useSesionStore(selectAccessToken);
   const cantidadFavoritosMomentaneo = useFavoritosMomentaneoStore(
     (estado) => estado.idsPublicacionesFavoritasMomentaneo.length,
+  );
+  const evaluacionesMomentaneo = useEvaluacionesMomentaneoStore(
+    (estado) => estado.evaluacionesMomentaneo,
   );
   const [perfil, setPerfil] = useState<PerfilRespuesta | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -308,6 +316,14 @@ export default function PerfilScreen() {
 
   const sedeSeleccionada =
     sedes.find((sede) => sede.id === formulario.sedeId)?.nombre ?? perfil?.sede.nombre;
+  const promedioEvaluacionesMomentaneo =
+    obtenerPromedioEvaluacionesMomentaneo(evaluacionesMomentaneo);
+  const evaluacionesComoVendedorMomentaneo = evaluacionesMomentaneo.filter(
+    (evaluacion) => evaluacion.rol === 'vendedor',
+  ).length;
+  const evaluacionesComoCompradorMomentaneo = evaluacionesMomentaneo.filter(
+    (evaluacion) => evaluacion.rol === 'comprador',
+  ).length;
 
   if (cargando) {
     return (
@@ -352,6 +368,41 @@ export default function PerfilScreen() {
             <Text style={styles.exitoTexto}>{mensajeExito}</Text>
           </View>
         ) : null}
+
+        <View style={styles.tarjetaReputacionMomentaneo}>
+          <View style={styles.filaReputacionTitulo}>
+            <Text style={styles.tituloSeccion}>Mi reputación</Text>
+            <View style={styles.iconoReputacion}>
+              <MaterialCommunityIcons name="star-circle-outline" size={27} color={colors.gold} />
+            </View>
+          </View>
+          <Text style={styles.reputacionAyuda}>
+            Resumen visual de evaluaciones realizadas en esta sesión.
+          </Text>
+          {promedioEvaluacionesMomentaneo === null ? (
+            <Text style={styles.reputacionVacia}>
+              Aún no tienes evaluaciones registradas.
+            </Text>
+          ) : (
+            <>
+              <View style={styles.filaPromedio}>
+                <EstrellasMomentaneo
+                  valor={Math.round(promedioEvaluacionesMomentaneo)}
+                  tamano={22}
+                />
+                <Text style={styles.promedioTexto}>
+                  {promedioEvaluacionesMomentaneo.toFixed(1)} / 5
+                </Text>
+              </View>
+              <Text style={styles.reputacionDetalle}>
+                {evaluacionesMomentaneo.length}{' '}
+                {evaluacionesMomentaneo.length === 1 ? 'evaluación' : 'evaluaciones'} ·{' '}
+                {evaluacionesComoVendedorMomentaneo} como vendedor ·{' '}
+                {evaluacionesComoCompradorMomentaneo} como comprador
+              </Text>
+            </>
+          )}
+        </View>
 
         <View style={styles.tarjeta}>
           <Text style={styles.tituloSeccion}>Datos personales</Text>
@@ -730,6 +781,33 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   badgeRolTexto: { color: colors.navy, fontSize: 13, fontWeight: '700' },
+  tarjetaReputacionMomentaneo: {
+    backgroundColor: '#fff8dc',
+    borderColor: colors.gold,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    padding: spacing.padMd,
+  },
+  filaReputacionTitulo: {
+    minHeight: 34,
+    paddingRight: 38,
+    position: 'relative',
+  },
+  iconoReputacion: {
+    alignItems: 'center',
+    height: 34,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: 34,
+  },
+  reputacionAyuda: { color: colors.muted, fontSize: 11, lineHeight: 15, marginTop: 2 },
+  reputacionVacia: { color: colors.muted, fontSize: 13 },
+  filaPromedio: { alignItems: 'center', flexDirection: 'row', gap: 8 },
+  promedioTexto: { color: colors.navy, fontSize: 16, fontWeight: '800' },
+  reputacionDetalle: { color: colors.muted, fontSize: 12, lineHeight: 17 },
   tarjeta: {
     backgroundColor: colors.card,
     borderColor: colors.border,
