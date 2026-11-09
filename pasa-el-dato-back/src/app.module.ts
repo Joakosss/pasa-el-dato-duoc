@@ -21,6 +21,7 @@ import { MarcaModule } from './marca/marca.module.js';
 import { PublicidadModule } from './publicidad/publicidad.module.js';
 import { ReporteUsuarioModule } from './reporte-usuario/reporte-usuario.module.js';
 import { ReportePublicacionModule } from './reporte-publicacion/reporte-publicacion.module.js';
+import { MetricasAdminModule } from './metricas-admin/metricas-admin.module.js';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ReportePublicacionModule } from './reporte-publicacion/reporte-publicac
     PublicidadModule,
     ReporteUsuarioModule,
     ReportePublicacionModule,
+    MetricasAdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
