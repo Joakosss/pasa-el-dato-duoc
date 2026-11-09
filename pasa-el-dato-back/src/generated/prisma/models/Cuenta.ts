@@ -253,6 +253,9 @@ export type CuentaWhereInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioListRelationFilter
   reportesEmitidos?: Prisma.ReporteUsuarioListRelationFilter
   reportesAsignados?: Prisma.ReporteUsuarioListRelationFilter
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionListRelationFilter
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionListRelationFilter
+  auditoriasAdmin?: Prisma.AuditoriaAdminListRelationFilter
 }
 
 export type CuentaOrderByWithRelationInput = {
@@ -283,6 +286,9 @@ export type CuentaOrderByWithRelationInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioOrderByRelationAggregateInput
   reportesEmitidos?: Prisma.ReporteUsuarioOrderByRelationAggregateInput
   reportesAsignados?: Prisma.ReporteUsuarioOrderByRelationAggregateInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionOrderByRelationAggregateInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionOrderByRelationAggregateInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminOrderByRelationAggregateInput
 }
 
 export type CuentaWhereUniqueInput = Prisma.AtLeast<{
@@ -316,6 +322,9 @@ export type CuentaWhereUniqueInput = Prisma.AtLeast<{
   reportesRecibidos?: Prisma.ReporteUsuarioListRelationFilter
   reportesEmitidos?: Prisma.ReporteUsuarioListRelationFilter
   reportesAsignados?: Prisma.ReporteUsuarioListRelationFilter
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionListRelationFilter
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionListRelationFilter
+  auditoriasAdmin?: Prisma.AuditoriaAdminListRelationFilter
 }, "id_cuenta" | "correo">
 
 export type CuentaOrderByWithAggregationInput = {
@@ -381,6 +390,9 @@ export type CuentaCreateInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateInput = {
@@ -410,6 +422,9 @@ export type CuentaUncheckedCreateInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUpdateInput = {
@@ -439,6 +454,9 @@ export type CuentaUpdateInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateInput = {
@@ -468,6 +486,9 @@ export type CuentaUncheckedUpdateInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateManyInput = {
@@ -745,6 +766,52 @@ export type CuentaUpdateOneRequiredWithoutAccessTokensRevocadosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutAccessTokensRevocadosInput, Prisma.CuentaUpdateWithoutAccessTokensRevocadosInput>, Prisma.CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput>
 }
 
+export type CuentaCreateNestedOneWithoutAuditoriasAdminInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutAuditoriasAdminInput, Prisma.CuentaUncheckedCreateWithoutAuditoriasAdminInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutAuditoriasAdminInput
+  connect?: Prisma.CuentaWhereUniqueInput
+}
+
+export type CuentaUpdateOneRequiredWithoutAuditoriasAdminNestedInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutAuditoriasAdminInput, Prisma.CuentaUncheckedCreateWithoutAuditoriasAdminInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutAuditoriasAdminInput
+  upsert?: Prisma.CuentaUpsertWithoutAuditoriasAdminInput
+  connect?: Prisma.CuentaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutAuditoriasAdminInput, Prisma.CuentaUpdateWithoutAuditoriasAdminInput>, Prisma.CuentaUncheckedUpdateWithoutAuditoriasAdminInput>
+}
+
+export type CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionEmitidosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionEmitidosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutReportesPublicacionEmitidosInput
+  connect?: Prisma.CuentaWhereUniqueInput
+}
+
+export type CuentaCreateNestedOneWithoutReportesPublicacionAsignadosInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionAsignadosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionAsignadosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutReportesPublicacionAsignadosInput
+  connect?: Prisma.CuentaWhereUniqueInput
+}
+
+export type CuentaUpdateOneWithoutReportesPublicacionEmitidosNestedInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionEmitidosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionEmitidosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutReportesPublicacionEmitidosInput
+  upsert?: Prisma.CuentaUpsertWithoutReportesPublicacionEmitidosInput
+  disconnect?: Prisma.CuentaWhereInput | boolean
+  delete?: Prisma.CuentaWhereInput | boolean
+  connect?: Prisma.CuentaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutReportesPublicacionEmitidosInput, Prisma.CuentaUpdateWithoutReportesPublicacionEmitidosInput>, Prisma.CuentaUncheckedUpdateWithoutReportesPublicacionEmitidosInput>
+}
+
+export type CuentaUpdateOneWithoutReportesPublicacionAsignadosNestedInput = {
+  create?: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionAsignadosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionAsignadosInput>
+  connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutReportesPublicacionAsignadosInput
+  upsert?: Prisma.CuentaUpsertWithoutReportesPublicacionAsignadosInput
+  disconnect?: Prisma.CuentaWhereInput | boolean
+  delete?: Prisma.CuentaWhereInput | boolean
+  connect?: Prisma.CuentaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutReportesPublicacionAsignadosInput, Prisma.CuentaUpdateWithoutReportesPublicacionAsignadosInput>, Prisma.CuentaUncheckedUpdateWithoutReportesPublicacionAsignadosInput>
+}
+
 export type CuentaCreateNestedOneWithoutPublicacionesCompradasInput = {
   create?: Prisma.XOR<Prisma.CuentaCreateWithoutPublicacionesCompradasInput, Prisma.CuentaUncheckedCreateWithoutPublicacionesCompradasInput>
   connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutPublicacionesCompradasInput
@@ -879,6 +946,9 @@ export type CuentaCreateWithoutOther_cuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
@@ -907,6 +977,9 @@ export type CuentaUncheckedCreateWithoutOther_cuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutOther_cuentaInput = {
@@ -940,6 +1013,9 @@ export type CuentaCreateWithoutCuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutCuentaInput = {
@@ -968,6 +1044,9 @@ export type CuentaUncheckedCreateWithoutCuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutCuentaInput = {
@@ -1017,6 +1096,9 @@ export type CuentaUpdateWithoutOther_cuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
@@ -1045,6 +1127,9 @@ export type CuentaUncheckedUpdateWithoutOther_cuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUpsertWithWhereUniqueWithoutCuentaInput = {
@@ -1107,6 +1192,9 @@ export type CuentaCreateWithoutMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutMarcaInput = {
@@ -1135,6 +1223,9 @@ export type CuentaUncheckedCreateWithoutMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutMarcaInput = {
@@ -1179,6 +1270,9 @@ export type CuentaUpdateWithoutMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutMarcaInput = {
@@ -1207,6 +1301,9 @@ export type CuentaUncheckedUpdateWithoutMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutSedeInput = {
@@ -1235,6 +1332,9 @@ export type CuentaCreateWithoutSedeInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutSedeInput = {
@@ -1263,6 +1363,9 @@ export type CuentaUncheckedCreateWithoutSedeInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutSedeInput = {
@@ -1307,6 +1410,9 @@ export type CuentaUpdateWithoutSedeInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutSedeInput = {
@@ -1335,6 +1441,9 @@ export type CuentaUncheckedUpdateWithoutSedeInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutUsuarioInput = {
@@ -1363,6 +1472,9 @@ export type CuentaCreateWithoutUsuarioInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutUsuarioInput = {
@@ -1391,6 +1503,9 @@ export type CuentaUncheckedCreateWithoutUsuarioInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutUsuarioInput = {
@@ -1435,6 +1550,9 @@ export type CuentaUpdateWithoutUsuarioInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutUsuarioInput = {
@@ -1463,6 +1581,9 @@ export type CuentaUncheckedUpdateWithoutUsuarioInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutLog_apiInput = {
@@ -1491,6 +1612,9 @@ export type CuentaCreateWithoutLog_apiInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutLog_apiInput = {
@@ -1519,6 +1643,9 @@ export type CuentaUncheckedCreateWithoutLog_apiInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutLog_apiInput = {
@@ -1563,6 +1690,9 @@ export type CuentaUpdateWithoutLog_apiInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutLog_apiInput = {
@@ -1591,6 +1721,9 @@ export type CuentaUncheckedUpdateWithoutLog_apiInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutRefreshTokensInput = {
@@ -1619,6 +1752,9 @@ export type CuentaCreateWithoutRefreshTokensInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutRefreshTokensInput = {
@@ -1647,6 +1783,9 @@ export type CuentaUncheckedCreateWithoutRefreshTokensInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutRefreshTokensInput = {
@@ -1691,6 +1830,9 @@ export type CuentaUpdateWithoutRefreshTokensInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutRefreshTokensInput = {
@@ -1719,6 +1861,9 @@ export type CuentaUncheckedUpdateWithoutRefreshTokensInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutAccessTokensRevocadosInput = {
@@ -1747,6 +1892,9 @@ export type CuentaCreateWithoutAccessTokensRevocadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutAccessTokensRevocadosInput = {
@@ -1775,6 +1923,9 @@ export type CuentaUncheckedCreateWithoutAccessTokensRevocadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutAccessTokensRevocadosInput = {
@@ -1819,6 +1970,9 @@ export type CuentaUpdateWithoutAccessTokensRevocadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput = {
@@ -1847,6 +2001,429 @@ export type CuentaUncheckedUpdateWithoutAccessTokensRevocadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type CuentaCreateWithoutAuditoriasAdminInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
+  other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
+  notificacionesMarca?: Prisma.NotificacionMarcaCreateNestedManyWithoutCuentaInput
+  reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
+  reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
+  reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+}
+
+export type CuentaUncheckedCreateWithoutAuditoriasAdminInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutCuentaInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
+  reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+}
+
+export type CuentaCreateOrConnectWithoutAuditoriasAdminInput = {
+  where: Prisma.CuentaWhereUniqueInput
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutAuditoriasAdminInput, Prisma.CuentaUncheckedCreateWithoutAuditoriasAdminInput>
+}
+
+export type CuentaUpsertWithoutAuditoriasAdminInput = {
+  update: Prisma.XOR<Prisma.CuentaUpdateWithoutAuditoriasAdminInput, Prisma.CuentaUncheckedUpdateWithoutAuditoriasAdminInput>
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutAuditoriasAdminInput, Prisma.CuentaUncheckedCreateWithoutAuditoriasAdminInput>
+  where?: Prisma.CuentaWhereInput
+}
+
+export type CuentaUpdateToOneWithWhereWithoutAuditoriasAdminInput = {
+  where?: Prisma.CuentaWhereInput
+  data: Prisma.XOR<Prisma.CuentaUpdateWithoutAuditoriasAdminInput, Prisma.CuentaUncheckedUpdateWithoutAuditoriasAdminInput>
+}
+
+export type CuentaUpdateWithoutAuditoriasAdminInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
+  other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUpdateManyWithoutCuentaNestedInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
+  reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+}
+
+export type CuentaUncheckedUpdateWithoutAuditoriasAdminInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutCuentaNestedInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+}
+
+export type CuentaCreateWithoutReportesPublicacionEmitidosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
+  other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
+  notificacionesMarca?: Prisma.NotificacionMarcaCreateNestedManyWithoutCuentaInput
+  reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
+  reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
+  reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
+}
+
+export type CuentaUncheckedCreateWithoutReportesPublicacionEmitidosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutCuentaInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
+  reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type CuentaCreateOrConnectWithoutReportesPublicacionEmitidosInput = {
+  where: Prisma.CuentaWhereUniqueInput
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionEmitidosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionEmitidosInput>
+}
+
+export type CuentaCreateWithoutReportesPublicacionAsignadosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  cuenta?: Prisma.CuentaCreateNestedOneWithoutOther_cuentaInput
+  other_cuenta?: Prisma.CuentaCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadCreateNestedManyWithoutModificadoPorInput
+  notificacionesMarca?: Prisma.NotificacionMarcaCreateNestedManyWithoutCuentaInput
+  reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
+  reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
+  reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
+}
+
+export type CuentaUncheckedCreateWithoutReportesPublicacionAsignadosInput = {
+  id_cuenta?: string
+  correo: string
+  claveHash: string
+  telefono: string
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  bloqueado?: boolean
+  fechaBloqueo?: Date | string | null
+  motivoBloqueo?: string | null
+  aprobada?: boolean
+  other_cuenta?: Prisma.CuentaUncheckedCreateNestedManyWithoutCuentaInput
+  log_api?: Prisma.log_apiUncheckedCreateNestedManyWithoutCuentaInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutCuentaInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedCreateNestedManyWithoutCuentaInput
+  sede?: Prisma.SedeUncheckedCreateNestedManyWithoutCuentaInput
+  usuario?: Prisma.UsuarioUncheckedCreateNestedOneWithoutCuentaInput
+  marca?: Prisma.MarcaUncheckedCreateNestedOneWithoutCuentaInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutCompradorInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedCreateNestedManyWithoutModificadoPorInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedCreateNestedManyWithoutModificadoPorInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutCuentaInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
+  reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type CuentaCreateOrConnectWithoutReportesPublicacionAsignadosInput = {
+  where: Prisma.CuentaWhereUniqueInput
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionAsignadosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionAsignadosInput>
+}
+
+export type CuentaUpsertWithoutReportesPublicacionEmitidosInput = {
+  update: Prisma.XOR<Prisma.CuentaUpdateWithoutReportesPublicacionEmitidosInput, Prisma.CuentaUncheckedUpdateWithoutReportesPublicacionEmitidosInput>
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionEmitidosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionEmitidosInput>
+  where?: Prisma.CuentaWhereInput
+}
+
+export type CuentaUpdateToOneWithWhereWithoutReportesPublicacionEmitidosInput = {
+  where?: Prisma.CuentaWhereInput
+  data: Prisma.XOR<Prisma.CuentaUpdateWithoutReportesPublicacionEmitidosInput, Prisma.CuentaUncheckedUpdateWithoutReportesPublicacionEmitidosInput>
+}
+
+export type CuentaUpdateWithoutReportesPublicacionEmitidosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
+  other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUpdateManyWithoutCuentaNestedInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
+  reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
+}
+
+export type CuentaUncheckedUpdateWithoutReportesPublicacionEmitidosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutCuentaNestedInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type CuentaUpsertWithoutReportesPublicacionAsignadosInput = {
+  update: Prisma.XOR<Prisma.CuentaUpdateWithoutReportesPublicacionAsignadosInput, Prisma.CuentaUncheckedUpdateWithoutReportesPublicacionAsignadosInput>
+  create: Prisma.XOR<Prisma.CuentaCreateWithoutReportesPublicacionAsignadosInput, Prisma.CuentaUncheckedCreateWithoutReportesPublicacionAsignadosInput>
+  where?: Prisma.CuentaWhereInput
+}
+
+export type CuentaUpdateToOneWithWhereWithoutReportesPublicacionAsignadosInput = {
+  where?: Prisma.CuentaWhereInput
+  data: Prisma.XOR<Prisma.CuentaUpdateWithoutReportesPublicacionAsignadosInput, Prisma.CuentaUncheckedUpdateWithoutReportesPublicacionAsignadosInput>
+}
+
+export type CuentaUpdateWithoutReportesPublicacionAsignadosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cuenta?: Prisma.CuentaUpdateOneWithoutOther_cuentaNestedInput
+  other_cuenta?: Prisma.CuentaUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUpdateManyWithoutModificadoPorNestedInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUpdateManyWithoutCuentaNestedInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
+  reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
+}
+
+export type CuentaUncheckedUpdateWithoutReportesPublicacionAsignadosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  correo?: Prisma.StringFieldUpdateOperationsInput | string
+  claveHash?: Prisma.StringFieldUpdateOperationsInput | string
+  telefono?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bloqueado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fechaBloqueo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aprobada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  other_cuenta?: Prisma.CuentaUncheckedUpdateManyWithoutCuentaNestedInput
+  log_api?: Prisma.log_apiUncheckedUpdateManyWithoutCuentaNestedInput
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutCuentaNestedInput
+  accessTokensRevocados?: Prisma.AccessTokenRevocadoUncheckedUpdateManyWithoutCuentaNestedInput
+  sede?: Prisma.SedeUncheckedUpdateManyWithoutCuentaNestedInput
+  usuario?: Prisma.UsuarioUncheckedUpdateOneWithoutCuentaNestedInput
+  marca?: Prisma.MarcaUncheckedUpdateOneWithoutCuentaNestedInput
+  publicacionesCompradas?: Prisma.PublicacionUncheckedUpdateManyWithoutCompradorNestedInput
+  publicacionesModificadas?: Prisma.PublicacionUncheckedUpdateManyWithoutModificadoPorNestedInput
+  bannersModificados?: Prisma.BannerPublicidadUncheckedUpdateManyWithoutModificadoPorNestedInput
+  notificacionesMarca?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutCuentaNestedInput
+  reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
+  reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutPublicacionesCompradasInput = {
@@ -1875,6 +2452,9 @@ export type CuentaCreateWithoutPublicacionesCompradasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutPublicacionesCompradasInput = {
@@ -1903,6 +2483,9 @@ export type CuentaUncheckedCreateWithoutPublicacionesCompradasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutPublicacionesCompradasInput = {
@@ -1936,6 +2519,9 @@ export type CuentaCreateWithoutPublicacionesModificadasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutPublicacionesModificadasInput = {
@@ -1964,6 +2550,9 @@ export type CuentaUncheckedCreateWithoutPublicacionesModificadasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutPublicacionesModificadasInput = {
@@ -2008,6 +2597,9 @@ export type CuentaUpdateWithoutPublicacionesCompradasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutPublicacionesCompradasInput = {
@@ -2036,6 +2628,9 @@ export type CuentaUncheckedUpdateWithoutPublicacionesCompradasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUpsertWithoutPublicacionesModificadasInput = {
@@ -2075,6 +2670,9 @@ export type CuentaUpdateWithoutPublicacionesModificadasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutPublicacionesModificadasInput = {
@@ -2103,6 +2701,9 @@ export type CuentaUncheckedUpdateWithoutPublicacionesModificadasInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutBannersModificadosInput = {
@@ -2131,6 +2732,9 @@ export type CuentaCreateWithoutBannersModificadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutBannersModificadosInput = {
@@ -2159,6 +2763,9 @@ export type CuentaUncheckedCreateWithoutBannersModificadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutBannersModificadosInput = {
@@ -2203,6 +2810,9 @@ export type CuentaUpdateWithoutBannersModificadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutBannersModificadosInput = {
@@ -2231,6 +2841,9 @@ export type CuentaUncheckedUpdateWithoutBannersModificadosInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutNotificacionesMarcaInput = {
@@ -2259,6 +2872,9 @@ export type CuentaCreateWithoutNotificacionesMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutNotificacionesMarcaInput = {
@@ -2287,6 +2903,9 @@ export type CuentaUncheckedCreateWithoutNotificacionesMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutNotificacionesMarcaInput = {
@@ -2331,6 +2950,9 @@ export type CuentaUpdateWithoutNotificacionesMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutNotificacionesMarcaInput = {
@@ -2359,6 +2981,9 @@ export type CuentaUncheckedUpdateWithoutNotificacionesMarcaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateWithoutReportesRecibidosInput = {
@@ -2387,6 +3012,9 @@ export type CuentaCreateWithoutReportesRecibidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaCreateNestedManyWithoutCuentaInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutReportesRecibidosInput = {
@@ -2415,6 +3043,9 @@ export type CuentaUncheckedCreateWithoutReportesRecibidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutCuentaInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutReportesRecibidosInput = {
@@ -2448,6 +3079,9 @@ export type CuentaCreateWithoutReportesEmitidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaCreateNestedManyWithoutCuentaInput
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesAsignados?: Prisma.ReporteUsuarioCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutReportesEmitidosInput = {
@@ -2476,6 +3110,9 @@ export type CuentaUncheckedCreateWithoutReportesEmitidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutCuentaInput
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutReportesEmitidosInput = {
@@ -2509,6 +3146,9 @@ export type CuentaCreateWithoutReportesAsignadosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaCreateNestedManyWithoutCuentaInput
   reportesRecibidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioCreateNestedManyWithoutReportanteInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaUncheckedCreateWithoutReportesAsignadosInput = {
@@ -2537,6 +3177,9 @@ export type CuentaUncheckedCreateWithoutReportesAsignadosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutCuentaInput
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportadoInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutReportanteInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutAdminAsignadoInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type CuentaCreateOrConnectWithoutReportesAsignadosInput = {
@@ -2581,6 +3224,9 @@ export type CuentaUpdateWithoutReportesRecibidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUpdateManyWithoutCuentaNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutReportesRecibidosInput = {
@@ -2609,6 +3255,9 @@ export type CuentaUncheckedUpdateWithoutReportesRecibidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutCuentaNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUpsertWithoutReportesEmitidosInput = {
@@ -2648,6 +3297,9 @@ export type CuentaUpdateWithoutReportesEmitidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUpdateManyWithoutCuentaNestedInput
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutReportesEmitidosInput = {
@@ -2676,6 +3328,9 @@ export type CuentaUncheckedUpdateWithoutReportesEmitidosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutCuentaNestedInput
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUpsertWithoutReportesAsignadosInput = {
@@ -2715,6 +3370,9 @@ export type CuentaUpdateWithoutReportesAsignadosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUpdateManyWithoutCuentaNestedInput
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutReportesAsignadosInput = {
@@ -2743,6 +3401,9 @@ export type CuentaUncheckedUpdateWithoutReportesAsignadosInput = {
   notificacionesMarca?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutCuentaNestedInput
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaCreateManyCuentaInput = {
@@ -2785,6 +3446,9 @@ export type CuentaUpdateWithoutCuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateWithoutCuentaInput = {
@@ -2813,6 +3477,9 @@ export type CuentaUncheckedUpdateWithoutCuentaInput = {
   reportesRecibidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportadoNestedInput
   reportesEmitidos?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutReportanteNestedInput
   reportesAsignados?: Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  reportesPublicacionEmitidos?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutReportanteNestedInput
+  reportesPublicacionAsignados?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
+  auditoriasAdmin?: Prisma.AuditoriaAdminUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type CuentaUncheckedUpdateManyWithoutCuentaInput = {
@@ -2847,6 +3514,9 @@ export type CuentaCountOutputType = {
   reportesRecibidos: number
   reportesEmitidos: number
   reportesAsignados: number
+  reportesPublicacionEmitidos: number
+  reportesPublicacionAsignados: number
+  auditoriasAdmin: number
 }
 
 export type CuentaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2862,6 +3532,9 @@ export type CuentaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   reportesRecibidos?: boolean | CuentaCountOutputTypeCountReportesRecibidosArgs
   reportesEmitidos?: boolean | CuentaCountOutputTypeCountReportesEmitidosArgs
   reportesAsignados?: boolean | CuentaCountOutputTypeCountReportesAsignadosArgs
+  reportesPublicacionEmitidos?: boolean | CuentaCountOutputTypeCountReportesPublicacionEmitidosArgs
+  reportesPublicacionAsignados?: boolean | CuentaCountOutputTypeCountReportesPublicacionAsignadosArgs
+  auditoriasAdmin?: boolean | CuentaCountOutputTypeCountAuditoriasAdminArgs
 }
 
 /**
@@ -2958,6 +3631,27 @@ export type CuentaCountOutputTypeCountReportesAsignadosArgs<ExtArgs extends runt
   where?: Prisma.ReporteUsuarioWhereInput
 }
 
+/**
+ * CuentaCountOutputType without action
+ */
+export type CuentaCountOutputTypeCountReportesPublicacionEmitidosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportePublicacionWhereInput
+}
+
+/**
+ * CuentaCountOutputType without action
+ */
+export type CuentaCountOutputTypeCountReportesPublicacionAsignadosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportePublicacionWhereInput
+}
+
+/**
+ * CuentaCountOutputType without action
+ */
+export type CuentaCountOutputTypeCountAuditoriasAdminArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuditoriaAdminWhereInput
+}
+
 
 export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_cuenta?: boolean
@@ -2987,6 +3681,9 @@ export type CuentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   reportesRecibidos?: boolean | Prisma.Cuenta$reportesRecibidosArgs<ExtArgs>
   reportesEmitidos?: boolean | Prisma.Cuenta$reportesEmitidosArgs<ExtArgs>
   reportesAsignados?: boolean | Prisma.Cuenta$reportesAsignadosArgs<ExtArgs>
+  reportesPublicacionEmitidos?: boolean | Prisma.Cuenta$reportesPublicacionEmitidosArgs<ExtArgs>
+  reportesPublicacionAsignados?: boolean | Prisma.Cuenta$reportesPublicacionAsignadosArgs<ExtArgs>
+  auditoriasAdmin?: boolean | Prisma.Cuenta$auditoriasAdminArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["cuenta"]>
 
@@ -3054,6 +3751,9 @@ export type CuentaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   reportesRecibidos?: boolean | Prisma.Cuenta$reportesRecibidosArgs<ExtArgs>
   reportesEmitidos?: boolean | Prisma.Cuenta$reportesEmitidosArgs<ExtArgs>
   reportesAsignados?: boolean | Prisma.Cuenta$reportesAsignadosArgs<ExtArgs>
+  reportesPublicacionEmitidos?: boolean | Prisma.Cuenta$reportesPublicacionEmitidosArgs<ExtArgs>
+  reportesPublicacionAsignados?: boolean | Prisma.Cuenta$reportesPublicacionAsignadosArgs<ExtArgs>
+  auditoriasAdmin?: boolean | Prisma.Cuenta$auditoriasAdminArgs<ExtArgs>
   _count?: boolean | Prisma.CuentaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CuentaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3081,6 +3781,9 @@ export type $CuentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     reportesRecibidos: Prisma.$ReporteUsuarioPayload<ExtArgs>[]
     reportesEmitidos: Prisma.$ReporteUsuarioPayload<ExtArgs>[]
     reportesAsignados: Prisma.$ReporteUsuarioPayload<ExtArgs>[]
+    reportesPublicacionEmitidos: Prisma.$ReportePublicacionPayload<ExtArgs>[]
+    reportesPublicacionAsignados: Prisma.$ReportePublicacionPayload<ExtArgs>[]
+    auditoriasAdmin: Prisma.$AuditoriaAdminPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_cuenta: string
@@ -3504,6 +4207,9 @@ export interface Prisma__CuentaClient<T, Null = never, ExtArgs extends runtime.T
   reportesRecibidos<T extends Prisma.Cuenta$reportesRecibidosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$reportesRecibidosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReporteUsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportesEmitidos<T extends Prisma.Cuenta$reportesEmitidosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$reportesEmitidosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReporteUsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportesAsignados<T extends Prisma.Cuenta$reportesAsignadosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$reportesAsignadosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReporteUsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportesPublicacionEmitidos<T extends Prisma.Cuenta$reportesPublicacionEmitidosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$reportesPublicacionEmitidosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportePublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportesPublicacionAsignados<T extends Prisma.Cuenta$reportesPublicacionAsignadosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$reportesPublicacionAsignadosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportePublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditoriasAdmin<T extends Prisma.Cuenta$auditoriasAdminArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Cuenta$auditoriasAdminArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditoriaAdminPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4288,6 +4994,78 @@ export type Cuenta$reportesAsignadosArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.ReporteUsuarioScalarFieldEnum | Prisma.ReporteUsuarioScalarFieldEnum[]
+}
+
+/**
+ * Cuenta.reportesPublicacionEmitidos
+ */
+export type Cuenta$reportesPublicacionEmitidosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReportePublicacion
+   */
+  select?: Prisma.ReportePublicacionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReportePublicacion
+   */
+  omit?: Prisma.ReportePublicacionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportePublicacionInclude<ExtArgs> | null
+  where?: Prisma.ReportePublicacionWhereInput
+  orderBy?: Prisma.ReportePublicacionOrderByWithRelationInput | Prisma.ReportePublicacionOrderByWithRelationInput[]
+  cursor?: Prisma.ReportePublicacionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportePublicacionScalarFieldEnum | Prisma.ReportePublicacionScalarFieldEnum[]
+}
+
+/**
+ * Cuenta.reportesPublicacionAsignados
+ */
+export type Cuenta$reportesPublicacionAsignadosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReportePublicacion
+   */
+  select?: Prisma.ReportePublicacionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReportePublicacion
+   */
+  omit?: Prisma.ReportePublicacionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportePublicacionInclude<ExtArgs> | null
+  where?: Prisma.ReportePublicacionWhereInput
+  orderBy?: Prisma.ReportePublicacionOrderByWithRelationInput | Prisma.ReportePublicacionOrderByWithRelationInput[]
+  cursor?: Prisma.ReportePublicacionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportePublicacionScalarFieldEnum | Prisma.ReportePublicacionScalarFieldEnum[]
+}
+
+/**
+ * Cuenta.auditoriasAdmin
+ */
+export type Cuenta$auditoriasAdminArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuditoriaAdmin
+   */
+  select?: Prisma.AuditoriaAdminSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuditoriaAdmin
+   */
+  omit?: Prisma.AuditoriaAdminOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuditoriaAdminInclude<ExtArgs> | null
+  where?: Prisma.AuditoriaAdminWhereInput
+  orderBy?: Prisma.AuditoriaAdminOrderByWithRelationInput | Prisma.AuditoriaAdminOrderByWithRelationInput[]
+  cursor?: Prisma.AuditoriaAdminWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuditoriaAdminScalarFieldEnum | Prisma.AuditoriaAdminScalarFieldEnum[]
 }
 
 /**

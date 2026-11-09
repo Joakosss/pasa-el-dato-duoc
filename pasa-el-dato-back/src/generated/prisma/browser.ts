@@ -98,6 +98,16 @@ export type Categoria = Prisma.CategoriaModel
  */
 export type EstadoPublicacion = Prisma.EstadoPublicacionModel
 /**
+ * Model AuditoriaAdmin
+ * 
+ */
+export type AuditoriaAdmin = Prisma.AuditoriaAdminModel
+/**
+ * Model ReportePublicacion
+ * 
+ */
+export type ReportePublicacion = Prisma.ReportePublicacionModel
+/**
  * Model Publicacion
  * 
  */

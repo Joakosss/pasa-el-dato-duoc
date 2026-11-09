@@ -413,6 +413,8 @@ export const ModelName = {
   TipoVenta: 'TipoVenta',
   Categoria: 'Categoria',
   EstadoPublicacion: 'EstadoPublicacion',
+  AuditoriaAdmin: 'AuditoriaAdmin',
+  ReportePublicacion: 'ReportePublicacion',
   Publicacion: 'Publicacion',
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
@@ -434,7 +436,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion" | "reporteUsuario"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion" | "reporteUsuario"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1622,6 +1624,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AuditoriaAdmin: {
+      payload: Prisma.$AuditoriaAdminPayload<ExtArgs>
+      fields: Prisma.AuditoriaAdminFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AuditoriaAdminFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AuditoriaAdminFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>
+        }
+        findFirst: {
+          args: Prisma.AuditoriaAdminFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AuditoriaAdminFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>
+        }
+        findMany: {
+          args: Prisma.AuditoriaAdminFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>[]
+        }
+        create: {
+          args: Prisma.AuditoriaAdminCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>
+        }
+        createMany: {
+          args: Prisma.AuditoriaAdminCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AuditoriaAdminCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>[]
+        }
+        delete: {
+          args: Prisma.AuditoriaAdminDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>
+        }
+        update: {
+          args: Prisma.AuditoriaAdminUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>
+        }
+        deleteMany: {
+          args: Prisma.AuditoriaAdminDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AuditoriaAdminUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AuditoriaAdminUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>[]
+        }
+        upsert: {
+          args: Prisma.AuditoriaAdminUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditoriaAdminPayload>
+        }
+        aggregate: {
+          args: Prisma.AuditoriaAdminAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditoriaAdmin>
+        }
+        groupBy: {
+          args: Prisma.AuditoriaAdminGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditoriaAdminGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AuditoriaAdminCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditoriaAdminCountAggregateOutputType> | number
+        }
+      }
+    }
+    ReportePublicacion: {
+      payload: Prisma.$ReportePublicacionPayload<ExtArgs>
+      fields: Prisma.ReportePublicacionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReportePublicacionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReportePublicacionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>
+        }
+        findFirst: {
+          args: Prisma.ReportePublicacionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReportePublicacionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>
+        }
+        findMany: {
+          args: Prisma.ReportePublicacionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>[]
+        }
+        create: {
+          args: Prisma.ReportePublicacionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>
+        }
+        createMany: {
+          args: Prisma.ReportePublicacionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReportePublicacionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>[]
+        }
+        delete: {
+          args: Prisma.ReportePublicacionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>
+        }
+        update: {
+          args: Prisma.ReportePublicacionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReportePublicacionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReportePublicacionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReportePublicacionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReportePublicacionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReportePublicacionPayload>
+        }
+        aggregate: {
+          args: Prisma.ReportePublicacionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReportePublicacion>
+        }
+        groupBy: {
+          args: Prisma.ReportePublicacionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReportePublicacionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReportePublicacionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReportePublicacionCountAggregateOutputType> | number
+        }
+      }
+    }
     Publicacion: {
       payload: Prisma.$PublicacionPayload<ExtArgs>
       fields: Prisma.PublicacionFieldRefs
@@ -2273,6 +2423,39 @@ export const EstadoPublicacionScalarFieldEnum = {
 export type EstadoPublicacionScalarFieldEnum = (typeof EstadoPublicacionScalarFieldEnum)[keyof typeof EstadoPublicacionScalarFieldEnum]
 
 
+export const AuditoriaAdminScalarFieldEnum = {
+  id: 'id',
+  accion: 'accion',
+  fk_admin: 'fk_admin',
+  entidad: 'entidad',
+  entidadId: 'entidadId',
+  detalle: 'detalle',
+  fecha: 'fecha'
+} as const
+
+export type AuditoriaAdminScalarFieldEnum = (typeof AuditoriaAdminScalarFieldEnum)[keyof typeof AuditoriaAdminScalarFieldEnum]
+
+
+export const ReportePublicacionScalarFieldEnum = {
+  id: 'id',
+  motivo: 'motivo',
+  comentarios: 'comentarios',
+  fk_publicacion: 'fk_publicacion',
+  fk_reportante: 'fk_reportante',
+  estado: 'estado',
+  fk_admin_asignado: 'fk_admin_asignado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  fechaResolucion: 'fechaResolucion',
+  resolucion: 'resolucion',
+  mensajeAdvertencia: 'mensajeAdvertencia',
+  avisoVendedorRegistrado: 'avisoVendedorRegistrado',
+  avisoVendedorFecha: 'avisoVendedorFecha'
+} as const
+
+export type ReportePublicacionScalarFieldEnum = (typeof ReportePublicacionScalarFieldEnum)[keyof typeof ReportePublicacionScalarFieldEnum]
+
+
 export const PublicacionScalarFieldEnum = {
   id: 'id',
   titulo: 'titulo',
@@ -2453,6 +2636,48 @@ export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'BigInt[]'
  */
 export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TipoAuditoriaAdmin'
+ */
+export type EnumTipoAuditoriaAdminFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoAuditoriaAdmin'>
+    
+
+
+/**
+ * Reference to a field of type 'TipoAuditoriaAdmin[]'
+ */
+export type ListEnumTipoAuditoriaAdminFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoAuditoriaAdmin[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EstadoReportePublicacion'
+ */
+export type EnumEstadoReportePublicacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoReportePublicacion'>
+    
+
+
+/**
+ * Reference to a field of type 'EstadoReportePublicacion[]'
+ */
+export type ListEnumEstadoReportePublicacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoReportePublicacion[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ResolucionReportePublicacion'
+ */
+export type EnumResolucionReportePublicacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ResolucionReportePublicacion'>
+    
+
+
+/**
+ * Reference to a field of type 'ResolucionReportePublicacion[]'
+ */
+export type ListEnumResolucionReportePublicacionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ResolucionReportePublicacion[]'>
     
 
 
@@ -2678,6 +2903,8 @@ export type GlobalOmitConfig = {
   tipoVenta?: Prisma.TipoVentaOmit
   categoria?: Prisma.CategoriaOmit
   estadoPublicacion?: Prisma.EstadoPublicacionOmit
+  auditoriaAdmin?: Prisma.AuditoriaAdminOmit
+  reportePublicacion?: Prisma.ReportePublicacionOmit
   publicacion?: Prisma.PublicacionOmit
   bannerPublicidad?: Prisma.BannerPublicidadOmit
   bannerSede?: Prisma.BannerSedeOmit

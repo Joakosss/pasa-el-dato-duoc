@@ -9,6 +9,36 @@
 * 🟢 You can import this file directly.
 */
 
+export const EstadoReportePublicacion = {
+  PENDIENTE: 'PENDIENTE',
+  EN_PROCESO: 'EN_PROCESO',
+  RESUELTO: 'RESUELTO',
+  DESCARTADO: 'DESCARTADO'
+} as const
+
+export type EstadoReportePublicacion = (typeof EstadoReportePublicacion)[keyof typeof EstadoReportePublicacion]
+
+
+export const ResolucionReportePublicacion = {
+  RETIRO_PUBLICACION: 'RETIRO_PUBLICACION',
+  ADVERTENCIA: 'ADVERTENCIA',
+  DESCARTE: 'DESCARTE'
+} as const
+
+export type ResolucionReportePublicacion = (typeof ResolucionReportePublicacion)[keyof typeof ResolucionReportePublicacion]
+
+
+export const TipoAuditoriaAdmin = {
+  TOMAR_REPORTE_PUBLICACION: 'TOMAR_REPORTE_PUBLICACION',
+  DESCARTAR_REPORTE_PUBLICACION: 'DESCARTAR_REPORTE_PUBLICACION',
+  REABRIR_REPORTE_PUBLICACION: 'REABRIR_REPORTE_PUBLICACION',
+  RETIRAR_PUBLICACION: 'RETIRAR_PUBLICACION',
+  ADVERTIR_VENDEDOR: 'ADVERTIR_VENDEDOR'
+} as const
+
+export type TipoAuditoriaAdmin = (typeof TipoAuditoriaAdmin)[keyof typeof TipoAuditoriaAdmin]
+
+
 export const EstadoBannerPublicidad = {
   PENDIENTE: 'PENDIENTE',
   APROBADO: 'APROBADO',

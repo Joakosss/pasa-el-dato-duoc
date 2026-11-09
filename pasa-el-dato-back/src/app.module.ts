@@ -20,6 +20,7 @@ import { ChatModule } from './chat/chat.module.js';
 import { MarcaModule } from './marca/marca.module.js';
 import { PublicidadModule } from './publicidad/publicidad.module.js';
 import { ReporteUsuarioModule } from './reporte-usuario/reporte-usuario.module.js';
+import { ReportePublicacionModule } from './reporte-publicacion/reporte-publicacion.module.js';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ReporteUsuarioModule } from './reporte-usuario/reporte-usuario.module.j
     MarcaModule,
     PublicidadModule,
     ReporteUsuarioModule,
+    ReportePublicacionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

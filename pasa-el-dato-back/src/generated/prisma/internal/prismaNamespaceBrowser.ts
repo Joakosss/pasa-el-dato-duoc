@@ -67,6 +67,8 @@ export const ModelName = {
   TipoVenta: 'TipoVenta',
   Categoria: 'Categoria',
   EstadoPublicacion: 'EstadoPublicacion',
+  AuditoriaAdmin: 'AuditoriaAdmin',
+  ReportePublicacion: 'ReportePublicacion',
   Publicacion: 'Publicacion',
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
@@ -257,6 +259,39 @@ export const EstadoPublicacionScalarFieldEnum = {
 } as const
 
 export type EstadoPublicacionScalarFieldEnum = (typeof EstadoPublicacionScalarFieldEnum)[keyof typeof EstadoPublicacionScalarFieldEnum]
+
+
+export const AuditoriaAdminScalarFieldEnum = {
+  id: 'id',
+  accion: 'accion',
+  fk_admin: 'fk_admin',
+  entidad: 'entidad',
+  entidadId: 'entidadId',
+  detalle: 'detalle',
+  fecha: 'fecha'
+} as const
+
+export type AuditoriaAdminScalarFieldEnum = (typeof AuditoriaAdminScalarFieldEnum)[keyof typeof AuditoriaAdminScalarFieldEnum]
+
+
+export const ReportePublicacionScalarFieldEnum = {
+  id: 'id',
+  motivo: 'motivo',
+  comentarios: 'comentarios',
+  fk_publicacion: 'fk_publicacion',
+  fk_reportante: 'fk_reportante',
+  estado: 'estado',
+  fk_admin_asignado: 'fk_admin_asignado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  fechaResolucion: 'fechaResolucion',
+  resolucion: 'resolucion',
+  mensajeAdvertencia: 'mensajeAdvertencia',
+  avisoVendedorRegistrado: 'avisoVendedorRegistrado',
+  avisoVendedorFecha: 'avisoVendedorFecha'
+} as const
+
+export type ReportePublicacionScalarFieldEnum = (typeof ReportePublicacionScalarFieldEnum)[keyof typeof ReportePublicacionScalarFieldEnum]
 
 
 export const PublicacionScalarFieldEnum = {

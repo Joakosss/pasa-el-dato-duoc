@@ -35,6 +35,9 @@ model Cuenta {
   reportesRecibidos         ReporteUsuario[] @relation("reporteUsuarioReportado")
   reportesEmitidos          ReporteUsuario[] @relation("reporteUsuarioReportante")
   reportesAsignados         ReporteUsuario[] @relation("reporteUsuarioAdminAsignado")
+  reportesPublicacionEmitidos ReportePublicacion[] @relation("reportePublicacionReportante")
+  reportesPublicacionAsignados ReportePublicacion[] @relation("reportePublicacionAdminAsignado")
+  auditoriasAdmin           AuditoriaAdmin[] @relation("auditoriaAdminCuenta")
 
   @@index([fk_modificado_por], map: "idx_cuenta_modificado_por")
   @@map("cuenta")
@@ -226,6 +229,71 @@ model EstadoPublicacion {
   @@map("estado_publicacion")
 }
 
+enum EstadoReportePublicacion {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  DESCARTADO
+}
+
+enum ResolucionReportePublicacion {
+  RETIRO_PUBLICACION
+  ADVERTENCIA
+  DESCARTE
+}
+
+enum TipoAuditoriaAdmin {
+  TOMAR_REPORTE_PUBLICACION
+  DESCARTAR_REPORTE_PUBLICACION
+  REABRIR_REPORTE_PUBLICACION
+  RETIRAR_PUBLICACION
+  ADVERTIR_VENDEDOR
+}
+
+model AuditoriaAdmin {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accion      TipoAuditoriaAdmin
+  fk_admin    String            @db.Uuid
+  entidad     String
+  entidadId   String            @map("entidad_id")
+  detalle     String?
+  fecha       DateTime          @default(now()) @db.Timestamptz(6)
+
+  admin Cuenta @relation("auditoriaAdminCuenta", fields: [fk_admin], references: [id_cuenta], onUpdate: NoAction)
+
+  @@index([fk_admin], map: "idx_auditoria_admin_admin")
+  @@index([entidad, entidadId], map: "idx_auditoria_admin_entidad")
+  @@index([fecha], map: "idx_auditoria_admin_fecha")
+  @@map("auditoria_admin")
+}
+
+model ReportePublicacion {
+  id                    String                         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  motivo                String
+  comentarios           String?
+  fk_publicacion        String                         @db.Uuid
+  fk_reportante         String?                        @db.Uuid
+  estado                EstadoReportePublicacion       @default(PENDIENTE)
+  fk_admin_asignado     String?                        @db.Uuid
+  fechaCreacion         DateTime                       @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion     DateTime                       @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  fechaResolucion       DateTime?                      @map("fecha_resolucion") @db.Timestamptz(6)
+  resolucion            ResolucionReportePublicacion?
+  mensajeAdvertencia    String?                        @map("mensaje_advertencia")
+  avisoVendedorRegistrado Boolean                      @default(false) @map("aviso_vendedor_registrado")
+  avisoVendedorFecha    DateTime?                      @map("aviso_vendedor_fecha") @db.Timestamptz(6)
+
+  publicacion    Publicacion @relation(fields: [fk_publicacion], references: [id], onUpdate: NoAction)
+  reportante     Cuenta?     @relation("reportePublicacionReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
+  adminAsignado  Cuenta?     @relation("reportePublicacionAdminAsignado", fields: [fk_admin_asignado], references: [id_cuenta], onUpdate: NoAction)
+
+  @@index([estado, fechaCreacion], map: "idx_reporte_publicacion_estado_fecha")
+  @@index([fk_publicacion], map: "idx_reporte_publicacion_publicacion")
+  @@index([fk_reportante], map: "idx_reporte_publicacion_reportante")
+  @@index([fk_admin_asignado], map: "idx_reporte_publicacion_admin")
+  @@map("reporte_publicacion")
+}
+
 model Publicacion {
   id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   titulo                String
@@ -251,6 +319,8 @@ model Publicacion {
   comprador         Cuenta?           @relation("publicacionComprador", fields: [fk_user_comprador], references: [id_cuenta], onUpdate: NoAction)
   modificadoPor     Cuenta?           @relation("publicacionModificadaPor", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction)
   imagenes          ImagenPublicacion[]
+  reportesPublicacion ReportePublicacion[]
+
 
   @@index([fk_estado_publicacion], map: "idx_publicacion_estado")
   @@index([fk_tipoventa], map: "idx_publicacion_tipoventa")
