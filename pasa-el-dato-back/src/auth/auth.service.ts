@@ -22,12 +22,19 @@ import {
 export interface UsuarioAutenticado {
   idCuenta: string;
   correo: string;
-  usuario: {
+  usuario?: {
     run: string;
     pNombre: string;
     sNombre: string | null;
     pApellido: string;
     sApellido: string;
+    rol: {
+      id: number;
+      descripcion: string;
+    };
+  };
+  marca?: {
+    nombre: string;
     rol: {
       id: number;
       descripcion: string;
@@ -81,6 +88,11 @@ export class AuthService {
             },
           },
         },
+        marca: {
+          select: {
+            nombre: true,
+          },
+        },
       },
     });
   }
@@ -120,24 +132,43 @@ export class AuthService {
     }
 
     // Una CUENTA puede existir durante el registro sin su USUARIO asociado.
-    if (cuenta.usuario === null) {
+    if (!cuenta.usuario && !cuenta.marca) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // Construimos un resultado nuevo para que claveHash no salga del servicio.
+    if (cuenta.usuario) {
+      return {
+        idCuenta: cuenta.id_cuenta,
+        correo: cuenta.correo,
+        usuario: {
+          run: cuenta.usuario.run,
+          pNombre: cuenta.usuario.pNombre,
+          sNombre: cuenta.usuario.sNombre,
+          pApellido: cuenta.usuario.pApellido,
+          sApellido: cuenta.usuario.sApellido,
+          rol: {
+            id: cuenta.usuario.rol_usuario.id,
+            descripcion: cuenta.usuario.rol_usuario.descripcion,
+          },
+        },
+      };
+    }
+
+    const rolMarca = await this.prisma.rolUsuario.findUnique({
+      where: { descripcion: 'Marca' },
+      select: { id: true, descripcion: true },
+    });
+
+    if (!rolMarca || !cuenta.marca) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
     return {
       idCuenta: cuenta.id_cuenta,
       correo: cuenta.correo,
-      usuario: {
-        run: cuenta.usuario.run,
-        pNombre: cuenta.usuario.pNombre,
-        sNombre: cuenta.usuario.sNombre,
-        pApellido: cuenta.usuario.pApellido,
-        sApellido: cuenta.usuario.sApellido,
-        rol: {
-          id: cuenta.usuario.rol_usuario.id,
-          descripcion: cuenta.usuario.rol_usuario.descripcion,
-        },
+      marca: {
+        nombre: cuenta.marca.nombre,
+        rol: rolMarca,
       },
     };
   }
@@ -148,9 +179,14 @@ export class AuthService {
     // El JWT contiene solo la identidad de la cuenta, su rol y un jti único
     // por emisión. Los emitidos no se persisten; solo los revocados.
     // JwtModule ya configuró el secreto y la vigencia desde el entorno.
+    const rol = autenticado.usuario?.rol ?? autenticado.marca?.rol;
+    if (!rol) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
     return this.jwtService.signAsync({
       sub: autenticado.idCuenta,
-      rolId: autenticado.usuario.rol.id,
+      rolId: rol.id,
       jti: randomUUID(),
     });
   }
@@ -238,6 +274,11 @@ export class AuthService {
             },
           },
         },
+        marca: {
+          select: {
+            id_cuenta: true,
+          },
+        },
       },
     });
   }
@@ -259,7 +300,7 @@ export class AuthService {
     // El rol y el estado se consultan de nuevo: pueden haber cambiado
     // desde que la persona inició sesión.
     const cuenta = await this.buscarCuentaParaRenovacion(registro.idCuenta);
-    if (!cuenta || !cuenta.usuario) {
+    if (!cuenta || (!cuenta.usuario && !cuenta.marca)) {
       throw new UnauthorizedException('Sesión inválida');
     }
     if (cuenta.bloqueado) {
@@ -278,9 +319,21 @@ export class AuthService {
       throw new Error('REFRESH_TOKEN_TTL_DAYS debe ser un entero positivo');
     }
 
+    const rolId = cuenta.usuario?.rol_usuario.id;
+    const rolMarca = cuenta.marca
+      ? await this.prisma.rolUsuario.findUnique({
+          where: { descripcion: 'Marca' },
+          select: { id: true },
+        })
+      : null;
+
+    if (typeof rolId !== 'number' && !rolMarca) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
     const accessToken = await this.jwtService.signAsync({
       sub: registro.idCuenta,
-      rolId: cuenta.usuario.rol_usuario.id,
+      rolId: rolId ?? rolMarca!.id,
       jti: randomUUID(),
     });
     const nuevo = generarRefreshToken();

@@ -11,6 +11,7 @@ import type {
   ImagenAlmacenada,
 } from './almacenamiento-imagenes.service.js';
 import type { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.js';
+import type { CierreVentaRespuestaDto } from './dto/cierre-venta-respuesta.dto.js';
 import type { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import type { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
 import type { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
@@ -685,5 +686,211 @@ export class PublicacionService {
     });
 
     return { id: publicacion.id, estado };
+  }
+
+  // HU-COM-01: construye el nombre completo de un usuario a partir de los
+  // campos del modelo Usuario (p_nombre, s_nombre, p_apellido, s_apellido).
+  private construirNombreCompleto(usuario: {
+    pNombre: string;
+    sNombre: string | null;
+    pApellido: string;
+    sApellido: string;
+  }): string {
+    return [usuario.pNombre, usuario.sNombre, usuario.pApellido, usuario.sApellido]
+      .filter((parte): parte is string => Boolean(parte && parte.trim()))
+      .join(' ');
+  }
+
+  // HU-COM-01-BE02/BE03/BE04/BE05: cierre de venta atómico con registro de
+  // comprador. Única vía válida para que una publicación quede "Vendida".
+  async cerrarVenta(entrada: {
+    idPublicacion: string;
+    vendedorId: string;
+    compradorId: string;
+  }): Promise<CierreVentaRespuestaDto> {
+    // Pre-chequeo fuera de la transacción: existencia, ownership, no eliminada.
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: entrada.idPublicacion },
+      select: {
+        id: true,
+        fk_usuario: true,
+        fk_user_comprador: true,
+        eliminado: true,
+        estadoPublicacion: { select: { descripcion: true } },
+      },
+    });
+
+    if (publicacion === null || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    if (publicacion.fk_usuario !== entrada.vendedorId) {
+      throw new ForbiddenException(
+        'No tiene permisos para cerrar la venta de esta publicación',
+      );
+    }
+
+    // HU-COM-01-BE04: el comprador no puede ser el propio vendedor.
+    if (entrada.compradorId === entrada.vendedorId) {
+      throw new BadRequestException(
+        'No puede ser comprador de su propia publicación',
+      );
+    }
+
+    // HU-COM-01-BE05: idempotencia. Si ya está cerrada, se devuelve el
+    // registro existente sin alterar el comprador registrado.
+    if (
+      publicacion.estadoPublicacion.descripcion === 'Vendida' &&
+      publicacion.fk_user_comprador !== null
+    ) {
+      return this.construirRespuestaTransaccion(publicacion.id);
+    }
+
+    // HU-COM-01-BE04: el comprador debe ser una cuenta de usuario válida
+    // (no eliminada, no bloqueada, aprobada) y no puede ser una marca.
+    const cuentaComprador = await this.prisma.cuenta.findUnique({
+      where: { id_cuenta: entrada.compradorId },
+      select: {
+        aprobada: true,
+        bloqueado: true,
+        eliminado: true,
+        usuario: { select: { id_cuenta: true } },
+      },
+    });
+
+    if (
+      cuentaComprador === null ||
+      cuentaComprador.usuario === null ||
+      cuentaComprador.eliminado ||
+      cuentaComprador.bloqueado ||
+      !cuentaComprador.aprobada
+    ) {
+      throw new BadRequestException('El comprador indicado no es un usuario válido');
+    }
+
+    const estadoVendida = await this.prisma.estadoPublicacion.findFirst({
+      where: { descripcion: 'Vendida' },
+      select: { id: true },
+    });
+
+    if (estadoVendida === null) {
+      throw new InternalServerErrorException('Catálogo de estados incompleto');
+    }
+
+    // HU-COM-01-BE05: updateMany con condición fk_user_comprador: null actúa
+    // como barrera atómica a nivel de fila en PostgreSQL contra cierres
+    // concurrentes. Si otra petición ya cerró la venta, count será 0.
+    const resultadoUpdate = await this.prisma.publicacion.updateMany({
+      where: {
+        id: entrada.idPublicacion,
+        fk_usuario: entrada.vendedorId,
+        fk_user_comprador: null,
+        eliminado: false,
+      },
+      data: {
+        fk_user_comprador: entrada.compradorId,
+        fk_estado_publicacion: estadoVendida.id,
+        fechaModificacion: new Date(),
+      },
+    });
+
+    if (resultadoUpdate.count === 0) {
+      // Ya fue cerrada por otra petición concurrente: idempotencia.
+      return this.construirRespuestaTransaccion(entrada.idPublicacion);
+    }
+
+    return this.construirRespuestaTransaccion(entrada.idPublicacion);
+  }
+
+  // HU-COM-01-BE06: consulta de la transacción (publicación + vendedor +
+  // comprador) accesible solo para los participantes.
+  async obtenerTransaccion(entrada: {
+    idPublicacion: string;
+    idCuenta: string;
+  }): Promise<CierreVentaRespuestaDto> {
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: entrada.idPublicacion },
+      select: {
+        id: true,
+        fk_usuario: true,
+        fk_user_comprador: true,
+        eliminado: true,
+        estadoPublicacion: { select: { descripcion: true } },
+      },
+    });
+
+    if (
+      publicacion === null ||
+      publicacion.eliminado ||
+      publicacion.estadoPublicacion.descripcion !== 'Vendida' ||
+      publicacion.fk_user_comprador === null
+    ) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    const esVendedor = publicacion.fk_usuario === entrada.idCuenta;
+    const esComprador = publicacion.fk_user_comprador === entrada.idCuenta;
+
+    if (!esVendedor && !esComprador) {
+      throw new ForbiddenException('No tiene acceso a esta transacción');
+    }
+
+    return this.construirRespuestaTransaccion(publicacion.id);
+  }
+
+  private async construirRespuestaTransaccion(
+    idPublicacion: string,
+  ): Promise<CierreVentaRespuestaDto> {
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: idPublicacion },
+      select: {
+        id: true,
+        estadoPublicacion: { select: { id: true, descripcion: true } },
+        usuario: {
+          select: {
+            id_cuenta: true,
+            pNombre: true,
+            sNombre: true,
+            pApellido: true,
+            sApellido: true,
+          },
+        },
+        comprador: {
+          select: {
+            id_cuenta: true,
+            usuario: {
+              select: {
+                pNombre: true,
+                sNombre: true,
+                pApellido: true,
+                sApellido: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (publicacion === null || publicacion.comprador === null || publicacion.comprador.usuario === null) {
+      throw new InternalServerErrorException(
+        'No fue posible construir la transacción de la publicación',
+      );
+    }
+
+    return {
+      id: publicacion.id,
+      estado: {
+        id: publicacion.estadoPublicacion.id,
+        descripcion: publicacion.estadoPublicacion.descripcion,
+      },
+      vendedor: {
+        id: publicacion.usuario.id_cuenta,
+        nombre: this.construirNombreCompleto(publicacion.usuario),
+      },
+      comprador: {
+        id: publicacion.comprador.id_cuenta,
+        nombre: this.construirNombreCompleto(publicacion.comprador.usuario),
+      },
+    };
   }
 }

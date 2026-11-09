@@ -47,7 +47,19 @@ export class MobileAuthController {
     const { usuario, accessToken, refreshToken } =
       await this.authService.iniciarSesion(dto);
 
-    return { ...usuario, accessToken, refreshToken };
+    if (!usuario.usuario) {
+      throw new UnauthorizedException(
+        'Este tipo de cuenta aún no está disponible en la aplicación móvil',
+      );
+    }
+
+    return {
+      idCuenta: usuario.idCuenta,
+      correo: usuario.correo,
+      usuario: usuario.usuario,
+      accessToken,
+      refreshToken,
+    };
   }
 
   @Post('refresh')

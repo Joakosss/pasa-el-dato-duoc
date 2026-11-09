@@ -45,11 +45,11 @@ describe('Registro de usuario (e2e)', () => {
 
     // La carrera también se obtiene por nombre para no depender de un ID fijo.
     const carrera = await prisma.carrera.findFirst({
-      where: { nombre: 'Carrera de prueba' },
+      where: { nombre: 'Analista Programador' },
       select: { id: true },
     });
     if (carrera === null) {
-      throw new Error('La prueba requiere la Carrera de prueba');
+      throw new Error('La prueba requiere la carrera Analista Programador');
     }
     carreraId = carrera.id;
   });
@@ -117,8 +117,10 @@ describe('Registro de usuario (e2e)', () => {
     expect(cuenta?.usuario?.run).toBe(runPrueba);
     expect(cuenta?.usuario?.rol_usuario.descripcion).toBe('Estudiante');
     expect(cuenta?.usuario?.sede.nombre).toBe('Puente Alto');
-    expect(cuenta?.usuario?.carrera.nombre).toBe('Carrera de prueba');
-    expect(cuenta?.usuario?.carrera.escuela.nombre).toBe('Escuela de prueba');
+    expect(cuenta?.usuario?.carrera.nombre).toBe('Analista Programador');
+    expect(cuenta?.usuario?.carrera.escuela.nombre).toBe(
+      'Escuela de Informática y Telecomunicaciones',
+    );
   });
 
   it('rechaza con 400 un correo que no sea institucional', async () => {

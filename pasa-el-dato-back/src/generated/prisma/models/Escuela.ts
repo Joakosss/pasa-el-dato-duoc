@@ -203,12 +203,12 @@ export type EscuelaOrderByWithRelationInput = {
 
 export type EscuelaWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  nombre?: string
   AND?: Prisma.EscuelaWhereInput | Prisma.EscuelaWhereInput[]
   OR?: Prisma.EscuelaWhereInput[]
   NOT?: Prisma.EscuelaWhereInput | Prisma.EscuelaWhereInput[]
-  nombre?: Prisma.StringFilter<"Escuela"> | string
   carreras?: Prisma.CarreraListRelationFilter
-}, "id">
+}, "id" | "nombre">
 
 export type EscuelaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

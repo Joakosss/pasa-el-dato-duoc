@@ -283,6 +283,23 @@ export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedBigIntFilter<$PrismaModel>
 }
 
+export type EnumEstadoBannerPublicidadFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoBannerPublicidad | Prisma.EnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoBannerPublicidadFilter<$PrismaModel> | $Enums.EstadoBannerPublicidad
+}
+
+export type EnumEstadoBannerPublicidadWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoBannerPublicidad | Prisma.EnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoBannerPublicidadWithAggregatesFilter<$PrismaModel> | $Enums.EstadoBannerPublicidad
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEstadoBannerPublicidadFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEstadoBannerPublicidadFilter<$PrismaModel>
+}
+
 export type NestedUuidFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -559,6 +576,23 @@ export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedBigIntFilter<$PrismaModel>
   _min?: Prisma.NestedBigIntFilter<$PrismaModel>
   _max?: Prisma.NestedBigIntFilter<$PrismaModel>
+}
+
+export type NestedEnumEstadoBannerPublicidadFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoBannerPublicidad | Prisma.EnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoBannerPublicidadFilter<$PrismaModel> | $Enums.EstadoBannerPublicidad
+}
+
+export type NestedEnumEstadoBannerPublicidadWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EstadoBannerPublicidad | Prisma.EnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  in?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  notIn?: $Enums.EstadoBannerPublicidad[] | Prisma.ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumEstadoBannerPublicidadWithAggregatesFilter<$PrismaModel> | $Enums.EstadoBannerPublicidad
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumEstadoBannerPublicidadFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumEstadoBannerPublicidadFilter<$PrismaModel>
 }
 
 

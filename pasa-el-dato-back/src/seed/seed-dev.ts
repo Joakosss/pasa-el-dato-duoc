@@ -35,24 +35,31 @@ export async function ejecutarSeedDev(): Promise<void> {
       await prisma.sede.create({ data: { nombre: 'Puente Alto' } });
     }
 
-    // Datos temporales para probar la selección de carrera del registro.
-    let escuela = await prisma.escuela.findFirst({
-      where: { nombre: 'Escuela de prueba' },
+    // Escuela y carrera reales del catálogo Duoc UC (prisma/datasets/carreras.json)
+    // para probar la selección de carrera del registro. Si ya corrió
+    // db:seed:carreras, solo se reutiliza; si no, se crean de forma idempotente.
+    let escuela = await prisma.escuela.findUnique({
+      where: { nombre: 'Escuela de Informática y Telecomunicaciones' },
       select: { id: true },
     });
     if (escuela === null) {
       escuela = await prisma.escuela.create({
-        data: { nombre: 'Escuela de prueba' },
+        data: { nombre: 'Escuela de Informática y Telecomunicaciones' },
       });
     }
 
-    const carrera = await prisma.carrera.findFirst({
-      where: { nombre: 'Carrera de prueba', fk_escuela: escuela.id },
+    const carrera = await prisma.carrera.findUnique({
+      where: {
+        nombre_fk_escuela: {
+          nombre: 'Analista Programador',
+          fk_escuela: escuela.id,
+        },
+      },
       select: { id: true },
     });
     if (carrera === null) {
       await prisma.carrera.create({
-        data: { nombre: 'Carrera de prueba', fk_escuela: escuela.id },
+        data: { nombre: 'Analista Programador', fk_escuela: escuela.id },
       });
     }
 
