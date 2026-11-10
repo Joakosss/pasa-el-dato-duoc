@@ -24,6 +24,7 @@ import { ReportePublicacionModule } from './reporte-publicacion/reporte-publicac
 import { MetricasAdminModule } from './metricas-admin/metricas-admin.module.js';
 import { PalabrasBloqueadasModule } from './palabras-bloqueadas/palabras-bloqueadas.module.js';
 import { NotificacionesModule } from './notificaciones/notificaciones.module.js';
+import { FavoritosModule } from './favoritos/favoritos.module.js';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { NotificacionesModule } from './notificaciones/notificaciones.module.js'
     MetricasAdminModule,
     PalabrasBloqueadasModule,
     NotificacionesModule,
+    FavoritosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
