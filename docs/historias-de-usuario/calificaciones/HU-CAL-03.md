@@ -43,6 +43,25 @@ Fuera de alcance de esta HU: elaborar calificaciones (HU-CAL-01), ver calificaci
 
 Nota técnica de origen (no define diseño): la activación requiere persistencia en la publicación o en un registro asociado; la ubicación exacta se resuelve en spec y design. La tabla `Calificacion` de MER no registra la activación.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-CAL-03-BE01:** Resolver mecanismo de persistencia para “calificación activada” (p.ej. campo en `publicacion` como `calificacion_activada:boolean` + `fecha_activacion`, o registro asociado); documentarlo en spec/design.
+- **HU-CAL-03-BE02:** Definir contrato REST idempotente para activar calificación de una publicación vendida (p.ej. `POST /publicaciones/:id/activar-calificacion`).
+- **HU-CAL-03-BE03:** Implementar validación de sesión y ownership: solo el vendedor dueño puede activar.
+- **HU-CAL-03-BE04:** Validar precondiciones: publicación existe, no eliminada, estado `Vendida` y comprador registrado.
+- **HU-CAL-03-BE05:** Implementar idempotencia: si ya estaba activada, no duplicar; responder OK con estado actual.
+- **HU-CAL-03-BE06:** Swagger: documentar endpoint, DTOs (si aplica) y errores (401/403/404/409/422).
+- **HU-CAL-03-BE07:** Pruebas unitarias/e2e: activación válida, no dueño, no vendida, sin comprador, repetición idempotente.
+
+### Frontend (FE)
+
+- **HU-CAL-03-FE01:** Mostrar acción “Activar calificación” solo al vendedor dueño y solo cuando la publicación esté vendida y no activada.
+- **HU-CAL-03-FE02:** Implementar confirmación UX + solicitud al backend (loading + evitar envíos duplicados).
+- **HU-CAL-03-FE03:** Actualizar la vista post-éxito para que se habilite “Calificar” para ambas partes según HU-CAL-01.
+- **HU-CAL-03-FE04:** Manejar errores: sesión expirada, permisos, publicación no vendida/no finalizada, venta sin comprador, ya activada.
+
 ## Dependencias
 
 - Publicación en estado "Vendida" asignable por su dueño (HU-PUB-04, implementada en backend).

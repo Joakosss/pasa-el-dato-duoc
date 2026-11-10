@@ -31,7 +31,16 @@ model Cuenta {
   publicacionesCompradas    Publicacion[] @relation("publicacionComprador")
   publicacionesModificadas  Publicacion[] @relation("publicacionModificadaPor")
   bannersModificados        BannerPublicidad[] @relation("bannerModificadoPor")
+  notificacionesPushHabilitadas Boolean        @default(true) @map("notificaciones_push_habilitadas")
   notificacionesMarca       NotificacionMarca[] @relation("notificacionMarcaCuenta")
+  notificacionesUsuario     NotificacionUsuario[] @relation("notificacionUsuarioCuenta")
+  reportesRecibidos         ReporteUsuario[] @relation("reporteUsuarioReportado")
+  reportesEmitidos          ReporteUsuario[] @relation("reporteUsuarioReportante")
+  reportesAsignados         ReporteUsuario[] @relation("reporteUsuarioAdminAsignado")
+  reportesPublicacionEmitidos ReportePublicacion[] @relation("reportePublicacionReportante")
+  reportesPublicacionAsignados ReportePublicacion[] @relation("reportePublicacionAdminAsignado")
+  auditoriasAdmin           AuditoriaAdmin[] @relation("auditoriaAdminCuenta")
+  favoritosModificados      Favorito[]       @relation("favoritoModificadoPor")
 
   @@index([fk_modificado_por], map: "idx_cuenta_modificado_por")
   @@map("cuenta")
@@ -154,6 +163,7 @@ model Usuario {
   sede           Sede       @relation(fields: [fk_sede], references: [id], onDelete: NoAction, onUpdate: NoAction)
   cuenta         Cuenta     @relation(fields: [id_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
   publicaciones  Publicacion[]
+  favoritos      Favorito[]
 
   @@index([fk_rol_usuario], map: "idx_usuario_rol")
   @@index([fk_sede], map: "idx_usuario_sede")
@@ -225,6 +235,71 @@ model EstadoPublicacion {
   @@map("estado_publicacion")
 }
 
+enum EstadoReportePublicacion {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  DESCARTADO
+}
+
+enum ResolucionReportePublicacion {
+  RETIRO_PUBLICACION
+  ADVERTENCIA
+  DESCARTE
+}
+
+enum TipoAuditoriaAdmin {
+  TOMAR_REPORTE_PUBLICACION
+  DESCARTAR_REPORTE_PUBLICACION
+  REABRIR_REPORTE_PUBLICACION
+  RETIRAR_PUBLICACION
+  ADVERTIR_VENDEDOR
+}
+
+model AuditoriaAdmin {
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accion      TipoAuditoriaAdmin
+  fk_admin    String            @db.Uuid
+  entidad     String
+  entidadId   String            @map("entidad_id")
+  detalle     String?
+  fecha       DateTime          @default(now()) @db.Timestamptz(6)
+
+  admin Cuenta @relation("auditoriaAdminCuenta", fields: [fk_admin], references: [id_cuenta], onUpdate: NoAction)
+
+  @@index([fk_admin], map: "idx_auditoria_admin_admin")
+  @@index([entidad, entidadId], map: "idx_auditoria_admin_entidad")
+  @@index([fecha], map: "idx_auditoria_admin_fecha")
+  @@map("auditoria_admin")
+}
+
+model ReportePublicacion {
+  id                    String                         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  motivo                String
+  comentarios           String?
+  fk_publicacion        String                         @db.Uuid
+  fk_reportante         String?                        @db.Uuid
+  estado                EstadoReportePublicacion       @default(PENDIENTE)
+  fk_admin_asignado     String?                        @db.Uuid
+  fechaCreacion         DateTime                       @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion     DateTime                       @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  fechaResolucion       DateTime?                      @map("fecha_resolucion") @db.Timestamptz(6)
+  resolucion            ResolucionReportePublicacion?
+  mensajeAdvertencia    String?                        @map("mensaje_advertencia")
+  avisoVendedorRegistrado Boolean                      @default(false) @map("aviso_vendedor_registrado")
+  avisoVendedorFecha    DateTime?                      @map("aviso_vendedor_fecha") @db.Timestamptz(6)
+
+  publicacion    Publicacion @relation(fields: [fk_publicacion], references: [id], onUpdate: NoAction)
+  reportante     Cuenta?     @relation("reportePublicacionReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
+  adminAsignado  Cuenta?     @relation("reportePublicacionAdminAsignado", fields: [fk_admin_asignado], references: [id_cuenta], onUpdate: NoAction)
+
+  @@index([estado, fechaCreacion], map: "idx_reporte_publicacion_estado_fecha")
+  @@index([fk_publicacion], map: "idx_reporte_publicacion_publicacion")
+  @@index([fk_reportante], map: "idx_reporte_publicacion_reportante")
+  @@index([fk_admin_asignado], map: "idx_reporte_publicacion_admin")
+  @@map("reporte_publicacion")
+}
+
 model Publicacion {
   id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   titulo                String
@@ -250,6 +325,9 @@ model Publicacion {
   comprador         Cuenta?           @relation("publicacionComprador", fields: [fk_user_comprador], references: [id_cuenta], onUpdate: NoAction)
   modificadoPor     Cuenta?           @relation("publicacionModificadaPor", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction)
   imagenes          ImagenPublicacion[]
+  reportesPublicacion ReportePublicacion[]
+  favoritos         Favorito[]
+
 
   @@index([fk_estado_publicacion], map: "idx_publicacion_estado")
   @@index([fk_tipoventa], map: "idx_publicacion_tipoventa")
@@ -324,6 +402,30 @@ model NotificacionMarca {
   @@map("notificacion_marca")
 }
 
+enum TipoNotificacionUsuario {
+  CHAT_NUEVO_MENSAJE
+  FAVORITA_VENDIDA
+  REPORTE_RESULTADO
+  ADMIN_ADVERTENCIA
+  ADMIN_AVISO
+}
+
+model NotificacionUsuario {
+  id            String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fk_cuenta     String                    @db.Uuid
+  tipo          TipoNotificacionUsuario
+  mensaje       String
+  leida         Boolean                   @default(false)
+  dataJson      Json?                     @map("data_json")
+  fechaCreacion DateTime                  @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+
+  cuenta Cuenta @relation("notificacionUsuarioCuenta", fields: [fk_cuenta], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([fk_cuenta, leida], map: "idx_notificacion_usuario_lectura")
+  @@index([fk_cuenta, fechaCreacion], map: "idx_notificacion_usuario_fecha")
+  @@map("notificacion_usuario")
+}
+
 model ImagenPublicacion {
   idImagen       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id_imagen")
   fk_publicacion String @db.Uuid
@@ -335,4 +437,70 @@ model ImagenPublicacion {
   @@unique([fk_publicacion, orden], map: "ux_imagen_publicacion_publicacion_orden")
   @@index([fk_publicacion], map: "idx_imagen_publicacion_publicacion")
   @@map("imagen_publicacion")
+}
+
+enum EstadoReporteUsuario {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  DESCARTADO
+}
+
+enum ResolucionReporteUsuario {
+  BLOQUEO
+  ADVERTENCIA
+  DESCARTE
+}
+
+model ReporteUsuario {
+  id                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  descripcion       String
+  fk_reportado      String                  @db.Uuid
+  fk_reportante     String?                 @db.Uuid
+  estado            EstadoReporteUsuario    @default(PENDIENTE)
+  fk_admin_asignado String?                 @db.Uuid
+  fechaCreacion     DateTime                @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion DateTime                @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  fechaResolucion   DateTime?               @map("fecha_resolucion") @db.Timestamptz(6)
+  resolucion        ResolucionReporteUsuario?
+  mensajeAdvertencia String?                @map("mensaje_advertencia")
+  motivoBloqueo     String?                 @map("motivo_bloqueo")
+
+  reportado   Cuenta  @relation("reporteUsuarioReportado", fields: [fk_reportado], references: [id_cuenta], onUpdate: NoAction)
+  reportante  Cuenta? @relation("reporteUsuarioReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
+  adminAsignado Cuenta? @relation("reporteUsuarioAdminAsignado", fields: [fk_admin_asignado], references: [id_cuenta], onUpdate: NoAction)
+
+  @@index([estado, fechaCreacion], map: "idx_reporte_usuario_estado_fecha")
+  @@index([fk_reportado], map: "idx_reporte_usuario_reportado")
+  @@index([fk_reportante], map: "idx_reporte_usuario_reportante")
+  @@index([fk_admin_asignado], map: "idx_reporte_usuario_admin")
+  @@map("reporte_usuario")
+}
+
+model Favorito {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fk_publicacion    String   @db.Uuid
+  fk_usuario        String   @db.Uuid
+  fechaCreacion     DateTime @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion DateTime @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+  eliminado         Boolean  @default(false)
+  fk_modificado_por String?  @db.Uuid
+
+  publicacion    Publicacion @relation(fields: [fk_publicacion], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  usuario        Usuario     @relation(fields: [fk_usuario], references: [id_cuenta], onDelete: Cascade, onUpdate: NoAction)
+  modificadoPor  Cuenta?     @relation("favoritoModificadoPor", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction)
+
+  @@unique([fk_publicacion, fk_usuario], map: "ux_favorito_publicacion_usuario")
+  @@index([fk_publicacion], map: "idx_favorito_publicacion")
+  @@index([fk_usuario], map: "idx_favorito_usuario")
+  @@index([fk_modificado_por], map: "idx_favorito_modificado_por")
+  @@map("favorito")
+}
+
+model PalabraBloqueada {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  termino       String   @unique
+  fechaCreacion DateTime @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+
+  @@map("palabra_bloqueada")
 }

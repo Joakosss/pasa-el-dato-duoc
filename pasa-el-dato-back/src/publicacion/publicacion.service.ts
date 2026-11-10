@@ -5,7 +5,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import type { TipoNotificacionUsuario } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 import type {
   AlmacenamientoImagenesService,
   ImagenAlmacenada,
@@ -21,7 +23,10 @@ import { ESTADOS_PUBLICACION_ASIGNABLES_POR_PROPIETARIO } from './publicacion-es
 
 @Injectable()
 export class PublicacionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificacionesService: NotificacionesService,
+  ) {}
 
   // T-10: crea publicacion + imagenes en una sola transaccion Prisma.
   // AlmacenamientoImagenesService ejecuta el callback dentro de su propia
@@ -799,6 +804,11 @@ export class PublicacionService {
       return this.construirRespuestaTransaccion(entrada.idPublicacion);
     }
 
+    await this.notificarFavoritaVendida({
+      idPublicacion: entrada.idPublicacion,
+      vendedorId: entrada.vendedorId,
+    });
+
     return this.construirRespuestaTransaccion(entrada.idPublicacion);
   }
 
@@ -836,6 +846,42 @@ export class PublicacionService {
     }
 
     return this.construirRespuestaTransaccion(publicacion.id);
+  }
+
+  private async notificarFavoritaVendida(entrada: {
+    idPublicacion: string;
+    vendedorId: string;
+  }): Promise<void> {
+    const favoritos: Array<{ fk_usuario: string }> =
+      await this.prisma.favorito.findMany({
+        where: {
+          fk_publicacion: entrada.idPublicacion,
+          eliminado: false,
+          usuario: {
+            cuenta: {
+              eliminado: false,
+              bloqueado: false,
+              aprobada: true,
+            },
+          },
+        },
+        select: { fk_usuario: true },
+      });
+
+    if (favoritos.length === 0) {
+      return;
+    }
+
+    await Promise.all(
+      favoritos.map((fav: { fk_usuario: string }) =>
+        this.notificacionesService.crearNotificacion({
+          cuentaId: fav.fk_usuario,
+          tipo: 'FAVORITA_VENDIDA' as TipoNotificacionUsuario,
+          mensaje: 'Una publicación que marcaste como favorita fue vendida',
+          dataJson: { publicacionId: entrada.idPublicacion },
+        }),
+      ),
+    );
   }
 
   private async construirRespuestaTransaccion(

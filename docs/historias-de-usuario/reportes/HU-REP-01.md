@@ -24,7 +24,15 @@
 
 - **Dado** que intento reportar mi propia publicación,
   **cuando** ejecuto el reporte,
-  **entonces** el sistema rechaza la operación e indica que no puedo reportar mi propia publicación (extensión de la regla de autoreporte de usuarios de CU012, aplicada a publicaciones; confirmar junto con las dudas).
+  **entonces** el sistema rechaza la operación e indica que no puedo reportar mi propia publicación (extensión de la regla de autoreporte de usuarios de CU012, aplicada a publicaciones; decisión aprobada).
+
+- **Dado** que la publicación está pausada,
+  **cuando** intento reportarla,
+  **entonces** el sistema rechaza la operación e indica que la publicación no está disponible para reporte (decisión aprobada: solo las pausadas no se pueden reportar).
+
+- **Dado** que la publicación está vendida,
+  **cuando** intento reportarla,
+  **entonces** el sistema permite el reporte (decisión aprobada).
 
 - **Dado** que envío el reporte sin motivo,
   **cuando** intento confirmarlo,
@@ -39,6 +47,9 @@
 Aprobadas documentalmente (R.4, CU011 extendido) y resoluciones del dominio administración (consumidores):
 
 - Solo un estudiante autenticado reporta publicaciones.
+- El motivo se selecciona de un catálogo predefinido y los comentarios son texto libre (decisión aprobada; MER guarda motivo y comentarios separados).
+- Publicaciones reportables: disponibles y vendidas; las pausadas no se pueden reportar (decisión aprobada).
+- No se puede reportar la propia publicación (decisión aprobada).
 - El reporte registra el motivo y comentarios, la publicación y el reportante (entidad `REPORTE_PUBLICACION` del MER: fk_publicacion, fk_reportador, motivo, comentarios, fk_estado_reporte).
 - El reporte nace en estado "pendiente" y pasa por el ciclo de administración vigente: pendiente → en_proceso (activado por el admin) → resuelto o descartado, con posibilidad de reapertura (decidido en HU-ADM-02).
 - Mi propio reporte no se duplica mientras exista en curso (CU011, alternativa 1); reportes de otros reportantes son independientes.
@@ -61,10 +72,8 @@ R.4 es solicitud explícita; completa el ciclo de moderación y las HUs de admin
 
 ## Dudas pendientes
 
-1. **Motivo del reporte**: ¿lista predefinida de motivos (catálogo del sistema), texto libre del estudiante, o lista + comentario? El MER guarda "motivo" y "comentarios" separados, lo que sugiere catálogo + comentarios. Confirmar.
-2. ¿Un reporte de publicación "expira" o permanece "en curso" hasta que un admin lo resuelva o descarte (interacción con reapertura)? Interpretación vigente: queda pendiente/en_proceso hasta resolución admin. Confirmar.
-3. ¿Se puede reportar una publicación pausada o vendida (no solo las visibles en el catálogo)? No está documentado.
+- Catálogo de motivos pendiente de gestión: la lista predefinida necesita se mantiene; definir quien la gestiona en spec (opción natural: administración, alineado con ADM-05).
 
 ## Estado
 
-`requiere aclaración` — la duda 1 define el formulario; las dudas 2 y 3 acotan el alcance del flujo. Listo para `explore` en paralelo.
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.

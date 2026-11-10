@@ -324,6 +324,8 @@ export type PublicacionWhereInput = {
   comprador?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   modificadoPor?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   imagenes?: Prisma.ImagenPublicacionListRelationFilter
+  reportesPublicacion?: Prisma.ReportePublicacionListRelationFilter
+  favoritos?: Prisma.FavoritoListRelationFilter
 }
 
 export type PublicacionOrderByWithRelationInput = {
@@ -350,6 +352,8 @@ export type PublicacionOrderByWithRelationInput = {
   comprador?: Prisma.CuentaOrderByWithRelationInput
   modificadoPor?: Prisma.CuentaOrderByWithRelationInput
   imagenes?: Prisma.ImagenPublicacionOrderByRelationAggregateInput
+  reportesPublicacion?: Prisma.ReportePublicacionOrderByRelationAggregateInput
+  favoritos?: Prisma.FavoritoOrderByRelationAggregateInput
 }
 
 export type PublicacionWhereUniqueInput = Prisma.AtLeast<{
@@ -379,6 +383,8 @@ export type PublicacionWhereUniqueInput = Prisma.AtLeast<{
   comprador?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   modificadoPor?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   imagenes?: Prisma.ImagenPublicacionListRelationFilter
+  reportesPublicacion?: Prisma.ReportePublicacionListRelationFilter
+  favoritos?: Prisma.FavoritoListRelationFilter
 }, "id">
 
 export type PublicacionOrderByWithAggregationInput = {
@@ -442,6 +448,8 @@ export type PublicacionCreateInput = {
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateInput = {
@@ -461,6 +469,8 @@ export type PublicacionUncheckedCreateInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUpdateInput = {
@@ -480,6 +490,8 @@ export type PublicacionUpdateInput = {
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateInput = {
@@ -499,6 +511,8 @@ export type PublicacionUncheckedUpdateInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionCreateManyInput = {
@@ -556,6 +570,11 @@ export type PublicacionListRelationFilter = {
 
 export type PublicacionOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type PublicacionScalarRelationFilter = {
+  is?: Prisma.PublicacionWhereInput
+  isNot?: Prisma.PublicacionWhereInput
 }
 
 export type PublicacionCountOrderByAggregateInput = {
@@ -628,11 +647,6 @@ export type PublicacionSumOrderByAggregateInput = {
   fk_categoria?: Prisma.SortOrder
   fk_sede?: Prisma.SortOrder
   contador_vistas?: Prisma.SortOrder
-}
-
-export type PublicacionScalarRelationFilter = {
-  is?: Prisma.PublicacionWhereInput
-  isNot?: Prisma.PublicacionWhereInput
 }
 
 export type PublicacionCreateNestedManyWithoutCompradorInput = {
@@ -929,6 +943,20 @@ export type PublicacionUncheckedUpdateManyWithoutEstadoPublicacionNestedInput = 
   deleteMany?: Prisma.PublicacionScalarWhereInput | Prisma.PublicacionScalarWhereInput[]
 }
 
+export type PublicacionCreateNestedOneWithoutReportesPublicacionInput = {
+  create?: Prisma.XOR<Prisma.PublicacionCreateWithoutReportesPublicacionInput, Prisma.PublicacionUncheckedCreateWithoutReportesPublicacionInput>
+  connectOrCreate?: Prisma.PublicacionCreateOrConnectWithoutReportesPublicacionInput
+  connect?: Prisma.PublicacionWhereUniqueInput
+}
+
+export type PublicacionUpdateOneRequiredWithoutReportesPublicacionNestedInput = {
+  create?: Prisma.XOR<Prisma.PublicacionCreateWithoutReportesPublicacionInput, Prisma.PublicacionUncheckedCreateWithoutReportesPublicacionInput>
+  connectOrCreate?: Prisma.PublicacionCreateOrConnectWithoutReportesPublicacionInput
+  upsert?: Prisma.PublicacionUpsertWithoutReportesPublicacionInput
+  connect?: Prisma.PublicacionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PublicacionUpdateToOneWithWhereWithoutReportesPublicacionInput, Prisma.PublicacionUpdateWithoutReportesPublicacionInput>, Prisma.PublicacionUncheckedUpdateWithoutReportesPublicacionInput>
+}
+
 export type PublicacionCreateNestedOneWithoutImagenesInput = {
   create?: Prisma.XOR<Prisma.PublicacionCreateWithoutImagenesInput, Prisma.PublicacionUncheckedCreateWithoutImagenesInput>
   connectOrCreate?: Prisma.PublicacionCreateOrConnectWithoutImagenesInput
@@ -941,6 +969,20 @@ export type PublicacionUpdateOneRequiredWithoutImagenesNestedInput = {
   upsert?: Prisma.PublicacionUpsertWithoutImagenesInput
   connect?: Prisma.PublicacionWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.PublicacionUpdateToOneWithWhereWithoutImagenesInput, Prisma.PublicacionUpdateWithoutImagenesInput>, Prisma.PublicacionUncheckedUpdateWithoutImagenesInput>
+}
+
+export type PublicacionCreateNestedOneWithoutFavoritosInput = {
+  create?: Prisma.XOR<Prisma.PublicacionCreateWithoutFavoritosInput, Prisma.PublicacionUncheckedCreateWithoutFavoritosInput>
+  connectOrCreate?: Prisma.PublicacionCreateOrConnectWithoutFavoritosInput
+  connect?: Prisma.PublicacionWhereUniqueInput
+}
+
+export type PublicacionUpdateOneRequiredWithoutFavoritosNestedInput = {
+  create?: Prisma.XOR<Prisma.PublicacionCreateWithoutFavoritosInput, Prisma.PublicacionUncheckedCreateWithoutFavoritosInput>
+  connectOrCreate?: Prisma.PublicacionCreateOrConnectWithoutFavoritosInput
+  upsert?: Prisma.PublicacionUpsertWithoutFavoritosInput
+  connect?: Prisma.PublicacionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PublicacionUpdateToOneWithWhereWithoutFavoritosInput, Prisma.PublicacionUpdateWithoutFavoritosInput>, Prisma.PublicacionUncheckedUpdateWithoutFavoritosInput>
 }
 
 export type PublicacionCreateWithoutCompradorInput = {
@@ -959,6 +1001,8 @@ export type PublicacionCreateWithoutCompradorInput = {
   sede: Prisma.SedeCreateNestedOneWithoutPublicacionesInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutCompradorInput = {
@@ -977,6 +1021,8 @@ export type PublicacionUncheckedCreateWithoutCompradorInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutCompradorInput = {
@@ -1005,6 +1051,8 @@ export type PublicacionCreateWithoutModificadoPorInput = {
   sede: Prisma.SedeCreateNestedOneWithoutPublicacionesInput
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutModificadoPorInput = {
@@ -1023,6 +1071,8 @@ export type PublicacionUncheckedCreateWithoutModificadoPorInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutModificadoPorInput = {
@@ -1104,6 +1154,8 @@ export type PublicacionCreateWithoutSedeInput = {
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutSedeInput = {
@@ -1122,6 +1174,8 @@ export type PublicacionUncheckedCreateWithoutSedeInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutSedeInput = {
@@ -1166,6 +1220,8 @@ export type PublicacionCreateWithoutUsuarioInput = {
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutUsuarioInput = {
@@ -1184,6 +1240,8 @@ export type PublicacionUncheckedCreateWithoutUsuarioInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutUsuarioInput = {
@@ -1228,6 +1286,8 @@ export type PublicacionCreateWithoutTipoVentaInput = {
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutTipoVentaInput = {
@@ -1246,6 +1306,8 @@ export type PublicacionUncheckedCreateWithoutTipoVentaInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutTipoVentaInput = {
@@ -1290,6 +1352,8 @@ export type PublicacionCreateWithoutCategoriaInput = {
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutCategoriaInput = {
@@ -1308,6 +1372,8 @@ export type PublicacionUncheckedCreateWithoutCategoriaInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutCategoriaInput = {
@@ -1352,6 +1418,8 @@ export type PublicacionCreateWithoutEstadoPublicacionInput = {
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
   imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutEstadoPublicacionInput = {
@@ -1370,6 +1438,8 @@ export type PublicacionUncheckedCreateWithoutEstadoPublicacionInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutEstadoPublicacionInput = {
@@ -1398,6 +1468,102 @@ export type PublicacionUpdateManyWithWhereWithoutEstadoPublicacionInput = {
   data: Prisma.XOR<Prisma.PublicacionUpdateManyMutationInput, Prisma.PublicacionUncheckedUpdateManyWithoutEstadoPublicacionInput>
 }
 
+export type PublicacionCreateWithoutReportesPublicacionInput = {
+  id?: string
+  titulo: string
+  descripcion: string
+  precio: number
+  contador_vistas?: number
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  estadoPublicacion: Prisma.EstadoPublicacionCreateNestedOneWithoutPublicacionInput
+  tipoVenta: Prisma.TipoVentaCreateNestedOneWithoutPublicacionInput
+  categoria: Prisma.CategoriaCreateNestedOneWithoutPublicacionInput
+  usuario: Prisma.UsuarioCreateNestedOneWithoutPublicacionesInput
+  sede: Prisma.SedeCreateNestedOneWithoutPublicacionesInput
+  comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
+  modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
+  imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
+}
+
+export type PublicacionUncheckedCreateWithoutReportesPublicacionInput = {
+  id?: string
+  titulo: string
+  descripcion: string
+  precio: number
+  fk_estado_publicacion: number
+  fk_tipoventa: number
+  fk_categoria: number
+  fk_usuario: string
+  fk_sede: number
+  fk_user_comprador?: string | null
+  contador_vistas?: number
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
+}
+
+export type PublicacionCreateOrConnectWithoutReportesPublicacionInput = {
+  where: Prisma.PublicacionWhereUniqueInput
+  create: Prisma.XOR<Prisma.PublicacionCreateWithoutReportesPublicacionInput, Prisma.PublicacionUncheckedCreateWithoutReportesPublicacionInput>
+}
+
+export type PublicacionUpsertWithoutReportesPublicacionInput = {
+  update: Prisma.XOR<Prisma.PublicacionUpdateWithoutReportesPublicacionInput, Prisma.PublicacionUncheckedUpdateWithoutReportesPublicacionInput>
+  create: Prisma.XOR<Prisma.PublicacionCreateWithoutReportesPublicacionInput, Prisma.PublicacionUncheckedCreateWithoutReportesPublicacionInput>
+  where?: Prisma.PublicacionWhereInput
+}
+
+export type PublicacionUpdateToOneWithWhereWithoutReportesPublicacionInput = {
+  where?: Prisma.PublicacionWhereInput
+  data: Prisma.XOR<Prisma.PublicacionUpdateWithoutReportesPublicacionInput, Prisma.PublicacionUncheckedUpdateWithoutReportesPublicacionInput>
+}
+
+export type PublicacionUpdateWithoutReportesPublicacionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  titulo?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  precio?: Prisma.IntFieldUpdateOperationsInput | number
+  contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  estadoPublicacion?: Prisma.EstadoPublicacionUpdateOneRequiredWithoutPublicacionNestedInput
+  tipoVenta?: Prisma.TipoVentaUpdateOneRequiredWithoutPublicacionNestedInput
+  categoria?: Prisma.CategoriaUpdateOneRequiredWithoutPublicacionNestedInput
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutPublicacionesNestedInput
+  sede?: Prisma.SedeUpdateOneRequiredWithoutPublicacionesNestedInput
+  comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
+  modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
+  imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
+}
+
+export type PublicacionUncheckedUpdateWithoutReportesPublicacionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  titulo?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  precio?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_estado_publicacion?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_tipoventa?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
+}
+
 export type PublicacionCreateWithoutImagenesInput = {
   id?: string
   titulo: string
@@ -1414,6 +1580,8 @@ export type PublicacionCreateWithoutImagenesInput = {
   sede: Prisma.SedeCreateNestedOneWithoutPublicacionesInput
   comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionUncheckedCreateWithoutImagenesInput = {
@@ -1432,6 +1600,8 @@ export type PublicacionUncheckedCreateWithoutImagenesInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   fk_modificado_por?: string | null
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutPublicacionInput
 }
 
 export type PublicacionCreateOrConnectWithoutImagenesInput = {
@@ -1466,6 +1636,8 @@ export type PublicacionUpdateWithoutImagenesInput = {
   sede?: Prisma.SedeUpdateOneRequiredWithoutPublicacionesNestedInput
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutImagenesInput = {
@@ -1484,6 +1656,104 @@ export type PublicacionUncheckedUpdateWithoutImagenesInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
+}
+
+export type PublicacionCreateWithoutFavoritosInput = {
+  id?: string
+  titulo: string
+  descripcion: string
+  precio: number
+  contador_vistas?: number
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  estadoPublicacion: Prisma.EstadoPublicacionCreateNestedOneWithoutPublicacionInput
+  tipoVenta: Prisma.TipoVentaCreateNestedOneWithoutPublicacionInput
+  categoria: Prisma.CategoriaCreateNestedOneWithoutPublicacionInput
+  usuario: Prisma.UsuarioCreateNestedOneWithoutPublicacionesInput
+  sede: Prisma.SedeCreateNestedOneWithoutPublicacionesInput
+  comprador?: Prisma.CuentaCreateNestedOneWithoutPublicacionesCompradasInput
+  modificadoPor?: Prisma.CuentaCreateNestedOneWithoutPublicacionesModificadasInput
+  imagenes?: Prisma.ImagenPublicacionCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionCreateNestedManyWithoutPublicacionInput
+}
+
+export type PublicacionUncheckedCreateWithoutFavoritosInput = {
+  id?: string
+  titulo: string
+  descripcion: string
+  precio: number
+  fk_estado_publicacion: number
+  fk_tipoventa: number
+  fk_categoria: number
+  fk_usuario: string
+  fk_sede: number
+  fk_user_comprador?: string | null
+  contador_vistas?: number
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  imagenes?: Prisma.ImagenPublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedCreateNestedManyWithoutPublicacionInput
+}
+
+export type PublicacionCreateOrConnectWithoutFavoritosInput = {
+  where: Prisma.PublicacionWhereUniqueInput
+  create: Prisma.XOR<Prisma.PublicacionCreateWithoutFavoritosInput, Prisma.PublicacionUncheckedCreateWithoutFavoritosInput>
+}
+
+export type PublicacionUpsertWithoutFavoritosInput = {
+  update: Prisma.XOR<Prisma.PublicacionUpdateWithoutFavoritosInput, Prisma.PublicacionUncheckedUpdateWithoutFavoritosInput>
+  create: Prisma.XOR<Prisma.PublicacionCreateWithoutFavoritosInput, Prisma.PublicacionUncheckedCreateWithoutFavoritosInput>
+  where?: Prisma.PublicacionWhereInput
+}
+
+export type PublicacionUpdateToOneWithWhereWithoutFavoritosInput = {
+  where?: Prisma.PublicacionWhereInput
+  data: Prisma.XOR<Prisma.PublicacionUpdateWithoutFavoritosInput, Prisma.PublicacionUncheckedUpdateWithoutFavoritosInput>
+}
+
+export type PublicacionUpdateWithoutFavoritosInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  titulo?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  precio?: Prisma.IntFieldUpdateOperationsInput | number
+  contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  estadoPublicacion?: Prisma.EstadoPublicacionUpdateOneRequiredWithoutPublicacionNestedInput
+  tipoVenta?: Prisma.TipoVentaUpdateOneRequiredWithoutPublicacionNestedInput
+  categoria?: Prisma.CategoriaUpdateOneRequiredWithoutPublicacionNestedInput
+  usuario?: Prisma.UsuarioUpdateOneRequiredWithoutPublicacionesNestedInput
+  sede?: Prisma.SedeUpdateOneRequiredWithoutPublicacionesNestedInput
+  comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
+  modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
+  imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+}
+
+export type PublicacionUncheckedUpdateWithoutFavoritosInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  titulo?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  precio?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_estado_publicacion?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_tipoventa?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionCreateManyCompradorInput = {
@@ -1536,6 +1806,8 @@ export type PublicacionUpdateWithoutCompradorInput = {
   sede?: Prisma.SedeUpdateOneRequiredWithoutPublicacionesNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutCompradorInput = {
@@ -1554,6 +1826,8 @@ export type PublicacionUncheckedUpdateWithoutCompradorInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateManyWithoutCompradorInput = {
@@ -1589,6 +1863,8 @@ export type PublicacionUpdateWithoutModificadoPorInput = {
   sede?: Prisma.SedeUpdateOneRequiredWithoutPublicacionesNestedInput
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutModificadoPorInput = {
@@ -1607,6 +1883,8 @@ export type PublicacionUncheckedUpdateWithoutModificadoPorInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateManyWithoutModificadoPorInput = {
@@ -1659,6 +1937,8 @@ export type PublicacionUpdateWithoutSedeInput = {
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutSedeInput = {
@@ -1677,6 +1957,8 @@ export type PublicacionUncheckedUpdateWithoutSedeInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateManyWithoutSedeInput = {
@@ -1729,6 +2011,8 @@ export type PublicacionUpdateWithoutUsuarioInput = {
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutUsuarioInput = {
@@ -1747,6 +2031,8 @@ export type PublicacionUncheckedUpdateWithoutUsuarioInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateManyWithoutUsuarioInput = {
@@ -1799,6 +2085,8 @@ export type PublicacionUpdateWithoutTipoVentaInput = {
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutTipoVentaInput = {
@@ -1817,6 +2105,8 @@ export type PublicacionUncheckedUpdateWithoutTipoVentaInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateManyWithoutTipoVentaInput = {
@@ -1869,6 +2159,8 @@ export type PublicacionUpdateWithoutCategoriaInput = {
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutCategoriaInput = {
@@ -1887,6 +2179,8 @@ export type PublicacionUncheckedUpdateWithoutCategoriaInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateManyWithoutCategoriaInput = {
@@ -1939,6 +2233,8 @@ export type PublicacionUpdateWithoutEstadoPublicacionInput = {
   comprador?: Prisma.CuentaUpdateOneWithoutPublicacionesCompradasNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutPublicacionesModificadasNestedInput
   imagenes?: Prisma.ImagenPublicacionUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateWithoutEstadoPublicacionInput = {
@@ -1957,6 +2253,8 @@ export type PublicacionUncheckedUpdateWithoutEstadoPublicacionInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenes?: Prisma.ImagenPublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  reportesPublicacion?: Prisma.ReportePublicacionUncheckedUpdateManyWithoutPublicacionNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutPublicacionNestedInput
 }
 
 export type PublicacionUncheckedUpdateManyWithoutEstadoPublicacionInput = {
@@ -1983,10 +2281,14 @@ export type PublicacionUncheckedUpdateManyWithoutEstadoPublicacionInput = {
 
 export type PublicacionCountOutputType = {
   imagenes: number
+  reportesPublicacion: number
+  favoritos: number
 }
 
 export type PublicacionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   imagenes?: boolean | PublicacionCountOutputTypeCountImagenesArgs
+  reportesPublicacion?: boolean | PublicacionCountOutputTypeCountReportesPublicacionArgs
+  favoritos?: boolean | PublicacionCountOutputTypeCountFavoritosArgs
 }
 
 /**
@@ -2004,6 +2306,20 @@ export type PublicacionCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
  */
 export type PublicacionCountOutputTypeCountImagenesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ImagenPublicacionWhereInput
+}
+
+/**
+ * PublicacionCountOutputType without action
+ */
+export type PublicacionCountOutputTypeCountReportesPublicacionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportePublicacionWhereInput
+}
+
+/**
+ * PublicacionCountOutputType without action
+ */
+export type PublicacionCountOutputTypeCountFavoritosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FavoritoWhereInput
 }
 
 
@@ -2031,6 +2347,8 @@ export type PublicacionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   comprador?: boolean | Prisma.Publicacion$compradorArgs<ExtArgs>
   modificadoPor?: boolean | Prisma.Publicacion$modificadoPorArgs<ExtArgs>
   imagenes?: boolean | Prisma.Publicacion$imagenesArgs<ExtArgs>
+  reportesPublicacion?: boolean | Prisma.Publicacion$reportesPublicacionArgs<ExtArgs>
+  favoritos?: boolean | Prisma.Publicacion$favoritosArgs<ExtArgs>
   _count?: boolean | Prisma.PublicacionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["publicacion"]>
 
@@ -2112,6 +2430,8 @@ export type PublicacionInclude<ExtArgs extends runtime.Types.Extensions.Internal
   comprador?: boolean | Prisma.Publicacion$compradorArgs<ExtArgs>
   modificadoPor?: boolean | Prisma.Publicacion$modificadoPorArgs<ExtArgs>
   imagenes?: boolean | Prisma.Publicacion$imagenesArgs<ExtArgs>
+  reportesPublicacion?: boolean | Prisma.Publicacion$reportesPublicacionArgs<ExtArgs>
+  favoritos?: boolean | Prisma.Publicacion$favoritosArgs<ExtArgs>
   _count?: boolean | Prisma.PublicacionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PublicacionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2144,6 +2464,8 @@ export type $PublicacionPayload<ExtArgs extends runtime.Types.Extensions.Interna
     comprador: Prisma.$CuentaPayload<ExtArgs> | null
     modificadoPor: Prisma.$CuentaPayload<ExtArgs> | null
     imagenes: Prisma.$ImagenPublicacionPayload<ExtArgs>[]
+    reportesPublicacion: Prisma.$ReportePublicacionPayload<ExtArgs>[]
+    favoritos: Prisma.$FavoritoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2563,6 +2885,8 @@ export interface Prisma__PublicacionClient<T, Null = never, ExtArgs extends runt
   comprador<T extends Prisma.Publicacion$compradorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Publicacion$compradorArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   modificadoPor<T extends Prisma.Publicacion$modificadoPorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Publicacion$modificadoPorArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   imagenes<T extends Prisma.Publicacion$imagenesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Publicacion$imagenesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImagenPublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportesPublicacion<T extends Prisma.Publicacion$reportesPublicacionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Publicacion$reportesPublicacionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportePublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  favoritos<T extends Prisma.Publicacion$favoritosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Publicacion$favoritosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3067,6 +3391,54 @@ export type Publicacion$imagenesArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ImagenPublicacionScalarFieldEnum | Prisma.ImagenPublicacionScalarFieldEnum[]
+}
+
+/**
+ * Publicacion.reportesPublicacion
+ */
+export type Publicacion$reportesPublicacionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReportePublicacion
+   */
+  select?: Prisma.ReportePublicacionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReportePublicacion
+   */
+  omit?: Prisma.ReportePublicacionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportePublicacionInclude<ExtArgs> | null
+  where?: Prisma.ReportePublicacionWhereInput
+  orderBy?: Prisma.ReportePublicacionOrderByWithRelationInput | Prisma.ReportePublicacionOrderByWithRelationInput[]
+  cursor?: Prisma.ReportePublicacionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportePublicacionScalarFieldEnum | Prisma.ReportePublicacionScalarFieldEnum[]
+}
+
+/**
+ * Publicacion.favoritos
+ */
+export type Publicacion$favoritosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Favorito
+   */
+  select?: Prisma.FavoritoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Favorito
+   */
+  omit?: Prisma.FavoritoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FavoritoInclude<ExtArgs> | null
+  where?: Prisma.FavoritoWhereInput
+  orderBy?: Prisma.FavoritoOrderByWithRelationInput | Prisma.FavoritoOrderByWithRelationInput[]
+  cursor?: Prisma.FavoritoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FavoritoScalarFieldEnum | Prisma.FavoritoScalarFieldEnum[]
 }
 
 /**

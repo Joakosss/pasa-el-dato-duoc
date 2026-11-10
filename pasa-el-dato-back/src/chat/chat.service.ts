@@ -9,6 +9,8 @@ import type { Model, PipelineStage } from 'mongoose';
 import { isValidObjectId, Types } from 'mongoose';
 import { decodeCursor, encodeCursor } from '../common/pagination/cursor.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { TipoNotificacionUsuario } from '../generated/prisma/client.js';
+import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 import { FiltroPalabrasBloqueadasService } from './moderacion/filtro-palabras-bloqueadas.service.js';
 import {
   Conversation,
@@ -25,6 +27,7 @@ type CursorConversaciones = {
 export class ChatService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly notificacionesService: NotificacionesService,
     private readonly filtroPalabrasBloqueadas: FiltroPalabrasBloqueadasService,
     @InjectModel(Conversation.name)
     private readonly conversationModel: Model<ConversationDocument>,
@@ -466,6 +469,22 @@ export class ChatService {
       { _id: conversacion._id },
       { $set: { ultimoMensajeEn: mensaje.enviadoEn } },
     );
+
+    const receptorCuentaId =
+      conversacion.vendedorCuentaId === entrada.cuentaId
+        ? conversacion.compradorCuentaId
+        : conversacion.vendedorCuentaId;
+
+    await this.notificacionesService.crearNotificacion({
+      cuentaId: receptorCuentaId,
+      tipo: TipoNotificacionUsuario.CHAT_NUEVO_MENSAJE,
+      mensaje: 'Tienes un nuevo mensaje en el chat.',
+      dataJson: {
+        conversacionId: String(conversacion._id),
+        mensajeId: String(mensaje._id),
+        publicacionId: conversacion.publicacionId,
+      },
+    });
 
     return mensaje;
   }

@@ -9,6 +9,36 @@
 * 🟢 You can import this file directly.
 */
 
+export const EstadoReportePublicacion = {
+  PENDIENTE: 'PENDIENTE',
+  EN_PROCESO: 'EN_PROCESO',
+  RESUELTO: 'RESUELTO',
+  DESCARTADO: 'DESCARTADO'
+} as const
+
+export type EstadoReportePublicacion = (typeof EstadoReportePublicacion)[keyof typeof EstadoReportePublicacion]
+
+
+export const ResolucionReportePublicacion = {
+  RETIRO_PUBLICACION: 'RETIRO_PUBLICACION',
+  ADVERTENCIA: 'ADVERTENCIA',
+  DESCARTE: 'DESCARTE'
+} as const
+
+export type ResolucionReportePublicacion = (typeof ResolucionReportePublicacion)[keyof typeof ResolucionReportePublicacion]
+
+
+export const TipoAuditoriaAdmin = {
+  TOMAR_REPORTE_PUBLICACION: 'TOMAR_REPORTE_PUBLICACION',
+  DESCARTAR_REPORTE_PUBLICACION: 'DESCARTAR_REPORTE_PUBLICACION',
+  REABRIR_REPORTE_PUBLICACION: 'REABRIR_REPORTE_PUBLICACION',
+  RETIRAR_PUBLICACION: 'RETIRAR_PUBLICACION',
+  ADVERTIR_VENDEDOR: 'ADVERTIR_VENDEDOR'
+} as const
+
+export type TipoAuditoriaAdmin = (typeof TipoAuditoriaAdmin)[keyof typeof TipoAuditoriaAdmin]
+
+
 export const EstadoBannerPublicidad = {
   PENDIENTE: 'PENDIENTE',
   APROBADO: 'APROBADO',
@@ -16,3 +46,33 @@ export const EstadoBannerPublicidad = {
 } as const
 
 export type EstadoBannerPublicidad = (typeof EstadoBannerPublicidad)[keyof typeof EstadoBannerPublicidad]
+
+
+export const TipoNotificacionUsuario = {
+  CHAT_NUEVO_MENSAJE: 'CHAT_NUEVO_MENSAJE',
+  FAVORITA_VENDIDA: 'FAVORITA_VENDIDA',
+  REPORTE_RESULTADO: 'REPORTE_RESULTADO',
+  ADMIN_ADVERTENCIA: 'ADMIN_ADVERTENCIA',
+  ADMIN_AVISO: 'ADMIN_AVISO'
+} as const
+
+export type TipoNotificacionUsuario = (typeof TipoNotificacionUsuario)[keyof typeof TipoNotificacionUsuario]
+
+
+export const EstadoReporteUsuario = {
+  PENDIENTE: 'PENDIENTE',
+  EN_PROCESO: 'EN_PROCESO',
+  RESUELTO: 'RESUELTO',
+  DESCARTADO: 'DESCARTADO'
+} as const
+
+export type EstadoReporteUsuario = (typeof EstadoReporteUsuario)[keyof typeof EstadoReporteUsuario]
+
+
+export const ResolucionReporteUsuario = {
+  BLOQUEO: 'BLOQUEO',
+  ADVERTENCIA: 'ADVERTENCIA',
+  DESCARTE: 'DESCARTE'
+} as const
+
+export type ResolucionReporteUsuario = (typeof ResolucionReporteUsuario)[keyof typeof ResolucionReporteUsuario]
