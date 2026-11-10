@@ -4,7 +4,7 @@ class EstadoPublicacionDto {
   @ApiProperty({ example: 3 })
   id: number;
 
-  @ApiProperty({ example: 'Vendida' })
+  @ApiProperty({ example: 'Vendido' })
   descripcion: string;
 }
 
@@ -21,6 +21,9 @@ class ParticipanteTransaccionDto {
 export class CierreVentaRespuestaDto {
   @ApiProperty({ example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479' })
   id: string;
+
+  @ApiProperty({ example: true })
+  calificacionActivada: boolean;
 
   @ApiProperty({ type: EstadoPublicacionDto })
   estado: EstadoPublicacionDto;

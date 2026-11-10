@@ -19,6 +19,12 @@ export interface PerfilRespuesta {
   };
 }
 
+export interface ReputacionPerfil {
+  usuarioId: string;
+  promedio: number | null;
+  total: number;
+}
+
 export interface ActualizarPerfilRequest {
   pNombre?: string;
   sNombre?: string | null;
@@ -34,6 +40,16 @@ interface PerfilOpciones {
 
 export function obtenerPerfil({ accessToken }: PerfilOpciones): Promise<PerfilRespuesta> {
   return apiClient.get<PerfilRespuesta>('/perfil/me', { accessToken });
+}
+
+export function obtenerReputacionPerfil(
+  idCuenta: string,
+  accessToken: string,
+): Promise<ReputacionPerfil> {
+  return apiClient.get<ReputacionPerfil>(
+    `/perfil/${encodeURIComponent(idCuenta)}/reputacion`,
+    { accessToken },
+  );
 }
 
 export function actualizarPerfil(

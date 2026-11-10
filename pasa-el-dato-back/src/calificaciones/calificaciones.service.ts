@@ -51,7 +51,7 @@ export class CalificacionesService {
     }
 
     // Precondición: transacción finalizada = Vendida + comprador registrado
-    if (publicacion.estadoPublicacion.descripcion !== 'Vendida') {
+    if (publicacion.estadoPublicacion.descripcion !== 'Vendido') {
       throw new NotFoundException('No hay transacción finalizada para calificar');
     }
     if (!publicacion.fk_user_comprador) {

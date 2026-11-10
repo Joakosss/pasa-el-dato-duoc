@@ -708,7 +708,7 @@ export class PublicacionService {
   }
 
   // HU-COM-01-BE02/BE03/BE04/BE05: cierre de venta atómico con registro de
-  // comprador. Única vía válida para que una publicación quede "Vendida".
+  // comprador. Única vía válida para que una publicación quede "Vendido".
   async cerrarVenta(entrada: {
     idPublicacion: string;
     vendedorId: string;
@@ -746,7 +746,7 @@ export class PublicacionService {
     // HU-COM-01-BE05: idempotencia. Si ya está cerrada, se devuelve el
     // registro existente sin alterar el comprador registrado.
     if (
-      publicacion.estadoPublicacion.descripcion === 'Vendida' &&
+      publicacion.estadoPublicacion.descripcion === 'Vendido' &&
       publicacion.fk_user_comprador !== null
     ) {
       return this.construirRespuestaTransaccion(publicacion.id);
@@ -775,12 +775,29 @@ export class PublicacionService {
     }
 
     const estadoVendida = await this.prisma.estadoPublicacion.findFirst({
-      where: { descripcion: 'Vendida' },
+      where: { descripcion: 'Vendido' },
       select: { id: true },
     });
 
     if (estadoVendida === null) {
       throw new InternalServerErrorException('Catálogo de estados incompleto');
+    }
+
+    // Reparación idempotente: versiones anteriores del flujo mobile podían
+    // cambiar el estado luego de registrar el comprador. La transacción ya
+    // cerrada conserva su comprador y se restituye el estado canónico.
+    if (publicacion.fk_user_comprador !== null) {
+      if (publicacion.estadoPublicacion.descripcion !== 'Vendido') {
+        await this.prisma.publicacion.update({
+          where: { id: publicacion.id },
+          data: {
+            fk_estado_publicacion: estadoVendida.id,
+            fechaModificacion: new Date(),
+          },
+        });
+      }
+
+      return this.construirRespuestaTransaccion(publicacion.id);
     }
 
     // HU-COM-01-BE05: updateMany con condición fk_user_comprador: null actúa
@@ -833,7 +850,7 @@ export class PublicacionService {
     if (
       publicacion === null ||
       publicacion.eliminado ||
-      publicacion.estadoPublicacion.descripcion !== 'Vendida' ||
+      publicacion.estadoPublicacion.descripcion !== 'Vendido' ||
       publicacion.fk_user_comprador === null
     ) {
       throw new NotFoundException('Publicación no encontrada');
@@ -915,8 +932,8 @@ export class PublicacionService {
       throw new ForbiddenException('No tiene permisos para activar la calificación');
     }
 
-    // Precondición: transacción finalizada = Vendida + comprador registrado
-    if (publicacion.estadoPublicacion.descripcion !== 'Vendida') {
+    // Precondición: transacción finalizada = Vendido + comprador registrado
+    if (publicacion.estadoPublicacion.descripcion !== 'Vendido') {
       // Mantener compatibilidad con mensajes existentes de CAL-01
       throw new NotFoundException('No hay transacción finalizada para activar calificación');
     }
@@ -990,6 +1007,7 @@ export class PublicacionService {
       where: { id: idPublicacion },
       select: {
         id: true,
+        calificacion_activada: true,
         estadoPublicacion: { select: { id: true, descripcion: true } },
         usuario: {
           select: {
@@ -1024,6 +1042,7 @@ export class PublicacionService {
 
     return {
       id: publicacion.id,
+      calificacionActivada: publicacion.calificacion_activada,
       estado: {
         id: publicacion.estadoPublicacion.id,
         descripcion: publicacion.estadoPublicacion.descripcion,

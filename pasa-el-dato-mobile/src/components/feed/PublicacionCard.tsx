@@ -4,7 +4,8 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { resolverUrlImagen, type PublicacionPublica } from '@/lib/api/publicaciones';
 import type { PublicacionFeed } from '@/lib/feed/publicaciones-placeholder';
-import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
+import { useFavorito } from '@/hooks/use-favorito';
+import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
 function esPublicacionReal(
@@ -31,11 +32,10 @@ export function PublicacionCard({
   const precio = publicacionReal
     ? `$${new Intl.NumberFormat('es-CL').format(publicacion.precio)}`
     : publicacion.precio;
-  const esFavoritoMomentaneo = useFavoritosMomentaneoStore((estado) =>
-    estado.esFavoritoMomentaneo(publicacion.id),
-  );
-  const alternarFavoritoMomentaneo = useFavoritosMomentaneoStore(
-    (estado) => estado.alternarFavoritoMomentaneo,
+  const accessToken = useSesionStore(selectAccessToken);
+  const { esFavorito, actualizando, alternar } = useFavorito(
+    publicacionReal ? publicacion.id : undefined,
+    accessToken,
   );
 
   return (
@@ -65,19 +65,20 @@ export function PublicacionCard({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
-            esFavoritoMomentaneo ? 'Quitar de favoritos' : 'Agregar a favoritos'
+            esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
           }
-          accessibilityState={{ selected: esFavoritoMomentaneo }}
+          accessibilityState={{ disabled: !publicacionReal || actualizando, selected: esFavorito }}
+          disabled={!publicacionReal || actualizando}
           hitSlop={8}
           onPress={(evento) => {
             evento.stopPropagation();
-            alternarFavoritoMomentaneo(publicacion.id);
+            void alternar();
           }}
           style={styles.botonFavorito}>
           <MaterialCommunityIcons
-            name={esFavoritoMomentaneo ? 'heart' : 'heart-outline'}
+            name={esFavorito ? 'heart' : 'heart-outline'}
             size={19}
-            color={esFavoritoMomentaneo ? colors.error : colors.navy}
+            color={esFavorito ? colors.error : colors.navy}
           />
         </Pressable>
       </View>

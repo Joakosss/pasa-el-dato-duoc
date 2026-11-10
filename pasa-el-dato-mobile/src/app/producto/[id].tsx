@@ -3,7 +3,7 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { GaleriaProducto } from '@/components/producto/GaleriaProducto';
+import { useFavorito } from '@/hooks/use-favorito';
 import { ApiError } from '@/lib/api';
 import {
   eliminarPublicacion,
@@ -21,7 +22,6 @@ import {
   type PublicacionDetalle,
 } from '@/lib/api/publicaciones';
 import { obtenerPublicacionDemostracionMomentaneo } from '@/lib/feed/publicaciones-demostracion-momentaneo';
-import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -32,15 +32,16 @@ function precioClp(precio: number): string {
 export default function DetalleProductoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const accessToken = useSesionStore(selectAccessToken);
-  const esFavoritoMomentaneo = useFavoritosMomentaneoStore((estado) =>
-    id ? estado.esFavoritoMomentaneo(id) : false,
-  );
-  const alternarFavoritoMomentaneo = useFavoritosMomentaneoStore(
-    (estado) => estado.alternarFavoritoMomentaneo,
-  );
+  const { esFavorito, actualizando: actualizandoFavorito, alternar: alternarFavorito } =
+    useFavorito(
+      id && !obtenerPublicacionDemostracionMomentaneo(id) ? id : undefined,
+      accessToken,
+    );
   const [publicacion, setPublicacion] = useState<PublicacionDetalle | null>(null);
   const [esPropietario, setEsPropietario] = useState(false);
   const [eliminando, setEliminando] = useState(false);
+  const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
+  const [errorEliminacion, setErrorEliminacion] = useState<string | undefined>();
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | undefined>();
 
@@ -98,33 +99,28 @@ export default function DetalleProductoScreen() {
     }, [accessToken, id]),
   );
 
-  const confirmarEliminacion = () => {
+  const abrirConfirmacionEliminacion = () => {
+    setErrorEliminacion(undefined);
+    setModalEliminarAbierto(true);
+  };
+
+  const confirmarEliminacion = async () => {
     if (!id || !accessToken || eliminando) return;
 
-    Alert.alert(
-      'Eliminar publicación',
-      'Esta acción eliminará la publicación y sus imágenes. No podrás deshacerla.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: () => {
-            void (async () => {
-              setEliminando(true);
-              try {
-                await eliminarPublicacion(id, accessToken);
-                router.replace('/inicio');
-              } catch (causa: unknown) {
-                Alert.alert('No se pudo eliminar', causa instanceof ApiError ? causa.message : 'Reintenta más tarde.');
-              } finally {
-                setEliminando(false);
-              }
-            })();
-          },
-        },
-      ],
-    );
+    setEliminando(true);
+    setErrorEliminacion(undefined);
+
+    try {
+      await eliminarPublicacion(id, accessToken);
+      setModalEliminarAbierto(false);
+      router.replace('/inicio');
+    } catch (causa: unknown) {
+      setErrorEliminacion(
+        causa instanceof ApiError ? causa.message : 'No pudimos eliminar la publicación. Reintenta más tarde.',
+      );
+    } finally {
+      setEliminando(false);
+    }
   };
 
   return (
@@ -159,15 +155,19 @@ export default function DetalleProductoScreen() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={
-                esFavoritoMomentaneo ? 'Quitar de favoritos' : 'Agregar a favoritos'
+                esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
               }
-              accessibilityState={{ selected: esFavoritoMomentaneo }}
-              onPress={() => alternarFavoritoMomentaneo(publicacion.id)}
+              accessibilityState={{
+                disabled: actualizandoFavorito,
+                selected: esFavorito,
+              }}
+              disabled={actualizandoFavorito}
+              onPress={() => void alternarFavorito()}
               style={styles.botonFavorito}>
               <MaterialCommunityIcons
-                name={esFavoritoMomentaneo ? 'heart' : 'heart-outline'}
+                name={esFavorito ? 'heart' : 'heart-outline'}
                 size={23}
-                color={esFavoritoMomentaneo ? colors.error : colors.navy}
+                color={esFavorito ? colors.error : colors.navy}
               />
             </Pressable>
           </View>
@@ -213,7 +213,7 @@ export default function DetalleProductoScreen() {
                 accessibilityRole="button"
                 accessibilityState={{ disabled: eliminando, busy: eliminando }}
                 disabled={eliminando}
-                onPress={confirmarEliminacion}
+                onPress={abrirConfirmacionEliminacion}
                 style={({ pressed }) => [
                   styles.botonEliminar,
                   eliminando && styles.deshabilitado,
@@ -280,6 +280,50 @@ export default function DetalleProductoScreen() {
           )}
         </ScrollView>
       )}
+
+      <Modal
+        visible={modalEliminarAbierto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => !eliminando && setModalEliminarAbierto(false)}>
+        <View style={styles.overlay}>
+          <View style={styles.modalEliminar}>
+            <View style={styles.iconoEliminar}>
+              <MaterialCommunityIcons name="trash-can-outline" size={32} color={colors.error} />
+            </View>
+            <Text style={styles.modalTitulo}>¿Eliminar publicación?</Text>
+            <Text style={styles.modalTexto}>
+              Eliminarás {'"'}{publicacion?.titulo ?? 'esta publicación'}{'"'} y sus imágenes. Esta acción no se puede deshacer.
+            </Text>
+            {errorEliminacion ? (
+              <Text accessibilityRole="alert" style={styles.modalError}>
+                {errorEliminacion}
+              </Text>
+            ) : null}
+            <View style={styles.accionesModalEliminar}>
+              <Pressable
+                accessibilityRole="button"
+                disabled={eliminando}
+                onPress={() => setModalEliminarAbierto(false)}
+                style={styles.botonCancelarModal}>
+                <Text style={styles.botonCancelarModalTexto}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ busy: eliminando, disabled: eliminando }}
+                disabled={eliminando}
+                onPress={() => void confirmarEliminacion()}
+                style={[styles.botonConfirmarEliminar, eliminando && styles.deshabilitado]}>
+                {eliminando ? (
+                  <ActivityIndicator color={colors.card} size="small" />
+                ) : (
+                  <Text style={styles.botonConfirmarEliminarTexto}>Eliminar</Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -517,5 +561,54 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.padMd,
   },
   vacioBotonTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  overlay: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,43,73,0.6)',
+    flex: 1,
+    justifyContent: 'center',
+    padding: spacing.padLg,
+  },
+  modalEliminar: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    maxWidth: 380,
+    padding: spacing.padLg,
+    width: '100%',
+  },
+  iconoEliminar: {
+    alignItems: 'center',
+    backgroundColor: '#fff1f2',
+    borderRadius: 30,
+    height: 60,
+    justifyContent: 'center',
+    width: 60,
+  },
+  modalTitulo: { color: colors.navy, fontSize: 19, fontWeight: '800', textAlign: 'center' },
+  modalTexto: { color: colors.muted, fontSize: 13, lineHeight: 19, textAlign: 'center' },
+  modalError: { alignSelf: 'stretch', color: colors.error, fontSize: 12, lineHeight: 17, textAlign: 'center' },
+  accionesModalEliminar: { flexDirection: 'row', gap: spacing.padSm, marginTop: spacing.padSm, width: '100%' },
+  botonCancelarModal: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonCancelarModalTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  botonConfirmarEliminar: {
+    alignItems: 'center',
+    backgroundColor: colors.error,
+    borderRadius: spacing.radiusMd,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonConfirmarEliminarTexto: { color: colors.card, fontSize: 14, fontWeight: '800' },
   pressed: { opacity: 0.9 },
 });

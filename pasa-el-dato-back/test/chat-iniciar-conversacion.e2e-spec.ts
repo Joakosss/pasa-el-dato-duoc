@@ -82,8 +82,8 @@ describe('Chat - iniciar conversación desde publicación (e2e)', () => {
       asegurarEstado('Pausada'),
     ]);
 
-    // Vendida se requiere para un CA; lo aseguramos también para no depender del seed.
-    await asegurarEstado('Vendida');
+    // Vendido se requiere para un CA; lo aseguramos también para no depender del seed.
+    await asegurarEstado('Vendido');
 
     // Registrar vendedor
     await request(app.getHttpServer())
@@ -256,15 +256,15 @@ describe('Chat - iniciar conversación desde publicación (e2e)', () => {
     expect(respuesta.body.message).toBe('Publicación no disponible para contacto');
   });
 
-  it('201 permite contactar si la publicación está Vendida', async () => {
+  it('201 permite contactar si la publicación está Vendido', async () => {
     const estadoVendido = await prisma.estadoPublicacion.findFirst({
-      where: { descripcion: 'Vendida' },
+      where: { descripcion: 'Vendido' },
       select: { id: true },
     });
 
     if (!estadoVendido) {
       throw new Error(
-        'Falta estadoPublicacion "Vendida". Ejecuta seed o agrega el estado antes del test.',
+        'Falta estadoPublicacion "Vendido". Ejecuta seed o agrega el estado antes del test.',
       );
     }
 

@@ -15,33 +15,42 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
 import { ApiError } from '@/lib/api';
 import {
-  listarPublicaciones,
-  type PublicacionPublica,
-} from '@/lib/api/publicaciones';
-import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
+  listarFavoritos,
+  type FavoritoPublicacion,
+} from '@/lib/api/favoritos';
+import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
 interface FilaGrilla {
   clave: string;
-  publicacion: PublicacionPublica | null;
+  publicacion: FavoritoPublicacion | null;
 }
 
 export default function FavoritosScreen() {
-  const idsFavoritosMomentaneo = useFavoritosMomentaneoStore(
-    (estado) => estado.idsPublicacionesFavoritasMomentaneo,
-  );
-  const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
+  const accessToken = useSesionStore(selectAccessToken);
+  const [favoritos, setFavoritos] = useState<FavoritoPublicacion[]>([]);
+  const [totalFavoritos, setTotalFavoritos] = useState(0);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
   const cargarFavoritos = useCallback(async (esActualizacion = false) => {
+    if (!accessToken) {
+      setFavoritos([]);
+      setTotalFavoritos(0);
+      setError('Inicia sesión para ver tus favoritos.');
+      setCargando(false);
+      return;
+    }
+
     if (esActualizacion) setActualizando(true);
     else setCargando(true);
 
     setError(undefined);
     try {
-      setPublicaciones(await listarPublicaciones());
+      const respuesta = await listarFavoritos(accessToken);
+      setFavoritos(respuesta.items);
+      setTotalFavoritos(respuesta.total);
     } catch (causa: unknown) {
       setError(
         causa instanceof ApiError
@@ -52,20 +61,12 @@ export default function FavoritosScreen() {
       setCargando(false);
       setActualizando(false);
     }
-  }, []);
+  }, [accessToken]);
 
   useFocusEffect(
     useCallback(() => {
       void cargarFavoritos();
     }, [cargarFavoritos]),
-  );
-
-  const favoritos = useMemo(
-    () =>
-      publicaciones.filter((publicacion) =>
-        idsFavoritosMomentaneo.includes(publicacion.id),
-      ),
-    [idsFavoritosMomentaneo, publicaciones],
   );
 
   const filas = useMemo(() => {
@@ -86,7 +87,7 @@ export default function FavoritosScreen() {
         <View style={styles.barraTexto}>
           <Text style={styles.titulo}>Mis favoritos</Text>
           <Text style={styles.subtitulo}>
-            {favoritos.length} {favoritos.length === 1 ? 'publicación guardada' : 'publicaciones guardadas'}
+            {totalFavoritos} {totalFavoritos === 1 ? 'publicación guardada' : 'publicaciones guardadas'}
           </Text>
         </View>
       </View>

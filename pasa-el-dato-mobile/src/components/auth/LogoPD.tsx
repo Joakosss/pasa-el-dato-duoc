@@ -1,29 +1,32 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
-import { colors, spacing } from '@/theme';
+import { spacing } from '@/theme';
 
-// Logo PD: espejo del bloque web h-12 w-12 rounded-xl bg-navy + text-gold.
+const TAMANO_LOGO_AUTH = Math.round((spacing.logoSize * 2) / 3 * 2);
+
 export function LogoPD() {
   return (
     <View style={styles.box}>
-      <Text style={styles.text}>PD</Text>
+      <Image
+        accessibilityLabel="Logo Pasa el Dato Duoc"
+        source={require('../../../assets/images/logo-ui.png')}
+        style={styles.image}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   box: {
-    width: spacing.logoSize,
-    height: spacing.logoSize,
-    borderRadius: spacing.radiusMd,
-    backgroundColor: colors.navy,
+    width: TAMANO_LOGO_AUTH,
+    height: TAMANO_LOGO_AUTH,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
   },
-  text: {
-    color: colors.gold,
-    fontWeight: '800',
-    fontSize: 18,
+  image: {
+    height: '100%',
+    resizeMode: 'contain',
+    width: '100%',
   },
 });

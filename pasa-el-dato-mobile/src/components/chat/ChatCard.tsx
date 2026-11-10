@@ -33,11 +33,11 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
   const hayNoLeidos = conversacion.noLeidosCount > 0;
   const noDisponible = conversacion.publicacion.estado === 'NO_DISPONIBLE';
   const ultimoMensaje = conversacion.ultimoMensaje?.texto ?? 'Aún no hay mensajes';
-  const ventaCerrada = conversacion.publicacion.estadoVenta === 'Vendida';
+  const ventaCerrada = conversacion.publicacion.estadoVenta === 'Vendido';
   const etiquetaCierre = ventaCerrada
     ? conversacion.rolEnTransaccion === 'vendedor'
-      ? 'Vendida'
-      : 'Comprada'
+      ? 'Venta realizada'
+      : 'Compra realizada'
     : null;
 
   return (

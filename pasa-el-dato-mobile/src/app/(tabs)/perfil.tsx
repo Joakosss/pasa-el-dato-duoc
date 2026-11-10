@@ -3,6 +3,7 @@ import { router, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -20,21 +21,20 @@ import { type SedeCatalogo, listarSedes } from '@/lib/api/catalogos';
 import {
   actualizarPerfil,
   obtenerPerfil,
+  obtenerReputacionPerfil,
   type ActualizarPerfilRequest,
   type PerfilRespuesta,
+  type ReputacionPerfil,
 } from '@/lib/api/perfil';
 import {
   formatearTelefonoChile,
   normalizarTelefonoChile,
   validarTelefonoChile,
 } from '@/lib/validators/telefono';
-import { useFavoritosMomentaneoStore } from '@/stores/favoritos-momentaneo-store';
-import {
-  obtenerPromedioEvaluacionesMomentaneo,
-  useEvaluacionesMomentaneoStore,
-} from '@/stores/evaluaciones-momentaneo-store';
+import { listarFavoritos } from '@/lib/api/favoritos';
 import {
   selectAccessToken,
+  selectSesion,
   useSesionStore,
 } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
@@ -109,13 +109,11 @@ function ItemInformativo({
 
 export default function PerfilScreen() {
   const accessToken = useSesionStore(selectAccessToken);
-  const cantidadFavoritosMomentaneo = useFavoritosMomentaneoStore(
-    (estado) => estado.idsPublicacionesFavoritasMomentaneo.length,
-  );
-  const evaluacionesMomentaneo = useEvaluacionesMomentaneoStore(
-    (estado) => estado.evaluacionesMomentaneo,
-  );
+  const sesion = useSesionStore(selectSesion);
+  const [cantidadFavoritos, setCantidadFavoritos] = useState(0);
   const [perfil, setPerfil] = useState<PerfilRespuesta | null>(null);
+  const [reputacion, setReputacion] = useState<ReputacionPerfil | null>(null);
+  const [errorReputacion, setErrorReputacion] = useState<string | undefined>();
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState<string | undefined>();
   const [modalEdicionAbierto, setModalEdicionAbierto] = useState(false);
@@ -167,7 +165,18 @@ export default function PerfilScreen() {
     setErrorCarga(undefined);
 
     try {
-      setPerfil(await obtenerPerfil({ accessToken }));
+      const perfilObtenido = await obtenerPerfil({ accessToken });
+      setPerfil(perfilObtenido);
+
+      if (sesion?.idCuenta) {
+        try {
+          setReputacion(await obtenerReputacionPerfil(sesion.idCuenta, accessToken));
+          setErrorReputacion(undefined);
+        } catch {
+          setReputacion(null);
+          setErrorReputacion('No pudimos cargar tu reputación.');
+        }
+      }
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 401) {
         void cerrarSesion();
@@ -199,6 +208,17 @@ export default function PerfilScreen() {
     }, 0);
 
     return () => clearTimeout(solicitud);
+  }, [accessToken, sesion?.idCuenta]);
+
+  useEffect(() => {
+    if (!accessToken) {
+      setCantidadFavoritos(0);
+      return;
+    }
+
+    void listarFavoritos(accessToken)
+      .then((respuesta) => setCantidadFavoritos(respuesta.total))
+      .catch(() => setCantidadFavoritos(0));
   }, [accessToken]);
 
   const abrirEdicion = () => {
@@ -316,15 +336,6 @@ export default function PerfilScreen() {
 
   const sedeSeleccionada =
     sedes.find((sede) => sede.id === formulario.sedeId)?.nombre ?? perfil?.sede.nombre;
-  const promedioEvaluacionesMomentaneo =
-    obtenerPromedioEvaluacionesMomentaneo(evaluacionesMomentaneo);
-  const evaluacionesComoVendedorMomentaneo = evaluacionesMomentaneo.filter(
-    (evaluacion) => evaluacion.rol === 'vendedor',
-  ).length;
-  const evaluacionesComoCompradorMomentaneo = evaluacionesMomentaneo.filter(
-    (evaluacion) => evaluacion.rol === 'comprador',
-  ).length;
-
   if (cargando) {
     return (
       <SafeAreaView style={styles.estadoPantalla}>
@@ -354,7 +365,15 @@ export default function PerfilScreen() {
       <ScrollView contentContainerStyle={styles.contenido} showsVerticalScrollIndicator={false}>
         <View style={styles.encabezado}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarTexto}>{iniciales(perfil) || 'PD'}</Text>
+            {iniciales(perfil) ? (
+              <Text style={styles.avatarTexto}>{iniciales(perfil)}</Text>
+            ) : (
+              <Image
+                accessibilityLabel="Logo Pasa el Dato Duoc"
+                source={require('../../../assets/images/logo-ui.png')}
+                style={styles.avatarLogo}
+              />
+            )}
           </View>
           <Text style={styles.nombre}>{nombreCompleto(perfil)}</Text>
           <View style={styles.badgeRol}>
@@ -369,7 +388,7 @@ export default function PerfilScreen() {
           </View>
         ) : null}
 
-        <View style={styles.tarjetaReputacionMomentaneo}>
+        <View style={styles.tarjetaReputacion}>
           <View style={styles.filaReputacionTitulo}>
             <Text style={styles.tituloSeccion}>Mi reputación</Text>
             <View style={styles.iconoReputacion}>
@@ -377,28 +396,23 @@ export default function PerfilScreen() {
             </View>
           </View>
           <Text style={styles.reputacionAyuda}>
-            Resumen visual de evaluaciones realizadas en esta sesión.
+            Resumen de las evaluaciones que has recibido.
           </Text>
-          {promedioEvaluacionesMomentaneo === null ? (
+          {errorReputacion ? (
+            <Text style={styles.reputacionVacia}>{errorReputacion}</Text>
+          ) : reputacion?.promedio === null || !reputacion ? (
             <Text style={styles.reputacionVacia}>
-              Aún no tienes evaluaciones registradas.
+              Aún no tienes evaluaciones recibidas.
             </Text>
           ) : (
             <>
               <View style={styles.filaPromedio}>
-                <EstrellasMomentaneo
-                  valor={Math.round(promedioEvaluacionesMomentaneo)}
-                  tamano={22}
-                />
-                <Text style={styles.promedioTexto}>
-                  {promedioEvaluacionesMomentaneo.toFixed(1)} / 5
-                </Text>
+                <EstrellasMomentaneo valor={Math.round(reputacion.promedio)} tamano={22} />
+                <Text style={styles.promedioTexto}>{reputacion.promedio.toFixed(1)} / 5</Text>
               </View>
               <Text style={styles.reputacionDetalle}>
-                {evaluacionesMomentaneo.length}{' '}
-                {evaluacionesMomentaneo.length === 1 ? 'evaluación' : 'evaluaciones'} ·{' '}
-                {evaluacionesComoVendedorMomentaneo} como vendedor ·{' '}
-                {evaluacionesComoCompradorMomentaneo} como comprador
+                {reputacion.total}{' '}
+                {reputacion.total === 1 ? 'evaluación recibida' : 'evaluaciones recibidas'}
               </Text>
             </>
           )}
@@ -432,10 +446,10 @@ export default function PerfilScreen() {
           <View style={styles.favoritosTexto}>
             <Text style={styles.favoritosTitulo}>Mis favoritos</Text>
             <Text style={styles.favoritosSubtitulo}>
-              {cantidadFavoritosMomentaneo === 0
+              {cantidadFavoritos === 0
                 ? 'Guarda publicaciones para verlas aquí.'
-                : `${cantidadFavoritosMomentaneo} ${
-                    cantidadFavoritosMomentaneo === 1
+                : `${cantidadFavoritos} ${
+                    cantidadFavoritos === 1
                       ? 'publicación guardada'
                       : 'publicaciones guardadas'
                   }`}
@@ -773,6 +787,7 @@ const styles = StyleSheet.create({
     width: 88,
   },
   avatarTexto: { color: colors.gold, fontSize: 29, fontWeight: '800' },
+  avatarLogo: { height: '82%', resizeMode: 'contain', width: '82%' },
   nombre: { color: colors.navy, fontSize: 23, fontWeight: '700', textAlign: 'center' },
   badgeRol: {
     backgroundColor: colors.gold,
@@ -781,7 +796,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   badgeRolTexto: { color: colors.navy, fontSize: 13, fontWeight: '700' },
-  tarjetaReputacionMomentaneo: {
+  tarjetaReputacion: {
     backgroundColor: '#fff8dc',
     borderColor: colors.gold,
     borderRadius: spacing.radiusLg,

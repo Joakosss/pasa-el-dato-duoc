@@ -194,7 +194,7 @@ describe('HU-COM-01 cierre de venta con registro de comprador (e2e)', () => {
 
     expect(respuesta.body).toMatchObject({
       id: idPublicacion,
-      estado: { descripcion: 'Vendida' },
+      estado: { descripcion: 'Vendido' },
       vendedor: { id: vendedor.idCuenta },
       comprador: { id: comprador.idCuenta },
     });
@@ -208,7 +208,7 @@ describe('HU-COM-01 cierre de venta con registro de comprador (e2e)', () => {
     });
 
     expect(publicacionDb?.fk_user_comprador).toBe(comprador.idCuenta);
-    expect(publicacionDb?.estadoPublicacion.descripcion).toBe('Vendida');
+    expect(publicacionDb?.estadoPublicacion.descripcion).toBe('Vendido');
   });
 
   it('C2: responde 401 sin autenticacion', async () => {
