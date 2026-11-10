@@ -3,6 +3,7 @@ import { apiClient } from '@/lib/api';
 export interface ConversacionPublicacion {
   id: string;
   estado: 'VISIBLE' | 'NO_DISPONIBLE';
+  estadoVenta?: string;
   titulo?: string;
 }
 

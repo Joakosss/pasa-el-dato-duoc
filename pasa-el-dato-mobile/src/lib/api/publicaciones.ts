@@ -167,6 +167,31 @@ export function crearPublicacion(
   });
 }
 
+export interface CierreVentaRespuesta {
+  id: string;
+  estado: EstadoPublicacionApi;
+  vendedor: {
+    id: string;
+    nombre: string;
+  };
+  comprador: {
+    id: string;
+    nombre: string;
+  };
+}
+
+export function cerrarVentaPublicacion(
+  id: string,
+  compradorId: string,
+  accessToken: string,
+): Promise<CierreVentaRespuesta> {
+  return apiClient.post<CierreVentaRespuesta>(
+    `/publicaciones/${encodeURIComponent(id)}/cierre-venta`,
+    { compradorId },
+    { accessToken },
+  );
+}
+
 export type EstadoPublicacionAsignable = 'En curso' | 'Pausado' | 'Vendido';
 
 export function cambiarEstadoPublicacion(

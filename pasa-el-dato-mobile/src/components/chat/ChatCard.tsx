@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -32,6 +33,12 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
   const hayNoLeidos = conversacion.noLeidosCount > 0;
   const noDisponible = conversacion.publicacion.estado === 'NO_DISPONIBLE';
   const ultimoMensaje = conversacion.ultimoMensaje?.texto ?? 'Aún no hay mensajes';
+  const ventaCerrada = conversacion.publicacion.estadoVenta === 'Vendida';
+  const etiquetaCierre = ventaCerrada
+    ? conversacion.rolEnTransaccion === 'vendedor'
+      ? 'Vendida'
+      : 'Comprada'
+    : null;
 
   return (
     <Pressable
@@ -67,6 +74,13 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
           </Text>
           <Text style={styles.fecha}>{formatearFecha(conversacion.actividadEn)}</Text>
         </View>
+
+        {etiquetaCierre ? (
+          <View style={styles.estadoCierre}>
+            <MaterialCommunityIcons name="check-decagram-outline" size={13} color={colors.gold} />
+            <Text style={styles.estadoCierreTexto}>{etiquetaCierre}</Text>
+          </View>
+        ) : null}
 
         <View style={styles.filaContraparte}>
           <View
@@ -146,6 +160,18 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     fontSize: 12,
   },
+  estadoCierre: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: colors.navy,
+    borderRadius: 999,
+    flexDirection: 'row',
+    gap: 4,
+    marginTop: 1,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+  },
+  estadoCierreTexto: { color: colors.card, fontSize: 10, fontWeight: '800' },
   filaContraparte: {
     alignItems: 'center',
     flexDirection: 'row',

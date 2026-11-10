@@ -1,10 +1,11 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as Location from 'expo-location';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Modal,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -19,13 +20,18 @@ import { colors, spacing } from '@/theme';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
 import { ApiError } from '@/lib/api';
 import { listarCategorias, type CategoriaCatalogo } from '@/lib/api/catalogos';
+import { listarNotificaciones } from '@/lib/api/notificaciones';
 import {
   listarPublicaciones,
   listarPublicacionesCercanas,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
 import { PUBLICACIONES_DEMOSTRACION_MOMENTANEO } from '@/lib/feed/publicaciones-demostracion-momentaneo';
-import { selectSesion, useSesionStore } from '@/stores/sesion-store';
+import {
+  selectAccessToken,
+  selectSesion,
+  useSesionStore,
+} from '@/stores/sesion-store';
 
 // Aviso institucional: mismo contenido y destino que el bloque web.
 const ANUNCIO = {
@@ -39,6 +45,7 @@ const ANUNCIO = {
 // institucional; luego categorías y la grilla de publicaciones.
 export default function InicioScreen() {
   const sesion = useSesionStore(selectSesion);
+  const accessToken = useSesionStore(selectAccessToken);
   const nombre = sesion?.nombreCompleto.trim().split(/\s+/)[0] ?? 'estudiante';
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
   const [categorias, setCategorias] = useState<CategoriaCatalogo[]>([]);
@@ -46,6 +53,7 @@ export default function InicioScreen() {
   const [actualizando, setActualizando] = useState(false);
   const [cargandoCercanas, setCargandoCercanas] = useState(false);
   const [mostrandoCercanas, setMostrandoCercanas] = useState(false);
+  const [modalUbicacionAbierto, setModalUbicacionAbierto] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const ubicacionActualRef = useRef<{ latitud: number; longitud: number } | null>(
     null,
@@ -83,6 +91,10 @@ export default function InicioScreen() {
       if (!mostrandoCercanas) void cargarPublicaciones();
     }, [cargarPublicaciones, mostrandoCercanas]),
   );
+
+  const abrirSolicitudUbicacion = () => {
+    if (!cargandoCercanas) setModalUbicacionAbierto(true);
+  };
 
   const cargarPublicacionesCercanas = async () => {
     if (cargandoCercanas) return;
@@ -164,7 +176,7 @@ export default function InicioScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <BarraSuperior nombre={nombre} />
+      <BarraSuperior nombre={nombre} accessToken={accessToken} />
 
       <FlatList
         data={publicaciones}
@@ -195,7 +207,7 @@ export default function InicioScreen() {
             cargandoCercanas={cargandoCercanas}
             mostrandoCercanas={mostrandoCercanas}
             errorUbicacion={error}
-            onCargarCercanas={() => void cargarPublicacionesCercanas()}
+            onCargarCercanas={abrirSolicitudUbicacion}
             onMostrarTodas={mostrarTodas}
           />
         }
@@ -227,12 +239,83 @@ export default function InicioScreen() {
         }
         ListFooterComponent={<PieFeed />}
       />
+
+      <Modal
+        visible={modalUbicacionAbierto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalUbicacionAbierto(false)}>
+        <View style={styles.overlay}>
+          <View style={styles.modalUbicacion}>
+            <View style={styles.iconoUbicacion}>
+              <MaterialCommunityIcons name="map-marker-radius-outline" size={33} color={colors.gold} />
+            </View>
+            <Text style={styles.modalUbicacionTitulo}>Publicaciones cerca de ti</Text>
+            <Text style={styles.modalUbicacionTexto}>
+              Usaremos tu ubicación actual para ordenar publicaciones de sedes cercanas.
+            </Text>
+            <View style={styles.privacidadUbicacion}>
+              <MaterialCommunityIcons name="shield-check-outline" size={17} color={colors.navy} />
+              <Text style={styles.privacidadUbicacionTexto}>
+                Tu ubicación no se guarda ni se comparte.
+              </Text>
+            </View>
+            <View style={styles.accionesModalUbicacion}>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setModalUbicacionAbierto(false)}
+                style={styles.botonCancelarUbicacion}>
+                <Text style={styles.botonCancelarUbicacionTexto}>Ahora no</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => {
+                  setModalUbicacionAbierto(false);
+                  void cargarPublicacionesCercanas();
+                }}
+                style={styles.botonContinuarUbicacion}>
+                <Text style={styles.botonContinuarUbicacionTexto}>Continuar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 // Barra fija: marca, saludo personalizado y acceso al perfil.
-function BarraSuperior({ nombre }: { nombre: string }) {
+function BarraSuperior({
+  nombre,
+  accessToken,
+}: {
+  nombre: string;
+  accessToken: string | null;
+}) {
+  const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0);
+
+  const cargarNoLeidas = useCallback(async () => {
+    if (!accessToken) {
+      setNotificacionesNoLeidas(0);
+      return;
+    }
+
+    try {
+      const respuesta = await listarNotificaciones(accessToken);
+      setNotificacionesNoLeidas(
+        respuesta.items.filter((notificacion) => !notificacion.leida).length,
+      );
+    } catch {
+      // Conserva el contador ante un error temporal de red.
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    void cargarNoLeidas();
+    const intervalo = setInterval(() => void cargarNoLeidas(), 10_000);
+    return () => clearInterval(intervalo);
+  }, [cargarNoLeidas]);
+
   return (
     <View style={styles.barra}>
       <View style={styles.marca}>
@@ -249,13 +332,29 @@ function BarraSuperior({ nombre }: { nombre: string }) {
         </View>
       </View>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Ir a mi perfil"
-        onPress={() => router.push('/perfil')}
-        style={({ pressed }) => [styles.avatarBoton, pressed && styles.pressed]}>
-        <MaterialCommunityIcons name="account" size={20} color={colors.navy} />
-      </Pressable>
+      <View style={styles.accionesBarra}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ver notificaciones"
+          onPress={() => router.push('/notificaciones')}
+          style={({ pressed }) => [styles.botonNotificaciones, pressed && styles.pressed]}>
+          <MaterialCommunityIcons name="bell-outline" size={21} color={colors.navy} />
+          {notificacionesNoLeidas > 0 ? (
+            <View style={styles.badgeNotificaciones}>
+              <Text style={styles.badgeNotificacionesTexto}>
+                {notificacionesNoLeidas > 9 ? '9+' : notificacionesNoLeidas}
+              </Text>
+            </View>
+          ) : null}
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ir a mi perfil"
+          onPress={() => router.push('/perfil')}
+          style={({ pressed }) => [styles.avatarBoton, pressed && styles.pressed]}>
+          <MaterialCommunityIcons name="account" size={20} color={colors.navy} />
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -455,6 +554,33 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontSize: 12,
   },
+  accionesBarra: { alignItems: 'center', flexDirection: 'row', gap: 8 },
+  botonNotificaciones: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: 19,
+    borderWidth: 1,
+    height: 38,
+    justifyContent: 'center',
+    position: 'relative',
+    width: 38,
+  },
+  badgeNotificaciones: {
+    alignItems: 'center',
+    backgroundColor: colors.error,
+    borderColor: colors.card,
+    borderRadius: 10,
+    borderWidth: 1,
+    height: 20,
+    justifyContent: 'center',
+    minWidth: 20,
+    paddingHorizontal: 3,
+    position: 'absolute',
+    right: -5,
+    top: -5,
+  },
+  badgeNotificacionesTexto: { color: colors.card, fontSize: 9, fontWeight: '800' },
   avatarBoton: {
     width: 38,
     height: 38,
@@ -663,4 +789,64 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.9,
   },
+  overlay: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,43,73,0.58)',
+    flex: 1,
+    justifyContent: 'center',
+    padding: spacing.padLg,
+  },
+  modalUbicacion: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: spacing.radiusLg,
+    borderWidth: 1,
+    gap: spacing.padSm,
+    maxWidth: 380,
+    padding: spacing.padLg,
+    width: '100%',
+  },
+  iconoUbicacion: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: 30,
+    height: 60,
+    justifyContent: 'center',
+    width: 60,
+  },
+  modalUbicacionTitulo: { color: colors.navy, fontSize: 19, fontWeight: '800', textAlign: 'center' },
+  modalUbicacionTexto: { color: colors.muted, fontSize: 14, lineHeight: 20, textAlign: 'center' },
+  privacidadUbicacion: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor: '#fff8dc',
+    borderColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 7,
+    padding: spacing.padSm,
+  },
+  privacidadUbicacionTexto: { color: colors.navy, flex: 1, fontSize: 12, lineHeight: 17 },
+  accionesModalUbicacion: { flexDirection: 'row', gap: spacing.padSm, marginTop: spacing.padSm, width: '100%' },
+  botonCancelarUbicacion: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonCancelarUbicacionTexto: { color: colors.navy, fontSize: 14, fontWeight: '700' },
+  botonContinuarUbicacion: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: spacing.radiusMd,
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: spacing.touchMin,
+  },
+  botonContinuarUbicacionTexto: { color: colors.navy, fontSize: 14, fontWeight: '800' },
 });

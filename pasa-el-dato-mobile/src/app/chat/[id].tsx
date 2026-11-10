@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/Avatar';
 import { EstrellasMomentaneo } from '@/components/ui/EstrellasMomentaneo';
+import { cerrarVentaPublicacion } from '@/lib/api/publicaciones';
 import {
   enviarMensaje as enviarMensajeApi,
   listarMensajes,
@@ -72,6 +73,8 @@ export default function ConversacionChatScreen() {
   const [modalAccionesAbierto, setModalAccionesAbierto] = useState(false);
   const [modalConfirmarVentaAbierto, setModalConfirmarVentaAbierto] = useState(false);
   const [modalEvaluacionAbierto, setModalEvaluacionAbierto] = useState(false);
+  const [cerrandoVenta, setCerrandoVenta] = useState(false);
+  const [errorCierreVenta, setErrorCierreVenta] = useState<string | null>(null);
   const [estrellasSeleccionadas, setEstrellasSeleccionadas] = useState(0);
   const [comentarioEvaluacion, setComentarioEvaluacion] = useState('');
   const publicacionesVendidasMomentaneo = useEvaluacionesMomentaneoStore(
@@ -173,6 +176,32 @@ export default function ConversacionChatScreen() {
     setEstrellasSeleccionadas(evaluacionPropiaMomentaneo?.estrellas ?? 0);
     setComentarioEvaluacion(evaluacionPropiaMomentaneo?.comentario ?? '');
     setModalEvaluacionAbierto(true);
+  };
+
+  const confirmarVentaReal = async () => {
+    if (!accessToken || !publicacionId || !contraparteCuentaId || cerrandoVenta) {
+      setErrorCierreVenta(
+        'No pudimos identificar la publicación o al comprador para cerrar la venta.',
+      );
+      return;
+    }
+
+    setCerrandoVenta(true);
+    setErrorCierreVenta(null);
+
+    try {
+      await cerrarVentaPublicacion(publicacionId, contraparteCuentaId, accessToken);
+      marcarPublicacionVendidaMomentaneo(publicacionId);
+      setModalConfirmarVentaAbierto(false);
+    } catch (causa: unknown) {
+      setErrorCierreVenta(
+        causa instanceof Error
+          ? causa.message
+          : 'No pudimos cerrar la venta. Inténtalo nuevamente.',
+      );
+    } finally {
+      setCerrandoVenta(false);
+    }
   };
 
   const guardarEvaluacion = () => {
@@ -408,6 +437,7 @@ export default function ConversacionChatScreen() {
               <Pressable
                 accessibilityRole="button"
                 onPress={() => {
+                  setErrorCierreVenta(null);
                   setModalAccionesAbierto(false);
                   setModalConfirmarVentaAbierto(true);
                 }}
@@ -452,21 +482,33 @@ export default function ConversacionChatScreen() {
             <Text style={styles.modalTextoEvaluacion}>
               Después ambos podrán evaluar la experiencia.
             </Text>
+            {errorCierreVenta ? (
+              <Text accessibilityRole="alert" style={styles.errorCierreVenta}>
+                {errorCierreVenta}
+              </Text>
+            ) : null}
             <View style={styles.accionesEvaluacion}>
               <Pressable
                 accessibilityRole="button"
+                disabled={cerrandoVenta}
                 onPress={() => setModalConfirmarVentaAbierto(false)}
                 style={styles.botonCancelarEvaluacion}>
                 <Text style={styles.botonCancelarEvaluacionTexto}>Cancelar</Text>
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                onPress={() => {
-                  marcarPublicacionVendidaMomentaneo(idPublicacion);
-                  setModalConfirmarVentaAbierto(false);
-                }}
-                style={styles.botonGuardarEvaluacion}>
-                <Text style={styles.botonGuardarEvaluacionTexto}>Confirmar</Text>
+                accessibilityState={{ busy: cerrandoVenta, disabled: cerrandoVenta }}
+                disabled={cerrandoVenta}
+                onPress={() => void confirmarVentaReal()}
+                style={[
+                  styles.botonGuardarEvaluacion,
+                  cerrandoVenta && styles.botonEvaluacionDeshabilitado,
+                ]}>
+                {cerrandoVenta ? (
+                  <ActivityIndicator color={colors.navy} size="small" />
+                ) : (
+                  <Text style={styles.botonGuardarEvaluacionTexto}>Confirmar</Text>
+                )}
               </Pressable>
             </View>
           </View>
@@ -768,6 +810,7 @@ const styles = StyleSheet.create({
   },
   modalTituloEvaluacion: { color: colors.navy, fontSize: 19, fontWeight: '800', textAlign: 'center' },
   modalTextoEvaluacion: { color: colors.muted, fontSize: 13, lineHeight: 18, textAlign: 'center' },
+  errorCierreVenta: { color: colors.error, fontSize: 12, lineHeight: 17, textAlign: 'center' },
   etiquetaEvaluacion: { alignSelf: 'flex-start', color: colors.navy, fontSize: 13, fontWeight: '700', marginTop: 4 },
   inputComentario: {
     alignSelf: 'stretch',

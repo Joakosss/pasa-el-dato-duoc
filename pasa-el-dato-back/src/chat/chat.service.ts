@@ -145,7 +145,12 @@ export class ChatService {
       contraparteCuentaId: string;
       rolEnTransaccion: 'vendedor' | 'comprador';
       estadoPublicacionAlCrear: string;
-      publicacion: { id: string; estado: 'VISIBLE' | 'NO_DISPONIBLE'; titulo?: string };
+      publicacion: {
+        id: string;
+        estado: 'VISIBLE' | 'NO_DISPONIBLE';
+        estadoVenta?: string;
+        titulo?: string;
+      };
       ultimoMensaje: null | { texto: string; enviadoEn: Date; emisorCuentaId: string };
       noLeidosCount: number;
       actividadEn: Date;
@@ -238,6 +243,7 @@ export class ChatService {
         id: true,
         eliminado: true,
         titulo: true,
+        estadoPublicacion: { select: { descripcion: true } },
       },
     });
 
@@ -247,6 +253,7 @@ export class ChatService {
         {
           id: p.id,
           estado: p.eliminado ? ('NO_DISPONIBLE' as const) : ('VISIBLE' as const),
+          estadoVenta: p.eliminado ? undefined : p.estadoPublicacion.descripcion,
           titulo: p.eliminado ? undefined : p.titulo,
         },
       ]),
@@ -277,7 +284,10 @@ export class ChatService {
 
       const publicacion =
         publicacionesPorId.get(doc.publicacionId) ??
-        ({ id: doc.publicacionId, estado: 'NO_DISPONIBLE' as const } as const);
+        ({
+          id: doc.publicacionId,
+          estado: 'NO_DISPONIBLE' as const,
+        } as const);
 
       const ultimoMensajeDoc = ultimoPorConversacion.get(conversacionId);
       const leidoHastaMensajeId =
