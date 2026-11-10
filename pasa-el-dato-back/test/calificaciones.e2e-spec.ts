@@ -251,4 +251,90 @@ describe('HU-CAL-01 Calificaciones (e2e)', () => {
       .send({ puntaje: 6 })
       .expect(400);
   });
+
+  it('HU-CAL-02 BE01: obtiene promedio y total de calificaciones recibidas', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/perfil/${idCuentaVendedor}/reputacion`)
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    expect(respuesta.body).toEqual({
+      usuarioId: idCuentaVendedor,
+      promedio: 5,
+      total: 1,
+    });
+  });
+
+  it('HU-CAL-02 BE02: lista calificaciones recibidas ordenadas y paginadas', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/perfil/${idCuentaVendedor}/calificaciones`)
+      .query({ page: 1, pageSize: 10 })
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    expect(respuesta.body).toMatchObject({
+      page: 1,
+      pageSize: 10,
+      total: 1,
+      nextPage: null,
+    });
+    expect(respuesta.body.items).toHaveLength(1);
+    expect(respuesta.body.items[0]).toMatchObject({
+      publicacionId: idPublicacion,
+      puntaje: 5,
+      comentario: null,
+    });
+    expect(typeof respuesta.body.items[0].id).toBe('string');
+    expect(typeof respuesta.body.items[0].fechaCreacion).toBe('string');
+  });
+
+  it('HU-CAL-02 BE05: responde sin calificaciones sin error', async () => {
+    const [resumen, listado] = await Promise.all([
+      request(app.getHttpServer())
+        .get(`/api/perfil/${idCuentaTercero}/reputacion`)
+        .set('Cookie', cookieComprador),
+      request(app.getHttpServer())
+        .get(`/api/perfil/${idCuentaTercero}/calificaciones`)
+        .set('Cookie', cookieComprador),
+    ]);
+
+    expect(resumen.status).toBe(200);
+    expect(resumen.body).toEqual({
+      usuarioId: idCuentaTercero,
+      promedio: null,
+      total: 0,
+    });
+
+    expect(listado.status).toBe(200);
+    expect(listado.body).toMatchObject({
+      items: [],
+      page: 1,
+      pageSize: 10,
+      total: 0,
+      nextPage: null,
+    });
+  });
+
+  it('HU-CAL-02 BE04: exige autenticación para resumen y listado', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/perfil/${idCuentaVendedor}/reputacion`)
+      .expect(401);
+
+    await request(app.getHttpServer())
+      .get(`/api/perfil/${idCuentaVendedor}/calificaciones`)
+      .expect(401);
+  });
+
+  it('HU-CAL-02 BE06: valida usuario inexistente y paginación inválida', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/perfil/${randomUUID()}/reputacion`)
+      .set('Cookie', cookieComprador)
+      .expect(404);
+
+    await request(app.getHttpServer())
+      .get(`/api/perfil/${idCuentaVendedor}/calificaciones`)
+      .query({ page: 0 })
+      .set('Cookie', cookieComprador)
+      .expect(400);
+  });
 });
