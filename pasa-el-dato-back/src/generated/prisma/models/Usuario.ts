@@ -261,6 +261,7 @@ export type UsuarioWhereInput = {
   sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>
   cuenta?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
   publicaciones?: Prisma.PublicacionListRelationFilter
+  favoritos?: Prisma.FavoritoListRelationFilter
 }
 
 export type UsuarioOrderByWithRelationInput = {
@@ -278,6 +279,7 @@ export type UsuarioOrderByWithRelationInput = {
   sede?: Prisma.SedeOrderByWithRelationInput
   cuenta?: Prisma.CuentaOrderByWithRelationInput
   publicaciones?: Prisma.PublicacionOrderByRelationAggregateInput
+  favoritos?: Prisma.FavoritoOrderByRelationAggregateInput
 }
 
 export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
@@ -298,6 +300,7 @@ export type UsuarioWhereUniqueInput = Prisma.AtLeast<{
   sede?: Prisma.XOR<Prisma.SedeScalarRelationFilter, Prisma.SedeWhereInput>
   cuenta?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
   publicaciones?: Prisma.PublicacionListRelationFilter
+  favoritos?: Prisma.FavoritoListRelationFilter
 }, "id_cuenta" | "run">
 
 export type UsuarioOrderByWithAggregationInput = {
@@ -343,6 +346,7 @@ export type UsuarioCreateInput = {
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateInput = {
@@ -356,6 +360,7 @@ export type UsuarioUncheckedCreateInput = {
   fk_sede: number
   fk_carrera: number
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUpdateInput = {
@@ -369,6 +374,7 @@ export type UsuarioUpdateInput = {
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateInput = {
@@ -382,6 +388,7 @@ export type UsuarioUncheckedUpdateInput = {
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateManyInput = {
@@ -656,6 +663,20 @@ export type UsuarioUpdateOneRequiredWithoutPublicacionesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutPublicacionesInput, Prisma.UsuarioUpdateWithoutPublicacionesInput>, Prisma.UsuarioUncheckedUpdateWithoutPublicacionesInput>
 }
 
+export type UsuarioCreateNestedOneWithoutFavoritosInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutFavoritosInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+}
+
+export type UsuarioUpdateOneRequiredWithoutFavoritosNestedInput = {
+  create?: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+  connectOrCreate?: Prisma.UsuarioCreateOrConnectWithoutFavoritosInput
+  upsert?: Prisma.UsuarioUpsertWithoutFavoritosInput
+  connect?: Prisma.UsuarioWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UsuarioUpdateToOneWithWhereWithoutFavoritosInput, Prisma.UsuarioUpdateWithoutFavoritosInput>, Prisma.UsuarioUncheckedUpdateWithoutFavoritosInput>
+}
+
 export type UsuarioCreateWithoutCuentaInput = {
   run: string
   pNombre: string
@@ -666,6 +687,7 @@ export type UsuarioCreateWithoutCuentaInput = {
   rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutCuentaInput = {
@@ -678,6 +700,7 @@ export type UsuarioUncheckedCreateWithoutCuentaInput = {
   fk_sede: number
   fk_carrera: number
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutCuentaInput = {
@@ -706,6 +729,7 @@ export type UsuarioUpdateWithoutCuentaInput = {
   rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutCuentaInput = {
@@ -718,6 +742,7 @@ export type UsuarioUncheckedUpdateWithoutCuentaInput = {
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateWithoutRol_usuarioInput = {
@@ -730,6 +755,7 @@ export type UsuarioCreateWithoutRol_usuarioInput = {
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutRol_usuarioInput = {
@@ -742,6 +768,7 @@ export type UsuarioUncheckedCreateWithoutRol_usuarioInput = {
   fk_sede: number
   fk_carrera: number
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutRol_usuarioInput = {
@@ -795,6 +822,7 @@ export type UsuarioCreateWithoutSedeInput = {
   rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutSedeInput = {
@@ -807,6 +835,7 @@ export type UsuarioUncheckedCreateWithoutSedeInput = {
   fk_rol_usuario: number
   fk_carrera: number
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutSedeInput = {
@@ -845,6 +874,7 @@ export type UsuarioCreateWithoutCarreraInput = {
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutCarreraInput = {
@@ -857,6 +887,7 @@ export type UsuarioUncheckedCreateWithoutCarreraInput = {
   fk_rol_usuario: number
   fk_sede: number
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutCarreraInput = {
@@ -895,6 +926,7 @@ export type UsuarioCreateWithoutPublicacionesInput = {
   rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
   sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
   cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
+  favoritos?: Prisma.FavoritoCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioUncheckedCreateWithoutPublicacionesInput = {
@@ -907,6 +939,7 @@ export type UsuarioUncheckedCreateWithoutPublicacionesInput = {
   fk_rol_usuario: number
   fk_sede: number
   fk_carrera: number
+  favoritos?: Prisma.FavoritoUncheckedCreateNestedManyWithoutUsuarioInput
 }
 
 export type UsuarioCreateOrConnectWithoutPublicacionesInput = {
@@ -935,6 +968,7 @@ export type UsuarioUpdateWithoutPublicacionesInput = {
   rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutPublicacionesInput = {
@@ -947,6 +981,75 @@ export type UsuarioUncheckedUpdateWithoutPublicacionesInput = {
   fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioCreateWithoutFavoritosInput = {
+  run: string
+  pNombre: string
+  sNombre?: string | null
+  pApellido: string
+  sApellido: string
+  carrera: Prisma.CarreraCreateNestedOneWithoutUsuariosInput
+  rol_usuario: Prisma.RolUsuarioCreateNestedOneWithoutUsuarioInput
+  sede: Prisma.SedeCreateNestedOneWithoutUsuarioInput
+  cuenta: Prisma.CuentaCreateNestedOneWithoutUsuarioInput
+  publicaciones?: Prisma.PublicacionCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioUncheckedCreateWithoutFavoritosInput = {
+  id_cuenta: string
+  run: string
+  pNombre: string
+  sNombre?: string | null
+  pApellido: string
+  sApellido: string
+  fk_rol_usuario: number
+  fk_sede: number
+  fk_carrera: number
+  publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutUsuarioInput
+}
+
+export type UsuarioCreateOrConnectWithoutFavoritosInput = {
+  where: Prisma.UsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+}
+
+export type UsuarioUpsertWithoutFavoritosInput = {
+  update: Prisma.XOR<Prisma.UsuarioUpdateWithoutFavoritosInput, Prisma.UsuarioUncheckedUpdateWithoutFavoritosInput>
+  create: Prisma.XOR<Prisma.UsuarioCreateWithoutFavoritosInput, Prisma.UsuarioUncheckedCreateWithoutFavoritosInput>
+  where?: Prisma.UsuarioWhereInput
+}
+
+export type UsuarioUpdateToOneWithWhereWithoutFavoritosInput = {
+  where?: Prisma.UsuarioWhereInput
+  data: Prisma.XOR<Prisma.UsuarioUpdateWithoutFavoritosInput, Prisma.UsuarioUncheckedUpdateWithoutFavoritosInput>
+}
+
+export type UsuarioUpdateWithoutFavoritosInput = {
+  run?: Prisma.StringFieldUpdateOperationsInput | string
+  pNombre?: Prisma.StringFieldUpdateOperationsInput | string
+  sNombre?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  sApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  carrera?: Prisma.CarreraUpdateOneRequiredWithoutUsuariosNestedInput
+  rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
+  sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
+  cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
+  publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
+}
+
+export type UsuarioUncheckedUpdateWithoutFavoritosInput = {
+  id_cuenta?: Prisma.StringFieldUpdateOperationsInput | string
+  run?: Prisma.StringFieldUpdateOperationsInput | string
+  pNombre?: Prisma.StringFieldUpdateOperationsInput | string
+  sNombre?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  sApellido?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
+  publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioCreateManyRol_usuarioInput = {
@@ -970,6 +1073,7 @@ export type UsuarioUpdateWithoutRol_usuarioInput = {
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutRol_usuarioInput = {
@@ -982,6 +1086,7 @@ export type UsuarioUncheckedUpdateWithoutRol_usuarioInput = {
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateManyWithoutRol_usuarioInput = {
@@ -1016,6 +1121,7 @@ export type UsuarioUpdateWithoutSedeInput = {
   rol_usuario?: Prisma.RolUsuarioUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutSedeInput = {
@@ -1028,6 +1134,7 @@ export type UsuarioUncheckedUpdateWithoutSedeInput = {
   fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
   fk_carrera?: Prisma.IntFieldUpdateOperationsInput | number
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateManyWithoutSedeInput = {
@@ -1062,6 +1169,7 @@ export type UsuarioUpdateWithoutCarreraInput = {
   sede?: Prisma.SedeUpdateOneRequiredWithoutUsuarioNestedInput
   cuenta?: Prisma.CuentaUpdateOneRequiredWithoutUsuarioNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateWithoutCarreraInput = {
@@ -1074,6 +1182,7 @@ export type UsuarioUncheckedUpdateWithoutCarreraInput = {
   fk_rol_usuario?: Prisma.IntFieldUpdateOperationsInput | number
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutUsuarioNestedInput
+  favoritos?: Prisma.FavoritoUncheckedUpdateManyWithoutUsuarioNestedInput
 }
 
 export type UsuarioUncheckedUpdateManyWithoutCarreraInput = {
@@ -1094,10 +1203,12 @@ export type UsuarioUncheckedUpdateManyWithoutCarreraInput = {
 
 export type UsuarioCountOutputType = {
   publicaciones: number
+  favoritos: number
 }
 
 export type UsuarioCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   publicaciones?: boolean | UsuarioCountOutputTypeCountPublicacionesArgs
+  favoritos?: boolean | UsuarioCountOutputTypeCountFavoritosArgs
 }
 
 /**
@@ -1117,6 +1228,13 @@ export type UsuarioCountOutputTypeCountPublicacionesArgs<ExtArgs extends runtime
   where?: Prisma.PublicacionWhereInput
 }
 
+/**
+ * UsuarioCountOutputType without action
+ */
+export type UsuarioCountOutputTypeCountFavoritosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FavoritoWhereInput
+}
+
 
 export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_cuenta?: boolean
@@ -1133,6 +1251,7 @@ export type UsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>
   cuenta?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   publicaciones?: boolean | Prisma.Usuario$publicacionesArgs<ExtArgs>
+  favoritos?: boolean | Prisma.Usuario$favoritosArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["usuario"]>
 
@@ -1187,6 +1306,7 @@ export type UsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   sede?: boolean | Prisma.SedeDefaultArgs<ExtArgs>
   cuenta?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   publicaciones?: boolean | Prisma.Usuario$publicacionesArgs<ExtArgs>
+  favoritos?: boolean | Prisma.Usuario$favoritosArgs<ExtArgs>
   _count?: boolean | Prisma.UsuarioCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1210,6 +1330,7 @@ export type $UsuarioPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     sede: Prisma.$SedePayload<ExtArgs>
     cuenta: Prisma.$CuentaPayload<ExtArgs>
     publicaciones: Prisma.$PublicacionPayload<ExtArgs>[]
+    favoritos: Prisma.$FavoritoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_cuenta: string
@@ -1620,6 +1741,7 @@ export interface Prisma__UsuarioClient<T, Null = never, ExtArgs extends runtime.
   sede<T extends Prisma.SedeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SedeDefaultArgs<ExtArgs>>): Prisma.Prisma__SedeClient<runtime.Types.Result.GetResult<Prisma.$SedePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   cuenta<T extends Prisma.CuentaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CuentaDefaultArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   publicaciones<T extends Prisma.Usuario$publicacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$publicacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  favoritos<T extends Prisma.Usuario$favoritosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Usuario$favoritosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2080,6 +2202,30 @@ export type Usuario$publicacionesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.PublicacionScalarFieldEnum | Prisma.PublicacionScalarFieldEnum[]
+}
+
+/**
+ * Usuario.favoritos
+ */
+export type Usuario$favoritosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Favorito
+   */
+  select?: Prisma.FavoritoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Favorito
+   */
+  omit?: Prisma.FavoritoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FavoritoInclude<ExtArgs> | null
+  where?: Prisma.FavoritoWhereInput
+  orderBy?: Prisma.FavoritoOrderByWithRelationInput | Prisma.FavoritoOrderByWithRelationInput[]
+  cursor?: Prisma.FavoritoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FavoritoScalarFieldEnum | Prisma.FavoritoScalarFieldEnum[]
 }
 
 /**

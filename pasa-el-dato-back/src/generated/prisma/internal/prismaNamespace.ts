@@ -419,8 +419,10 @@ export const ModelName = {
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
+  NotificacionUsuario: 'NotificacionUsuario',
   ImagenPublicacion: 'ImagenPublicacion',
   ReporteUsuario: 'ReporteUsuario',
+  Favorito: 'Favorito',
   PalabraBloqueada: 'PalabraBloqueada'
 } as const
 
@@ -437,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "imagenPublicacion" | "reporteUsuario" | "palabraBloqueada"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "notificacionUsuario" | "imagenPublicacion" | "reporteUsuario" | "favorito" | "palabraBloqueada"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2069,6 +2071,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NotificacionUsuario: {
+      payload: Prisma.$NotificacionUsuarioPayload<ExtArgs>
+      fields: Prisma.NotificacionUsuarioFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotificacionUsuarioFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotificacionUsuarioFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>
+        }
+        findFirst: {
+          args: Prisma.NotificacionUsuarioFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotificacionUsuarioFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>
+        }
+        findMany: {
+          args: Prisma.NotificacionUsuarioFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>[]
+        }
+        create: {
+          args: Prisma.NotificacionUsuarioCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>
+        }
+        createMany: {
+          args: Prisma.NotificacionUsuarioCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotificacionUsuarioCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>[]
+        }
+        delete: {
+          args: Prisma.NotificacionUsuarioDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>
+        }
+        update: {
+          args: Prisma.NotificacionUsuarioUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>
+        }
+        deleteMany: {
+          args: Prisma.NotificacionUsuarioDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotificacionUsuarioUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotificacionUsuarioUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>[]
+        }
+        upsert: {
+          args: Prisma.NotificacionUsuarioUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificacionUsuarioPayload>
+        }
+        aggregate: {
+          args: Prisma.NotificacionUsuarioAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificacionUsuario>
+        }
+        groupBy: {
+          args: Prisma.NotificacionUsuarioGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificacionUsuarioGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotificacionUsuarioCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificacionUsuarioCountAggregateOutputType> | number
+        }
+      }
+    }
     ImagenPublicacion: {
       payload: Prisma.$ImagenPublicacionPayload<ExtArgs>
       fields: Prisma.ImagenPublicacionFieldRefs
@@ -2217,6 +2293,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Favorito: {
+      payload: Prisma.$FavoritoPayload<ExtArgs>
+      fields: Prisma.FavoritoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FavoritoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FavoritoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>
+        }
+        findFirst: {
+          args: Prisma.FavoritoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FavoritoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>
+        }
+        findMany: {
+          args: Prisma.FavoritoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>[]
+        }
+        create: {
+          args: Prisma.FavoritoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>
+        }
+        createMany: {
+          args: Prisma.FavoritoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FavoritoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>[]
+        }
+        delete: {
+          args: Prisma.FavoritoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>
+        }
+        update: {
+          args: Prisma.FavoritoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>
+        }
+        deleteMany: {
+          args: Prisma.FavoritoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FavoritoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FavoritoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>[]
+        }
+        upsert: {
+          args: Prisma.FavoritoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FavoritoPayload>
+        }
+        aggregate: {
+          args: Prisma.FavoritoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFavorito>
+        }
+        groupBy: {
+          args: Prisma.FavoritoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FavoritoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FavoritoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FavoritoCountAggregateOutputType> | number
+        }
+      }
+    }
     PalabraBloqueada: {
       payload: Prisma.$PalabraBloqueadaPayload<ExtArgs>
       fields: Prisma.PalabraBloqueadaFieldRefs
@@ -2342,7 +2492,8 @@ export const CuentaScalarFieldEnum = {
   bloqueado: 'bloqueado',
   fechaBloqueo: 'fechaBloqueo',
   motivoBloqueo: 'motivoBloqueo',
-  aprobada: 'aprobada'
+  aprobada: 'aprobada',
+  notificacionesPushHabilitadas: 'notificacionesPushHabilitadas'
 } as const
 
 export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
@@ -2593,6 +2744,19 @@ export const NotificacionMarcaScalarFieldEnum = {
 export type NotificacionMarcaScalarFieldEnum = (typeof NotificacionMarcaScalarFieldEnum)[keyof typeof NotificacionMarcaScalarFieldEnum]
 
 
+export const NotificacionUsuarioScalarFieldEnum = {
+  id: 'id',
+  fk_cuenta: 'fk_cuenta',
+  tipo: 'tipo',
+  mensaje: 'mensaje',
+  leida: 'leida',
+  dataJson: 'dataJson',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type NotificacionUsuarioScalarFieldEnum = (typeof NotificacionUsuarioScalarFieldEnum)[keyof typeof NotificacionUsuarioScalarFieldEnum]
+
+
 export const ImagenPublicacionScalarFieldEnum = {
   idImagen: 'idImagen',
   fk_publicacion: 'fk_publicacion',
@@ -2621,6 +2785,19 @@ export const ReporteUsuarioScalarFieldEnum = {
 export type ReporteUsuarioScalarFieldEnum = (typeof ReporteUsuarioScalarFieldEnum)[keyof typeof ReporteUsuarioScalarFieldEnum]
 
 
+export const FavoritoScalarFieldEnum = {
+  id: 'id',
+  fk_publicacion: 'fk_publicacion',
+  fk_usuario: 'fk_usuario',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  eliminado: 'eliminado',
+  fk_modificado_por: 'fk_modificado_por'
+} as const
+
+export type FavoritoScalarFieldEnum = (typeof FavoritoScalarFieldEnum)[keyof typeof FavoritoScalarFieldEnum]
+
+
 export const PalabraBloqueadaScalarFieldEnum = {
   id: 'id',
   termino: 'termino',
@@ -2638,6 +2815,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -2652,6 +2837,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -2776,6 +2970,34 @@ export type EnumEstadoBannerPublicidadFieldRefInput<$PrismaModel> = FieldRefInpu
  * Reference to a field of type 'EstadoBannerPublicidad[]'
  */
 export type ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoBannerPublicidad[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TipoNotificacionUsuario'
+ */
+export type EnumTipoNotificacionUsuarioFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoNotificacionUsuario'>
+    
+
+
+/**
+ * Reference to a field of type 'TipoNotificacionUsuario[]'
+ */
+export type ListEnumTipoNotificacionUsuarioFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TipoNotificacionUsuario[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2993,8 +3215,10 @@ export type GlobalOmitConfig = {
   bannerPublicidad?: Prisma.BannerPublicidadOmit
   bannerSede?: Prisma.BannerSedeOmit
   notificacionMarca?: Prisma.NotificacionMarcaOmit
+  notificacionUsuario?: Prisma.NotificacionUsuarioOmit
   imagenPublicacion?: Prisma.ImagenPublicacionOmit
   reporteUsuario?: Prisma.ReporteUsuarioOmit
+  favorito?: Prisma.FavoritoOmit
   palabraBloqueada?: Prisma.PalabraBloqueadaOmit
 }
 

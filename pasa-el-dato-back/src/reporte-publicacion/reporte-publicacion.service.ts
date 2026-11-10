@@ -3,14 +3,20 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
+import { TipoNotificacionUsuario } from '../generated/prisma/client.js';
+import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
 const ESTADOS_EN_RESOLUCION = ['PENDIENTE', 'EN_PROCESO'] as const;
 
 @Injectable()
 export class ReportePublicacionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() private readonly notificacionesService?: NotificacionesService,
+  ) {}
 
   async listarPendientes() {
     return this.prisma.reportePublicacion.findMany({
@@ -250,6 +256,14 @@ export class ReportePublicacionService {
         },
       });
     });
+
+    await this.notificarResultadoReporte({
+      cuentaId: reporte.publicacion.fk_usuario,
+      reporteId: reporte.id,
+      publicacionId: reporte.fk_publicacion,
+      mensaje: 'Tu publicación fue retirada por una resolución administrativa.',
+      resolucion: 'RETIRO_PUBLICACION',
+    });
   }
 
   async resolverAdvertencia(
@@ -291,12 +305,50 @@ export class ReportePublicacionService {
         },
       });
     });
+
+    if (reporte.publicacion) {
+      await this.notificarResultadoReporte({
+        cuentaId: reporte.publicacion.fk_usuario,
+        reporteId: reporte.id,
+        publicacionId: reporte.fk_publicacion,
+        mensaje: `Se registró una advertencia administrativa sobre tu publicación: ${mensaje.trim()}`,
+        resolucion: 'ADVERTENCIA',
+      });
+    }
+  }
+
+  private async notificarResultadoReporte(entrada: {
+    cuentaId: string;
+    reporteId: string;
+    publicacionId: string;
+    mensaje: string;
+    resolucion: 'ADVERTENCIA' | 'RETIRO_PUBLICACION';
+  }): Promise<void> {
+    if (!this.notificacionesService) {
+      return;
+    }
+
+    await this.notificacionesService.crearNotificacion({
+      cuentaId: entrada.cuentaId,
+      tipo: TipoNotificacionUsuario.REPORTE_RESULTADO,
+      mensaje: entrada.mensaje,
+      dataJson: {
+        reporteId: entrada.reporteId,
+        publicacionId: entrada.publicacionId,
+        resolucion: entrada.resolucion,
+      },
+    });
   }
 
   private async obtenerEstado(idReporte: string) {
     const reporte = await this.prisma.reportePublicacion.findUnique({
       where: { id: idReporte },
-      select: { id: true, estado: true },
+      select: {
+        id: true,
+        estado: true,
+        fk_publicacion: true,
+        publicacion: { select: { fk_usuario: true } },
+      },
     });
 
     if (!reporte) {

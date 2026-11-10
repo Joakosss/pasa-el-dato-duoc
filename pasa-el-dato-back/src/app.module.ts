@@ -23,6 +23,7 @@ import { ReporteUsuarioModule } from './reporte-usuario/reporte-usuario.module.j
 import { ReportePublicacionModule } from './reporte-publicacion/reporte-publicacion.module.js';
 import { MetricasAdminModule } from './metricas-admin/metricas-admin.module.js';
 import { PalabrasBloqueadasModule } from './palabras-bloqueadas/palabras-bloqueadas.module.js';
+import { NotificacionesModule } from './notificaciones/notificaciones.module.js';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { PalabrasBloqueadasModule } from './palabras-bloqueadas/palabras-bloquea
     ReportePublicacionModule,
     MetricasAdminModule,
     PalabrasBloqueadasModule,
+    NotificacionesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

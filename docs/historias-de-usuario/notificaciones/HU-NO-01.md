@@ -54,7 +54,8 @@ Nota técnica de origen (no define diseño): el backend ya tiene el patrón `not
 - **HU-NO-01-BE02:** Definir catálogo de tipos (enum) alineado al catálogo de eventos vigente (chat nuevo mensaje, favorita vendida, reporte resuelto, advertencia admin, aviso admin, etc.).
 - **HU-NO-01-BE03:** Definir el “payload” mínimo (`dataJson`) por tipo para habilitar redirección (p.ej. `chatId`, `publicacionId`, `reporteId`, `adminSeccion`, etc.) y su contrato.
 - **HU-NO-01-BE04:** Implementar `NotificacionUsuarioService` para registrar notificaciones solo si la cuenta está activa (no bloqueada/eliminada) y según preferencia vigente (HU-NO-02).
-- **HU-NO-01-BE05:** Implementar deduplicación por evento cuando aplique (p.ej. evitar spam por múltiples mensajes: agrupar o colapsar por conversación + ventana de tiempo) y documentarlo en spec si se adopta.
+- **HU-NO-01-BE05:** (MVP) No se implementa deduplicación. Cada evento genera un registro en `notificacion_usuario`.  
+  TODO: definir criterio de deduplicación (p.ej. por conversación + ventana de tiempo) para iteración posterior.
 - **HU-NO-01-BE06:** Integrar emisión desde eventos fuente (hooks/llamadas desde dominios):
   - chat: nuevo mensaje (HU-CHAT-02)
   - compras/favoritos: favorita vendida (HU-COM-01, HU-FAV-01)

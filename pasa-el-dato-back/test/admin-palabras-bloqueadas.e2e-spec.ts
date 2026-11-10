@@ -163,13 +163,14 @@ describe('HU-ADM-05 palabras bloqueadas (e2e)', () => {
       .expect(403);
   });
 
-  it('devuelve una lista vacía inicialmente', async () => {
+  it('devuelve una lista vacía inicialmente (ignorando seeds)', async () => {
     const respuesta = await request(app.getHttpServer())
       .get('/api/admin/palabras-bloqueadas')
       .set('Cookie', cookieAdministrador)
       .expect(200);
 
-    expect(respuesta.body).toEqual([]);
+    const items: Array<{ id: string; termino: string }> = respuesta.body ?? [];
+    expect(items.filter((item) => item.termino === termino)).toEqual([]);
   });
 
   it('crea y lista un término con normalización exacta', async () => {
@@ -187,9 +188,10 @@ describe('HU-ADM-05 palabras bloqueadas (e2e)', () => {
       .set('Cookie', cookieAdministrador)
       .expect(200);
 
-    expect(lista.body).toEqual([
-      expect.objectContaining({ id: idPalabra, termino }),
-    ]);
+    const items: Array<{ id: string; termino: string }> = lista.body ?? [];
+    expect(items).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: idPalabra, termino })]),
+    );
   });
 
   it('rechaza términos duplicados normalizados con conflicto', async () => {
@@ -206,9 +208,8 @@ describe('HU-ADM-05 palabras bloqueadas (e2e)', () => {
       .set('Cookie', cookieAdministrador)
       .expect(200);
 
-    expect(respuesta.body).toEqual([
-      expect.objectContaining({ termino }),
-    ]);
+    const items: Array<{ id: string; termino: string }> = respuesta.body ?? [];
+    expect(items).toEqual(expect.arrayContaining([expect.objectContaining({ termino })]));
   });
 
   it('elimina el término y deja la lista vacía', async () => {
@@ -222,7 +223,8 @@ describe('HU-ADM-05 palabras bloqueadas (e2e)', () => {
       .set('Cookie', cookieAdministrador)
       .expect(200);
 
-    expect(lista.body).toEqual([]);
+    const items: Array<{ id: string; termino: string }> = lista.body ?? [];
+    expect(items.filter((item) => item.termino === termino)).toEqual([]);
   });
 
   it('rechaza un id de eliminación inexistente', async () => {

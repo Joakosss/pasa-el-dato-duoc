@@ -48,6 +48,17 @@ export const EstadoBannerPublicidad = {
 export type EstadoBannerPublicidad = (typeof EstadoBannerPublicidad)[keyof typeof EstadoBannerPublicidad]
 
 
+export const TipoNotificacionUsuario = {
+  CHAT_NUEVO_MENSAJE: 'CHAT_NUEVO_MENSAJE',
+  FAVORITA_VENDIDA: 'FAVORITA_VENDIDA',
+  REPORTE_RESULTADO: 'REPORTE_RESULTADO',
+  ADMIN_ADVERTENCIA: 'ADMIN_ADVERTENCIA',
+  ADMIN_AVISO: 'ADMIN_AVISO'
+} as const
+
+export type TipoNotificacionUsuario = (typeof TipoNotificacionUsuario)[keyof typeof TipoNotificacionUsuario]
+
+
 export const EstadoReporteUsuario = {
   PENDIENTE: 'PENDIENTE',
   EN_PROCESO: 'EN_PROCESO',

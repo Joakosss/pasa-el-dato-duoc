@@ -7,6 +7,7 @@ import {
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AlmacenamientoImagenesService, ImagenAlmacenada } from './almacenamiento-imagenes.service.js';
 import { PublicacionService } from './publicacion.service.js';
+import type { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 import type { ImagenRecibida } from './validar-imagenes.js';
 
 // Imagenes validas para pruebas del servicio (la validacion de firma la hace
@@ -86,7 +87,11 @@ describe('PublicacionService', () => {
 
   beforeEach(() => {
     prismaMock = crearPrismaMock();
-    service = new PublicacionService(prismaMock as never);
+    const notificacionesMock = {
+      crearNotificacion: vi.fn(),
+    } as unknown as NotificacionesService;
+
+    service = new PublicacionService(prismaMock as never, notificacionesMock);
   });
 
   describe('asegurarSedeDisponible', () => {

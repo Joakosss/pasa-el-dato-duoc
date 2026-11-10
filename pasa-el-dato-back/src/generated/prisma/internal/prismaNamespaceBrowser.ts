@@ -73,8 +73,10 @@ export const ModelName = {
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
+  NotificacionUsuario: 'NotificacionUsuario',
   ImagenPublicacion: 'ImagenPublicacion',
   ReporteUsuario: 'ReporteUsuario',
+  Favorito: 'Favorito',
   PalabraBloqueada: 'PalabraBloqueada'
 } as const
 
@@ -106,7 +108,8 @@ export const CuentaScalarFieldEnum = {
   bloqueado: 'bloqueado',
   fechaBloqueo: 'fechaBloqueo',
   motivoBloqueo: 'motivoBloqueo',
-  aprobada: 'aprobada'
+  aprobada: 'aprobada',
+  notificacionesPushHabilitadas: 'notificacionesPushHabilitadas'
 } as const
 
 export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
@@ -357,6 +360,19 @@ export const NotificacionMarcaScalarFieldEnum = {
 export type NotificacionMarcaScalarFieldEnum = (typeof NotificacionMarcaScalarFieldEnum)[keyof typeof NotificacionMarcaScalarFieldEnum]
 
 
+export const NotificacionUsuarioScalarFieldEnum = {
+  id: 'id',
+  fk_cuenta: 'fk_cuenta',
+  tipo: 'tipo',
+  mensaje: 'mensaje',
+  leida: 'leida',
+  dataJson: 'dataJson',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type NotificacionUsuarioScalarFieldEnum = (typeof NotificacionUsuarioScalarFieldEnum)[keyof typeof NotificacionUsuarioScalarFieldEnum]
+
+
 export const ImagenPublicacionScalarFieldEnum = {
   idImagen: 'idImagen',
   fk_publicacion: 'fk_publicacion',
@@ -385,6 +401,19 @@ export const ReporteUsuarioScalarFieldEnum = {
 export type ReporteUsuarioScalarFieldEnum = (typeof ReporteUsuarioScalarFieldEnum)[keyof typeof ReporteUsuarioScalarFieldEnum]
 
 
+export const FavoritoScalarFieldEnum = {
+  id: 'id',
+  fk_publicacion: 'fk_publicacion',
+  fk_usuario: 'fk_usuario',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  eliminado: 'eliminado',
+  fk_modificado_por: 'fk_modificado_por'
+} as const
+
+export type FavoritoScalarFieldEnum = (typeof FavoritoScalarFieldEnum)[keyof typeof FavoritoScalarFieldEnum]
+
+
 export const PalabraBloqueadaScalarFieldEnum = {
   id: 'id',
   termino: 'termino',
@@ -402,6 +431,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -416,4 +453,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

@@ -152,6 +152,11 @@ export type BannerSede = Prisma.BannerSedeModel
  */
 export type NotificacionMarca = Prisma.NotificacionMarcaModel
 /**
+ * Model NotificacionUsuario
+ * 
+ */
+export type NotificacionUsuario = Prisma.NotificacionUsuarioModel
+/**
  * Model ImagenPublicacion
  * 
  */
@@ -161,6 +166,11 @@ export type ImagenPublicacion = Prisma.ImagenPublicacionModel
  * 
  */
 export type ReporteUsuario = Prisma.ReporteUsuarioModel
+/**
+ * Model Favorito
+ * 
+ */
+export type Favorito = Prisma.FavoritoModel
 /**
  * Model PalabraBloqueada
  * 
