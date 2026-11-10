@@ -41,6 +41,8 @@ model Cuenta {
   reportesPublicacionAsignados ReportePublicacion[] @relation("reportePublicacionAdminAsignado")
   auditoriasAdmin           AuditoriaAdmin[] @relation("auditoriaAdminCuenta")
   favoritosModificados      Favorito[]       @relation("favoritoModificadoPor")
+  calificacionesEmitidas    Calificacion[]   @relation("calificacionEmisor")
+  calificacionesRecibidas   Calificacion[]   @relation("calificacionReceptor")
 
   @@index([fk_modificado_por], map: "idx_cuenta_modificado_por")
   @@map("cuenta")
@@ -311,6 +313,8 @@ model Publicacion {
   fk_usuario            String    @db.Uuid
   fk_sede               Int
   fk_user_comprador     String?   @db.Uuid
+  calificacion_activada Boolean   @default(false)
+  fecha_activacion_calificacion DateTime? @db.Timestamptz(6)
   contador_vistas       Int       @default(0)
   fechaCreacion         DateTime  @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
   fechaModificacion     DateTime  @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
@@ -327,6 +331,7 @@ model Publicacion {
   imagenes          ImagenPublicacion[]
   reportesPublicacion ReportePublicacion[]
   favoritos         Favorito[]
+  calificacionesEmitidas Calificacion[] @relation("calificacionPublicacion")
 
 
   @@index([fk_estado_publicacion], map: "idx_publicacion_estado")
@@ -337,6 +342,27 @@ model Publicacion {
   @@index([fk_user_comprador], map: "idx_publicacion_comprador")
   @@index([fk_modificado_por], map: "idx_publicacion_modificado_por")
   @@map("publicacion")
+}
+
+model Calificacion {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  puntaje           Int
+  comentario        String?
+  fk_publicacion    String   @db.Uuid
+  fk_emisor         String   @db.Uuid
+  fk_receptor       String   @db.Uuid
+  fechaCreacion     DateTime @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
+  fechaModificacion DateTime @default(now()) @map("fecha_modificacion") @db.Timestamptz(6)
+
+  publicacion Publicacion @relation("calificacionPublicacion", fields: [fk_publicacion], references: [id], onUpdate: NoAction)
+  emisor      Cuenta      @relation("calificacionEmisor", fields: [fk_emisor], references: [id_cuenta], onUpdate: NoAction)
+  receptor    Cuenta      @relation("calificacionReceptor", fields: [fk_receptor], references: [id_cuenta], onUpdate: NoAction)
+
+  @@unique([fk_publicacion, fk_emisor, fk_receptor], map: "ux_calificacion_publicacion_emisor_receptor")
+  @@index([fk_publicacion], map: "idx_calificacion_publicacion")
+  @@index([fk_receptor], map: "idx_calificacion_receptor")
+  @@index([fk_emisor], map: "idx_calificacion_emisor")
+  @@map("calificacion")
 }
 
 enum EstadoBannerPublicidad {
