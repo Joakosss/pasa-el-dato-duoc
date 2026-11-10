@@ -1,0 +1,1 @@
+export const CALIFICACION_COMENTARIO_MAX_LEN = 500 as const;

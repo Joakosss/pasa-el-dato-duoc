@@ -416,6 +416,7 @@ export const ModelName = {
   AuditoriaAdmin: 'AuditoriaAdmin',
   ReportePublicacion: 'ReportePublicacion',
   Publicacion: 'Publicacion',
+  Calificacion: 'Calificacion',
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
@@ -439,7 +440,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "notificacionUsuario" | "imagenPublicacion" | "reporteUsuario" | "favorito" | "palabraBloqueada"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "calificacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "notificacionUsuario" | "imagenPublicacion" | "reporteUsuario" | "favorito" | "palabraBloqueada"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1849,6 +1850,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Calificacion: {
+      payload: Prisma.$CalificacionPayload<ExtArgs>
+      fields: Prisma.CalificacionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CalificacionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CalificacionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>
+        }
+        findFirst: {
+          args: Prisma.CalificacionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CalificacionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>
+        }
+        findMany: {
+          args: Prisma.CalificacionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>[]
+        }
+        create: {
+          args: Prisma.CalificacionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>
+        }
+        createMany: {
+          args: Prisma.CalificacionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CalificacionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>[]
+        }
+        delete: {
+          args: Prisma.CalificacionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>
+        }
+        update: {
+          args: Prisma.CalificacionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CalificacionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CalificacionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CalificacionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CalificacionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CalificacionPayload>
+        }
+        aggregate: {
+          args: Prisma.CalificacionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCalificacion>
+        }
+        groupBy: {
+          args: Prisma.CalificacionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CalificacionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CalificacionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CalificacionCountAggregateOutputType> | number
+        }
+      }
+    }
     BannerPublicidad: {
       payload: Prisma.$BannerPublicidadPayload<ExtArgs>
       fields: Prisma.BannerPublicidadFieldRefs
@@ -2703,6 +2778,20 @@ export const PublicacionScalarFieldEnum = {
 export type PublicacionScalarFieldEnum = (typeof PublicacionScalarFieldEnum)[keyof typeof PublicacionScalarFieldEnum]
 
 
+export const CalificacionScalarFieldEnum = {
+  id: 'id',
+  puntaje: 'puntaje',
+  comentario: 'comentario',
+  fk_publicacion: 'fk_publicacion',
+  fk_emisor: 'fk_emisor',
+  fk_receptor: 'fk_receptor',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion'
+} as const
+
+export type CalificacionScalarFieldEnum = (typeof CalificacionScalarFieldEnum)[keyof typeof CalificacionScalarFieldEnum]
+
+
 export const BannerPublicidadScalarFieldEnum = {
   id: 'id',
   fk_marca: 'fk_marca',
@@ -3212,6 +3301,7 @@ export type GlobalOmitConfig = {
   auditoriaAdmin?: Prisma.AuditoriaAdminOmit
   reportePublicacion?: Prisma.ReportePublicacionOmit
   publicacion?: Prisma.PublicacionOmit
+  calificacion?: Prisma.CalificacionOmit
   bannerPublicidad?: Prisma.BannerPublicidadOmit
   bannerSede?: Prisma.BannerSedeOmit
   notificacionMarca?: Prisma.NotificacionMarcaOmit
