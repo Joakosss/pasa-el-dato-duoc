@@ -41,6 +41,7 @@ export class CalificacionesService {
         eliminado: true,
         fk_usuario: true,
         fk_user_comprador: true,
+        calificacion_activada: true,
         estadoPublicacion: { select: { descripcion: true } },
       },
     });
@@ -57,8 +58,10 @@ export class CalificacionesService {
       throw new NotFoundException('No hay transacción finalizada para calificar');
     }
 
-    // HU-CAL-03: activación de calificación (aún no implementada en el modelo actual).
-    // TODO: agregar validación real cuando exista el campo/tabla de activación.
+    // HU-CAL-03: mientras la calificación no esté activada, ningún participante puede calificar.
+    if (!publicacion.calificacion_activada) {
+      throw new NotFoundException('La calificación aún no está activada');
+    }
 
     const idCuenta = sesion.idCuenta;
 

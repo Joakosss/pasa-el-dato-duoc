@@ -195,6 +195,47 @@ describe('HU-CAL-01 Calificaciones (e2e)', () => {
     }
   });
 
+  it('CAL-03: exige activación antes de calificar (404)', async () => {
+    await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/calificaciones`)
+      .set('Cookie', cookieComprador)
+      .send({ puntaje: 5 })
+      .expect(404);
+  });
+
+  it('CAL-03: vendedor activa calificación (200) e idempotencia (200)', async () => {
+    const res1 = await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/activar-calificacion`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    expect(res1.body).toMatchObject({
+      publicacionId: idPublicacion,
+      calificacionActivada: true,
+    });
+    expect(
+      res1.body.fechaActivacionCalificacion === null ||
+        typeof res1.body.fechaActivacionCalificacion === 'string',
+    ).toBe(true);
+
+    const res2 = await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/activar-calificacion`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    expect(res2.body).toMatchObject({
+      publicacionId: idPublicacion,
+      calificacionActivada: true,
+    });
+  });
+
+  it('CAL-03: no dueño no puede activar (403)', async () => {
+    await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/activar-calificacion`)
+      .set('Cookie', cookieComprador)
+      .expect(403);
+  });
+
   it('C1: comprador califica al vendedor (201)', async () => {
     const res = await request(app.getHttpServer())
       .post(`/api/publicaciones/${idPublicacion}/calificaciones`)

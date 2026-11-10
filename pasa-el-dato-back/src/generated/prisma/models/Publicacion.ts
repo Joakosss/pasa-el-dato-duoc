@@ -55,6 +55,8 @@ export type PublicacionMinAggregateOutputType = {
   fk_usuario: string | null
   fk_sede: number | null
   fk_user_comprador: string | null
+  calificacion_activada: boolean | null
+  fecha_activacion_calificacion: Date | null
   contador_vistas: number | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
@@ -73,6 +75,8 @@ export type PublicacionMaxAggregateOutputType = {
   fk_usuario: string | null
   fk_sede: number | null
   fk_user_comprador: string | null
+  calificacion_activada: boolean | null
+  fecha_activacion_calificacion: Date | null
   contador_vistas: number | null
   fechaCreacion: Date | null
   fechaModificacion: Date | null
@@ -91,6 +95,8 @@ export type PublicacionCountAggregateOutputType = {
   fk_usuario: number
   fk_sede: number
   fk_user_comprador: number
+  calificacion_activada: number
+  fecha_activacion_calificacion: number
   contador_vistas: number
   fechaCreacion: number
   fechaModificacion: number
@@ -129,6 +135,8 @@ export type PublicacionMinAggregateInputType = {
   fk_usuario?: true
   fk_sede?: true
   fk_user_comprador?: true
+  calificacion_activada?: true
+  fecha_activacion_calificacion?: true
   contador_vistas?: true
   fechaCreacion?: true
   fechaModificacion?: true
@@ -147,6 +155,8 @@ export type PublicacionMaxAggregateInputType = {
   fk_usuario?: true
   fk_sede?: true
   fk_user_comprador?: true
+  calificacion_activada?: true
+  fecha_activacion_calificacion?: true
   contador_vistas?: true
   fechaCreacion?: true
   fechaModificacion?: true
@@ -165,6 +175,8 @@ export type PublicacionCountAggregateInputType = {
   fk_usuario?: true
   fk_sede?: true
   fk_user_comprador?: true
+  calificacion_activada?: true
+  fecha_activacion_calificacion?: true
   contador_vistas?: true
   fechaCreacion?: true
   fechaModificacion?: true
@@ -270,6 +282,8 @@ export type PublicacionGroupByOutputType = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador: string | null
+  calificacion_activada: boolean
+  fecha_activacion_calificacion: Date | null
   contador_vistas: number
   fechaCreacion: Date
   fechaModificacion: Date
@@ -311,6 +325,8 @@ export type PublicacionWhereInput = {
   fk_usuario?: Prisma.UuidFilter<"Publicacion"> | string
   fk_sede?: Prisma.IntFilter<"Publicacion"> | number
   fk_user_comprador?: Prisma.UuidNullableFilter<"Publicacion"> | string | null
+  calificacion_activada?: Prisma.BoolFilter<"Publicacion"> | boolean
+  fecha_activacion_calificacion?: Prisma.DateTimeNullableFilter<"Publicacion"> | Date | string | null
   contador_vistas?: Prisma.IntFilter<"Publicacion"> | number
   fechaCreacion?: Prisma.DateTimeFilter<"Publicacion"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Publicacion"> | Date | string
@@ -340,6 +356,8 @@ export type PublicacionOrderByWithRelationInput = {
   fk_usuario?: Prisma.SortOrder
   fk_sede?: Prisma.SortOrder
   fk_user_comprador?: Prisma.SortOrderInput | Prisma.SortOrder
+  calificacion_activada?: Prisma.SortOrder
+  fecha_activacion_calificacion?: Prisma.SortOrderInput | Prisma.SortOrder
   contador_vistas?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
@@ -372,6 +390,8 @@ export type PublicacionWhereUniqueInput = Prisma.AtLeast<{
   fk_usuario?: Prisma.UuidFilter<"Publicacion"> | string
   fk_sede?: Prisma.IntFilter<"Publicacion"> | number
   fk_user_comprador?: Prisma.UuidNullableFilter<"Publicacion"> | string | null
+  calificacion_activada?: Prisma.BoolFilter<"Publicacion"> | boolean
+  fecha_activacion_calificacion?: Prisma.DateTimeNullableFilter<"Publicacion"> | Date | string | null
   contador_vistas?: Prisma.IntFilter<"Publicacion"> | number
   fechaCreacion?: Prisma.DateTimeFilter<"Publicacion"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Publicacion"> | Date | string
@@ -401,6 +421,8 @@ export type PublicacionOrderByWithAggregationInput = {
   fk_usuario?: Prisma.SortOrder
   fk_sede?: Prisma.SortOrder
   fk_user_comprador?: Prisma.SortOrderInput | Prisma.SortOrder
+  calificacion_activada?: Prisma.SortOrder
+  fecha_activacion_calificacion?: Prisma.SortOrderInput | Prisma.SortOrder
   contador_vistas?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
@@ -427,6 +449,8 @@ export type PublicacionScalarWhereWithAggregatesInput = {
   fk_usuario?: Prisma.UuidWithAggregatesFilter<"Publicacion"> | string
   fk_sede?: Prisma.IntWithAggregatesFilter<"Publicacion"> | number
   fk_user_comprador?: Prisma.UuidNullableWithAggregatesFilter<"Publicacion"> | string | null
+  calificacion_activada?: Prisma.BoolWithAggregatesFilter<"Publicacion"> | boolean
+  fecha_activacion_calificacion?: Prisma.DateTimeNullableWithAggregatesFilter<"Publicacion"> | Date | string | null
   contador_vistas?: Prisma.IntWithAggregatesFilter<"Publicacion"> | number
   fechaCreacion?: Prisma.DateTimeWithAggregatesFilter<"Publicacion"> | Date | string
   fechaModificacion?: Prisma.DateTimeWithAggregatesFilter<"Publicacion"> | Date | string
@@ -439,6 +463,8 @@ export type PublicacionCreateInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -467,6 +493,8 @@ export type PublicacionUncheckedCreateInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -483,6 +511,8 @@ export type PublicacionUpdateInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -511,6 +541,8 @@ export type PublicacionUncheckedUpdateInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -533,6 +565,8 @@ export type PublicacionCreateManyInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -545,6 +579,8 @@ export type PublicacionUpdateManyMutationInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -562,6 +598,8 @@ export type PublicacionUncheckedUpdateManyInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -595,6 +633,8 @@ export type PublicacionCountOrderByAggregateInput = {
   fk_usuario?: Prisma.SortOrder
   fk_sede?: Prisma.SortOrder
   fk_user_comprador?: Prisma.SortOrder
+  calificacion_activada?: Prisma.SortOrder
+  fecha_activacion_calificacion?: Prisma.SortOrder
   contador_vistas?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
@@ -622,6 +662,8 @@ export type PublicacionMaxOrderByAggregateInput = {
   fk_usuario?: Prisma.SortOrder
   fk_sede?: Prisma.SortOrder
   fk_user_comprador?: Prisma.SortOrder
+  calificacion_activada?: Prisma.SortOrder
+  fecha_activacion_calificacion?: Prisma.SortOrder
   contador_vistas?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
@@ -640,6 +682,8 @@ export type PublicacionMinOrderByAggregateInput = {
   fk_usuario?: Prisma.SortOrder
   fk_sede?: Prisma.SortOrder
   fk_user_comprador?: Prisma.SortOrder
+  calificacion_activada?: Prisma.SortOrder
+  fecha_activacion_calificacion?: Prisma.SortOrder
   contador_vistas?: Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
   fechaModificacion?: Prisma.SortOrder
@@ -1011,6 +1055,8 @@ export type PublicacionCreateWithoutCompradorInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1037,6 +1083,8 @@ export type PublicacionUncheckedCreateWithoutCompradorInput = {
   fk_categoria: number
   fk_usuario: string
   fk_sede: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1063,6 +1111,8 @@ export type PublicacionCreateWithoutModificadoPorInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1090,6 +1140,8 @@ export type PublicacionUncheckedCreateWithoutModificadoPorInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1140,6 +1192,8 @@ export type PublicacionScalarWhereInput = {
   fk_usuario?: Prisma.UuidFilter<"Publicacion"> | string
   fk_sede?: Prisma.IntFilter<"Publicacion"> | number
   fk_user_comprador?: Prisma.UuidNullableFilter<"Publicacion"> | string | null
+  calificacion_activada?: Prisma.BoolFilter<"Publicacion"> | boolean
+  fecha_activacion_calificacion?: Prisma.DateTimeNullableFilter<"Publicacion"> | Date | string | null
   contador_vistas?: Prisma.IntFilter<"Publicacion"> | number
   fechaCreacion?: Prisma.DateTimeFilter<"Publicacion"> | Date | string
   fechaModificacion?: Prisma.DateTimeFilter<"Publicacion"> | Date | string
@@ -1168,6 +1222,8 @@ export type PublicacionCreateWithoutSedeInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1194,6 +1250,8 @@ export type PublicacionUncheckedCreateWithoutSedeInput = {
   fk_categoria: number
   fk_usuario: string
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1236,6 +1294,8 @@ export type PublicacionCreateWithoutUsuarioInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1262,6 +1322,8 @@ export type PublicacionUncheckedCreateWithoutUsuarioInput = {
   fk_categoria: number
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1304,6 +1366,8 @@ export type PublicacionCreateWithoutTipoVentaInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1330,6 +1394,8 @@ export type PublicacionUncheckedCreateWithoutTipoVentaInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1372,6 +1438,8 @@ export type PublicacionCreateWithoutCategoriaInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1398,6 +1466,8 @@ export type PublicacionUncheckedCreateWithoutCategoriaInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1440,6 +1510,8 @@ export type PublicacionCreateWithoutEstadoPublicacionInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1466,6 +1538,8 @@ export type PublicacionUncheckedCreateWithoutEstadoPublicacionInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1508,6 +1582,8 @@ export type PublicacionCreateWithoutReportesPublicacionInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1535,6 +1611,8 @@ export type PublicacionUncheckedCreateWithoutReportesPublicacionInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1566,6 +1644,8 @@ export type PublicacionUpdateWithoutReportesPublicacionInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1593,6 +1673,8 @@ export type PublicacionUncheckedUpdateWithoutReportesPublicacionInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1608,6 +1690,8 @@ export type PublicacionCreateWithoutCalificacionesEmitidasInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1635,6 +1719,8 @@ export type PublicacionUncheckedCreateWithoutCalificacionesEmitidasInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1666,6 +1752,8 @@ export type PublicacionUpdateWithoutCalificacionesEmitidasInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1693,6 +1781,8 @@ export type PublicacionUncheckedUpdateWithoutCalificacionesEmitidasInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1708,6 +1798,8 @@ export type PublicacionCreateWithoutImagenesInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1735,6 +1827,8 @@ export type PublicacionUncheckedCreateWithoutImagenesInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1766,6 +1860,8 @@ export type PublicacionUpdateWithoutImagenesInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1793,6 +1889,8 @@ export type PublicacionUncheckedUpdateWithoutImagenesInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1808,6 +1906,8 @@ export type PublicacionCreateWithoutFavoritosInput = {
   titulo: string
   descripcion: string
   precio: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1835,6 +1935,8 @@ export type PublicacionUncheckedCreateWithoutFavoritosInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1866,6 +1968,8 @@ export type PublicacionUpdateWithoutFavoritosInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1893,6 +1997,8 @@ export type PublicacionUncheckedUpdateWithoutFavoritosInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1913,6 +2019,8 @@ export type PublicacionCreateManyCompradorInput = {
   fk_categoria: number
   fk_usuario: string
   fk_sede: number
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1931,6 +2039,8 @@ export type PublicacionCreateManyModificadoPorInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -1942,6 +2052,8 @@ export type PublicacionUpdateWithoutCompradorInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1968,6 +2080,8 @@ export type PublicacionUncheckedUpdateWithoutCompradorInput = {
   fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1989,6 +2103,8 @@ export type PublicacionUncheckedUpdateManyWithoutCompradorInput = {
   fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2001,6 +2117,8 @@ export type PublicacionUpdateWithoutModificadoPorInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2028,6 +2146,8 @@ export type PublicacionUncheckedUpdateWithoutModificadoPorInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2049,6 +2169,8 @@ export type PublicacionUncheckedUpdateManyWithoutModificadoPorInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2065,6 +2187,8 @@ export type PublicacionCreateManySedeInput = {
   fk_categoria: number
   fk_usuario: string
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -2077,6 +2201,8 @@ export type PublicacionUpdateWithoutSedeInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2103,6 +2229,8 @@ export type PublicacionUncheckedUpdateWithoutSedeInput = {
   fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2124,6 +2252,8 @@ export type PublicacionUncheckedUpdateManyWithoutSedeInput = {
   fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2141,6 +2271,8 @@ export type PublicacionCreateManyUsuarioInput = {
   fk_categoria: number
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -2153,6 +2285,8 @@ export type PublicacionUpdateWithoutUsuarioInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2179,6 +2313,8 @@ export type PublicacionUncheckedUpdateWithoutUsuarioInput = {
   fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2200,6 +2336,8 @@ export type PublicacionUncheckedUpdateManyWithoutUsuarioInput = {
   fk_categoria?: Prisma.IntFieldUpdateOperationsInput | number
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2217,6 +2355,8 @@ export type PublicacionCreateManyTipoVentaInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -2229,6 +2369,8 @@ export type PublicacionUpdateWithoutTipoVentaInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2255,6 +2397,8 @@ export type PublicacionUncheckedUpdateWithoutTipoVentaInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2276,6 +2420,8 @@ export type PublicacionUncheckedUpdateManyWithoutTipoVentaInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2293,6 +2439,8 @@ export type PublicacionCreateManyCategoriaInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -2305,6 +2453,8 @@ export type PublicacionUpdateWithoutCategoriaInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2331,6 +2481,8 @@ export type PublicacionUncheckedUpdateWithoutCategoriaInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2352,6 +2504,8 @@ export type PublicacionUncheckedUpdateManyWithoutCategoriaInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2369,6 +2523,8 @@ export type PublicacionCreateManyEstadoPublicacionInput = {
   fk_usuario: string
   fk_sede: number
   fk_user_comprador?: string | null
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: Date | string | null
   contador_vistas?: number
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -2381,6 +2537,8 @@ export type PublicacionUpdateWithoutEstadoPublicacionInput = {
   titulo?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
   precio?: Prisma.IntFieldUpdateOperationsInput | number
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2407,6 +2565,8 @@ export type PublicacionUncheckedUpdateWithoutEstadoPublicacionInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2428,6 +2588,8 @@ export type PublicacionUncheckedUpdateManyWithoutEstadoPublicacionInput = {
   fk_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   fk_sede?: Prisma.IntFieldUpdateOperationsInput | number
   fk_user_comprador?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  calificacion_activada?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fecha_activacion_calificacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contador_vistas?: Prisma.IntFieldUpdateOperationsInput | number
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2504,6 +2666,8 @@ export type PublicacionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   fk_usuario?: boolean
   fk_sede?: boolean
   fk_user_comprador?: boolean
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: boolean
   contador_vistas?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
@@ -2534,6 +2698,8 @@ export type PublicacionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   fk_usuario?: boolean
   fk_sede?: boolean
   fk_user_comprador?: boolean
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: boolean
   contador_vistas?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
@@ -2559,6 +2725,8 @@ export type PublicacionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   fk_usuario?: boolean
   fk_sede?: boolean
   fk_user_comprador?: boolean
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: boolean
   contador_vistas?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
@@ -2584,6 +2752,8 @@ export type PublicacionSelectScalar = {
   fk_usuario?: boolean
   fk_sede?: boolean
   fk_user_comprador?: boolean
+  calificacion_activada?: boolean
+  fecha_activacion_calificacion?: boolean
   contador_vistas?: boolean
   fechaCreacion?: boolean
   fechaModificacion?: boolean
@@ -2591,7 +2761,7 @@ export type PublicacionSelectScalar = {
   fk_modificado_por?: boolean
 }
 
-export type PublicacionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "titulo" | "descripcion" | "precio" | "fk_estado_publicacion" | "fk_tipoventa" | "fk_categoria" | "fk_usuario" | "fk_sede" | "fk_user_comprador" | "contador_vistas" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por", ExtArgs["result"]["publicacion"]>
+export type PublicacionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "titulo" | "descripcion" | "precio" | "fk_estado_publicacion" | "fk_tipoventa" | "fk_categoria" | "fk_usuario" | "fk_sede" | "fk_user_comprador" | "calificacion_activada" | "fecha_activacion_calificacion" | "contador_vistas" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por", ExtArgs["result"]["publicacion"]>
 export type PublicacionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   estadoPublicacion?: boolean | Prisma.EstadoPublicacionDefaultArgs<ExtArgs>
   tipoVenta?: boolean | Prisma.TipoVentaDefaultArgs<ExtArgs>
@@ -2651,6 +2821,8 @@ export type $PublicacionPayload<ExtArgs extends runtime.Types.Extensions.Interna
     fk_usuario: string
     fk_sede: number
     fk_user_comprador: string | null
+    calificacion_activada: boolean
+    fecha_activacion_calificacion: Date | null
     contador_vistas: number
     fechaCreacion: Date
     fechaModificacion: Date
@@ -3100,6 +3272,8 @@ export interface PublicacionFieldRefs {
   readonly fk_usuario: Prisma.FieldRef<"Publicacion", 'String'>
   readonly fk_sede: Prisma.FieldRef<"Publicacion", 'Int'>
   readonly fk_user_comprador: Prisma.FieldRef<"Publicacion", 'String'>
+  readonly calificacion_activada: Prisma.FieldRef<"Publicacion", 'Boolean'>
+  readonly fecha_activacion_calificacion: Prisma.FieldRef<"Publicacion", 'DateTime'>
   readonly contador_vistas: Prisma.FieldRef<"Publicacion", 'Int'>
   readonly fechaCreacion: Prisma.FieldRef<"Publicacion", 'DateTime'>
   readonly fechaModificacion: Prisma.FieldRef<"Publicacion", 'DateTime'>

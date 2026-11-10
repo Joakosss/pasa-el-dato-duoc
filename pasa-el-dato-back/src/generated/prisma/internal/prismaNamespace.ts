@@ -2768,6 +2768,8 @@ export const PublicacionScalarFieldEnum = {
   fk_usuario: 'fk_usuario',
   fk_sede: 'fk_sede',
   fk_user_comprador: 'fk_user_comprador',
+  calificacion_activada: 'calificacion_activada',
+  fecha_activacion_calificacion: 'fecha_activacion_calificacion',
   contador_vistas: 'contador_vistas',
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion',
