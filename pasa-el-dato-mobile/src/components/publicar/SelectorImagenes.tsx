@@ -1,12 +1,12 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing } from '@/theme';
 import {
   FORMATOS_IMAGEN,
   IMAGENES_MAX,
   PESO_MAX_IMAGEN_MB,
 } from '@/lib/validators/publicacion';
+import { colors, spacing } from '@/theme';
 
 export interface ImagenVistaPrevia {
   id: string;
@@ -15,13 +15,15 @@ export interface ImagenVistaPrevia {
 
 export function SelectorImagenes({
   imagenes,
-  onAgregar,
+  onSeleccionarGaleria,
+  onTomarFoto,
   onQuitar,
   error,
   deshabilitado = false,
 }: {
   imagenes: readonly ImagenVistaPrevia[];
-  onAgregar: () => void;
+  onSeleccionarGaleria: () => void;
+  onTomarFoto: () => void;
   onQuitar: (id: string) => void;
   error?: string;
   deshabilitado?: boolean;
@@ -54,21 +56,26 @@ export function SelectorImagenes({
           </Pressable>
         </View>
       ) : (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Agregar foto de portada"
-          disabled={deshabilitado}
-          onPress={onAgregar}
-          style={({ pressed }) => [
-            styles.vacia,
-            error ? styles.conError : null,
-            deshabilitado && styles.deshabilitado,
-            pressed && styles.pressed,
-          ]}>
+        <View style={[styles.vacia, error ? styles.conError : null, deshabilitado && styles.deshabilitado]}>
           <MaterialCommunityIcons name="image-plus" size={28} color={colors.gold} />
-          <Text style={styles.vaciaTitulo}>Agregar foto</Text>
-          <Text style={styles.vaciaTexto}>Selecciona una imagen desde tu galería</Text>
-        </Pressable>
+          <Text style={styles.vaciaTitulo}>Agrega una foto</Text>
+          <Text style={styles.vaciaTexto}>Elige una imagen o toma una foto de tu producto</Text>
+          <View style={styles.acciones}>
+            <BotonOrigen
+              icono="image-outline"
+              etiqueta="Galería"
+              deshabilitado={deshabilitado}
+              onPress={onSeleccionarGaleria}
+            />
+            <BotonOrigen
+              icono="camera-outline"
+              etiqueta="Tomar foto"
+              deshabilitado={deshabilitado}
+              onPress={onTomarFoto}
+              primario
+            />
+          </View>
+        </View>
       )}
 
       {imagenes.length > 0 ? (
@@ -92,18 +99,20 @@ export function SelectorImagenes({
           ))}
 
           {puedeAgregar ? (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Agregar otra imagen"
-              disabled={deshabilitado}
-              onPress={onAgregar}
-              style={({ pressed }) => [
-                styles.agregarMini,
-                deshabilitado && styles.deshabilitado,
-                pressed && styles.pressed,
-              ]}>
-              <MaterialCommunityIcons name="plus" size={20} color={colors.navy} />
-            </Pressable>
+            <>
+              <BotonMiniatura
+                icono="image-plus"
+                etiqueta="Agregar desde galería"
+                deshabilitado={deshabilitado}
+                onPress={onSeleccionarGaleria}
+              />
+              <BotonMiniatura
+                icono="camera-plus-outline"
+                etiqueta="Tomar otra foto"
+                deshabilitado={deshabilitado}
+                onPress={onTomarFoto}
+              />
+            </>
           ) : null}
         </View>
       ) : null}
@@ -119,6 +128,62 @@ export function SelectorImagenes({
         </Text>
       ) : null}
     </View>
+  );
+}
+
+function BotonOrigen({
+  icono,
+  etiqueta,
+  deshabilitado,
+  onPress,
+  primario = false,
+}: {
+  icono: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  etiqueta: string;
+  deshabilitado: boolean;
+  onPress: () => void;
+  primario?: boolean;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      disabled={deshabilitado}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.botonOrigen,
+        primario && styles.botonOrigenPrimario,
+        pressed && styles.pressed,
+      ]}>
+      <MaterialCommunityIcons name={icono} size={18} color={primario ? colors.navy : colors.navy} />
+      <Text style={styles.botonOrigenTexto}>{etiqueta}</Text>
+    </Pressable>
+  );
+}
+
+function BotonMiniatura({
+  icono,
+  etiqueta,
+  deshabilitado,
+  onPress,
+}: {
+  icono: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  etiqueta: string;
+  deshabilitado: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={etiqueta}
+      disabled={deshabilitado}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.agregarMini,
+        deshabilitado && styles.deshabilitado,
+        pressed && styles.pressed,
+      ]}>
+      <MaterialCommunityIcons name={icono} size={20} color={colors.navy} />
+    </Pressable>
   );
 }
 
@@ -154,11 +219,26 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderWidth: 2,
     gap: 2,
-    height: 200,
+    minHeight: 200,
     justifyContent: 'center',
+    padding: spacing.padMd,
   },
   vaciaTitulo: { color: colors.navy, fontSize: 14, fontWeight: '700', marginTop: 6 },
-  vaciaTexto: { color: colors.muted, fontSize: 12 },
+  vaciaTexto: { color: colors.muted, fontSize: 12, textAlign: 'center' },
+  acciones: { flexDirection: 'row', gap: spacing.padSm, marginTop: spacing.padSm, width: '100%' },
+  botonOrigen: {
+    alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
+    gap: 6,
+    justifyContent: 'center',
+    minHeight: 40,
+  },
+  botonOrigenPrimario: { backgroundColor: colors.gold, borderColor: colors.gold },
+  botonOrigenTexto: { color: colors.navy, fontSize: 12, fontWeight: '700' },
   miniaturas: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   miniatura: {
     backgroundColor: colors.border,

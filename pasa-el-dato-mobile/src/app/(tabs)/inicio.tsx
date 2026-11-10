@@ -1,6 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import * as Location from 'expo-location';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -20,6 +21,7 @@ import { ApiError } from '@/lib/api';
 import { listarCategorias, type CategoriaCatalogo } from '@/lib/api/catalogos';
 import {
   listarPublicaciones,
+  listarPublicacionesCercanas,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
 import { PUBLICACIONES_DEMOSTRACION_MOMENTANEO } from '@/lib/feed/publicaciones-demostracion-momentaneo';
@@ -42,7 +44,12 @@ export default function InicioScreen() {
   const [categorias, setCategorias] = useState<CategoriaCatalogo[]>([]);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
+  const [cargandoCercanas, setCargandoCercanas] = useState(false);
+  const [mostrandoCercanas, setMostrandoCercanas] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const ubicacionActualRef = useRef<{ latitud: number; longitud: number } | null>(
+    null,
+  );
 
   const cargarPublicaciones = useCallback(async (esActualizacion = false) => {
     if (esActualizacion) setActualizando(true);
@@ -73,9 +80,87 @@ export default function InicioScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      void cargarPublicaciones();
-    }, [cargarPublicaciones]),
+      if (!mostrandoCercanas) void cargarPublicaciones();
+    }, [cargarPublicaciones, mostrandoCercanas]),
   );
+
+  const cargarPublicacionesCercanas = async () => {
+    if (cargandoCercanas) return;
+
+    setCargandoCercanas(true);
+    setError(undefined);
+
+    try {
+      const permiso = await Location.requestForegroundPermissionsAsync();
+      if (!permiso.granted) {
+        setError(
+          'Necesitamos tu ubicación para mostrar publicaciones cercanas. No guardamos tu ubicación.',
+        );
+        return;
+      }
+
+      const posicionActual = await Promise.race([
+        Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        }),
+        new Promise<null>((resolver) => {
+          setTimeout(() => resolver(null), 8000);
+        }),
+      ]);
+
+      let ubicacion = posicionActual
+        ? {
+            latitud: posicionActual.coords.latitude,
+            longitud: posicionActual.coords.longitude,
+          }
+        : null;
+
+      if (!ubicacion) {
+        const ultimaUbicacion = await Location.getLastKnownPositionAsync({
+          maxAge: 5 * 60 * 1000,
+          requiredAccuracy: 5000,
+        });
+
+        if (ultimaUbicacion) {
+          ubicacion = {
+            latitud: ultimaUbicacion.coords.latitude,
+            longitud: ultimaUbicacion.coords.longitude,
+          };
+        }
+      }
+
+      if (!ubicacion) {
+        ubicacion = ubicacionActualRef.current;
+      }
+
+      if (!ubicacion) {
+        setError(
+          'No pudimos determinar tu ubicación. Activa la ubicación del dispositivo e inténtalo nuevamente.',
+        );
+        return;
+      }
+
+      ubicacionActualRef.current = ubicacion;
+      const respuesta = await listarPublicacionesCercanas(
+        ubicacion.latitud,
+        ubicacion.longitud,
+      );
+
+      setPublicaciones(respuesta);
+      setMostrandoCercanas(true);
+    } catch {
+      setError(
+        'No pudimos obtener tu ubicación. Revisa que la ubicación esté activada e inténtalo nuevamente.',
+      );
+    } finally {
+      setCargandoCercanas(false);
+    }
+  };
+
+  const mostrarTodas = () => {
+    setMostrandoCercanas(false);
+    void cargarPublicaciones();
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -95,12 +180,25 @@ export default function InicioScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={actualizando}
-            onRefresh={() => void cargarPublicaciones(true)}
+            refreshing={actualizando || cargandoCercanas}
+            onRefresh={() =>
+              mostrandoCercanas
+                ? void cargarPublicacionesCercanas()
+                : void cargarPublicaciones(true)
+            }
             tintColor={colors.navy}
           />
         }
-        ListHeaderComponent={<CabeceraFeed categorias={categorias} />}
+        ListHeaderComponent={
+          <CabeceraFeed
+            categorias={categorias}
+            cargandoCercanas={cargandoCercanas}
+            mostrandoCercanas={mostrandoCercanas}
+            errorUbicacion={error}
+            onCargarCercanas={() => void cargarPublicacionesCercanas()}
+            onMostrarTodas={mostrarTodas}
+          />
+        }
         ListEmptyComponent={
           cargando ? (
             <View style={styles.estadoLista}>
@@ -163,7 +261,21 @@ function BarraSuperior({ nombre }: { nombre: string }) {
 }
 
 // Contenido que viaja con el scroll: buscador, anuncio, categorías y título.
-function CabeceraFeed({ categorias }: { categorias: CategoriaCatalogo[] }) {
+function CabeceraFeed({
+  categorias,
+  cargandoCercanas,
+  mostrandoCercanas,
+  errorUbicacion,
+  onCargarCercanas,
+  onMostrarTodas,
+}: {
+  categorias: CategoriaCatalogo[];
+  cargandoCercanas: boolean;
+  mostrandoCercanas: boolean;
+  errorUbicacion?: string;
+  onCargarCercanas: () => void;
+  onMostrarTodas: () => void;
+}) {
   return (
     <View>
       <View style={styles.busqueda}>
@@ -230,16 +342,46 @@ function CabeceraFeed({ categorias }: { categorias: CategoriaCatalogo[] }) {
         ))}
       </ScrollView>
 
+      {errorUbicacion ? (
+        <View style={styles.avisoUbicacion}>
+          <MaterialCommunityIcons name="map-marker-alert-outline" size={18} color={colors.error} />
+          <Text style={styles.avisoUbicacionTexto}>{errorUbicacion}</Text>
+        </View>
+      ) : null}
+
       <View style={styles.seccionBarra}>
-        <Text style={styles.seccionTitulo}>Productos para ti</Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Ver todas las publicaciones"
-          onPress={() => router.push('/buscar')}
-          style={({ pressed }) => [styles.verTodo, pressed && styles.pressed]}>
-          <Text style={styles.verTodoTexto}>Ver todo</Text>
-          <MaterialCommunityIcons name="chevron-right" size={14} color={colors.navy} />
-        </Pressable>
+        <Text style={styles.seccionTitulo}>
+          {mostrandoCercanas ? 'Publicaciones cerca de ti' : 'Productos para ti'}
+        </Text>
+        {mostrandoCercanas ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Ver todas las publicaciones"
+            onPress={onMostrarTodas}
+            style={({ pressed }) => [styles.verTodo, pressed && styles.pressed]}>
+            <Text style={styles.verTodoTexto}>Ver todo</Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ busy: cargandoCercanas }}
+            disabled={cargandoCercanas}
+            onPress={onCargarCercanas}
+            style={({ pressed }) => [
+              styles.cercaDeTi,
+              cargandoCercanas && styles.deshabilitado,
+              pressed && styles.pressed,
+            ]}>
+            {cargandoCercanas ? (
+              <ActivityIndicator color={colors.navy} size="small" />
+            ) : (
+              <>
+                <MaterialCommunityIcons name="crosshairs-gps" size={15} color={colors.navy} />
+                <Text style={styles.cercaDeTiTexto}>Cerca de ti</Text>
+              </>
+            )}
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -439,6 +581,31 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
+  cercaDeTi: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: 999,
+    flexDirection: 'row',
+    gap: 5,
+    justifyContent: 'center',
+    marginTop: spacing.padMd,
+    minHeight: 32,
+    paddingHorizontal: 10,
+  },
+  cercaDeTiTexto: { color: colors.navy, fontSize: 12, fontWeight: '800' },
+  deshabilitado: { opacity: 0.65 },
+  avisoUbicacion: {
+    alignItems: 'center',
+    backgroundColor: '#fef2f2',
+    borderColor: colors.error,
+    borderRadius: spacing.radiusMd,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: spacing.padMd,
+    padding: spacing.padSm,
+  },
+  avisoUbicacionTexto: { color: colors.error, flex: 1, fontSize: 12, lineHeight: 17 },
   cta: {
     backgroundColor: colors.gold,
     borderRadius: spacing.radiusLg,

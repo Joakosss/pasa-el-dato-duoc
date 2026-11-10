@@ -27,6 +27,19 @@
     "plugins": [
       "expo-router",
       [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Permite que Pasa el Dato use tu cámara para fotografiar tus productos.",
+          "photosPermission": "Permite que Pasa el Dato acceda a tus fotos para publicar productos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Permite que Pasa el Dato use tu ubicación para mostrar publicaciones cercanas. Tu ubicación no se guarda."
+        }
+      ],
+      [
         "expo-navigation-bar",
         {
           "enforceContrast": false

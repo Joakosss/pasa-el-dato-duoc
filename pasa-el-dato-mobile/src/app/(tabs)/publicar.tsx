@@ -191,7 +191,36 @@ export default function PublicarScreen() {
     );
   };
 
-  const agregarImagen = async () => {
+  const agregarImagenesSeleccionadas = (
+    assets: readonly ImagePicker.ImagePickerAsset[],
+  ) => {
+    const imagenMuyPesada = assets.find(
+      (asset) =>
+        asset.fileSize !== null &&
+        asset.fileSize !== undefined &&
+        asset.fileSize > PESO_MAX_IMAGEN_MB * 1024 * 1024,
+    );
+
+    if (imagenMuyPesada) {
+      setErrores((previos) => ({
+        ...previos,
+        imagenes: `Cada imagen debe pesar como máximo ${PESO_MAX_IMAGEN_MB} MB.`,
+      }));
+      return;
+    }
+
+    const nuevasImagenes: ImagenFormulario[] = assets.map((asset, indice) => ({
+      id: `${asset.assetId ?? asset.uri}-${Date.now()}-${indice}`,
+      uri: asset.uri,
+      nombre: asset.fileName ?? nombreArchivo(asset.uri, indice),
+      mimeType: mimeTypeImagen(asset.uri, asset.mimeType),
+    }));
+
+    setImagenes((previas) => [...previas, ...nuevasImagenes].slice(0, IMAGENES_MAX));
+    limpiarError('imagenes');
+  };
+
+  const seleccionarDesdeGaleria = async () => {
     if (publicando || imagenes.length >= IMAGENES_MAX) return;
 
     const permiso = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -210,32 +239,28 @@ export default function PublicarScreen() {
       quality: 0.8,
     });
 
-    if (resultado.canceled) return;
+    if (!resultado.canceled) agregarImagenesSeleccionadas(resultado.assets);
+  };
 
-    const nuevasImagenes: ImagenFormulario[] = resultado.assets.map((asset, indice) => ({
-      id: `${asset.assetId ?? asset.uri}-${Date.now()}-${indice}`,
-      uri: asset.uri,
-      nombre: asset.fileName ?? nombreArchivo(asset.uri, indice),
-      mimeType: mimeTypeImagen(asset.uri, asset.mimeType),
-    }));
+  const tomarFoto = async () => {
+    if (publicando || imagenes.length >= IMAGENES_MAX) return;
 
-    const imagenMuyPesada = resultado.assets.find(
-      (asset) =>
-        asset.fileSize !== null &&
-        asset.fileSize !== undefined &&
-        asset.fileSize > PESO_MAX_IMAGEN_MB * 1024 * 1024,
-    );
-
-    if (imagenMuyPesada) {
+    const permiso = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permiso.granted) {
       setErrores((previos) => ({
         ...previos,
-        imagenes: `Cada imagen debe pesar como máximo ${PESO_MAX_IMAGEN_MB} MB.`,
+        imagenes: 'Debes autorizar el uso de la cámara para fotografiar tu producto.',
       }));
       return;
     }
 
-    setImagenes((previas) => [...previas, ...nuevasImagenes].slice(0, IMAGENES_MAX));
-    limpiarError('imagenes');
+    const resultado = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
+      cameraType: ImagePicker.CameraType.back,
+      quality: 0.8,
+    });
+
+    if (!resultado.canceled) agregarImagenesSeleccionadas(resultado.assets);
   };
 
   const quitarImagen = (id: string) => {
@@ -359,7 +384,8 @@ export default function PublicarScreen() {
           <View style={styles.bloque}>
             <SelectorImagenes
               imagenes={imagenes}
-              onAgregar={() => void agregarImagen()}
+              onSeleccionarGaleria={() => void seleccionarDesdeGaleria()}
+              onTomarFoto={() => void tomarFoto()}
               onQuitar={quitarImagen}
               error={errores.imagenes}
               deshabilitado={publicando}

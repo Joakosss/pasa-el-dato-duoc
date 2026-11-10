@@ -67,6 +67,8 @@ model Sede {
   // Fase A (HU-UBI-01, ES-MIG-A): comunaId nace nullable; se vuelve NOT NULL
   // recién en la fase D, tras el gate de sedes sin territorializar.
   comunaId          Int?      @map("fk_comuna")
+  latitud           Float?
+  longitud          Float?
   comuna            Comuna?   @relation(fields: [comunaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   usuario           Usuario[]
   publicaciones     Publicacion[]

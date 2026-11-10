@@ -132,7 +132,9 @@ export const SedeScalarFieldEnum = {
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
   fk_modificado_por: 'fk_modificado_por',
-  comunaId: 'comunaId'
+  comunaId: 'comunaId',
+  latitud: 'latitud',
+  longitud: 'longitud'
 } as const
 
 export type SedeScalarFieldEnum = (typeof SedeScalarFieldEnum)[keyof typeof SedeScalarFieldEnum]

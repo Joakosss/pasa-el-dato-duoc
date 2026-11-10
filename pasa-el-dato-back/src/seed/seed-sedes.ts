@@ -8,6 +8,8 @@ export type SedeSeed = {
   cut: string;
   ciudadReferenciaId: string;
   reglaReferencia: 'unica' | 'nombre_comuna';
+  latitud: number;
+  longitud: number;
 };
 
 function normalizar(texto: string): string {
@@ -64,13 +66,17 @@ export async function ejecutarSeedSedes(): Promise<void> {
             where: { nombre: sede.nombre },
             update: {
               comunaId: comuna.id,
+              latitud: sede.latitud,
+              longitud: sede.longitud,
               activa: true,
               eliminado: false,
             },
             create: {
               nombre: sede.nombre,
-              comunaId: comuna.id,
+              latitud: sede.latitud,
+              longitud: sede.longitud,
               activa: true,
+              comuna: { connect: { id: comuna.id } },
             },
           });
         }
@@ -102,6 +108,17 @@ async function validarSedes(
 
     if (!/^\d{5}$/.test(sede.cut)) {
       throw new Error(`CUT inválido para sede ${sede.nombre}: ${sede.cut}`);
+    }
+
+    if (
+      !Number.isFinite(sede.latitud) ||
+      !Number.isFinite(sede.longitud) ||
+      sede.latitud < -90 ||
+      sede.latitud > 90 ||
+      sede.longitud < -180 ||
+      sede.longitud > 180
+    ) {
+      throw new Error(`Coordenadas inválidas para sede ${sede.nombre}`);
     }
 
     const comuna = await prisma.comuna.findUnique({

@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -16,12 +17,100 @@ import {
 } from '../../auth/jwt-auth.guard.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { CambiarEstadoPublicacionMobileDto } from './dto/cambiar-estado-publicacion-mobile.dto.js';
+import { ListarPublicacionesCercanasMobileDto } from './dto/listar-publicaciones-cercanas-mobile.dto.js';
 
 type SolicitudAutenticada = Request & { user?: SesionAutenticada };
+
+const RADIO_TERRESTRE_KM = 6371;
+
+function calcularDistanciaKm(
+  latitudOrigen: number,
+  longitudOrigen: number,
+  latitudDestino: number,
+  longitudDestino: number,
+): number {
+  const gradosARadianes = (grados: number) => (grados * Math.PI) / 180;
+  const diferenciaLatitud = gradosARadianes(latitudDestino - latitudOrigen);
+  const diferenciaLongitud = gradosARadianes(longitudDestino - longitudOrigen);
+  const a =
+    Math.sin(diferenciaLatitud / 2) ** 2 +
+    Math.cos(gradosARadianes(latitudOrigen)) *
+      Math.cos(gradosARadianes(latitudDestino)) *
+      Math.sin(diferenciaLongitud / 2) ** 2;
+
+  return RADIO_TERRESTRE_KM * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 @Controller('mobile/publicaciones')
 export class MobilePublicacionesController {
   constructor(private readonly prisma: PrismaService) {}
+
+  // La ubicación del dispositivo se usa solo para esta consulta; no se persiste.
+  @Get('cercanas')
+  async listarCercanas(
+    @Query() consulta: ListarPublicacionesCercanasMobileDto,
+  ) {
+    const radioKm = consulta.radioKm ?? 50;
+    const publicaciones = await this.prisma.publicacion.findMany({
+      where: {
+        eliminado: false,
+        estadoPublicacion: { descripcion: 'En curso' },
+        sede: { latitud: { not: null }, longitud: { not: null } },
+        usuario: {
+          cuenta: {
+            eliminado: false,
+            bloqueado: false,
+            aprobada: true,
+          },
+        },
+      },
+      orderBy: { fechaCreacion: 'desc' },
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        estadoPublicacion: { select: { id: true, descripcion: true } },
+        sede: { select: { id: true, nombre: true, latitud: true, longitud: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        imagenes: {
+          select: { idImagen: true, url: true, orden: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    return publicaciones
+      .flatMap((publicacion) => {
+        if (publicacion.sede.latitud === null || publicacion.sede.longitud === null) {
+          return [];
+        }
+
+        const distanciaKm = calcularDistanciaKm(
+          consulta.latitud,
+          consulta.longitud,
+          publicacion.sede.latitud,
+          publicacion.sede.longitud,
+        );
+
+        if (distanciaKm > radioKm) return [];
+
+        return [{
+          id: publicacion.id,
+          titulo: publicacion.titulo,
+          descripcion: publicacion.descripcion,
+          precio: publicacion.precio,
+          estado: publicacion.estadoPublicacion,
+          sede: { id: publicacion.sede.id, nombre: publicacion.sede.nombre },
+          tipoVenta: publicacion.tipoVenta,
+          categoria: publicacion.categoria,
+          imagenes: publicacion.imagenes,
+          distanciaKm: Math.round(distanciaKm * 10) / 10,
+        }];
+      })
+      .sort((primera, segunda) => primera.distanciaKm - segunda.distanciaKm);
+  }
 
   @Get(':id')
   async obtenerDetalle(@Param('id') id: string) {

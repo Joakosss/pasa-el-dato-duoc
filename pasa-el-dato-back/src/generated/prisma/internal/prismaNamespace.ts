@@ -2072,7 +2072,9 @@ export const SedeScalarFieldEnum = {
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
   fk_modificado_por: 'fk_modificado_por',
-  comunaId: 'comunaId'
+  comunaId: 'comunaId',
+  latitud: 'latitud',
+  longitud: 'longitud'
 } as const
 
 export type SedeScalarFieldEnum = (typeof SedeScalarFieldEnum)[keyof typeof SedeScalarFieldEnum]
@@ -2350,6 +2352,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
  * Reference to a field of type 'BigInt'
  */
 export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
@@ -2374,20 +2390,6 @@ export type EnumEstadoBannerPublicidadFieldRefInput<$PrismaModel> = FieldRefInpu
  * Reference to a field of type 'EstadoBannerPublicidad[]'
  */
 export type ListEnumEstadoBannerPublicidadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoBannerPublicidad[]'>
-    
-
-
-/**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**

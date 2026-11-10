@@ -59,6 +59,7 @@ interface PublicacionApiBase {
 
 export interface PublicacionPublica extends PublicacionApiBase {
   estado?: EstadoPublicacionApi;
+  distanciaKm?: number;
 }
 
 export interface PublicacionDetalle extends PublicacionApiBase {
@@ -123,6 +124,16 @@ function crearFormDataActualizacion(datos: ActualizarPublicacionRequest): FormDa
 
 export function listarPublicaciones(): Promise<PublicacionPublica[]> {
   return apiClient.get<PublicacionPublica[]>('/publicaciones');
+}
+
+export function listarPublicacionesCercanas(
+  latitud: number,
+  longitud: number,
+  radioKm = 50,
+): Promise<PublicacionPublica[]> {
+  return apiClient.get<PublicacionPublica[]>('/mobile/publicaciones/cercanas', {
+    query: { latitud, longitud, radioKm },
+  });
 }
 
 export function listarMisPublicaciones(
