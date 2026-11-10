@@ -18,7 +18,7 @@
   **cuando** la marco como consultada,
   **entonces** el sistema la redirige/a llega a la sección correspondiente según el evento (chat, publicación, reporte, sección administrativa correspondiente) y la deja como leída (CU021, paso 3).
 
-- **Dado** que noizo ninguna notificación aún,
+- **Dado** que no tengo ninguna notificación aún,
   **cuando** accedo al historial,
   **entonces** el sistema muestra el estado de vacío con un mensaje claro.
 
@@ -31,7 +31,8 @@
 Aprobadas documentalmente (R.14, CU021) y resoluciones del proyecto:
 
 - El historial es personal: cada usuario solo ve sus notificaciones.
-- Toda notificación de evento queda registrada en el historial (postcondición CU021), independientemente de la preferencia push/correo.
+- Toda notificación de evento queda registrada en el historial (postcondición CU021), independiente del canal de entrega.
+- El historial no permite borrar notificaciones (decisión aprobada: solo lectura).
 - Abrir una notificación redirige a la sección del evento (CU021, paso 3) y la deja como leída.
 - Fuera de alcance de esta HU: eliminar notificaciones del historial (no está documentado), y la configuración de canales (HU-NO-02).
 
@@ -72,9 +73,8 @@ Completa el ciclo de CU021: sin historial ni redirección las notificaciones no 
 
 ## Dudas pendientes
 
-1. ¿Paginación del historial? Propuesta de proyecto: alineada al catálogo (20 web / 10 móvil). Confirmar en spec.
-2. ¿El usuario puede borrar notificaciones de su historial? No está documentado; propuesta vigente: no se puede (solo lectura). Confirmar.
+- Paginación del historial: propuesta alineada al catálogo (20 web / 10 móvil); confirmar en spec.
 
 ## Estado
 
-`requiere aclaración` — dudas no bloqueantes para `explore`; propuestas marcadas en dejar ámbitos en spec.
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.

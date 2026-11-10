@@ -10,9 +10,13 @@
   **cuando** el sistema lo detecta,
   **entonces** genera una notificación dirigida a mí y la entrega según mi configuración de notificaciones vigente.
 
-- **Dado** que tengo las notificaciones push habilitadas,
+- **Dado** que tengo las notificaciones habilitadas,
   **cuando** ocurre el evento,
-  **entonces** el sistema envía la notificación push y, si corresponde, el correo automático asociado (CU021, curso normal).
+  **entonces** recibir la entrega sobre el canal activo: en el MVP web, la notificación en la aplicación (disponible de inmediato en mi historial con su indicación de no leída) y correo automático si el evento lo define (decisión aprobada de canales MVP; el push nativo queda para la app móvil del arquitectura objetivo).
+
+- **Dado** que el evento lo define con correo en el catálogo de eventos,
+  **cuando** ocurre,
+  **entonces** el sistema envía además el correo automático al correo registrado de mi cuenta (CU021, curso normal).
 
 - **Dado** que tengo las notificaciones push deshabilitadas,
   **cuando** ocurre el evento,
@@ -31,7 +35,9 @@
 Aprobadas documentalmente (R.14, CU021 extendido) y eventos fijados por dominios ya definidos:
 
 - Solo cuenta activa con notificaciones habilitadas recibe (precondición CU021).
-- La entrega sigue la preferencia del usuario: push habilitada → push (y/o correo); push deshabilitada → solo correo (CU021).
+- La entrega sigue la preferencia del usuario (CU021).
+- Canales del MVP web (decisión de proyecto): la entrega es in-app (disponible de inmediato en el historial con su indicación de no leída) más correo automático para los eventos que el catálogo defina. El push nativo queda para la app móvil, según la arquitectura objetivo; sin infraestructura de push nueva para web.
+- Toda notificación queda registrada en el historial, independiente del canal de entrega.
 - Toda notificación queda registrada en el historial del usuario (postcondición CU021).
 - Catálogo de eventos vigente: nuevo mensaje de chat, favorita vendida, respuesta/resultado de reporte, advertencias administrativas y avisos administrativos con entrega activa según los dominios de origen (ADM-01/02, HU-CHAT-02, HU-FAV-01).
 - Fuera de alcance de esta HU: la gestión de preferencias (HU-NO-02), el centro/historial de lectura (HU-NO-03) y la entrega de avisos institucionales (HU-NO-04/05).
@@ -83,9 +89,8 @@ R.14 es requerimiento solicitado y las decisiones de otros módulos (advertencia
 
 ## Dudas pendientes
 
-1. **Canales de entrega**: la arquitectura vigente no define infraestructura de push para la aplicación web (push nativo se asocia a la app móvil, objetivo futura). ¿Para el MVP web, "push" significa notificación in-app con centre de actividad, o se integra un servicio real de web push (hay que definirlo)? Conviene cerrarla antes del spec.
-2. ¿El correo aplica a todos los eventos o solo los "(si corresponde)" según el catálogo de eventos? CU021 lo deja suelto: "push y, si corresponde, correo". Definir en spec qué eventos van con correo.
+- Catálogo de eventos con correo: cada evento define si incluye correo por "si corresponde" (CU021); la lista definitiva fija spec.
 
 ## Estado
 
-`requiere aclaración` — la duda 1 (canales de push web) define la forma de entrega; LISTA dependerá de esta respuesta (o de decidir "in-app sólo" para el MVP).
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.

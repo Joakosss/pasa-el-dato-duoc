@@ -12,7 +12,7 @@
 
 - **Dado** que deshabilito el canal de push,
   **cuando** confirmo,
-  **entonces** las siguientes notificaciones de eventos se entregan solo por correo (sin push) desde ese momento (CU021, curso alternativo 1).
+  **entonces** las siguientes notificaciones de eventos se entregan solo en el mínimo vigente (sin aviso in-app activo: el evento se registra en el historial y avisa por correo solo si el evento lo define) desde ese momento (CU021, curso alternativo 1, adaptado a los canales MVP).
 
 - **Dado** que vuelvo a habilitar el canal de push,
   **cuando** confirmo,
@@ -26,8 +26,8 @@
 
 Aprobadas documentalmente (R.14, CU021) y decisiones del proyecto:
 
-- La preferencia es por usuario; afecta solo la forma de entrega, no la existencia del evento ni la construcción del historial (la notificación se registra igualmente en el historial, CU021).
-- Deshabilitar push no elimina ni silencia el envío base: el sistema deriva a correo (CU021, alternativa 1). No existe "apagar todo" en el alcance vigente; el canal de correo queda como mínimo de entrega documentado.
+- La preferencia es un único toggle global de push por usuario (decisión aprobada); afecta solo la forma de entrega, no la construcción del historial (la notificación se registra igualmente, CU021).
+- La preferencia de canales MVP: "push" equivale a la entrega in-app; al desactivarlo, las entregas se limitan al canal mínimo (historial + correo según evento) (CU021, alternativa 1 adaptada).
 - El cambio de preferencia aplica desde el momento del cambio; no se renuevan notificaciones anteriores.
 - Fuera de alcance de esta HU: definir el catálogo de eventos (HU-NO-01), entregas específicas por evento y preferencias por tipo de evento (no definidas en R.14/CU021).
 
@@ -66,9 +66,8 @@ Da control al usuario (precondición CU021 exige "notificaciones habilitadas"); 
 
 ## Dudas pendientes
 
-1. ¿La preferencia es global (un solo toggle de push) o existe detalle por tipo de evento (sines mensajes, reportes, publicidad)? CU021 solo menciona "notificaciones push deshabilitadas", un nivel; la granularidad no está definida. Proposición vigente: toggle global de push para el MVP. Confirmar.
-2. ¿Puede el usuario dejar silencio total (sin push y sin correo)? CU021 no lo cubre; la propuesta vigente mantiene correo como mínimo. Confirmar.
+- ¿Silencio total (sin aviso in-app ni correo)? CU021 no lo cubre; propuesta vigente: correo se mantiene como mínimo si el evento lo define. Confirmar en spec.
 
 ## Estado
 
-`requiere aclaración` — dudas no bloqueantes para `explore`; cerrarlas antes de especificar.
+`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`.
