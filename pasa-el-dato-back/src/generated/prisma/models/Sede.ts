@@ -29,11 +29,15 @@ export type AggregateSede = {
 export type SedeAvgAggregateOutputType = {
   id: number | null
   comunaId: number | null
+  latitud: number | null
+  longitud: number | null
 }
 
 export type SedeSumAggregateOutputType = {
   id: number | null
   comunaId: number | null
+  latitud: number | null
+  longitud: number | null
 }
 
 export type SedeMinAggregateOutputType = {
@@ -45,6 +49,8 @@ export type SedeMinAggregateOutputType = {
   eliminado: boolean | null
   fk_modificado_por: string | null
   comunaId: number | null
+  latitud: number | null
+  longitud: number | null
 }
 
 export type SedeMaxAggregateOutputType = {
@@ -56,6 +62,8 @@ export type SedeMaxAggregateOutputType = {
   eliminado: boolean | null
   fk_modificado_por: string | null
   comunaId: number | null
+  latitud: number | null
+  longitud: number | null
 }
 
 export type SedeCountAggregateOutputType = {
@@ -67,6 +75,8 @@ export type SedeCountAggregateOutputType = {
   eliminado: number
   fk_modificado_por: number
   comunaId: number
+  latitud: number
+  longitud: number
   _all: number
 }
 
@@ -74,11 +84,15 @@ export type SedeCountAggregateOutputType = {
 export type SedeAvgAggregateInputType = {
   id?: true
   comunaId?: true
+  latitud?: true
+  longitud?: true
 }
 
 export type SedeSumAggregateInputType = {
   id?: true
   comunaId?: true
+  latitud?: true
+  longitud?: true
 }
 
 export type SedeMinAggregateInputType = {
@@ -90,6 +104,8 @@ export type SedeMinAggregateInputType = {
   eliminado?: true
   fk_modificado_por?: true
   comunaId?: true
+  latitud?: true
+  longitud?: true
 }
 
 export type SedeMaxAggregateInputType = {
@@ -101,6 +117,8 @@ export type SedeMaxAggregateInputType = {
   eliminado?: true
   fk_modificado_por?: true
   comunaId?: true
+  latitud?: true
+  longitud?: true
 }
 
 export type SedeCountAggregateInputType = {
@@ -112,6 +130,8 @@ export type SedeCountAggregateInputType = {
   eliminado?: true
   fk_modificado_por?: true
   comunaId?: true
+  latitud?: true
+  longitud?: true
   _all?: true
 }
 
@@ -210,6 +230,8 @@ export type SedeGroupByOutputType = {
   eliminado: boolean
   fk_modificado_por: string | null
   comunaId: number | null
+  latitud: number | null
+  longitud: number | null
   _count: SedeCountAggregateOutputType | null
   _avg: SedeAvgAggregateOutputType | null
   _sum: SedeSumAggregateOutputType | null
@@ -244,6 +266,8 @@ export type SedeWhereInput = {
   eliminado?: Prisma.BoolFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableFilter<"Sede"> | string | null
   comunaId?: Prisma.IntNullableFilter<"Sede"> | number | null
+  latitud?: Prisma.FloatNullableFilter<"Sede"> | number | null
+  longitud?: Prisma.FloatNullableFilter<"Sede"> | number | null
   cuenta?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   comuna?: Prisma.XOR<Prisma.ComunaNullableScalarRelationFilter, Prisma.ComunaWhereInput> | null
   usuario?: Prisma.UsuarioListRelationFilter
@@ -260,6 +284,8 @@ export type SedeOrderByWithRelationInput = {
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrderInput | Prisma.SortOrder
   comunaId?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitud?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitud?: Prisma.SortOrderInput | Prisma.SortOrder
   cuenta?: Prisma.CuentaOrderByWithRelationInput
   comuna?: Prisma.ComunaOrderByWithRelationInput
   usuario?: Prisma.UsuarioOrderByRelationAggregateInput
@@ -279,6 +305,8 @@ export type SedeWhereUniqueInput = Prisma.AtLeast<{
   eliminado?: Prisma.BoolFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableFilter<"Sede"> | string | null
   comunaId?: Prisma.IntNullableFilter<"Sede"> | number | null
+  latitud?: Prisma.FloatNullableFilter<"Sede"> | number | null
+  longitud?: Prisma.FloatNullableFilter<"Sede"> | number | null
   cuenta?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   comuna?: Prisma.XOR<Prisma.ComunaNullableScalarRelationFilter, Prisma.ComunaWhereInput> | null
   usuario?: Prisma.UsuarioListRelationFilter
@@ -295,6 +323,8 @@ export type SedeOrderByWithAggregationInput = {
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrderInput | Prisma.SortOrder
   comunaId?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitud?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitud?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SedeCountOrderByAggregateInput
   _avg?: Prisma.SedeAvgOrderByAggregateInput
   _max?: Prisma.SedeMaxOrderByAggregateInput
@@ -314,6 +344,8 @@ export type SedeScalarWhereWithAggregatesInput = {
   eliminado?: Prisma.BoolWithAggregatesFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableWithAggregatesFilter<"Sede"> | string | null
   comunaId?: Prisma.IntNullableWithAggregatesFilter<"Sede"> | number | null
+  latitud?: Prisma.FloatNullableWithAggregatesFilter<"Sede"> | number | null
+  longitud?: Prisma.FloatNullableWithAggregatesFilter<"Sede"> | number | null
 }
 
 export type SedeCreateInput = {
@@ -322,6 +354,8 @@ export type SedeCreateInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  latitud?: number | null
+  longitud?: number | null
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
@@ -338,6 +372,8 @@ export type SedeUncheckedCreateInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   comunaId?: number | null
+  latitud?: number | null
+  longitud?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
   banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
@@ -349,6 +385,8 @@ export type SedeUpdateInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
@@ -365,6 +403,8 @@ export type SedeUncheckedUpdateInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
   banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
@@ -379,6 +419,8 @@ export type SedeCreateManyInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   comunaId?: number | null
+  latitud?: number | null
+  longitud?: number | null
 }
 
 export type SedeUpdateManyMutationInput = {
@@ -387,6 +429,8 @@ export type SedeUpdateManyMutationInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type SedeUncheckedUpdateManyInput = {
@@ -398,6 +442,8 @@ export type SedeUncheckedUpdateManyInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type SedeListRelationFilter = {
@@ -419,11 +465,15 @@ export type SedeCountOrderByAggregateInput = {
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrder
   comunaId?: Prisma.SortOrder
+  latitud?: Prisma.SortOrder
+  longitud?: Prisma.SortOrder
 }
 
 export type SedeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   comunaId?: Prisma.SortOrder
+  latitud?: Prisma.SortOrder
+  longitud?: Prisma.SortOrder
 }
 
 export type SedeMaxOrderByAggregateInput = {
@@ -435,6 +485,8 @@ export type SedeMaxOrderByAggregateInput = {
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrder
   comunaId?: Prisma.SortOrder
+  latitud?: Prisma.SortOrder
+  longitud?: Prisma.SortOrder
 }
 
 export type SedeMinOrderByAggregateInput = {
@@ -446,11 +498,15 @@ export type SedeMinOrderByAggregateInput = {
   eliminado?: Prisma.SortOrder
   fk_modificado_por?: Prisma.SortOrder
   comunaId?: Prisma.SortOrder
+  latitud?: Prisma.SortOrder
+  longitud?: Prisma.SortOrder
 }
 
 export type SedeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   comunaId?: Prisma.SortOrder
+  latitud?: Prisma.SortOrder
+  longitud?: Prisma.SortOrder
 }
 
 export type SedeScalarRelationFilter = {
@@ -498,6 +554,14 @@ export type SedeUncheckedUpdateManyWithoutCuentaNestedInput = {
   update?: Prisma.SedeUpdateWithWhereUniqueWithoutCuentaInput | Prisma.SedeUpdateWithWhereUniqueWithoutCuentaInput[]
   updateMany?: Prisma.SedeUpdateManyWithWhereWithoutCuentaInput | Prisma.SedeUpdateManyWithWhereWithoutCuentaInput[]
   deleteMany?: Prisma.SedeScalarWhereInput | Prisma.SedeScalarWhereInput[]
+}
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type NullableIntFieldUpdateOperationsInput = {
@@ -598,6 +662,8 @@ export type SedeCreateWithoutCuentaInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  latitud?: number | null
+  longitud?: number | null
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
@@ -612,6 +678,8 @@ export type SedeUncheckedCreateWithoutCuentaInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   comunaId?: number | null
+  latitud?: number | null
+  longitud?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
   banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
@@ -655,6 +723,8 @@ export type SedeScalarWhereInput = {
   eliminado?: Prisma.BoolFilter<"Sede"> | boolean
   fk_modificado_por?: Prisma.UuidNullableFilter<"Sede"> | string | null
   comunaId?: Prisma.IntNullableFilter<"Sede"> | number | null
+  latitud?: Prisma.FloatNullableFilter<"Sede"> | number | null
+  longitud?: Prisma.FloatNullableFilter<"Sede"> | number | null
 }
 
 export type SedeCreateWithoutComunaInput = {
@@ -663,6 +733,8 @@ export type SedeCreateWithoutComunaInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  latitud?: number | null
+  longitud?: number | null
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
@@ -677,6 +749,8 @@ export type SedeUncheckedCreateWithoutComunaInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   fk_modificado_por?: string | null
+  latitud?: number | null
+  longitud?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
   banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
@@ -714,6 +788,8 @@ export type SedeCreateWithoutUsuarioInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  latitud?: number | null
+  longitud?: number | null
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   publicaciones?: Prisma.PublicacionCreateNestedManyWithoutSedeInput
@@ -729,6 +805,8 @@ export type SedeUncheckedCreateWithoutUsuarioInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   comunaId?: number | null
+  latitud?: number | null
+  longitud?: number | null
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
   banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
 }
@@ -755,6 +833,8 @@ export type SedeUpdateWithoutUsuarioInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
@@ -770,6 +850,8 @@ export type SedeUncheckedUpdateWithoutUsuarioInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
   banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
 }
@@ -780,6 +862,8 @@ export type SedeCreateWithoutPublicacionesInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  latitud?: number | null
+  longitud?: number | null
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
@@ -795,6 +879,8 @@ export type SedeUncheckedCreateWithoutPublicacionesInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   comunaId?: number | null
+  latitud?: number | null
+  longitud?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   banners?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutSedeInput
 }
@@ -821,6 +907,8 @@ export type SedeUpdateWithoutPublicacionesInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
@@ -836,6 +924,8 @@ export type SedeUncheckedUpdateWithoutPublicacionesInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
 }
@@ -846,6 +936,8 @@ export type SedeCreateWithoutBannersInput = {
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
   eliminado?: boolean
+  latitud?: number | null
+  longitud?: number | null
   cuenta?: Prisma.CuentaCreateNestedOneWithoutSedeInput
   comuna?: Prisma.ComunaCreateNestedOneWithoutSedesInput
   usuario?: Prisma.UsuarioCreateNestedManyWithoutSedeInput
@@ -861,6 +953,8 @@ export type SedeUncheckedCreateWithoutBannersInput = {
   eliminado?: boolean
   fk_modificado_por?: string | null
   comunaId?: number | null
+  latitud?: number | null
+  longitud?: number | null
   usuario?: Prisma.UsuarioUncheckedCreateNestedManyWithoutSedeInput
   publicaciones?: Prisma.PublicacionUncheckedCreateNestedManyWithoutSedeInput
 }
@@ -887,6 +981,8 @@ export type SedeUpdateWithoutBannersInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
@@ -902,6 +998,8 @@ export type SedeUncheckedUpdateWithoutBannersInput = {
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
 }
@@ -914,6 +1012,8 @@ export type SedeCreateManyCuentaInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   comunaId?: number | null
+  latitud?: number | null
+  longitud?: number | null
 }
 
 export type SedeUpdateWithoutCuentaInput = {
@@ -922,6 +1022,8 @@ export type SedeUpdateWithoutCuentaInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   comuna?: Prisma.ComunaUpdateOneWithoutSedesNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
@@ -936,6 +1038,8 @@ export type SedeUncheckedUpdateWithoutCuentaInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
   banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
@@ -949,6 +1053,8 @@ export type SedeUncheckedUpdateManyWithoutCuentaInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   comunaId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type SedeCreateManyComunaInput = {
@@ -959,6 +1065,8 @@ export type SedeCreateManyComunaInput = {
   fechaModificacion?: Date | string
   eliminado?: boolean
   fk_modificado_por?: string | null
+  latitud?: number | null
+  longitud?: number | null
 }
 
 export type SedeUpdateWithoutComunaInput = {
@@ -967,6 +1075,8 @@ export type SedeUpdateWithoutComunaInput = {
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   cuenta?: Prisma.CuentaUpdateOneWithoutSedeNestedInput
   usuario?: Prisma.UsuarioUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUpdateManyWithoutSedeNestedInput
@@ -981,6 +1091,8 @@ export type SedeUncheckedUpdateWithoutComunaInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usuario?: Prisma.UsuarioUncheckedUpdateManyWithoutSedeNestedInput
   publicaciones?: Prisma.PublicacionUncheckedUpdateManyWithoutSedeNestedInput
   banners?: Prisma.BannerSedeUncheckedUpdateManyWithoutSedeNestedInput
@@ -994,6 +1106,8 @@ export type SedeUncheckedUpdateManyWithoutComunaInput = {
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitud?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 
@@ -1054,6 +1168,8 @@ export type SedeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   eliminado?: boolean
   fk_modificado_por?: boolean
   comunaId?: boolean
+  latitud?: boolean
+  longitud?: boolean
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
   comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
   usuario?: boolean | Prisma.Sede$usuarioArgs<ExtArgs>
@@ -1071,6 +1187,8 @@ export type SedeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   eliminado?: boolean
   fk_modificado_por?: boolean
   comunaId?: boolean
+  latitud?: boolean
+  longitud?: boolean
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
   comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
 }, ExtArgs["result"]["sede"]>
@@ -1084,6 +1202,8 @@ export type SedeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   eliminado?: boolean
   fk_modificado_por?: boolean
   comunaId?: boolean
+  latitud?: boolean
+  longitud?: boolean
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
   comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
 }, ExtArgs["result"]["sede"]>
@@ -1097,9 +1217,11 @@ export type SedeSelectScalar = {
   eliminado?: boolean
   fk_modificado_por?: boolean
   comunaId?: boolean
+  latitud?: boolean
+  longitud?: boolean
 }
 
-export type SedeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "activa" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por" | "comunaId", ExtArgs["result"]["sede"]>
+export type SedeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "activa" | "fechaCreacion" | "fechaModificacion" | "eliminado" | "fk_modificado_por" | "comunaId" | "latitud" | "longitud", ExtArgs["result"]["sede"]>
 export type SedeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cuenta?: boolean | Prisma.Sede$cuentaArgs<ExtArgs>
   comuna?: boolean | Prisma.Sede$comunaArgs<ExtArgs>
@@ -1135,6 +1257,8 @@ export type $SedePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     eliminado: boolean
     fk_modificado_por: string | null
     comunaId: number | null
+    latitud: number | null
+    longitud: number | null
   }, ExtArgs["result"]["sede"]>
   composites: {}
 }
@@ -1571,6 +1695,8 @@ export interface SedeFieldRefs {
   readonly eliminado: Prisma.FieldRef<"Sede", 'Boolean'>
   readonly fk_modificado_por: Prisma.FieldRef<"Sede", 'String'>
   readonly comunaId: Prisma.FieldRef<"Sede", 'Int'>
+  readonly latitud: Prisma.FieldRef<"Sede", 'Float'>
+  readonly longitud: Prisma.FieldRef<"Sede", 'Float'>
 }
     
 

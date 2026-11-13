@@ -9,6 +9,8 @@ import type { Model, PipelineStage } from 'mongoose';
 import { isValidObjectId, Types } from 'mongoose';
 import { decodeCursor, encodeCursor } from '../common/pagination/cursor.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { TipoNotificacionUsuario } from '../generated/prisma/client.js';
+import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 import { FiltroPalabrasBloqueadasService } from './moderacion/filtro-palabras-bloqueadas.service.js';
 import {
   Conversation,
@@ -25,6 +27,7 @@ type CursorConversaciones = {
 export class ChatService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly notificacionesService: NotificacionesService,
     private readonly filtroPalabrasBloqueadas: FiltroPalabrasBloqueadasService,
     @InjectModel(Conversation.name)
     private readonly conversationModel: Model<ConversationDocument>,
@@ -140,8 +143,14 @@ export class ChatService {
     items: Array<{
       conversacionId: string;
       contraparteCuentaId: string;
+      rolEnTransaccion: 'vendedor' | 'comprador';
       estadoPublicacionAlCrear: string;
-      publicacion: { id: string; estado: 'VISIBLE' | 'NO_DISPONIBLE'; titulo?: string };
+      publicacion: {
+        id: string;
+        estado: 'VISIBLE' | 'NO_DISPONIBLE';
+        estadoVenta?: string;
+        titulo?: string;
+      };
       ultimoMensaje: null | { texto: string; enviadoEn: Date; emisorCuentaId: string };
       noLeidosCount: number;
       actividadEn: Date;
@@ -234,6 +243,7 @@ export class ChatService {
         id: true,
         eliminado: true,
         titulo: true,
+        estadoPublicacion: { select: { descripcion: true } },
       },
     });
 
@@ -243,6 +253,7 @@ export class ChatService {
         {
           id: p.id,
           estado: p.eliminado ? ('NO_DISPONIBLE' as const) : ('VISIBLE' as const),
+          estadoVenta: p.eliminado ? undefined : p.estadoPublicacion.descripcion,
           titulo: p.eliminado ? undefined : p.titulo,
         },
       ]),
@@ -273,7 +284,10 @@ export class ChatService {
 
       const publicacion =
         publicacionesPorId.get(doc.publicacionId) ??
-        ({ id: doc.publicacionId, estado: 'NO_DISPONIBLE' as const } as const);
+        ({
+          id: doc.publicacionId,
+          estado: 'NO_DISPONIBLE' as const,
+        } as const);
 
       const ultimoMensajeDoc = ultimoPorConversacion.get(conversacionId);
       const leidoHastaMensajeId =
@@ -284,6 +298,10 @@ export class ChatService {
       return {
         conversacionId,
         contraparteCuentaId,
+        rolEnTransaccion:
+          doc.vendedorCuentaId === entrada.cuentaId
+            ? ('vendedor' as const)
+            : ('comprador' as const),
         estadoPublicacionAlCrear: doc.estadoPublicacionAlCrear,
         publicacion,
         ultimoMensaje: ultimoMensajeDoc
@@ -461,6 +479,22 @@ export class ChatService {
       { _id: conversacion._id },
       { $set: { ultimoMensajeEn: mensaje.enviadoEn } },
     );
+
+    const receptorCuentaId =
+      conversacion.vendedorCuentaId === entrada.cuentaId
+        ? conversacion.compradorCuentaId
+        : conversacion.vendedorCuentaId;
+
+    await this.notificacionesService.crearNotificacion({
+      cuentaId: receptorCuentaId,
+      tipo: TipoNotificacionUsuario.CHAT_NUEVO_MENSAJE,
+      mensaje: 'Tienes un nuevo mensaje en el chat.',
+      dataJson: {
+        conversacionId: String(conversacion._id),
+        mensajeId: String(mensaje._id),
+        publicacionId: conversacion.publicacionId,
+      },
+    });
 
     return mensaje;
   }

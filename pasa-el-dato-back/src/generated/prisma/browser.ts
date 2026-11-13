@@ -98,6 +98,16 @@ export type Categoria = Prisma.CategoriaModel
  */
 export type EstadoPublicacion = Prisma.EstadoPublicacionModel
 /**
+ * Model AuditoriaAdmin
+ * 
+ */
+export type AuditoriaAdmin = Prisma.AuditoriaAdminModel
+/**
+ * Model ReportePublicacion
+ * 
+ */
+export type ReportePublicacion = Prisma.ReportePublicacionModel
+/**
  * Model Publicacion
  * 
  */
@@ -118,7 +128,27 @@ export type BannerSede = Prisma.BannerSedeModel
  */
 export type NotificacionMarca = Prisma.NotificacionMarcaModel
 /**
+ * Model NotificacionUsuario
+ * 
+ */
+export type NotificacionUsuario = Prisma.NotificacionUsuarioModel
+/**
  * Model ImagenPublicacion
  * 
  */
 export type ImagenPublicacion = Prisma.ImagenPublicacionModel
+/**
+ * Model ReporteUsuario
+ * 
+ */
+export type ReporteUsuario = Prisma.ReporteUsuarioModel
+/**
+ * Model Favorito
+ * 
+ */
+export type Favorito = Prisma.FavoritoModel
+/**
+ * Model PalabraBloqueada
+ * 
+ */
+export type PalabraBloqueada = Prisma.PalabraBloqueadaModel

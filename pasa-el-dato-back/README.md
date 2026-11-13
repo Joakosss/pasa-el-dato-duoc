@@ -57,6 +57,31 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
+## Palabras bloqueadas (HU-ADM-05)
+
+El módulo `PalabrasBloqueadasModule` mantiene una lista global en PostgreSQL mediante
+Prisma. Expone los endpoints administrativos:
+
+- `GET /api/admin/palabras-bloqueadas`
+- `POST /api/admin/palabras-bloqueadas` con `{ "termino": "fraude" }`
+- `DELETE /api/admin/palabras-bloqueadas/:id`
+
+Las rutas requieren sesión válida y rol `Administrador`. Los términos se normalizan
+con `trim()` y minúsculas regionales (`es-CL`); la coincidencia posterior es exacta
+sobre el término normalizado, sin tokenización ni variantes con espacios o símbolos.
+La unicidad se aplica en PostgreSQL y los duplicados responden `409 Conflict`.
+
+Los consumidores backend, como HU-CHAT-05 y el futuro flujo de validación de
+publicaciones, deben importar `PalabrasBloqueadasModule` y consumir
+`PalabrasBloqueadasService.obtenerTerminosVigentes()` o
+`contieneTerminoExacto()`. Estos métodos consultan los términos vigentes en cada
+llamada, por lo que las altas y eliminaciones se reflejan en envíos posteriores.
+Este módulo no modifica mensajes, conversaciones ni publicaciones históricas.
+
+La integración del filtro en el envío de chat y en la validación de publicaciones
+no se implementa aquí: requiere sus respectivas historias de usuario y no se
+asumen consumidores inexistentes.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.

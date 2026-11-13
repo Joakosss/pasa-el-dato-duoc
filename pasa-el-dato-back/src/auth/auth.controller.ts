@@ -29,6 +29,20 @@ import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
 import { AuthLogInterceptor } from './auth-log.interceptor.js';
 import { JwtAuthGuard, type SesionAutenticada } from './jwt-auth.guard.js';
 
+// Cuerpo de POST /auth/login: identidad segura más los tokens. Los tokens
+// también viajan en cookies HttpOnly para la web; el cliente móvil los lee
+// aquí porque no dispone de cookie jar nativo.
+export interface RespuestaLogin extends UsuarioAutenticado {
+  accessToken: string;
+  refreshToken: string;
+}
+
+// Cuerpo de POST /auth/refresh: solo el par renovado.
+export interface RespuestaRenovacion {
+  accessToken: string;
+  refreshToken: string;
+}
+
 @ApiTags('Autenticación')
 @Controller('auth')
 export class AuthController {
@@ -40,16 +54,23 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(AuthLogInterceptor)
+  @ApiOkResponse({
+    description:
+      'Sesión iniciada. El cuerpo trae la identidad y accessToken/refreshToken; las mismas credenciales viajan en cookies HttpOnly.',
+  })
   async login(
     @Body() datos: IniciarSesionDto,
     @Res({ passthrough: true }) respuesta: Response,
-  ): Promise<UsuarioAutenticado> {
+  ): Promise<RespuestaLogin> {
     const { usuario, accessToken, refreshToken } =
       await this.authService.iniciarSesion(datos);
 
     this.establecerCookies(respuesta, accessToken, refreshToken);
     respuesta.locals.authCuentaId = usuario.idCuenta;
-    return usuario;
+
+    // Las cookies anteriores no cambian; los tokens se agregan al cuerpo para
+    // los clientes nativos (móvil).
+    return { ...usuario, accessToken, refreshToken };
   }
 
   @Post('refresh')
@@ -58,11 +79,12 @@ export class AuthController {
   @ApiOperation({
     summary: 'Renovar la sesión',
     description:
-      'No recibe un cuerpo. Usa la cookie HttpOnly refreshToken obtenida al iniciar sesión y la reemplaza junto con accessToken.',
+      'No recibe un cuerpo. Usa la cookie HttpOnly refreshToken obtenida al iniciar sesión y la reemplaza junto con accessToken. El par renovado también viaja en el cuerpo.',
   })
   @ApiCookieAuth('refreshToken')
   @ApiOkResponse({
-    description: 'Sesión renovada. Los nuevos tokens se envían en cookies HttpOnly; el cuerpo está vacío.',
+    description:
+      'Sesión renovada. Los nuevos tokens se envían en cookies HttpOnly y también en el cuerpo (accessToken/refreshToken).',
   })
   @ApiUnauthorizedResponse({
     description: 'Falta el refresh token o es inválido, expiró o ya fue usado.',
@@ -73,7 +95,7 @@ export class AuthController {
   async refresh(
     @Req() solicitud: Request,
     @Res({ passthrough: true }) respuesta: Response,
-  ): Promise<void> {
+  ): Promise<RespuestaRenovacion> {
     // cookie-parser, configurado en main.ts, entrega las cookies aquí.
     const token = solicitud.cookies?.refreshToken;
     if (typeof token !== 'string' || !token) {
@@ -84,6 +106,9 @@ export class AuthController {
       await this.authService.renovarSesion(token);
     this.establecerCookies(respuesta, accessToken, refreshToken);
     respuesta.locals.authCuentaId = idCuenta;
+
+    // Mismo criterio que en el login: cookies intactas y tokens en el cuerpo.
+    return { accessToken, refreshToken };
   }
 
   @Patch('password')

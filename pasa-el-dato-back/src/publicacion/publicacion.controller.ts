@@ -17,6 +17,7 @@ import {
 import type { Request } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBadRequestResponse,
   ApiBody,
   ApiConsumes,
   ApiCookieAuth,
@@ -32,6 +33,8 @@ import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js'
 import { AlmacenamientoImagenesService } from './almacenamiento-imagenes.service.js';
 import { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.js';
 import { CambiarEstadoPublicacionDto } from './dto/cambiar-estado-publicacion.dto.js';
+import { CerrarVentaDto } from './dto/cerrar-venta.dto.js';
+import { CierreVentaRespuestaDto } from './dto/cierre-venta-respuesta.dto.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
 import { PublicacionCreadaRespuestaDto } from './dto/publicacion-creada-respuesta.dto.js';
 import { PublicacionEdicionRespuestaDto } from './dto/publicacion-edicion-respuesta.dto.js';
@@ -246,7 +249,12 @@ export class PublicacionController {
 
   @Patch(':id/estado')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Cambiar estado de publicación propia no eliminada' })
+  @ApiOperation({
+    summary:
+      'Cambiar estado de publicación propia no eliminada (En curso / Pausada). ' +
+      'HU-COM-01: "Vendida" ya no es asignable por este endpoint; usar ' +
+      'POST /publicaciones/:id/cierre-venta, que registra el comprador.',
+  })
   @ApiCookieAuth('accessToken')
   @ApiOkResponse({
     schema: {
@@ -282,6 +290,71 @@ export class PublicacionController {
       idPublicacion: id,
       idCuenta: user.idCuenta,
       estadoDescripcion: dto.estado,
+    });
+  }
+
+  @Post(':id/cierre-venta')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary:
+      'Cerrar venta de publicación propia registrando al comprador (HU-COM-01). ' +
+      'Operación atómica: asigna fk_user_comprador y cambia el estado a "Vendida". ' +
+      'Idempotente: un cierre repetido devuelve el registro existente sin alterar el comprador.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: CierreVentaRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'No tiene permisos para cerrar la venta de esta publicación',
+  })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  @ApiBadRequestResponse({
+    description:
+      'Comprador inválido (no existe, no es usuario, está bloqueado/eliminado/no aprobado) ' +
+      'o comprador igual al vendedor',
+  })
+  async cerrarVenta(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Body() dto: CerrarVentaDto,
+  ): Promise<CierreVentaRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicacionService.cerrarVenta({
+      idPublicacion: id,
+      vendedorId: user.idCuenta,
+      compradorId: dto.compradorId,
+    });
+  }
+
+  @Get(':id/transaccion')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary:
+      'Consultar la transacción de una publicación vendida (HU-COM-01). ' +
+      'Accesible solo para el vendedor o el comprador registrados.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: CierreVentaRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({ description: 'No tiene acceso a esta transacción' })
+  @ApiNotFoundResponse({ description: 'Publicación no encontrada' })
+  async obtenerTransaccion(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<CierreVentaRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicacionService.obtenerTransaccion({
+      idPublicacion: id,
+      idCuenta: user.idCuenta,
     });
   }
 

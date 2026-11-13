@@ -50,6 +50,10 @@ export class ChatGateway {
   @WebSocketServer()
   private server!: Server;
 
+  // Presencia efímera por cuenta. Una cuenta permanece en línea mientras
+  // conserve al menos un socket autenticado (web o mobile).
+  private readonly socketsPorCuenta = new Map<string, Set<string>>();
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
@@ -60,6 +64,12 @@ export class ChatGateway {
     try {
       const sesion = await this.autenticar(cliente);
       cliente.data.sesion = sesion;
+      if (this.registrarConexion(sesion.idCuenta, cliente.id)) {
+        this.server.emit('chat:presencia', {
+          cuentaId: sesion.idCuenta,
+          enLinea: true,
+        });
+      }
       this.logger.log(`Conexión WS aceptada para cuenta ${sesion.idCuenta}`);
     } catch {
       this.logger.warn('Conexión WS rechazada por sesión inválida');
@@ -69,6 +79,13 @@ export class ChatGateway {
 
   handleDisconnect(cliente: SocketChat): void {
     const cuentaId = cliente.data.sesion?.idCuenta;
+    if (cuentaId && this.registrarDesconexion(cuentaId, cliente.id)) {
+      this.server.emit('chat:presencia', {
+        cuentaId,
+        enLinea: false,
+      });
+    }
+
     this.logger.log(
       cuentaId
         ? `Conexión WS cerrada para cuenta ${cuentaId}`
@@ -116,6 +133,22 @@ export class ChatGateway {
     }
   }
 
+  estaEnLinea(cuentaId: string): boolean {
+    return (this.socketsPorCuenta.get(cuentaId)?.size ?? 0) > 0;
+  }
+
+  emitirMensajeNuevo(mensaje: {
+    _id: unknown;
+    conversacionId: unknown;
+    emisorCuentaId: string;
+    texto: string;
+    enviadoEn: Date;
+  }): void {
+    this.server
+      .to(this.room(String(mensaje.conversacionId)))
+      .emit('chat:mensaje_nuevo', this.mapearMensaje(mensaje));
+  }
+
   @SubscribeMessage('chat:enviar_mensaje')
   async enviarMensaje(
     @ConnectedSocket() cliente: SocketChat,
@@ -132,9 +165,7 @@ export class ChatGateway {
 
       const respuesta = this.mapearMensaje(mensaje);
 
-      this.server
-        .to(this.room(dto.conversacionId))
-        .emit('chat:mensaje_nuevo', respuesta);
+      this.emitirMensajeNuevo(mensaje);
 
       this.logger.log(
         `Mensaje ${respuesta.id} emitido en conversación ${dto.conversacionId}`,
@@ -170,7 +201,11 @@ export class ChatGateway {
   }
 
   private async autenticar(cliente: Socket): Promise<SesionWs> {
-    const token = this.obtenerCookie(cliente.handshake.headers.cookie, 'accessToken');
+    // La cookie conserva prioridad para web. Mobile usa auth.token porque
+    // React Native no dispone de un cookie jar HTTP confiable.
+    const token =
+      this.obtenerCookie(cliente.handshake.headers.cookie, 'accessToken') ??
+      this.obtenerTokenDeHandshake(cliente.handshake.auth);
 
     if (!token) {
       throw new Error('Sesión WS ausente');
@@ -224,6 +259,29 @@ export class ChatGateway {
     return { idCuenta: payload.sub };
   }
 
+  private registrarConexion(cuentaId: string, socketId: string): boolean {
+    const sockets = this.socketsPorCuenta.get(cuentaId) ?? new Set<string>();
+    const estabaDesconectada = sockets.size === 0;
+    sockets.add(socketId);
+    this.socketsPorCuenta.set(cuentaId, sockets);
+    return estabaDesconectada;
+  }
+
+  private registrarDesconexion(cuentaId: string, socketId: string): boolean {
+    const sockets = this.socketsPorCuenta.get(cuentaId);
+    if (!sockets) {
+      return false;
+    }
+
+    sockets.delete(socketId);
+    if (sockets.size === 0) {
+      this.socketsPorCuenta.delete(cuentaId);
+      return true;
+    }
+
+    return false;
+  }
+
   private obtenerSesion(cliente: SocketChat): SesionWs {
     const sesion = cliente.data.sesion;
     if (!sesion) {
@@ -273,6 +331,25 @@ export class ChatGateway {
     }
 
     return new WsException('No se pudo completar la operación de chat');
+  }
+
+  private obtenerTokenDeHandshake(auth: unknown): string | undefined {
+    if (
+      !auth ||
+      typeof auth !== 'object' ||
+      !('token' in auth) ||
+      typeof auth.token !== 'string'
+    ) {
+      return undefined;
+    }
+
+    const valor = auth.token.trim();
+    if (!valor) {
+      return undefined;
+    }
+
+    const coincidencia = /^Bearer\s+(\S+)$/i.exec(valor);
+    return coincidencia ? coincidencia[1] : valor;
   }
 
   private obtenerCookie(

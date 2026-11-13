@@ -17,8 +17,14 @@ import { PublicacionModule } from './publicacion/publicacion.module.js';
 import { CategoriaModule } from './categoria/categoria.module.js';
 import { TipoVentaModule } from './tipo-venta/tipo-venta.module.js';
 import { ChatModule } from './chat/chat.module.js';
+import { MobileModule } from './mobile/mobile.module.js';
 import { MarcaModule } from './marca/marca.module.js';
 import { PublicidadModule } from './publicidad/publicidad.module.js';
+import { ReporteUsuarioModule } from './reporte-usuario/reporte-usuario.module.js';
+import { ReportePublicacionModule } from './reporte-publicacion/reporte-publicacion.module.js';
+import { MetricasAdminModule } from './metricas-admin/metricas-admin.module.js';
+import { PalabrasBloqueadasModule } from './palabras-bloqueadas/palabras-bloqueadas.module.js';
+import { NotificacionesModule } from './notificaciones/notificaciones.module.js';
 
 @Module({
   imports: [
@@ -38,8 +44,14 @@ import { PublicidadModule } from './publicidad/publicidad.module.js';
     CategoriaModule,
     TipoVentaModule,
     ChatModule,
+    MobileModule,
     MarcaModule,
     PublicidadModule,
+    ReporteUsuarioModule,
+    ReportePublicacionModule,
+    MetricasAdminModule,
+    PalabrasBloqueadasModule,
+    NotificacionesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -34,7 +34,6 @@ import { RolesGuard } from './roles.guard.js';
 
         return {
           secret: secreto,
-
           signOptions: {
             expiresIn: duracionSegundos,
           },
@@ -46,6 +45,12 @@ import { RolesGuard } from './roles.guard.js';
   providers: [AuthService, AuthLogInterceptor, JwtAuthGuard, RolesGuard],
   // JwtModule se exporta para que módulos que usen JwtAuthGuard
   // (p. ej. PerfilModule) puedan resolver JwtService.
-  exports: [JwtAuthGuard, RolesGuard, AuthLogInterceptor, JwtModule],
+  exports: [
+    AuthService,
+    JwtAuthGuard,
+    RolesGuard,
+    AuthLogInterceptor,
+    JwtModule,
+  ],
 })
 export class AuthModule {}

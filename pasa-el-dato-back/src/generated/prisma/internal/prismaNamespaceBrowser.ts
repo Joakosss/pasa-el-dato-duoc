@@ -67,11 +67,17 @@ export const ModelName = {
   TipoVenta: 'TipoVenta',
   Categoria: 'Categoria',
   EstadoPublicacion: 'EstadoPublicacion',
+  AuditoriaAdmin: 'AuditoriaAdmin',
+  ReportePublicacion: 'ReportePublicacion',
   Publicacion: 'Publicacion',
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
-  ImagenPublicacion: 'ImagenPublicacion'
+  NotificacionUsuario: 'NotificacionUsuario',
+  ImagenPublicacion: 'ImagenPublicacion',
+  ReporteUsuario: 'ReporteUsuario',
+  Favorito: 'Favorito',
+  PalabraBloqueada: 'PalabraBloqueada'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -102,7 +108,8 @@ export const CuentaScalarFieldEnum = {
   bloqueado: 'bloqueado',
   fechaBloqueo: 'fechaBloqueo',
   motivoBloqueo: 'motivoBloqueo',
-  aprobada: 'aprobada'
+  aprobada: 'aprobada',
+  notificacionesPushHabilitadas: 'notificacionesPushHabilitadas'
 } as const
 
 export type CuentaScalarFieldEnum = (typeof CuentaScalarFieldEnum)[keyof typeof CuentaScalarFieldEnum]
@@ -132,7 +139,9 @@ export const SedeScalarFieldEnum = {
   fechaModificacion: 'fechaModificacion',
   eliminado: 'eliminado',
   fk_modificado_por: 'fk_modificado_por',
-  comunaId: 'comunaId'
+  comunaId: 'comunaId',
+  latitud: 'latitud',
+  longitud: 'longitud'
 } as const
 
 export type SedeScalarFieldEnum = (typeof SedeScalarFieldEnum)[keyof typeof SedeScalarFieldEnum]
@@ -258,6 +267,39 @@ export const EstadoPublicacionScalarFieldEnum = {
 export type EstadoPublicacionScalarFieldEnum = (typeof EstadoPublicacionScalarFieldEnum)[keyof typeof EstadoPublicacionScalarFieldEnum]
 
 
+export const AuditoriaAdminScalarFieldEnum = {
+  id: 'id',
+  accion: 'accion',
+  fk_admin: 'fk_admin',
+  entidad: 'entidad',
+  entidadId: 'entidadId',
+  detalle: 'detalle',
+  fecha: 'fecha'
+} as const
+
+export type AuditoriaAdminScalarFieldEnum = (typeof AuditoriaAdminScalarFieldEnum)[keyof typeof AuditoriaAdminScalarFieldEnum]
+
+
+export const ReportePublicacionScalarFieldEnum = {
+  id: 'id',
+  motivo: 'motivo',
+  comentarios: 'comentarios',
+  fk_publicacion: 'fk_publicacion',
+  fk_reportante: 'fk_reportante',
+  estado: 'estado',
+  fk_admin_asignado: 'fk_admin_asignado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  fechaResolucion: 'fechaResolucion',
+  resolucion: 'resolucion',
+  mensajeAdvertencia: 'mensajeAdvertencia',
+  avisoVendedorRegistrado: 'avisoVendedorRegistrado',
+  avisoVendedorFecha: 'avisoVendedorFecha'
+} as const
+
+export type ReportePublicacionScalarFieldEnum = (typeof ReportePublicacionScalarFieldEnum)[keyof typeof ReportePublicacionScalarFieldEnum]
+
+
 export const PublicacionScalarFieldEnum = {
   id: 'id',
   titulo: 'titulo',
@@ -320,6 +362,19 @@ export const NotificacionMarcaScalarFieldEnum = {
 export type NotificacionMarcaScalarFieldEnum = (typeof NotificacionMarcaScalarFieldEnum)[keyof typeof NotificacionMarcaScalarFieldEnum]
 
 
+export const NotificacionUsuarioScalarFieldEnum = {
+  id: 'id',
+  fk_cuenta: 'fk_cuenta',
+  tipo: 'tipo',
+  mensaje: 'mensaje',
+  leida: 'leida',
+  dataJson: 'dataJson',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type NotificacionUsuarioScalarFieldEnum = (typeof NotificacionUsuarioScalarFieldEnum)[keyof typeof NotificacionUsuarioScalarFieldEnum]
+
+
 export const ImagenPublicacionScalarFieldEnum = {
   idImagen: 'idImagen',
   fk_publicacion: 'fk_publicacion',
@@ -330,12 +385,60 @@ export const ImagenPublicacionScalarFieldEnum = {
 export type ImagenPublicacionScalarFieldEnum = (typeof ImagenPublicacionScalarFieldEnum)[keyof typeof ImagenPublicacionScalarFieldEnum]
 
 
+export const ReporteUsuarioScalarFieldEnum = {
+  id: 'id',
+  descripcion: 'descripcion',
+  fk_reportado: 'fk_reportado',
+  fk_reportante: 'fk_reportante',
+  estado: 'estado',
+  fk_admin_asignado: 'fk_admin_asignado',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  fechaResolucion: 'fechaResolucion',
+  resolucion: 'resolucion',
+  mensajeAdvertencia: 'mensajeAdvertencia',
+  motivoBloqueo: 'motivoBloqueo'
+} as const
+
+export type ReporteUsuarioScalarFieldEnum = (typeof ReporteUsuarioScalarFieldEnum)[keyof typeof ReporteUsuarioScalarFieldEnum]
+
+
+export const FavoritoScalarFieldEnum = {
+  id: 'id',
+  fk_publicacion: 'fk_publicacion',
+  fk_usuario: 'fk_usuario',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion',
+  eliminado: 'eliminado',
+  fk_modificado_por: 'fk_modificado_por'
+} as const
+
+export type FavoritoScalarFieldEnum = (typeof FavoritoScalarFieldEnum)[keyof typeof FavoritoScalarFieldEnum]
+
+
+export const PalabraBloqueadaScalarFieldEnum = {
+  id: 'id',
+  termino: 'termino',
+  fechaCreacion: 'fechaCreacion'
+} as const
+
+export type PalabraBloqueadaScalarFieldEnum = (typeof PalabraBloqueadaScalarFieldEnum)[keyof typeof PalabraBloqueadaScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -352,4 +455,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

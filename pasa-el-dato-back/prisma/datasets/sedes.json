@@ -1,116 +1,21 @@
 [
-  {
-    "nombre": "Alameda",
-    "cut": "13101",
-    "ciudadReferenciaId": "1310100100101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Antonio Varas",
-    "cut": "13123",
-    "ciudadReferenciaId": "1312300100101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Maipú",
-    "cut": "13119",
-    "ciudadReferenciaId": "1311900500101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Melipilla",
-    "cut": "13501",
-    "ciudadReferenciaId": "1350102900101",
-    "reglaReferencia": "nombre_comuna"
-  },
-  {
-    "nombre": "Padre Alonso de Ovalle",
-    "cut": "13101",
-    "ciudadReferenciaId": "1310100100101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Plaza Norte",
-    "cut": "13107",
-    "ciudadReferenciaId": "1310700200101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Plaza Oeste",
-    "cut": "13102",
-    "ciudadReferenciaId": "1310200100101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Plaza Vespucio",
-    "cut": "13110",
-    "ciudadReferenciaId": "1311000100101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Puente Alto",
-    "cut": "13201",
-    "ciudadReferenciaId": "1320100300101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "San Bernardo",
-    "cut": "13401",
-    "ciudadReferenciaId": "1340101700101",
-    "reglaReferencia": "nombre_comuna"
-  },
-  {
-    "nombre": "San Carlos de Apoquindo",
-    "cut": "13114",
-    "ciudadReferenciaId": "1311400100101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "San Joaquín",
-    "cut": "13129",
-    "ciudadReferenciaId": "1312900100101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Valparaíso",
-    "cut": "05101",
-    "ciudadReferenciaId": "510100700101",
-    "reglaReferencia": "nombre_comuna"
-  },
-  {
-    "nombre": "Viña del Mar",
-    "cut": "05109",
-    "ciudadReferenciaId": "510900200101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Campus Arauco",
-    "cut": "08202",
-    "ciudadReferenciaId": "820200300101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Campus Nacimiento",
-    "cut": "08306",
-    "ciudadReferenciaId": "830602600101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "San Andrés de Concepción",
-    "cut": "08101",
-    "ciudadReferenciaId": "810100700101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Campus Villarrica",
-    "cut": "09120",
-    "ciudadReferenciaId": "912005400101",
-    "reglaReferencia": "unica"
-  },
-  {
-    "nombre": "Puerto Montt",
-    "cut": "10101",
-    "ciudadReferenciaId": "1010104300101",
-    "reglaReferencia": "nombre_comuna"
-  }
+  {"nombre":"Alameda","cut":"13101","ciudadReferenciaId":"1310100100101","reglaReferencia":"unica","latitud":-33.4489437,"longitud":-70.6700844},
+  {"nombre":"Antonio Varas","cut":"13123","ciudadReferenciaId":"1312300100101","reglaReferencia":"unica","latitud":-33.4330482,"longitud":-70.614952},
+  {"nombre":"Maipú","cut":"13119","ciudadReferenciaId":"1311900500101","reglaReferencia":"unica","latitud":-33.5120026,"longitud":-70.7523787},
+  {"nombre":"Melipilla","cut":"13501","ciudadReferenciaId":"1350102900101","reglaReferencia":"nombre_comuna","latitud":-33.6838743,"longitud":-71.2138132},
+  {"nombre":"Padre Alonso de Ovalle","cut":"13101","ciudadReferenciaId":"1310100100101","reglaReferencia":"unica","latitud":-33.447294,"longitud":-70.6575918},
+  {"nombre":"Plaza Norte","cut":"13107","ciudadReferenciaId":"1310700200101","reglaReferencia":"unica","latitud":-33.362217,"longitud":-70.6783318},
+  {"nombre":"Plaza Oeste","cut":"13102","ciudadReferenciaId":"1310200100101","reglaReferencia":"unica","latitud":-33.5173068,"longitud":-70.7174339},
+  {"nombre":"Plaza Vespucio","cut":"13110","ciudadReferenciaId":"1311000100101","reglaReferencia":"unica","latitud":-33.5151035,"longitud":-70.5992561},
+  {"nombre":"Puente Alto","cut":"13201","ciudadReferenciaId":"1320100300101","reglaReferencia":"unica","latitud":-33.598569,"longitud":-70.5792277},
+  {"nombre":"San Bernardo","cut":"13401","ciudadReferenciaId":"1340101700101","reglaReferencia":"nombre_comuna","latitud":-33.5988605,"longitud":-70.705295},
+  {"nombre":"San Carlos de Apoquindo","cut":"13114","ciudadReferenciaId":"1311400100101","reglaReferencia":"unica","latitud":-33.4002234,"longitud":-70.5056027},
+  {"nombre":"San Joaquín","cut":"13129","ciudadReferenciaId":"1312900100101","reglaReferencia":"unica","latitud":-33.4999615,"longitud":-70.6166289},
+  {"nombre":"Valparaíso","cut":"05101","ciudadReferenciaId":"510100700101","reglaReferencia":"nombre_comuna","latitud":-33.0448772,"longitud":-71.6080262},
+  {"nombre":"Viña del Mar","cut":"05109","ciudadReferenciaId":"510900200101","reglaReferencia":"unica","latitud":-33.0278186,"longitud":-71.5459834},
+  {"nombre":"Campus Arauco","cut":"08202","ciudadReferenciaId":"820200300101","reglaReferencia":"unica","latitud":-37.2584625,"longitud":-73.2270461},
+  {"nombre":"Campus Nacimiento","cut":"08306","ciudadReferenciaId":"830602600101","reglaReferencia":"unica","latitud":-37.4962595,"longitud":-72.6892868},
+  {"nombre":"San Andrés de Concepción","cut":"08101","ciudadReferenciaId":"810100700101","reglaReferencia":"unica","latitud":-36.7792118,"longitud":-73.0574737},
+  {"nombre":"Campus Villarrica","cut":"09120","ciudadReferenciaId":"912005400101","reglaReferencia":"unica","latitud":-39.2774331,"longitud":-72.2244295},
+  {"nombre":"Puerto Montt","cut":"10101","ciudadReferenciaId":"1010104300101","reglaReferencia":"nombre_comuna","latitud":-41.470017,"longitud":-72.9259331}
 ]
