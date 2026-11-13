@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ActualizarPerfilRequestDTO } from "@/domain/dtos";
 import { ApiError } from "@/lib/api";
 import { actualizarMiPerfil, obtenerMiPerfil } from "@/lib/api/perfil";
+import { useSesionStore } from "@/stores/sesion-store";
 
 // Clave única del perfil propio, aislada por cuenta.
 export function clavePerfil(idCuenta: string | null) {
@@ -28,6 +30,19 @@ export function usePerfil(idCuenta: string | null) {
 
   const esSesionInvalida =
     query.error instanceof ApiError && query.error.status === 401;
+
+  // Hidrata el nombre de la sede en el store de sesión (el login no lo
+  // trae). Se sincroniza en cada carga válida, así también refleja cambios
+  // de sede tras editar el perfil. Idempotente por igualdad.
+  const nombreSede = query.data?.sede?.nombre ?? null;
+  const conDatos = query.data !== undefined;
+  useEffect(() => {
+    if (!conDatos || !idCuenta) return;
+    const sedeActual = useSesionStore.getState().sesion?.sedeNombre ?? null;
+    if (sedeActual !== nombreSede) {
+      useSesionStore.getState().fijarSede(nombreSede);
+    }
+  }, [conDatos, nombreSede, idCuenta]);
 
   return {
     perfil: query.data ?? null,

@@ -9,10 +9,13 @@ import type {
 
 // Sesión UI mínima y no sensible. Los tokens viajan solo en cookies HttpOnly
 // (credentials:"include" global); aquí nunca se guardan tokens, run ni claves.
+// `sedeNombre` no viene en el login: se hidrata desde GET /perfil/me
+// (ver usePerfil) y queda cacheada aquí para uso directo en UI.
 export interface Sesion {
   idCuenta: string;
   correo: string;
   nombreCompleto: string;
+  sedeNombre: string | null;
   rol: {
     id: number;
     descripcion: string;
@@ -22,6 +25,7 @@ export interface Sesion {
 interface SesionState {
   sesion: Sesion | null;
   iniciarSesion: (dto: UsuarioAutenticadoDTO) => void;
+  fijarSede: (nombre: string | null) => void;
   cerrarSesion: () => void;
 }
 
@@ -45,6 +49,8 @@ export const useSesionStore = create<SesionState>()(
                   idCuenta: dto.idCuenta,
                   correo: dto.correo,
                   nombreCompleto: construirNombreCompleto(dto.usuario),
+                  // La sede se hidrata después vía GET /perfil/me.
+                  sedeNombre: null,
                   rol: {
                     id: dto.usuario.rol.id,
                     descripcion: dto.usuario.rol.descripcion,
@@ -54,12 +60,20 @@ export const useSesionStore = create<SesionState>()(
                   idCuenta: dto.idCuenta,
                   correo: dto.correo,
                   nombreCompleto: dto.marca.nombre,
+                  // Las marcas no tienen sede.
+                  sedeNombre: null,
                   rol: {
                     id: dto.marca.rol.id,
                     descripcion: dto.marca.rol.descripcion,
                   },
                 },
         }),
+      fijarSede: (nombre) =>
+        set((estado) =>
+          estado.sesion && estado.sesion.sedeNombre !== nombre
+            ? { sesion: { ...estado.sesion, sedeNombre: nombre } }
+            : estado,
+        ),
       cerrarSesion: () => set({ sesion: null }),
     }),
     {
