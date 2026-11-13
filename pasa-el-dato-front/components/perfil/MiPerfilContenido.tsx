@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { ROUTES } from "@/config/constants";
 import { usePerfil } from "@/hooks/use-perfil";
 import { useSesionStore } from "@/stores/sesion-store";
+import { CalificacionesLista } from "./CalificacionesLista";
 import { PerfilDetalle } from "./PerfilDetalle";
 import { PerfilError } from "./PerfilError";
 import { PerfilSkeleton } from "./PerfilSkeleton";
+import { ReputacionResumen } from "./ReputacionResumen";
 
 export function MiPerfilContenido() {
   const router = useRouter();
@@ -40,5 +42,11 @@ export function MiPerfilContenido() {
     );
   }
 
-  return <PerfilDetalle perfil={perfil} />;
+  return (
+    <div className="space-y-6">
+      <PerfilDetalle perfil={perfil} />
+      {idCuenta ? <ReputacionResumen idCuenta={idCuenta} /> : null}
+      {idCuenta ? <CalificacionesLista idCuenta={idCuenta} /> : null}
+    </div>
+  );
 }

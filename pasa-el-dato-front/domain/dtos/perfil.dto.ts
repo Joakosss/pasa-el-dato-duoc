@@ -19,6 +19,37 @@ export interface ActualizarPerfilRequestDTO {
   sedeId?: number;
 }
 
+// Espejo de ReputacionRespuestaDto del back (GET /perfil/:idCuenta/reputacion).
+export interface ReputacionDTO {
+  usuarioId: string;
+  promedio: number | null;
+  total: number;
+}
+
+// Espejo de CalificacionRecibidaItemDto del back.
+export interface CalificacionRecibidaDTO {
+  id: string;
+  puntaje: number;
+  comentario: string | null;
+  fechaCreacion: string;
+  publicacionId: string;
+}
+
+// Espejo de ListarCalificacionesRespuestaDto del back
+// (GET /perfil/:idCuenta/calificaciones?page=&pageSize=).
+export interface ListadoCalificacionesDTO {
+  items: CalificacionRecibidaDTO[];
+  page: number;
+  pageSize: number;
+  total: number;
+  nextPage: number | null;
+}
+
+export interface ListarCalificacionesQuery {
+  page?: number;
+  pageSize?: 10 | 20;
+}
+
 export interface PerfilRespuestaDTO {
   run: string;
   pNombre: string;

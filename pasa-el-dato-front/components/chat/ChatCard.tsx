@@ -79,7 +79,8 @@ export function ChatCard({
             <RolConversacionBadge rol={rol} />
             <span className="min-w-0 truncate">
               {ETIQUETA_CONTRAPARTE_MOMENTANEO} ·{" "}
-              {conversacion.estadoPublicacionAlCrear}
+              {conversacion.publicacion.estadoVenta ??
+                conversacion.estadoPublicacionAlCrear}
             </span>
             {noDisponible ? (
               <Badge variant="reported" className="shrink-0">

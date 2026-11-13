@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import { EnvioMensajeForm } from "./EnvioMensajeForm";
+import { CalificarDesdeChat } from "./CalificarDesdeChat";
+import { CierreVentaDesdeChat } from "./CierreVentaDesdeChat";
 import { EstadoConexionChat } from "./EstadoConexionChat";
 import { MensajeBurbuja } from "./MensajeBurbuja";
 import { ROUTES } from "@/config/constants";
@@ -180,6 +182,8 @@ export function ChatConversacion({ conversacionId }: { conversacionId: string })
         cargandoAnteriores={historial.isCargandoAnteriores}
         onCargarAnteriores={() => void historial.cargarAnteriores()}
       />
+      <CierreVentaDesdeChat conversacionId={conversacionId} />
+      <CalificarDesdeChat conversacionId={conversacionId} />
 
       {tiempoReal.errorConexion ? (
         <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-card px-3 py-2">

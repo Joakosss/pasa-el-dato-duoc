@@ -15,8 +15,13 @@ import { cambiarEstadoPublicacion } from "@/lib/api/publicaciones";
 
 interface EstadoPublicacionBotoneraProps {
   publicacionId: string;
-  estadoInicial?: EstadoPublicacionAsignable;
+  // Descripción del estado actual (viene de GET /publicaciones/me, que sí
+  // expone `estado`). Puede ser no asignable (ej. "Vendido") cuando la
+  // publicación ya se cerró por POST /:id/cierre-venta.
+  estadoInicial?: string;
 }
+
+const ESTADO_INICIAL_POR_DEFECTO = "En curso";
 
 function esEstadoAsignable(
   descripcion: string,
@@ -28,25 +33,20 @@ function esEstadoAsignable(
 
 export function EstadoPublicacionBotonera({
   publicacionId,
-  estadoInicial = "En curso",
+  estadoInicial,
 }: EstadoPublicacionBotoneraProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [estadoActual, setEstadoActual] =
-    useState<EstadoPublicacionAsignable>(estadoInicial);
+  const [estadoActual, setEstadoActual] = useState<string>(
+    estadoInicial ?? ESTADO_INICIAL_POR_DEFECTO,
+  );
   const [error, setError] = useState<string | null>(null);
 
   const cambiarMutation = useMutation({
     mutationFn: (estado: EstadoPublicacionAsignable) =>
       cambiarEstadoPublicacion(publicacionId, estado),
-    onSuccess: (respuesta, estadoSolicitado) => {
-      const estadoConfirmado = esEstadoAsignable(
-        respuesta.estado.descripcion,
-      )
-        ? respuesta.estado.descripcion
-        : estadoSolicitado;
-
-      setEstadoActual(estadoConfirmado);
+    onSuccess: (respuesta) => {
+      setEstadoActual(respuesta.estado.descripcion);
       setError(null);
       // Invalida por prefijo: cubre ["publicaciones"] y ["publicaciones", "me"].
       queryClient.invalidateQueries({ queryKey: ["publicaciones"] });
@@ -55,7 +55,7 @@ export function EstadoPublicacionBotonera({
       queryClient.invalidateQueries({
         queryKey: ["publicacion-edicion", publicacionId],
       });
-      toast.success(`Estado actualizado a “${estadoConfirmado}”`);
+      toast.success(`Estado actualizado a “${respuesta.estado.descripcion}”`);
     },
     onError: (err: unknown) => {
       if (err instanceof ApiError && err.status === 401) {
@@ -77,6 +77,14 @@ export function EstadoPublicacionBotonera({
         return;
       }
 
+      if (err instanceof ApiError && err.status === 400) {
+        const mensaje =
+          "Ese estado no se puede asignar directamente. Para marcarla como vendida debes cerrar la venta con un comprador.";
+        setError(mensaje);
+        toast.error(mensaje);
+        return;
+      }
+
       const mensaje =
         err instanceof ApiError && err.message
           ? err.message
@@ -91,6 +99,8 @@ export function EstadoPublicacionBotonera({
     setError(null);
     cambiarMutation.mutate(estado);
   };
+
+  const estadoActualEsAsignable = esEstadoAsignable(estadoActual);
 
   return (
     <section
@@ -107,10 +117,17 @@ export function EstadoPublicacionBotonera({
         Controla cómo se muestra tu publicación en el marketplace.
       </p>
 
+      {!estadoActualEsAsignable ? (
+        <p className="mb-3 text-xs text-gray-500">
+          Estado actual: <strong className="text-navy">{estadoActual}</strong>.
+          Puedes reactivarla volviendo a “En curso” o “Pausada”.
+        </p>
+      ) : null}
+
       <div
         role="group"
         aria-label="Estado de la publicación"
-        className="grid grid-cols-3 gap-2"
+        className="grid grid-cols-2 gap-2"
       >
         {ESTADOS_PUBLICACION_ASIGNABLES.map((estado) => {
           const esActual = estado === estadoActual;

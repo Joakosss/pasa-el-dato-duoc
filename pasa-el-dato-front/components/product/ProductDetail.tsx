@@ -53,7 +53,7 @@ export function ProductDetail({ id }: ProductDetailProps) {
   // El detalle público solo existe en estado "En curso". Si da 404 y hay
   // sesión, se intenta la vista de propietario (/edicion), que responde en
   // cualquier estado no eliminado. Así el dueño siempre puede abrir y
-  // gestionar sus Pausadas/Vendidas.
+  // gestionar sus Pausadas o Vendidas.
   const {
     publicacion: publicacionPropia,
     isCargando: isCargandoPropia,

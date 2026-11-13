@@ -14,8 +14,8 @@ interface MisPublicacionesCardProps {
 type VarianteEstado = "active" | "review" | "category";
 
 function varianteEstado(estado: string): VarianteEstado {
-  if (estado === "Pausada") return "review";
-  if (estado === "Vendida") return "category";
+  if (estado === "Pausada" || estado === "Pausado") return "review";
+  if (estado === "Vendida" || estado === "Vendido") return "category";
   return "active";
 }
 

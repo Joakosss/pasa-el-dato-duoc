@@ -167,8 +167,53 @@ export function crearPublicacion(
   });
 }
 
+export interface ActivarCalificacionRespuesta {
+  publicacionId: string;
+  calificacionActivada: boolean;
+  fechaActivacionCalificacion: string | null;
+}
+
+export function activarCalificacionPublicacion(
+  id: string,
+  accessToken: string,
+): Promise<ActivarCalificacionRespuesta> {
+  return apiClient.post<ActivarCalificacionRespuesta>(
+    `/publicaciones/${encodeURIComponent(id)}/activar-calificacion`,
+    undefined,
+    { accessToken },
+  );
+}
+
+export interface CrearCalificacionRequest {
+  puntaje: number;
+  comentario?: string;
+}
+
+export interface CalificacionCreada {
+  id: string;
+  publicacionId: string;
+  emisorId: string;
+  receptorId: string;
+  puntaje: number;
+  comentario?: string;
+  createdAt: string;
+}
+
+export function crearCalificacion(
+  publicacionId: string,
+  datos: CrearCalificacionRequest,
+  accessToken: string,
+): Promise<CalificacionCreada> {
+  return apiClient.post<CalificacionCreada>(
+    `/publicaciones/${encodeURIComponent(publicacionId)}/calificaciones`,
+    datos,
+    { accessToken },
+  );
+}
+
 export interface CierreVentaRespuesta {
   id: string;
+  calificacionActivada: boolean;
   estado: EstadoPublicacionApi;
   vendedor: {
     id: string;
@@ -188,6 +233,16 @@ export function cerrarVentaPublicacion(
   return apiClient.post<CierreVentaRespuesta>(
     `/publicaciones/${encodeURIComponent(id)}/cierre-venta`,
     { compradorId },
+    { accessToken },
+  );
+}
+
+export function obtenerTransaccionPublicacion(
+  id: string,
+  accessToken: string,
+): Promise<CierreVentaRespuesta> {
+  return apiClient.get<CierreVentaRespuesta>(
+    `/publicaciones/${encodeURIComponent(id)}/transaccion`,
     { accessToken },
   );
 }

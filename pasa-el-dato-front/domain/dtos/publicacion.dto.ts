@@ -1,16 +1,19 @@
 import type {
   CategoriaId,
+  CuentaId,
   PublicacionId,
   SedeId,
   TipoVentaId,
 } from "@/domain/types/common";
 
 // Catálogo de estados asignables por el propietario (HU-PUB-04).
-// Debe coincidir con ESTADOS_PUBLICACION_ASIGNABLES_POR_PROPIETARIO del back.
+// Debe coincidir con ESTADOS_PUBLICACION_ASIGNABLES_POR_PROPIETARIO del back
+// (PATCH /publicaciones/:id/estado). "Vendido" no es asignable por este
+// endpoint: requiere POST /publicaciones/:id/cierre-venta con compradorId
+// (HU-COM-01).
 export const ESTADOS_PUBLICACION_ASIGNABLES = [
   "En curso",
   "Pausada",
-  "Vendida",
 ] as const;
 
 export type EstadoPublicacionAsignable =
@@ -26,6 +29,33 @@ export interface CambioEstadoPublicacionDTO {
   estado: {
     id: number;
     descripcion: string;
+  };
+}
+
+// HU-COM-01: cierre de venta. Espejo de CerrarVentaDto del back
+// (POST /publicaciones/:id/cierre-venta). compradorId es el UUID de
+// Cuenta.id_cuenta del comprador registrado.
+export interface CerrarVentaRequestDTO {
+  compradorId: CuentaId;
+}
+
+// HU-COM-01: espejo de CierreVentaRespuestaDto del back (cierre y consulta
+// GET /publicaciones/:id/transaccion). Expone las tres partes: publicación,
+// vendedor y comprador.
+export interface CierreVentaDTO {
+  id: PublicacionId;
+  calificacionActivada: boolean;
+  estado: {
+    id: number;
+    descripcion: string;
+  };
+  vendedor: {
+    id: CuentaId;
+    nombre: string;
+  };
+  comprador: {
+    id: CuentaId;
+    nombre: string;
   };
 }
 

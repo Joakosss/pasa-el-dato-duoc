@@ -70,6 +70,7 @@ export const ModelName = {
   AuditoriaAdmin: 'AuditoriaAdmin',
   ReportePublicacion: 'ReportePublicacion',
   Publicacion: 'Publicacion',
+  Calificacion: 'Calificacion',
   BannerPublicidad: 'BannerPublicidad',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
@@ -311,6 +312,8 @@ export const PublicacionScalarFieldEnum = {
   fk_usuario: 'fk_usuario',
   fk_sede: 'fk_sede',
   fk_user_comprador: 'fk_user_comprador',
+  calificacion_activada: 'calificacion_activada',
+  fecha_activacion_calificacion: 'fecha_activacion_calificacion',
   contador_vistas: 'contador_vistas',
   fechaCreacion: 'fechaCreacion',
   fechaModificacion: 'fechaModificacion',
@@ -319,6 +322,20 @@ export const PublicacionScalarFieldEnum = {
 } as const
 
 export type PublicacionScalarFieldEnum = (typeof PublicacionScalarFieldEnum)[keyof typeof PublicacionScalarFieldEnum]
+
+
+export const CalificacionScalarFieldEnum = {
+  id: 'id',
+  puntaje: 'puntaje',
+  comentario: 'comentario',
+  fk_publicacion: 'fk_publicacion',
+  fk_emisor: 'fk_emisor',
+  fk_receptor: 'fk_receptor',
+  fechaCreacion: 'fechaCreacion',
+  fechaModificacion: 'fechaModificacion'
+} as const
+
+export type CalificacionScalarFieldEnum = (typeof CalificacionScalarFieldEnum)[keyof typeof CalificacionScalarFieldEnum]
 
 
 export const BannerPublicidadScalarFieldEnum = {

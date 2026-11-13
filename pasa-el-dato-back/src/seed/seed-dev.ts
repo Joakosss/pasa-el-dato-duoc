@@ -65,9 +65,12 @@ export async function ejecutarSeedDev(): Promise<void> {
 
     // Catálogos de publicación (HU-PUB-01, T-02).
     // skipDuplicates usa los índices unique de cada tabla.
+    // Se conservan "Pausado"/"Vendido" (mobile + cierre de venta HU-COM-01) y
+    // se agrega "Pausada" (web PATCH /:id/estado + chat + favoritos e2e).
     await prisma.estadoPublicacion.createMany({
       data: [
         { descripcion: 'En curso' },
+        { descripcion: 'Pausada' },
         { descripcion: 'Pausado' },
         { descripcion: 'Vendido' },
       ],

@@ -137,6 +137,11 @@ export type ReportePublicacion = Prisma.ReportePublicacionModel
  */
 export type Publicacion = Prisma.PublicacionModel
 /**
+ * Model Calificacion
+ * 
+ */
+export type Calificacion = Prisma.CalificacionModel
+/**
  * Model BannerPublicidad
  * 
  */

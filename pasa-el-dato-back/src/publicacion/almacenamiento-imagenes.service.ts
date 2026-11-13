@@ -5,6 +5,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { validarImagenesRecibidas, type ImagenRecibida } from './validar-imagenes.js';
 
@@ -52,6 +53,7 @@ export function obtenerDirectorioUploads(
 
 @Injectable()
 export class AlmacenamientoImagenesService {
+  private readonly logger = new Logger(AlmacenamientoImagenesService.name);
   private readonly directorioUploads = obtenerDirectorioUploads();
 
   async ejecutarConImagenesAlmacenadas<T>(
@@ -123,6 +125,13 @@ export class AlmacenamientoImagenesService {
       ) {
         throw error;
       }
+
+      // El mensaje público es genérico para no filtrar detalles internos;
+      // el error original se registra con stack para diagnóstico.
+      this.logger.error(
+        'Fallo al almacenar imágenes de publicación',
+        error instanceof Error ? error.stack : String(error),
+      );
 
       throw new InternalServerErrorException(
         'No fue posible almacenar las imágenes',

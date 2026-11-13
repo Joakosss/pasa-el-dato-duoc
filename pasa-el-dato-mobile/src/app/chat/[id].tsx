@@ -17,7 +17,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/Avatar';
 import { EstrellasMomentaneo } from '@/components/ui/EstrellasMomentaneo';
-import { cerrarVentaPublicacion } from '@/lib/api/publicaciones';
+import {
+  activarCalificacionPublicacion,
+  cerrarVentaPublicacion,
+  crearCalificacion,
+  obtenerTransaccionPublicacion,
+} from '@/lib/api/publicaciones';
 import {
   enviarMensaje as enviarMensajeApi,
   listarMensajes,
@@ -74,7 +79,9 @@ export default function ConversacionChatScreen() {
   const [modalConfirmarVentaAbierto, setModalConfirmarVentaAbierto] = useState(false);
   const [modalEvaluacionAbierto, setModalEvaluacionAbierto] = useState(false);
   const [cerrandoVenta, setCerrandoVenta] = useState(false);
+  const [guardandoCalificacion, setGuardandoCalificacion] = useState(false);
   const [errorCierreVenta, setErrorCierreVenta] = useState<string | null>(null);
+  const [errorCalificacion, setErrorCalificacion] = useState<string | null>(null);
   const [estrellasSeleccionadas, setEstrellasSeleccionadas] = useState(0);
   const [comentarioEvaluacion, setComentarioEvaluacion] = useState('');
   const publicacionesVendidasMomentaneo = useEvaluacionesMomentaneoStore(
@@ -138,6 +145,27 @@ export default function ConversacionChatScreen() {
   }, [cargarHistorial]);
 
   useEffect(() => {
+    if (!accessToken || !publicacionId) return;
+
+    const sincronizarEstadoTransaccion = () => {
+      void obtenerTransaccionPublicacion(publicacionId, accessToken)
+        .then((transaccion) => {
+          if (transaccion.calificacionActivada) {
+            marcarPublicacionVendidaMomentaneo(publicacionId);
+          }
+        })
+        .catch(() => {
+          // La conversación puede existir antes de que la venta sea confirmada.
+        });
+    };
+
+    sincronizarEstadoTransaccion();
+    const intervalo = setInterval(sincronizarEstadoTransaccion, 5_000);
+
+    return () => clearInterval(intervalo);
+  }, [accessToken, marcarPublicacionVendidaMomentaneo, publicacionId]);
+
+  useEffect(() => {
     if (!accessToken || !conversacionId) return;
 
     const socket = crearSocketChat(accessToken);
@@ -175,6 +203,7 @@ export default function ConversacionChatScreen() {
   const abrirEvaluacion = () => {
     setEstrellasSeleccionadas(evaluacionPropiaMomentaneo?.estrellas ?? 0);
     setComentarioEvaluacion(evaluacionPropiaMomentaneo?.comentario ?? '');
+    setErrorCalificacion(null);
     setModalEvaluacionAbierto(true);
   };
 
@@ -191,6 +220,7 @@ export default function ConversacionChatScreen() {
 
     try {
       await cerrarVentaPublicacion(publicacionId, contraparteCuentaId, accessToken);
+      await activarCalificacionPublicacion(publicacionId, accessToken);
       marcarPublicacionVendidaMomentaneo(publicacionId);
       setModalConfirmarVentaAbierto(false);
     } catch (causa: unknown) {
@@ -204,16 +234,39 @@ export default function ConversacionChatScreen() {
     }
   };
 
-  const guardarEvaluacion = () => {
-    if (!idPublicacion || estrellasSeleccionadas < 1) return;
+  const guardarEvaluacion = async () => {
+    if (!accessToken || !publicacionId || estrellasSeleccionadas < 1 || guardandoCalificacion) {
+      return;
+    }
 
-    guardarEvaluacionMomentaneo({
-      publicacionId: idPublicacion,
-      rol: rolActualMomentaneo,
-      estrellas: estrellasSeleccionadas,
-      comentario: comentarioEvaluacion,
-    });
-    setModalEvaluacionAbierto(false);
+    setGuardandoCalificacion(true);
+    setErrorCalificacion(null);
+
+    try {
+      await crearCalificacion(
+        publicacionId,
+        {
+          puntaje: estrellasSeleccionadas,
+          comentario: comentarioEvaluacion.trim() || undefined,
+        },
+        accessToken,
+      );
+      guardarEvaluacionMomentaneo({
+        publicacionId,
+        rol: rolActualMomentaneo,
+        estrellas: estrellasSeleccionadas,
+        comentario: comentarioEvaluacion,
+      });
+      setModalEvaluacionAbierto(false);
+    } catch (causa: unknown) {
+      setErrorCalificacion(
+        causa instanceof Error
+          ? causa.message
+          : 'No pudimos guardar tu calificación. Inténtalo nuevamente.',
+      );
+    } finally {
+      setGuardandoCalificacion(false);
+    }
   };
 
   const enviarMensaje = async () => {
@@ -296,15 +349,20 @@ export default function ConversacionChatScreen() {
             </Text>
           </View>
           {ventaConfirmadaMomentaneo ? (
-            <Pressable
-              accessibilityRole="button"
-              onPress={abrirEvaluacion}
-              style={styles.botonEvaluar}>
-              <MaterialCommunityIcons name="star-outline" size={18} color={colors.navy} />
-              <Text style={styles.botonEvaluarTexto}>
-                {evaluacionPropiaMomentaneo ? 'Editar' : 'Evaluar'}
-              </Text>
-            </Pressable>
+            evaluacionPropiaMomentaneo ? (
+              <View accessibilityLabel="Calificación enviada" style={styles.botonEvaluacionEnviada}>
+                <MaterialCommunityIcons name="check-circle-outline" size={18} color={colors.navy} />
+                <Text style={styles.botonEvaluarTexto}>Evaluación enviada</Text>
+              </View>
+            ) : (
+              <Pressable
+                accessibilityRole="button"
+                onPress={abrirEvaluacion}
+                style={styles.botonEvaluar}>
+                <MaterialCommunityIcons name="star-outline" size={18} color={colors.navy} />
+                <Text style={styles.botonEvaluarTexto}>Evaluar</Text>
+              </Pressable>
+            )
           ) : null}
         </View>
       ) : null}
@@ -477,7 +535,7 @@ export default function ConversacionChatScreen() {
             </View>
             <Text style={styles.modalTituloEvaluacion}>¿Confirmar venta?</Text>
             <Text style={styles.modalTextoEvaluacion}>
-              Marcarás "{tituloPublicacion}" como vendida a {nombreContraparte}.
+              Marcarás {'"'}{tituloPublicacion}{'"'} como vendida a {nombreContraparte}.
             </Text>
             <Text style={styles.modalTextoEvaluacion}>
               Después ambos podrán evaluar la experiencia.
@@ -536,6 +594,11 @@ export default function ConversacionChatScreen() {
               tamano={34}
               onCambiar={setEstrellasSeleccionadas}
             />
+            {errorCalificacion ? (
+              <Text accessibilityRole="alert" style={styles.errorCalificacion}>
+                {errorCalificacion}
+              </Text>
+            ) : null}
             <Text style={styles.etiquetaEvaluacion}>Comentario (opcional)</Text>
             <TextInput
               value={comentarioEvaluacion}
@@ -549,19 +612,29 @@ export default function ConversacionChatScreen() {
             <View style={styles.accionesEvaluacion}>
               <Pressable
                 accessibilityRole="button"
+                disabled={guardandoCalificacion}
                 onPress={() => setModalEvaluacionAbierto(false)}
                 style={styles.botonCancelarEvaluacion}>
                 <Text style={styles.botonCancelarEvaluacionTexto}>Cancelar</Text>
               </Pressable>
               <Pressable
                 accessibilityRole="button"
-                disabled={estrellasSeleccionadas < 1}
-                onPress={guardarEvaluacion}
+                accessibilityState={{
+                  busy: guardandoCalificacion,
+                  disabled: estrellasSeleccionadas < 1 || guardandoCalificacion,
+                }}
+                disabled={estrellasSeleccionadas < 1 || guardandoCalificacion}
+                onPress={() => void guardarEvaluacion()}
                 style={[
                   styles.botonGuardarEvaluacion,
-                  estrellasSeleccionadas < 1 && styles.botonEvaluacionDeshabilitado,
+                  (estrellasSeleccionadas < 1 || guardandoCalificacion) &&
+                    styles.botonEvaluacionDeshabilitado,
                 ]}>
-                <Text style={styles.botonGuardarEvaluacionTexto}>Guardar</Text>
+                {guardandoCalificacion ? (
+                  <ActivityIndicator color={colors.navy} size="small" />
+                ) : (
+                  <Text style={styles.botonGuardarEvaluacionTexto}>Guardar</Text>
+                )}
               </Pressable>
             </View>
           </View>
@@ -657,6 +730,15 @@ const styles = StyleSheet.create({
     borderColor: colors.navy,
     borderRadius: spacing.radiusSm,
     borderWidth: 1,
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 7,
+  },
+  botonEvaluacionEnviada: {
+    alignItems: 'center',
+    backgroundColor: '#e6f4ff',
+    borderRadius: spacing.radiusSm,
     flexDirection: 'row',
     gap: 4,
     paddingHorizontal: 8,
@@ -811,6 +893,7 @@ const styles = StyleSheet.create({
   modalTituloEvaluacion: { color: colors.navy, fontSize: 19, fontWeight: '800', textAlign: 'center' },
   modalTextoEvaluacion: { color: colors.muted, fontSize: 13, lineHeight: 18, textAlign: 'center' },
   errorCierreVenta: { color: colors.error, fontSize: 12, lineHeight: 17, textAlign: 'center' },
+  errorCalificacion: { alignSelf: 'stretch', color: colors.error, fontSize: 12, lineHeight: 17 },
   etiquetaEvaluacion: { alignSelf: 'flex-start', color: colors.navy, fontSize: 13, fontWeight: '700', marginTop: 4 },
   inputComentario: {
     alignSelf: 'stretch',

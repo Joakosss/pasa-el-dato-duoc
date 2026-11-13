@@ -65,8 +65,8 @@ export class ChatService {
       throw new BadRequestException('Publicación no disponible para contacto');
     }
 
-    // Solo se permite iniciar en "En curso" o "Vendida".
-    if (estado !== 'En curso' && estado !== 'Vendida') {
+    // Solo se permite iniciar en "En curso" o "Vendido".
+    if (estado !== 'En curso' && estado !== 'Vendido') {
       throw new BadRequestException('Publicación no disponible para contacto');
     }
 

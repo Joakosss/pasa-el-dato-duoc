@@ -46,9 +46,13 @@ export interface ListarMensajesQuery {
 }
 
 // Espejo de ConversacionPublicacionListaDto del back.
+// `estadoVenta` es la descripción del estado de venta (En curso/Pausada/
+// Vendido...) y solo falta cuando la publicación está eliminada
+// (estado NO_DISPONIBLE).
 export interface ConversacionPublicacionDTO {
   id: string;
   estado: "VISIBLE" | "NO_DISPONIBLE";
+  estadoVenta?: string;
   titulo?: string;
 }
 

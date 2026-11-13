@@ -3,6 +3,8 @@ export { ChatList } from "./ChatList";
 export { ChatEmptyState } from "./ChatEmptyState";
 export { ChatListSkeleton } from "./ChatListSkeleton";
 export { ChatConversacion } from "./ChatConversacion";
+export { CierreVentaDesdeChat } from "./CierreVentaDesdeChat";
+export { CalificarDesdeChat } from "./CalificarDesdeChat";
 export { MisConversaciones } from "./MisConversaciones";
 export { MensajeBurbuja } from "./MensajeBurbuja";
 export { EnvioMensajeForm } from "./EnvioMensajeForm";

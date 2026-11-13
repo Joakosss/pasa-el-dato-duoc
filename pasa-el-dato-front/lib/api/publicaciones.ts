@@ -2,6 +2,8 @@ import type {
   ActualizarPublicacionRequestDTO,
   CambiarEstadoPublicacionRequestDTO,
   CambioEstadoPublicacionDTO,
+  CerrarVentaRequestDTO,
+  CierreVentaDTO,
   CrearPublicacionRequestDTO,
   EstadoPublicacionAsignable,
   PublicacionCreadaDTO,
@@ -87,7 +89,8 @@ export async function actualizarPublicacion(
 }
 
 // PATCH /publicaciones/:id/estado (JSON, cookie accessToken).
-// Solo el propietario puede cambiar entre En curso, Pausada y Vendida.
+// Solo el propietario puede alternar entre En curso y Pausada. Marcar como
+// vendida requiere POST /publicaciones/:id/cierre-venta con compradorId.
 export async function cambiarEstadoPublicacion(
   id: string,
   estado: EstadoPublicacionAsignable,
@@ -102,4 +105,27 @@ export async function cambiarEstadoPublicacion(
 // DELETE /publicaciones/:id -> 204 (eliminación lógica).
 export async function eliminarPublicacion(id: string): Promise<void> {
   return apiClient.delete<void>(`/publicaciones/${encodeURIComponent(id)}`);
+}
+
+// POST /publicaciones/:id/cierre-venta (JSON, cookie accessToken) — HU-COM-01.
+// Registra al comprador y cambia el estado a "Vendido" en una única acción.
+// Idempotente: si ya está cerrada devuelve la transacción existente.
+export async function cerrarVenta(
+  id: string,
+  dto: CerrarVentaRequestDTO,
+): Promise<CierreVentaDTO> {
+  return apiClient.post<CierreVentaDTO>(
+    `/publicaciones/${encodeURIComponent(id)}/cierre-venta`,
+    dto,
+  );
+}
+
+// GET /publicaciones/:id/transaccion (cookie accessToken) — HU-COM-01.
+// Solo vendedor o comprador registrados; resto 403, no vendida 404.
+export async function obtenerTransaccion(
+  id: string,
+): Promise<CierreVentaDTO> {
+  return apiClient.get<CierreVentaDTO>(
+    `/publicaciones/${encodeURIComponent(id)}/transaccion`,
+  );
 }

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   Modal,
   Pressable,
   RefreshControl,
@@ -320,7 +321,11 @@ function BarraSuperior({
     <View style={styles.barra}>
       <View style={styles.marca}>
         <View style={styles.logo}>
-          <Text style={styles.logoTexto}>PD</Text>
+          <Image
+            accessibilityLabel="Logo Pasa el Dato Duoc"
+            source={require('../../../assets/images/logo-ui.png')}
+            style={styles.logoImagen}
+          />
         </View>
         <View style={styles.saludoCaja}>
           <Text style={styles.saludo} numberOfLines={1}>
@@ -530,17 +535,15 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   logo: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: colors.navy,
     alignItems: 'center',
+    height: 36,
     justifyContent: 'center',
+    width: 36,
   },
-  logoTexto: {
-    color: colors.gold,
-    fontSize: 14,
-    fontWeight: '800',
+  logoImagen: {
+    height: '100%',
+    resizeMode: 'contain',
+    width: '100%',
   },
   saludoCaja: {
     flexShrink: 1,

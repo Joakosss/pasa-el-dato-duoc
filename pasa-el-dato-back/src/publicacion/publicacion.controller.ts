@@ -28,11 +28,13 @@ import {
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js';
 import { AlmacenamientoImagenesService } from './almacenamiento-imagenes.service.js';
 import { ActualizarPublicacionDto } from './dto/actualizar-publicacion.dto.js';
 import { CambiarEstadoPublicacionDto } from './dto/cambiar-estado-publicacion.dto.js';
+import { ActivarCalificacionRespuestaDto } from './dto/activar-calificacion-respuesta.dto.js';
 import { CerrarVentaDto } from './dto/cerrar-venta.dto.js';
 import { CierreVentaRespuestaDto } from './dto/cierre-venta-respuesta.dto.js';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
@@ -291,6 +293,45 @@ export class PublicacionController {
       idCuenta: user.idCuenta,
       estadoDescripcion: dto.estado,
     });
+  }
+
+  @Post(':id/activar-calificacion')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary:
+      'Activar calificación de una publicación vendida (HU-CAL-03). ' +
+      'Solo el vendedor dueño puede activar. Idempotente: repetir devuelve el estado actual.',
+  })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: ActivarCalificacionRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'No tiene permisos para activar la calificación de esta publicación',
+  })
+  @ApiNotFoundResponse({
+    description: 'Publicación no encontrada o venta no finalizada (no está Vendida)',
+  })
+  @ApiUnprocessableEntityResponse({ description: 'La venta no tiene comprador registrado' })
+  async activarCalificacion(
+    @Param('id') id: string,
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<ActivarCalificacionRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    const resultado = await this.publicacionService.activarCalificacion({
+      idPublicacion: id,
+      idCuenta: user.idCuenta,
+    });
+
+    return {
+      publicacionId: resultado.publicacionId,
+      calificacionActivada: resultado.calificacionActivada,
+      fechaActivacionCalificacion: resultado.fechaActivacionCalificacion,
+    };
   }
 
   @Post(':id/cierre-venta')

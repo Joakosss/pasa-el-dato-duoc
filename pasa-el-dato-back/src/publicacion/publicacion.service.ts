@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import type { TipoNotificacionUsuario } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -707,7 +708,7 @@ export class PublicacionService {
   }
 
   // HU-COM-01-BE02/BE03/BE04/BE05: cierre de venta atómico con registro de
-  // comprador. Única vía válida para que una publicación quede "Vendida".
+  // comprador. Única vía válida para que una publicación quede "Vendido".
   async cerrarVenta(entrada: {
     idPublicacion: string;
     vendedorId: string;
@@ -745,7 +746,7 @@ export class PublicacionService {
     // HU-COM-01-BE05: idempotencia. Si ya está cerrada, se devuelve el
     // registro existente sin alterar el comprador registrado.
     if (
-      publicacion.estadoPublicacion.descripcion === 'Vendida' &&
+      publicacion.estadoPublicacion.descripcion === 'Vendido' &&
       publicacion.fk_user_comprador !== null
     ) {
       return this.construirRespuestaTransaccion(publicacion.id);
@@ -774,12 +775,29 @@ export class PublicacionService {
     }
 
     const estadoVendida = await this.prisma.estadoPublicacion.findFirst({
-      where: { descripcion: 'Vendida' },
+      where: { descripcion: 'Vendido' },
       select: { id: true },
     });
 
     if (estadoVendida === null) {
       throw new InternalServerErrorException('Catálogo de estados incompleto');
+    }
+
+    // Reparación idempotente: versiones anteriores del flujo mobile podían
+    // cambiar el estado luego de registrar el comprador. La transacción ya
+    // cerrada conserva su comprador y se restituye el estado canónico.
+    if (publicacion.fk_user_comprador !== null) {
+      if (publicacion.estadoPublicacion.descripcion !== 'Vendido') {
+        await this.prisma.publicacion.update({
+          where: { id: publicacion.id },
+          data: {
+            fk_estado_publicacion: estadoVendida.id,
+            fechaModificacion: new Date(),
+          },
+        });
+      }
+
+      return this.construirRespuestaTransaccion(publicacion.id);
     }
 
     // HU-COM-01-BE05: updateMany con condición fk_user_comprador: null actúa
@@ -832,7 +850,7 @@ export class PublicacionService {
     if (
       publicacion === null ||
       publicacion.eliminado ||
-      publicacion.estadoPublicacion.descripcion !== 'Vendida' ||
+      publicacion.estadoPublicacion.descripcion !== 'Vendido' ||
       publicacion.fk_user_comprador === null
     ) {
       throw new NotFoundException('Publicación no encontrada');
@@ -884,6 +902,104 @@ export class PublicacionService {
     );
   }
 
+  async activarCalificacion(entrada: {
+    idPublicacion: string;
+    idCuenta: string;
+  }): Promise<{
+    publicacionId: string;
+    calificacionActivada: boolean;
+    fechaActivacionCalificacion: string | null;
+  }> {
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: entrada.idPublicacion },
+      select: {
+        id: true,
+        eliminado: true,
+        fk_usuario: true,
+        fk_user_comprador: true,
+        calificacion_activada: true,
+        fecha_activacion_calificacion: true,
+        estadoPublicacion: { select: { descripcion: true } },
+      },
+    });
+
+    if (!publicacion || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    // Ownership: solo vendedor (owner) puede activar
+    if (publicacion.fk_usuario !== entrada.idCuenta) {
+      throw new ForbiddenException('No tiene permisos para activar la calificación');
+    }
+
+    // Precondición: transacción finalizada = Vendido + comprador registrado
+    if (publicacion.estadoPublicacion.descripcion !== 'Vendido') {
+      // Mantener compatibilidad con mensajes existentes de CAL-01
+      throw new NotFoundException('No hay transacción finalizada para activar calificación');
+    }
+    if (!publicacion.fk_user_comprador) {
+      throw new UnprocessableEntityException('La venta no tiene comprador registrado');
+    }
+
+    // Idempotencia: si ya está activada, devolver estado actual
+    if (publicacion.calificacion_activada) {
+      return {
+        publicacionId: publicacion.id,
+        calificacionActivada: true,
+        fechaActivacionCalificacion: publicacion.fecha_activacion_calificacion
+          ? new Date(publicacion.fecha_activacion_calificacion).toISOString()
+          : null,
+      };
+    }
+
+    const ahora = new Date();
+
+    // Update atómico (barrera) para soportar concurrencia
+    const resultado = await this.prisma.publicacion.updateMany({
+      where: {
+        id: publicacion.id,
+        eliminado: false,
+        fk_usuario: entrada.idCuenta,
+        calificacion_activada: false,
+      },
+      data: {
+        calificacion_activada: true,
+        fecha_activacion_calificacion: ahora,
+        fechaModificacion: ahora,
+      },
+    });
+
+    if (resultado.count === 0) {
+      // Otra petición la activó concurrentemente (idempotencia)
+      const actual = await this.prisma.publicacion.findUnique({
+        where: { id: publicacion.id },
+        select: {
+          id: true,
+          calificacion_activada: true,
+          fecha_activacion_calificacion: true,
+        },
+      });
+
+      if (!actual) {
+        throw new InternalServerErrorException('No fue posible activar la calificación');
+      }
+
+      return {
+        publicacionId: actual.id,
+        calificacionActivada: actual.calificacion_activada,
+        fechaActivacionCalificacion: actual.fecha_activacion_calificacion
+          ? new Date(actual.fecha_activacion_calificacion).toISOString()
+          : null,
+      };
+    }
+
+    return {
+      publicacionId: publicacion.id,
+      calificacionActivada: true,
+      fechaActivacionCalificacion: ahora.toISOString(),
+    };
+  }
+
   private async construirRespuestaTransaccion(
     idPublicacion: string,
   ): Promise<CierreVentaRespuestaDto> {
@@ -891,6 +1007,7 @@ export class PublicacionService {
       where: { id: idPublicacion },
       select: {
         id: true,
+        calificacion_activada: true,
         estadoPublicacion: { select: { id: true, descripcion: true } },
         usuario: {
           select: {
@@ -925,6 +1042,7 @@ export class PublicacionService {
 
     return {
       id: publicacion.id,
+      calificacionActivada: publicacion.calificacion_activada,
       estado: {
         id: publicacion.estadoPublicacion.id,
         descripcion: publicacion.estadoPublicacion.descripcion,

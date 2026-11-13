@@ -1,11 +1,16 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 import { PerfilRespuestaDto } from './dto/perfil-respuesta.dto.js';
+import { ReputacionRespuestaDto } from './dto/reputacion-respuesta.dto.js';
+import {
+  ListarCalificacionesRespuestaDto,
+} from './dto/listar-calificaciones-respuesta.dto.js';
 
 @Injectable()
 export class PerfilService {
@@ -15,6 +20,66 @@ export class PerfilService {
     const usuario = await this.buscarPerfilPorCuenta(idCuenta);
 
     return this.mapearPerfil(usuario);
+  }
+
+  async obtenerReputacion(
+    idCuenta: string,
+  ): Promise<ReputacionRespuestaDto> {
+    await this.validarPerfilConsultable(idCuenta);
+
+    const agregacion = await this.prisma.calificacion.aggregate({
+      where: { fk_receptor: idCuenta },
+      _avg: { puntaje: true },
+      _count: { _all: true },
+    });
+
+    return {
+      usuarioId: idCuenta,
+      promedio: agregacion._count._all === 0 ? null : agregacion._avg.puntaje,
+      total: agregacion._count._all,
+    };
+  }
+
+  async listarCalificaciones(
+    idCuenta: string,
+    page: number,
+    pageSize: number,
+  ): Promise<ListarCalificacionesRespuestaDto> {
+    await this.validarPerfilConsultable(idCuenta);
+
+    const skip = (page - 1) * pageSize;
+    const where = { fk_receptor: idCuenta };
+
+    const [total, calificaciones] = await Promise.all([
+      this.prisma.calificacion.count({ where }),
+      this.prisma.calificacion.findMany({
+        where,
+        orderBy: [{ fechaCreacion: 'desc' }, { id: 'desc' }],
+        skip,
+        take: pageSize,
+        select: {
+          id: true,
+          puntaje: true,
+          comentario: true,
+          fechaCreacion: true,
+          fk_publicacion: true,
+        },
+      }),
+    ]);
+
+    return {
+      items: calificaciones.map((calificacion) => ({
+        id: calificacion.id,
+        puntaje: calificacion.puntaje,
+        comentario: calificacion.comentario,
+        fechaCreacion: calificacion.fechaCreacion.toISOString(),
+        publicacionId: calificacion.fk_publicacion,
+      })),
+      page,
+      pageSize,
+      total,
+      nextPage: skip + calificaciones.length < total ? page + 1 : null,
+    };
   }
 
   async actualizarPerfil(
@@ -107,6 +172,17 @@ export class PerfilService {
     }
 
     return this.obtenerPerfil(idCuenta);
+  }
+
+  private async validarPerfilConsultable(idCuenta: string): Promise<void> {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_cuenta: idCuenta },
+      select: { id_cuenta: true },
+    });
+
+    if (usuario === null) {
+      throw new NotFoundException('Perfil no encontrado');
+    }
   }
 
   private async buscarPerfilPorCuenta(idCuenta: string) {

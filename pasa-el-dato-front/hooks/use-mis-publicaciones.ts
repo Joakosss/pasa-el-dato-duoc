@@ -7,10 +7,11 @@ import { listarMisPublicaciones } from "@/lib/api/publicaciones";
 // Listado de publicaciones propias no eliminadas (GET /publicaciones/me).
 // La clave comparte prefijo con ["publicaciones"], por lo que las mutaciones
 // existentes (editar estado/eliminar) invalidan también esta consulta.
-export function useMisPublicaciones() {
+export function useMisPublicaciones(opciones?: { enabled?: boolean }) {
   const query = useQuery({
     queryKey: ["publicaciones", "me"],
     queryFn: () => listarMisPublicaciones(),
+    enabled: opciones?.enabled ?? true,
     staleTime: 30_000,
     retry: (intentos, error) => {
       if (error instanceof ApiError && error.status === 401) return false;

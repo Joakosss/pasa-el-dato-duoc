@@ -8,7 +8,7 @@ import { selectSesion, useSesionStore } from "@/stores/sesion-store";
 // Publicación propia para pre-edición. El back responde 404 cuando no es
 // propia o está eliminada, y 401 cuando la sesión no es válida.
 // A diferencia del detalle público, responde en cualquier estado
-// ("En curso", "Pausada", "Vendida").
+// ("En curso", "Pausada", "Vendido").
 export function usePublicacionParaEdicion(
   id: string,
   opciones?: { enabled?: boolean },
