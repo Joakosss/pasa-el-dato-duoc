@@ -45,6 +45,31 @@ Aprobadas documentalmente (R.5, CU012 extendido) y resoluciones del dominio admi
 
 Nota técnica de origen (no define diseño): `ReporteUsuario` no existe en el `schema.prisma`; el MER lo define como tabla de negocio con el patrón `BASE`.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-REP-02-BE01:** Revisar el modelo `ReporteUsuario` existente y completar el contrato de persistencia para usuario reportado, reportante, motivo/descripcion, estado pendiente y fechas, incluyendo la migración necesaria si corresponde.
+- **HU-REP-02-BE02:** Definir el catálogo de motivos de reporte y su contrato, manteniendo el motivo seleccionado separado de los comentarios o descripción libre.
+- **HU-REP-02-BE03:** Implementar DTO de creación con validación de usuario reportado válido, motivo obligatorio y comentarios opcionales.
+- **HU-REP-02-BE04:** Implementar en `ReporteUsuarioService` la creación autenticada del reporte con estado `PENDIENTE`, asociando como reportante la cuenta de la sesión.
+- **HU-REP-02-BE05:** Validar que el usuario reportado exista y no esté eliminado; rechazar el autoreporte y conservar la regla de que solo se reporta a otro usuario.
+- **HU-REP-02-BE06:** Rechazar la creación si el mismo reportante ya tiene un reporte propio en curso contra el usuario; permitir reportes independientes de reportantes distintos.
+- **HU-REP-02-BE07:** Exponer endpoint REST protegido para crear reportes desde perfil o chat (por ejemplo, `POST /reportes/usuarios`) y definir respuestas de éxito y errores `401`, `404`, `409` y `422`.
+- **HU-REP-02-BE08:** Mantener separados los endpoints y permisos del flujo de creación del flujo administrativo ya existente (listar, tomar en revisión, resolver, descartar y reabrir).
+- **HU-REP-02-BE09:** Documentar el endpoint, DTOs, catálogo de motivos, estados y errores en Swagger o la documentación técnica del backend.
+- **HU-REP-02-BE10:** Agregar pruebas unitarias y e2e para autenticación, motivo obligatorio, usuario inexistente/eliminado, autoreporte, duplicación del mismo reportante y coexistencia de reportantes distintos.
+
+### Frontend (FE)
+
+- **HU-REP-02-FE01:** Agregar acción “Reportar usuario” en el perfil de otro usuario y en la vista de conversación, sin mostrarla para el usuario autenticado sobre sí mismo.
+- **HU-REP-02-FE02:** Implementar modal o formulario reutilizable con selector de motivo obligatorio, campo de comentarios opcional, estados de carga y confirmación explícita.
+- **HU-REP-02-FE03:** Consumir el endpoint de creación y enviar el identificador del usuario reportado, motivo y comentarios con el contrato acordado.
+- **HU-REP-02-FE04:** Mostrar confirmación cuando el reporte se registre y evitar reenvíos mientras la solicitud esté en curso.
+- **HU-REP-02-FE05:** Presentar mensajes diferenciados para sesión expirada, usuario inexistente/eliminado, autoreporte, reporte duplicado y errores de validación o red.
+- **HU-REP-02-FE06:** Reutilizar el formulario y sus componentes entre perfil y chat, conservando el contexto de origen sin duplicar la lógica de envío.
+- **HU-REP-02-FE07:** Agregar pruebas de componente o e2e para apertura desde perfil/chat, validación del motivo, envío exitoso y principales respuestas de error.
+
 ## Dependencias
 
 - Perfil de usuario consultable (HU-PERF existentes) y conversación del chat accesible (HU-CHAT-02/03), desde donde se permite la acción.
