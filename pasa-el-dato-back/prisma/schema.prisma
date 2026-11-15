@@ -235,6 +235,16 @@ model EstadoPublicacion {
   @@map("estado_publicacion")
 }
 
+// HU-REP-01: catálogo persistido de motivos de reporte de publicación.
+// El snapshot del nombre se guarda en ReportePublicacion.motivo.
+model MotivoReporte {
+  id                  Int                  @id @default(autoincrement())
+  nombre              String               @unique
+  reportesPublicacion ReportePublicacion[]
+
+  @@map("motivo_reporte")
+}
+
 enum EstadoReportePublicacion {
   PENDIENTE
   EN_PROCESO
@@ -276,9 +286,11 @@ model AuditoriaAdmin {
 model ReportePublicacion {
   id                    String                         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   motivo                String
+  // HU-REP-01: motivo del catálogo. `motivo` queda como snapshot del nombre.
+  fk_motivo             Int
   comentarios           String?
   fk_publicacion        String                         @db.Uuid
-  fk_reportante         String?                        @db.Uuid
+  fk_reportante         String                         @db.Uuid
   estado                EstadoReportePublicacion       @default(PENDIENTE)
   fk_admin_asignado     String?                        @db.Uuid
   fechaCreacion         DateTime                       @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
@@ -290,7 +302,8 @@ model ReportePublicacion {
   avisoVendedorFecha    DateTime?                      @map("aviso_vendedor_fecha") @db.Timestamptz(6)
 
   publicacion    Publicacion @relation(fields: [fk_publicacion], references: [id], onUpdate: NoAction)
-  reportante     Cuenta?     @relation("reportePublicacionReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
+  motivoReporte  MotivoReporte @relation(fields: [fk_motivo], references: [id], onUpdate: NoAction)
+  reportante     Cuenta      @relation("reportePublicacionReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
   adminAsignado  Cuenta?     @relation("reportePublicacionAdminAsignado", fields: [fk_admin_asignado], references: [id_cuenta], onUpdate: NoAction)
 
   @@index([estado, fechaCreacion], map: "idx_reporte_publicacion_estado_fecha")

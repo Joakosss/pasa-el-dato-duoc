@@ -36,6 +36,7 @@ describe('HU-ADM-02 gestionar reportes de publicación (e2e)', () => {
   let idCategoria: number;
   let idTipoVenta: number;
   let idEstadoEnCurso: number;
+  let idMotivoReporte: number;
 
   const contrasenaAdministrador = 'admin-publicaciones-e2e-123';
   const contrasenaEstudiante = 'estudiante-publicaciones-e2e-123';
@@ -55,6 +56,7 @@ describe('HU-ADM-02 gestionar reportes de publicación (e2e)', () => {
     const reporte = await prisma.reportePublicacion.create({
       data: {
         motivo: 'Contenido contrario a normativa',
+        fk_motivo: idMotivoReporte,
         comentarios: 'Reporte creado para prueba e2e.',
         fk_publicacion: idPublicacion,
         fk_reportante: idCuentaNoAdmin,
@@ -107,20 +109,22 @@ describe('HU-ADM-02 gestionar reportes de publicación (e2e)', () => {
 
     prisma = modulo.get(PrismaService);
 
-    const [sede, categoria, tipoVenta, estado] = await Promise.all([
-      prisma.sede.findFirst({
-        where: { activa: true, eliminado: false },
-        select: { id: true },
-      }),
-      prisma.categoria.findFirst({ select: { id: true } }),
-      prisma.tipoVenta.findFirst({ select: { id: true } }),
-      prisma.estadoPublicacion.findFirst({
-        where: { descripcion: 'En curso' },
-        select: { id: true },
-      }),
-    ]);
+    const [sede, categoria, tipoVenta, estado, motivoReporte] =
+      await Promise.all([
+        prisma.sede.findFirst({
+          where: { activa: true, eliminado: false },
+          select: { id: true },
+        }),
+        prisma.categoria.findFirst({ select: { id: true } }),
+        prisma.tipoVenta.findFirst({ select: { id: true } }),
+        prisma.estadoPublicacion.findFirst({
+          where: { descripcion: 'En curso' },
+          select: { id: true },
+        }),
+        prisma.motivoReporte.findFirst({ select: { id: true } }),
+      ]);
 
-    if (!sede || !categoria || !tipoVenta || !estado) {
+    if (!sede || !categoria || !tipoVenta || !estado || !motivoReporte) {
       throw new Error('El e2e requiere catálogos de publicación disponibles');
     }
 
@@ -128,6 +132,7 @@ describe('HU-ADM-02 gestionar reportes de publicación (e2e)', () => {
     idCategoria = categoria.id;
     idTipoVenta = tipoVenta.id;
     idEstadoEnCurso = estado.id;
+    idMotivoReporte = motivoReporte.id;
 
     const sufijo = randomUUID();
 

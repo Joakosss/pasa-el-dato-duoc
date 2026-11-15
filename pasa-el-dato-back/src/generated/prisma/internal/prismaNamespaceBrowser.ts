@@ -67,6 +67,7 @@ export const ModelName = {
   TipoVenta: 'TipoVenta',
   Categoria: 'Categoria',
   EstadoPublicacion: 'EstadoPublicacion',
+  MotivoReporte: 'MotivoReporte',
   AuditoriaAdmin: 'AuditoriaAdmin',
   ReportePublicacion: 'ReportePublicacion',
   Publicacion: 'Publicacion',
@@ -266,6 +267,14 @@ export const EstadoPublicacionScalarFieldEnum = {
 export type EstadoPublicacionScalarFieldEnum = (typeof EstadoPublicacionScalarFieldEnum)[keyof typeof EstadoPublicacionScalarFieldEnum]
 
 
+export const MotivoReporteScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre'
+} as const
+
+export type MotivoReporteScalarFieldEnum = (typeof MotivoReporteScalarFieldEnum)[keyof typeof MotivoReporteScalarFieldEnum]
+
+
 export const AuditoriaAdminScalarFieldEnum = {
   id: 'id',
   accion: 'accion',
@@ -282,6 +291,7 @@ export type AuditoriaAdminScalarFieldEnum = (typeof AuditoriaAdminScalarFieldEnu
 export const ReportePublicacionScalarFieldEnum = {
   id: 'id',
   motivo: 'motivo',
+  fk_motivo: 'fk_motivo',
   comentarios: 'comentarios',
   fk_publicacion: 'fk_publicacion',
   fk_reportante: 'fk_reportante',

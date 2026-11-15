@@ -413,6 +413,7 @@ export const ModelName = {
   TipoVenta: 'TipoVenta',
   Categoria: 'Categoria',
   EstadoPublicacion: 'EstadoPublicacion',
+  MotivoReporte: 'MotivoReporte',
   AuditoriaAdmin: 'AuditoriaAdmin',
   ReportePublicacion: 'ReportePublicacion',
   Publicacion: 'Publicacion',
@@ -440,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "calificacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "notificacionUsuario" | "imagenPublicacion" | "reporteUsuario" | "favorito" | "palabraBloqueada"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "motivoReporte" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "calificacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "notificacionUsuario" | "imagenPublicacion" | "reporteUsuario" | "favorito" | "palabraBloqueada"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1628,6 +1629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MotivoReporte: {
+      payload: Prisma.$MotivoReportePayload<ExtArgs>
+      fields: Prisma.MotivoReporteFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MotivoReporteFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MotivoReporteFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>
+        }
+        findFirst: {
+          args: Prisma.MotivoReporteFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MotivoReporteFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>
+        }
+        findMany: {
+          args: Prisma.MotivoReporteFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>[]
+        }
+        create: {
+          args: Prisma.MotivoReporteCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>
+        }
+        createMany: {
+          args: Prisma.MotivoReporteCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MotivoReporteCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>[]
+        }
+        delete: {
+          args: Prisma.MotivoReporteDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>
+        }
+        update: {
+          args: Prisma.MotivoReporteUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>
+        }
+        deleteMany: {
+          args: Prisma.MotivoReporteDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MotivoReporteUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MotivoReporteUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>[]
+        }
+        upsert: {
+          args: Prisma.MotivoReporteUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReportePayload>
+        }
+        aggregate: {
+          args: Prisma.MotivoReporteAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMotivoReporte>
+        }
+        groupBy: {
+          args: Prisma.MotivoReporteGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MotivoReporteGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MotivoReporteCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MotivoReporteCountAggregateOutputType> | number
+        }
+      }
+    }
     AuditoriaAdmin: {
       payload: Prisma.$AuditoriaAdminPayload<ExtArgs>
       fields: Prisma.AuditoriaAdminFieldRefs
@@ -2724,6 +2799,14 @@ export const EstadoPublicacionScalarFieldEnum = {
 export type EstadoPublicacionScalarFieldEnum = (typeof EstadoPublicacionScalarFieldEnum)[keyof typeof EstadoPublicacionScalarFieldEnum]
 
 
+export const MotivoReporteScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre'
+} as const
+
+export type MotivoReporteScalarFieldEnum = (typeof MotivoReporteScalarFieldEnum)[keyof typeof MotivoReporteScalarFieldEnum]
+
+
 export const AuditoriaAdminScalarFieldEnum = {
   id: 'id',
   accion: 'accion',
@@ -2740,6 +2823,7 @@ export type AuditoriaAdminScalarFieldEnum = (typeof AuditoriaAdminScalarFieldEnu
 export const ReportePublicacionScalarFieldEnum = {
   id: 'id',
   motivo: 'motivo',
+  fk_motivo: 'fk_motivo',
   comentarios: 'comentarios',
   fk_publicacion: 'fk_publicacion',
   fk_reportante: 'fk_reportante',
@@ -3300,6 +3384,7 @@ export type GlobalOmitConfig = {
   tipoVenta?: Prisma.TipoVentaOmit
   categoria?: Prisma.CategoriaOmit
   estadoPublicacion?: Prisma.EstadoPublicacionOmit
+  motivoReporte?: Prisma.MotivoReporteOmit
   auditoriaAdmin?: Prisma.AuditoriaAdminOmit
   reportePublicacion?: Prisma.ReportePublicacionOmit
   publicacion?: Prisma.PublicacionOmit

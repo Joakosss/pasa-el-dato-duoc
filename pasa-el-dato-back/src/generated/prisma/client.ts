@@ -122,6 +122,11 @@ export type Categoria = Prisma.CategoriaModel
  */
 export type EstadoPublicacion = Prisma.EstadoPublicacionModel
 /**
+ * Model MotivoReporte
+ * 
+ */
+export type MotivoReporte = Prisma.MotivoReporteModel
+/**
  * Model AuditoriaAdmin
  * 
  */
