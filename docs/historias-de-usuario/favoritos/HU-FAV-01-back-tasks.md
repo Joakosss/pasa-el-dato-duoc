@@ -8,85 +8,54 @@ Objetivo: implementar **marcar/desmarcar** una publicación como favorita con pe
 ## Checklist de subtareas
 
 ### 0) Descubrimiento mínimo (antes de tocar código)
-- [ ] Revisar convenciones existentes en backend:
-  - naming de soft delete (`deleted_at` vs `deletedAt`)
-  - naming de PK/FK en Prisma (`id`, `fk_usuario`, etc.)
-  - formato de errores HTTP (mensajes, códigos, filtros globales).
-- [ ] Identificar cómo se representa el **estado de publicación** (tabla catálogo/enum) y cómo se modela “bloqueada”/“eliminada” hoy.
+- [x] Revisar convenciones existentes en backend:
+  - soft delete: booleano `eliminado` (no `deleted_at`), timestamps `fechaCreacion`/`fechaModificacion` (patrón BASE del repo)
+  - PK/FK: `id` UUID, `fk_usuario`, `fk_publicacion`
+  - errores: `NotFoundException` (404), `BadRequestException` (400), guard JWT (401)
+- [x] Estado de publicación: tabla catálogo `estado_publicacion`; "eliminada" = `eliminado`; "bloqueada" = cuenta del dueño `bloqueado`
 
 ### 1) Persistencia: Prisma schema + migración
-- [ ] Agregar modelo Prisma `favorito` en `pasa-el-dato-back/prisma/schema.prisma`:
-  - campos BASE: `id`, `created_at`, `updated_at`, `deleted_at` (o el patrón vigente en el repo)
-  - columnas de negocio: `fk_usuario`, `fk_publicacion`
-  - relaciones:
-    - `usuario` (1 usuario → N favoritos)
-    - `publicacion` (1 publicación → N favoritos)
-  - **unique constraint** en (`fk_usuario`, `fk_publicacion`) para evitar duplicados.
-- [ ] Crear índices:
-  - index por `fk_usuario` (listados futuros, HU-FAV-02)
-  - index por `fk_publicacion` (opcional)
-- [ ] Generar migración Prisma correspondiente y verificar que aplica en entorno de contenedores.
+- [x] Modelo `Favorito` en `schema.prisma` con campos BASE + `fk_usuario` + `fk_publicacion` y relaciones
+- [x] Unique `(fk_publicacion, fk_usuario)` — `ux_favorito_publicacion_usuario`
+- [x] Índices `idx_favorito_usuario`, `idx_favorito_publicacion`, `idx_favorito_modificado_por`
+- [x] Migración `20261110013554_favorito` aplicada en entorno de contenedores
 
 ### 2) Módulo Favoritos (Nest)
-- [ ] Crear `FavoritosModule` e incluirlo en `AppModule`.
-- [ ] Crear `FavoritosService` (inyección de `PrismaService`) con:
-  - `marcarFavorito(usuarioId: number, publicacionId: number)`
-  - `quitarFavorito(usuarioId: number, publicacionId: number)`
-  - (opcional) `obtenerEstado(usuarioId: number, publicacionId: number)` para UI persistente
-- [ ] Soporte de soft delete:
-  - `quitarFavorito` debe hacer **baja lógica** del favorito.
-  - `marcarFavorito` debe:
-    - crear si no existe
-    - **reactivar** (unset `deleted_at`) si existía soft-deleted.
+- [x] `FavoritosModule` registrado en `AppModule`
+- [x] `FavoritosService` (inyección de `PrismaService`) con `marcarFavorito`, `quitarFavorito`, `obtenerEstadoFavorito`, `listarFavoritos`
+- [x] Soft delete: `quitarFavorito` baja lógica; `marcarFavorito` crea o reactiva (`eliminado: false`)
 
 ### 3) Controller + Endpoints (contrato REST)
-Endpoints mínimos sugeridos:
-- [ ] `POST /api/favoritos/:publicacionId` → marcar favorito
-- [ ] `DELETE /api/favoritos/:publicacionId` → quitar favorito
-- [ ] (Recomendado) `GET /api/favoritos/:publicacionId` → consultar estado `{ esFavorito: boolean }`
-  - Alternativa: exponer `esFavorito` en endpoints de `publicacion` (listado/detalle) cuando hay sesión.
-
-Detalles:
-- [ ] Proteger endpoints con `JwtAuthGuard` (solo autenticados).
-- [ ] Validar `publicacionId` con pipes (ej. `ParseIntPipe`) y/o DTO de params.
-- [ ] Respuestas:
-  - POST: `{ publicacionId, esFavorito: true }` (201 o 200 si restaurado)
-  - DELETE: `{ publicacionId, esFavorito: false }` (200) o sin body (204)
-  - GET: `{ publicacionId, esFavorito }`
+- [x] `POST /api/favoritos/:publicacionId` → `{ publicacionId, esFavorito: true }` (201)
+- [x] `DELETE /api/favoritos/:publicacionId` → `{ publicacionId, esFavorito: false }` (200)
+- [x] `GET /api/favoritos/:publicacionId` → `{ publicacionId, esFavorito }` (200)
+- [x] `GET /api/favoritos` → listado paginado (pageSize 20 web / 10 móvil)
+- [x] `JwtAuthGuard` en todo el controller (cookie `accessToken`)
+- [x] Validación `ParseUUIDPipe` v4 en `:publicacionId`
 
 ### 4) Reglas de negocio y validaciones
-Implementar validaciones en service (transaccional cuando aplique):
-
-- [ ] **Publicación no disponible**:
-  - Si no existe → 404
-  - Si eliminada → 404/409 (según convención del repo)
-  - Si bloqueada → 409/403 (según convención)
-- [ ] **Permitido si está “pausada” o “vendida”**:
-  - Marcar permitido; se guarda igual.
-- [ ] **No permitir marcar favorita propia**:
-  - Si `publicacion.fk_usuario === usuarioId` → rechazar (400/409).
-- [ ] **Idempotencia / no duplicación**:
-  - POST dos veces no debe duplicar (unique constraint + upsert/transaction).
-  - DELETE repetido debe ser idempotente (204/200 sin error).
+- [x] No existe / eliminada / dueño bloqueado, eliminado o no aprobado → 404 "Publicación no encontrada"
+- [x] Pausada/Vendida → permitida (no se filtra por estado al marcar)
+- [x] Publicación propia → 400 "No puede guardar su propia publicación"
+- [x] Idempotencia: POST repetido no duplica (unique + upsert); DELETE repetido sin error
 
 ### 5) Pruebas (e2e) — Criterios de aceptación
-Agregar specs en `pasa-el-dato-back/test/` siguiendo patrón existente:
+`pasa-el-dato-back/test/favoritos.e2e-spec.ts`:
 
-- [ ] E2E: usuario autenticado marca favorito de publicación de otro usuario → OK y persiste.
-- [ ] E2E: usuario autenticado desmarca favorito → baja lógica aplicada.
-- [ ] E2E: persistencia de estado:
-  - (si hay GET estado) marcar → GET → `esFavorito: true`
-  - (o si se implementa en detalle publicación) marcar → GET detalle → `esFavorito: true`
-- [ ] E2E: no autenticado → POST devuelve 401.
-- [ ] E2E: propia publicación → POST rechaza.
-- [ ] E2E: publicación no existe/eliminada/bloqueada → POST rechaza.
-- [ ] E2E: POST repetido no crea duplicado.
+- [x] F1: 401 sin sesión al marcar
+- [x] F2: marcar/quitar idempotente, persistencia vía GET estado, reactivación tras quitar
+- [x] F3: propia publicación → 400
+- [x] F4/F4.1: sesión requerida para listar + Swagger documenta endpoint y cookie
+- [x] F5: listado solo propios, conserva no disponibles (Pausada/eliminada con `disponible: false`)
+- [x] F6: lista vacía + paginación inválida → 400
+- [x] F7: paginación 20/10 sin repetir publicaciones
+- [x] F8: marcar rechaza publicación inexistente/eliminada/dueño bloqueado (404)
+- [x] F9: marcar permite Pausada/Vendida (201) y persiste estado
+- [x] Suite e2e en contenedor verde (30 archivos, 252 tests pasados)
 
 ### 6) Documentación técnica mínima
-- [ ] Documentar en README o en doc de HU:
-  - endpoints y respuestas
-  - códigos de error esperados
-  - nota sobre soft delete/reactivación.
+- [x] Swagger documenta los 4 endpoints: `@ApiOperation`, respuestas (`200`/`201` con `EstadoFavoritoRespuestaDto`, `400`, `401`, `404` en POST marcar) y cookie `accessToken`
+- [x] Nota técnica (ver "Notas de implementación")
 
 ---
 
@@ -95,3 +64,20 @@ Agregar specs en `pasa-el-dato-back/test/` siguiendo patrón existente:
   - leer publicación + validar + upsert favorito de forma consistente.
 - Usar el patrón BASE del MER para timestamps y baja lógica.
 - No asumir librerías nuevas; reutilizar guards/exceptions ya existentes.
+
+## Nota técnica (implementación vigente)
+
+Contrato REST (prefijo global `api`, cookie `accessToken`):
+
+| Método | Ruta | OK | Errores |
+|--------|------|----|---------|
+| GET | `/api/favoritos` | 200 listado paginado `{ items, page, pageSize, total, nextPage }` | 400 query inválida, 401 |
+| GET | `/api/favoritos/:publicacionId` | 200 `{ publicacionId, esFavorito }` | 400 UUID inválido, 401 |
+| POST | `/api/favoritos/:publicacionId` | 201 `{ publicacionId, esFavorito: true }` | 400 propia publicación / UUID inválido, 401, 404 no disponible |
+| DELETE | `/api/favoritos/:publicacionId` | 200 `{ publicacionId, esFavorito: false }` | 400 UUID inválido, 401 |
+
+- "No disponible" = publicación inexistente, `eliminado: true`, o dueño con cuenta `bloqueado`/`eliminado`/no `aprobada`. Se responde 404 (convención del repo, no 403/409).
+- Publicaciones Pausada/Vendida se pueden marcar.
+- Baja lógica: `DELETE` marca `eliminado: true` + `fk_modificado_por` + `fechaModificacion`. No borra la fila.
+- Reactivación: `POST` sobre favorito soft-deleted lo reactiva con `upsert` (`eliminado: false`).
+- La fila y el unique `(fk_publicacion, fk_usuario)` garantizan un único favorito por par usuario–publicación.
