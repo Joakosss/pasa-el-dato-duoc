@@ -20,13 +20,24 @@ export type ReporteUsuarioModel = runtime.Types.Result.DefaultSelection<Prisma.$
 
 export type AggregateReporteUsuario = {
   _count: ReporteUsuarioCountAggregateOutputType | null
+  _avg: ReporteUsuarioAvgAggregateOutputType | null
+  _sum: ReporteUsuarioSumAggregateOutputType | null
   _min: ReporteUsuarioMinAggregateOutputType | null
   _max: ReporteUsuarioMaxAggregateOutputType | null
+}
+
+export type ReporteUsuarioAvgAggregateOutputType = {
+  fk_motivo: number | null
+}
+
+export type ReporteUsuarioSumAggregateOutputType = {
+  fk_motivo: number | null
 }
 
 export type ReporteUsuarioMinAggregateOutputType = {
   id: string | null
   descripcion: string | null
+  fk_motivo: number | null
   fk_reportado: string | null
   fk_reportante: string | null
   estado: $Enums.EstadoReporteUsuario | null
@@ -42,6 +53,7 @@ export type ReporteUsuarioMinAggregateOutputType = {
 export type ReporteUsuarioMaxAggregateOutputType = {
   id: string | null
   descripcion: string | null
+  fk_motivo: number | null
   fk_reportado: string | null
   fk_reportante: string | null
   estado: $Enums.EstadoReporteUsuario | null
@@ -57,6 +69,7 @@ export type ReporteUsuarioMaxAggregateOutputType = {
 export type ReporteUsuarioCountAggregateOutputType = {
   id: number
   descripcion: number
+  fk_motivo: number
   fk_reportado: number
   fk_reportante: number
   estado: number
@@ -71,9 +84,18 @@ export type ReporteUsuarioCountAggregateOutputType = {
 }
 
 
+export type ReporteUsuarioAvgAggregateInputType = {
+  fk_motivo?: true
+}
+
+export type ReporteUsuarioSumAggregateInputType = {
+  fk_motivo?: true
+}
+
 export type ReporteUsuarioMinAggregateInputType = {
   id?: true
   descripcion?: true
+  fk_motivo?: true
   fk_reportado?: true
   fk_reportante?: true
   estado?: true
@@ -89,6 +111,7 @@ export type ReporteUsuarioMinAggregateInputType = {
 export type ReporteUsuarioMaxAggregateInputType = {
   id?: true
   descripcion?: true
+  fk_motivo?: true
   fk_reportado?: true
   fk_reportante?: true
   estado?: true
@@ -104,6 +127,7 @@ export type ReporteUsuarioMaxAggregateInputType = {
 export type ReporteUsuarioCountAggregateInputType = {
   id?: true
   descripcion?: true
+  fk_motivo?: true
   fk_reportado?: true
   fk_reportante?: true
   estado?: true
@@ -155,6 +179,18 @@ export type ReporteUsuarioAggregateArgs<ExtArgs extends runtime.Types.Extensions
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ReporteUsuarioAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ReporteUsuarioSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ReporteUsuarioMinAggregateInputType
@@ -185,6 +221,8 @@ export type ReporteUsuarioGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   _count?: ReporteUsuarioCountAggregateInputType | true
+  _avg?: ReporteUsuarioAvgAggregateInputType
+  _sum?: ReporteUsuarioSumAggregateInputType
   _min?: ReporteUsuarioMinAggregateInputType
   _max?: ReporteUsuarioMaxAggregateInputType
 }
@@ -192,8 +230,9 @@ export type ReporteUsuarioGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 export type ReporteUsuarioGroupByOutputType = {
   id: string
   descripcion: string
+  fk_motivo: number
   fk_reportado: string
-  fk_reportante: string | null
+  fk_reportante: string
   estado: $Enums.EstadoReporteUsuario
   fk_admin_asignado: string | null
   fechaCreacion: Date
@@ -203,6 +242,8 @@ export type ReporteUsuarioGroupByOutputType = {
   mensajeAdvertencia: string | null
   motivoBloqueo: string | null
   _count: ReporteUsuarioCountAggregateOutputType | null
+  _avg: ReporteUsuarioAvgAggregateOutputType | null
+  _sum: ReporteUsuarioSumAggregateOutputType | null
   _min: ReporteUsuarioMinAggregateOutputType | null
   _max: ReporteUsuarioMaxAggregateOutputType | null
 }
@@ -228,8 +269,9 @@ export type ReporteUsuarioWhereInput = {
   NOT?: Prisma.ReporteUsuarioWhereInput | Prisma.ReporteUsuarioWhereInput[]
   id?: Prisma.UuidFilter<"ReporteUsuario"> | string
   descripcion?: Prisma.StringFilter<"ReporteUsuario"> | string
+  fk_motivo?: Prisma.IntFilter<"ReporteUsuario"> | number
   fk_reportado?: Prisma.UuidFilter<"ReporteUsuario"> | string
-  fk_reportante?: Prisma.UuidNullableFilter<"ReporteUsuario"> | string | null
+  fk_reportante?: Prisma.UuidFilter<"ReporteUsuario"> | string
   estado?: Prisma.EnumEstadoReporteUsuarioFilter<"ReporteUsuario"> | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.UuidNullableFilter<"ReporteUsuario"> | string | null
   fechaCreacion?: Prisma.DateTimeFilter<"ReporteUsuario"> | Date | string
@@ -239,15 +281,17 @@ export type ReporteUsuarioWhereInput = {
   mensajeAdvertencia?: Prisma.StringNullableFilter<"ReporteUsuario"> | string | null
   motivoBloqueo?: Prisma.StringNullableFilter<"ReporteUsuario"> | string | null
   reportado?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
-  reportante?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
+  motivoReporteUsuario?: Prisma.XOR<Prisma.MotivoReporteUsuarioScalarRelationFilter, Prisma.MotivoReporteUsuarioWhereInput>
+  reportante?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
   adminAsignado?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
 }
 
 export type ReporteUsuarioOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   descripcion?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   fk_reportado?: Prisma.SortOrder
-  fk_reportante?: Prisma.SortOrderInput | Prisma.SortOrder
+  fk_reportante?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   fk_admin_asignado?: Prisma.SortOrderInput | Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
@@ -257,6 +301,7 @@ export type ReporteUsuarioOrderByWithRelationInput = {
   mensajeAdvertencia?: Prisma.SortOrderInput | Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrderInput | Prisma.SortOrder
   reportado?: Prisma.CuentaOrderByWithRelationInput
+  motivoReporteUsuario?: Prisma.MotivoReporteUsuarioOrderByWithRelationInput
   reportante?: Prisma.CuentaOrderByWithRelationInput
   adminAsignado?: Prisma.CuentaOrderByWithRelationInput
 }
@@ -267,8 +312,9 @@ export type ReporteUsuarioWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ReporteUsuarioWhereInput[]
   NOT?: Prisma.ReporteUsuarioWhereInput | Prisma.ReporteUsuarioWhereInput[]
   descripcion?: Prisma.StringFilter<"ReporteUsuario"> | string
+  fk_motivo?: Prisma.IntFilter<"ReporteUsuario"> | number
   fk_reportado?: Prisma.UuidFilter<"ReporteUsuario"> | string
-  fk_reportante?: Prisma.UuidNullableFilter<"ReporteUsuario"> | string | null
+  fk_reportante?: Prisma.UuidFilter<"ReporteUsuario"> | string
   estado?: Prisma.EnumEstadoReporteUsuarioFilter<"ReporteUsuario"> | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.UuidNullableFilter<"ReporteUsuario"> | string | null
   fechaCreacion?: Prisma.DateTimeFilter<"ReporteUsuario"> | Date | string
@@ -278,15 +324,17 @@ export type ReporteUsuarioWhereUniqueInput = Prisma.AtLeast<{
   mensajeAdvertencia?: Prisma.StringNullableFilter<"ReporteUsuario"> | string | null
   motivoBloqueo?: Prisma.StringNullableFilter<"ReporteUsuario"> | string | null
   reportado?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
-  reportante?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
+  motivoReporteUsuario?: Prisma.XOR<Prisma.MotivoReporteUsuarioScalarRelationFilter, Prisma.MotivoReporteUsuarioWhereInput>
+  reportante?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
   adminAsignado?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
 }, "id">
 
 export type ReporteUsuarioOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   descripcion?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   fk_reportado?: Prisma.SortOrder
-  fk_reportante?: Prisma.SortOrderInput | Prisma.SortOrder
+  fk_reportante?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   fk_admin_asignado?: Prisma.SortOrderInput | Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
@@ -296,8 +344,10 @@ export type ReporteUsuarioOrderByWithAggregationInput = {
   mensajeAdvertencia?: Prisma.SortOrderInput | Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ReporteUsuarioCountOrderByAggregateInput
+  _avg?: Prisma.ReporteUsuarioAvgOrderByAggregateInput
   _max?: Prisma.ReporteUsuarioMaxOrderByAggregateInput
   _min?: Prisma.ReporteUsuarioMinOrderByAggregateInput
+  _sum?: Prisma.ReporteUsuarioSumOrderByAggregateInput
 }
 
 export type ReporteUsuarioScalarWhereWithAggregatesInput = {
@@ -306,8 +356,9 @@ export type ReporteUsuarioScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ReporteUsuarioScalarWhereWithAggregatesInput | Prisma.ReporteUsuarioScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"ReporteUsuario"> | string
   descripcion?: Prisma.StringWithAggregatesFilter<"ReporteUsuario"> | string
+  fk_motivo?: Prisma.IntWithAggregatesFilter<"ReporteUsuario"> | number
   fk_reportado?: Prisma.UuidWithAggregatesFilter<"ReporteUsuario"> | string
-  fk_reportante?: Prisma.UuidNullableWithAggregatesFilter<"ReporteUsuario"> | string | null
+  fk_reportante?: Prisma.UuidWithAggregatesFilter<"ReporteUsuario"> | string
   estado?: Prisma.EnumEstadoReporteUsuarioWithAggregatesFilter<"ReporteUsuario"> | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.UuidNullableWithAggregatesFilter<"ReporteUsuario"> | string | null
   fechaCreacion?: Prisma.DateTimeWithAggregatesFilter<"ReporteUsuario"> | Date | string
@@ -329,15 +380,17 @@ export type ReporteUsuarioCreateInput = {
   mensajeAdvertencia?: string | null
   motivoBloqueo?: string | null
   reportado: Prisma.CuentaCreateNestedOneWithoutReportesRecibidosInput
-  reportante?: Prisma.CuentaCreateNestedOneWithoutReportesEmitidosInput
+  motivoReporteUsuario: Prisma.MotivoReporteUsuarioCreateNestedOneWithoutReportesUsuarioInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesEmitidosInput
   adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesAsignadosInput
 }
 
 export type ReporteUsuarioUncheckedCreateInput = {
   id?: string
   descripcion: string
+  fk_motivo: number
   fk_reportado: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReporteUsuario
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -359,15 +412,17 @@ export type ReporteUsuarioUpdateInput = {
   mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportado?: Prisma.CuentaUpdateOneRequiredWithoutReportesRecibidosNestedInput
-  reportante?: Prisma.CuentaUpdateOneWithoutReportesEmitidosNestedInput
+  motivoReporteUsuario?: Prisma.MotivoReporteUsuarioUpdateOneRequiredWithoutReportesUsuarioNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesEmitidosNestedInput
   adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesAsignadosNestedInput
 }
 
 export type ReporteUsuarioUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -381,8 +436,9 @@ export type ReporteUsuarioUncheckedUpdateInput = {
 export type ReporteUsuarioCreateManyInput = {
   id?: string
   descripcion: string
+  fk_motivo: number
   fk_reportado: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReporteUsuario
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -408,8 +464,9 @@ export type ReporteUsuarioUpdateManyMutationInput = {
 export type ReporteUsuarioUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -433,6 +490,7 @@ export type ReporteUsuarioOrderByRelationAggregateInput = {
 export type ReporteUsuarioCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   descripcion?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   fk_reportado?: Prisma.SortOrder
   fk_reportante?: Prisma.SortOrder
   estado?: Prisma.SortOrder
@@ -445,9 +503,14 @@ export type ReporteUsuarioCountOrderByAggregateInput = {
   motivoBloqueo?: Prisma.SortOrder
 }
 
+export type ReporteUsuarioAvgOrderByAggregateInput = {
+  fk_motivo?: Prisma.SortOrder
+}
+
 export type ReporteUsuarioMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   descripcion?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   fk_reportado?: Prisma.SortOrder
   fk_reportante?: Prisma.SortOrder
   estado?: Prisma.SortOrder
@@ -463,6 +526,7 @@ export type ReporteUsuarioMaxOrderByAggregateInput = {
 export type ReporteUsuarioMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   descripcion?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   fk_reportado?: Prisma.SortOrder
   fk_reportante?: Prisma.SortOrder
   estado?: Prisma.SortOrder
@@ -473,6 +537,10 @@ export type ReporteUsuarioMinOrderByAggregateInput = {
   resolucion?: Prisma.SortOrder
   mensajeAdvertencia?: Prisma.SortOrder
   motivoBloqueo?: Prisma.SortOrder
+}
+
+export type ReporteUsuarioSumOrderByAggregateInput = {
+  fk_motivo?: Prisma.SortOrder
 }
 
 export type ReporteUsuarioCreateNestedManyWithoutReportadoInput = {
@@ -601,6 +669,48 @@ export type ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoNestedInput = {
   deleteMany?: Prisma.ReporteUsuarioScalarWhereInput | Prisma.ReporteUsuarioScalarWhereInput[]
 }
 
+export type ReporteUsuarioCreateNestedManyWithoutMotivoReporteUsuarioInput = {
+  create?: Prisma.XOR<Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput> | Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput[] | Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput[]
+  connectOrCreate?: Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput[]
+  createMany?: Prisma.ReporteUsuarioCreateManyMotivoReporteUsuarioInputEnvelope
+  connect?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+}
+
+export type ReporteUsuarioUncheckedCreateNestedManyWithoutMotivoReporteUsuarioInput = {
+  create?: Prisma.XOR<Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput> | Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput[] | Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput[]
+  connectOrCreate?: Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput[]
+  createMany?: Prisma.ReporteUsuarioCreateManyMotivoReporteUsuarioInputEnvelope
+  connect?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+}
+
+export type ReporteUsuarioUpdateManyWithoutMotivoReporteUsuarioNestedInput = {
+  create?: Prisma.XOR<Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput> | Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput[] | Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput[]
+  connectOrCreate?: Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput[]
+  upsert?: Prisma.ReporteUsuarioUpsertWithWhereUniqueWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioUpsertWithWhereUniqueWithoutMotivoReporteUsuarioInput[]
+  createMany?: Prisma.ReporteUsuarioCreateManyMotivoReporteUsuarioInputEnvelope
+  set?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  disconnect?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  delete?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  connect?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  update?: Prisma.ReporteUsuarioUpdateWithWhereUniqueWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioUpdateWithWhereUniqueWithoutMotivoReporteUsuarioInput[]
+  updateMany?: Prisma.ReporteUsuarioUpdateManyWithWhereWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioUpdateManyWithWhereWithoutMotivoReporteUsuarioInput[]
+  deleteMany?: Prisma.ReporteUsuarioScalarWhereInput | Prisma.ReporteUsuarioScalarWhereInput[]
+}
+
+export type ReporteUsuarioUncheckedUpdateManyWithoutMotivoReporteUsuarioNestedInput = {
+  create?: Prisma.XOR<Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput> | Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput[] | Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput[]
+  connectOrCreate?: Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput[]
+  upsert?: Prisma.ReporteUsuarioUpsertWithWhereUniqueWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioUpsertWithWhereUniqueWithoutMotivoReporteUsuarioInput[]
+  createMany?: Prisma.ReporteUsuarioCreateManyMotivoReporteUsuarioInputEnvelope
+  set?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  disconnect?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  delete?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  connect?: Prisma.ReporteUsuarioWhereUniqueInput | Prisma.ReporteUsuarioWhereUniqueInput[]
+  update?: Prisma.ReporteUsuarioUpdateWithWhereUniqueWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioUpdateWithWhereUniqueWithoutMotivoReporteUsuarioInput[]
+  updateMany?: Prisma.ReporteUsuarioUpdateManyWithWhereWithoutMotivoReporteUsuarioInput | Prisma.ReporteUsuarioUpdateManyWithWhereWithoutMotivoReporteUsuarioInput[]
+  deleteMany?: Prisma.ReporteUsuarioScalarWhereInput | Prisma.ReporteUsuarioScalarWhereInput[]
+}
+
 export type EnumEstadoReporteUsuarioFieldUpdateOperationsInput = {
   set?: $Enums.EstadoReporteUsuario
 }
@@ -619,14 +729,16 @@ export type ReporteUsuarioCreateWithoutReportadoInput = {
   resolucion?: $Enums.ResolucionReporteUsuario | null
   mensajeAdvertencia?: string | null
   motivoBloqueo?: string | null
-  reportante?: Prisma.CuentaCreateNestedOneWithoutReportesEmitidosInput
+  motivoReporteUsuario: Prisma.MotivoReporteUsuarioCreateNestedOneWithoutReportesUsuarioInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesEmitidosInput
   adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesAsignadosInput
 }
 
 export type ReporteUsuarioUncheckedCreateWithoutReportadoInput = {
   id?: string
   descripcion: string
-  fk_reportante?: string | null
+  fk_motivo: number
+  fk_reportante: string
   estado?: $Enums.EstadoReporteUsuario
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -658,12 +770,14 @@ export type ReporteUsuarioCreateWithoutReportanteInput = {
   mensajeAdvertencia?: string | null
   motivoBloqueo?: string | null
   reportado: Prisma.CuentaCreateNestedOneWithoutReportesRecibidosInput
+  motivoReporteUsuario: Prisma.MotivoReporteUsuarioCreateNestedOneWithoutReportesUsuarioInput
   adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesAsignadosInput
 }
 
 export type ReporteUsuarioUncheckedCreateWithoutReportanteInput = {
   id?: string
   descripcion: string
+  fk_motivo: number
   fk_reportado: string
   estado?: $Enums.EstadoReporteUsuario
   fk_admin_asignado?: string | null
@@ -696,14 +810,16 @@ export type ReporteUsuarioCreateWithoutAdminAsignadoInput = {
   mensajeAdvertencia?: string | null
   motivoBloqueo?: string | null
   reportado: Prisma.CuentaCreateNestedOneWithoutReportesRecibidosInput
-  reportante?: Prisma.CuentaCreateNestedOneWithoutReportesEmitidosInput
+  motivoReporteUsuario: Prisma.MotivoReporteUsuarioCreateNestedOneWithoutReportesUsuarioInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesEmitidosInput
 }
 
 export type ReporteUsuarioUncheckedCreateWithoutAdminAsignadoInput = {
   id?: string
   descripcion: string
+  fk_motivo: number
   fk_reportado: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReporteUsuario
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -745,8 +861,9 @@ export type ReporteUsuarioScalarWhereInput = {
   NOT?: Prisma.ReporteUsuarioScalarWhereInput | Prisma.ReporteUsuarioScalarWhereInput[]
   id?: Prisma.UuidFilter<"ReporteUsuario"> | string
   descripcion?: Prisma.StringFilter<"ReporteUsuario"> | string
+  fk_motivo?: Prisma.IntFilter<"ReporteUsuario"> | number
   fk_reportado?: Prisma.UuidFilter<"ReporteUsuario"> | string
-  fk_reportante?: Prisma.UuidNullableFilter<"ReporteUsuario"> | string | null
+  fk_reportante?: Prisma.UuidFilter<"ReporteUsuario"> | string
   estado?: Prisma.EnumEstadoReporteUsuarioFilter<"ReporteUsuario"> | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.UuidNullableFilter<"ReporteUsuario"> | string | null
   fechaCreacion?: Prisma.DateTimeFilter<"ReporteUsuario"> | Date | string
@@ -789,10 +906,67 @@ export type ReporteUsuarioUpdateManyWithWhereWithoutAdminAsignadoInput = {
   data: Prisma.XOR<Prisma.ReporteUsuarioUpdateManyMutationInput, Prisma.ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoInput>
 }
 
+export type ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput = {
+  id?: string
+  descripcion: string
+  estado?: $Enums.EstadoReporteUsuario
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  fechaResolucion?: Date | string | null
+  resolucion?: $Enums.ResolucionReporteUsuario | null
+  mensajeAdvertencia?: string | null
+  motivoBloqueo?: string | null
+  reportado: Prisma.CuentaCreateNestedOneWithoutReportesRecibidosInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesEmitidosInput
+  adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesAsignadosInput
+}
+
+export type ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput = {
+  id?: string
+  descripcion: string
+  fk_reportado: string
+  fk_reportante: string
+  estado?: $Enums.EstadoReporteUsuario
+  fk_admin_asignado?: string | null
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  fechaResolucion?: Date | string | null
+  resolucion?: $Enums.ResolucionReporteUsuario | null
+  mensajeAdvertencia?: string | null
+  motivoBloqueo?: string | null
+}
+
+export type ReporteUsuarioCreateOrConnectWithoutMotivoReporteUsuarioInput = {
+  where: Prisma.ReporteUsuarioWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput>
+}
+
+export type ReporteUsuarioCreateManyMotivoReporteUsuarioInputEnvelope = {
+  data: Prisma.ReporteUsuarioCreateManyMotivoReporteUsuarioInput | Prisma.ReporteUsuarioCreateManyMotivoReporteUsuarioInput[]
+  skipDuplicates?: boolean
+}
+
+export type ReporteUsuarioUpsertWithWhereUniqueWithoutMotivoReporteUsuarioInput = {
+  where: Prisma.ReporteUsuarioWhereUniqueInput
+  update: Prisma.XOR<Prisma.ReporteUsuarioUpdateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedUpdateWithoutMotivoReporteUsuarioInput>
+  create: Prisma.XOR<Prisma.ReporteUsuarioCreateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedCreateWithoutMotivoReporteUsuarioInput>
+}
+
+export type ReporteUsuarioUpdateWithWhereUniqueWithoutMotivoReporteUsuarioInput = {
+  where: Prisma.ReporteUsuarioWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReporteUsuarioUpdateWithoutMotivoReporteUsuarioInput, Prisma.ReporteUsuarioUncheckedUpdateWithoutMotivoReporteUsuarioInput>
+}
+
+export type ReporteUsuarioUpdateManyWithWhereWithoutMotivoReporteUsuarioInput = {
+  where: Prisma.ReporteUsuarioScalarWhereInput
+  data: Prisma.XOR<Prisma.ReporteUsuarioUpdateManyMutationInput, Prisma.ReporteUsuarioUncheckedUpdateManyWithoutMotivoReporteUsuarioInput>
+}
+
 export type ReporteUsuarioCreateManyReportadoInput = {
   id?: string
   descripcion: string
-  fk_reportante?: string | null
+  fk_motivo: number
+  fk_reportante: string
   estado?: $Enums.EstadoReporteUsuario
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -806,6 +980,7 @@ export type ReporteUsuarioCreateManyReportadoInput = {
 export type ReporteUsuarioCreateManyReportanteInput = {
   id?: string
   descripcion: string
+  fk_motivo: number
   fk_reportado: string
   estado?: $Enums.EstadoReporteUsuario
   fk_admin_asignado?: string | null
@@ -820,8 +995,9 @@ export type ReporteUsuarioCreateManyReportanteInput = {
 export type ReporteUsuarioCreateManyAdminAsignadoInput = {
   id?: string
   descripcion: string
+  fk_motivo: number
   fk_reportado: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReporteUsuario
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -841,14 +1017,16 @@ export type ReporteUsuarioUpdateWithoutReportadoInput = {
   resolucion?: Prisma.NullableEnumResolucionReporteUsuarioFieldUpdateOperationsInput | $Enums.ResolucionReporteUsuario | null
   mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportante?: Prisma.CuentaUpdateOneWithoutReportesEmitidosNestedInput
+  motivoReporteUsuario?: Prisma.MotivoReporteUsuarioUpdateOneRequiredWithoutReportesUsuarioNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesEmitidosNestedInput
   adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesAsignadosNestedInput
 }
 
 export type ReporteUsuarioUncheckedUpdateWithoutReportadoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -862,7 +1040,8 @@ export type ReporteUsuarioUncheckedUpdateWithoutReportadoInput = {
 export type ReporteUsuarioUncheckedUpdateManyWithoutReportadoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -884,12 +1063,14 @@ export type ReporteUsuarioUpdateWithoutReportanteInput = {
   mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportado?: Prisma.CuentaUpdateOneRequiredWithoutReportesRecibidosNestedInput
+  motivoReporteUsuario?: Prisma.MotivoReporteUsuarioUpdateOneRequiredWithoutReportesUsuarioNestedInput
   adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesAsignadosNestedInput
 }
 
 export type ReporteUsuarioUncheckedUpdateWithoutReportanteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -904,6 +1085,7 @@ export type ReporteUsuarioUncheckedUpdateWithoutReportanteInput = {
 export type ReporteUsuarioUncheckedUpdateManyWithoutReportanteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -926,14 +1108,16 @@ export type ReporteUsuarioUpdateWithoutAdminAsignadoInput = {
   mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportado?: Prisma.CuentaUpdateOneRequiredWithoutReportesRecibidosNestedInput
-  reportante?: Prisma.CuentaUpdateOneWithoutReportesEmitidosNestedInput
+  motivoReporteUsuario?: Prisma.MotivoReporteUsuarioUpdateOneRequiredWithoutReportesUsuarioNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesEmitidosNestedInput
 }
 
 export type ReporteUsuarioUncheckedUpdateWithoutAdminAsignadoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -946,9 +1130,70 @@ export type ReporteUsuarioUncheckedUpdateWithoutAdminAsignadoInput = {
 export type ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resolucion?: Prisma.NullableEnumResolucionReporteUsuarioFieldUpdateOperationsInput | $Enums.ResolucionReporteUsuario | null
+  mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ReporteUsuarioCreateManyMotivoReporteUsuarioInput = {
+  id?: string
+  descripcion: string
+  fk_reportado: string
+  fk_reportante: string
+  estado?: $Enums.EstadoReporteUsuario
+  fk_admin_asignado?: string | null
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  fechaResolucion?: Date | string | null
+  resolucion?: $Enums.ResolucionReporteUsuario | null
+  mensajeAdvertencia?: string | null
+  motivoBloqueo?: string | null
+}
+
+export type ReporteUsuarioUpdateWithoutMotivoReporteUsuarioInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resolucion?: Prisma.NullableEnumResolucionReporteUsuarioFieldUpdateOperationsInput | $Enums.ResolucionReporteUsuario | null
+  mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reportado?: Prisma.CuentaUpdateOneRequiredWithoutReportesRecibidosNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesEmitidosNestedInput
+  adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesAsignadosNestedInput
+}
+
+export type ReporteUsuarioUncheckedUpdateWithoutMotivoReporteUsuarioInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
+  fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resolucion?: Prisma.NullableEnumResolucionReporteUsuarioFieldUpdateOperationsInput | $Enums.ResolucionReporteUsuario | null
+  mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motivoBloqueo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ReporteUsuarioUncheckedUpdateManyWithoutMotivoReporteUsuarioInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_reportado?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.EnumEstadoReporteUsuarioFieldUpdateOperationsInput | $Enums.EstadoReporteUsuario
+  fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -962,6 +1207,7 @@ export type ReporteUsuarioUncheckedUpdateManyWithoutAdminAsignadoInput = {
 export type ReporteUsuarioSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   descripcion?: boolean
+  fk_motivo?: boolean
   fk_reportado?: boolean
   fk_reportante?: boolean
   estado?: boolean
@@ -973,13 +1219,15 @@ export type ReporteUsuarioSelect<ExtArgs extends runtime.Types.Extensions.Intern
   mensajeAdvertencia?: boolean
   motivoBloqueo?: boolean
   reportado?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReporteUsuario$reportanteArgs<ExtArgs>
+  motivoReporteUsuario?: boolean | Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs>
 }, ExtArgs["result"]["reporteUsuario"]>
 
 export type ReporteUsuarioSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   descripcion?: boolean
+  fk_motivo?: boolean
   fk_reportado?: boolean
   fk_reportante?: boolean
   estado?: boolean
@@ -991,13 +1239,15 @@ export type ReporteUsuarioSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   mensajeAdvertencia?: boolean
   motivoBloqueo?: boolean
   reportado?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReporteUsuario$reportanteArgs<ExtArgs>
+  motivoReporteUsuario?: boolean | Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs>
 }, ExtArgs["result"]["reporteUsuario"]>
 
 export type ReporteUsuarioSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   descripcion?: boolean
+  fk_motivo?: boolean
   fk_reportado?: boolean
   fk_reportante?: boolean
   estado?: boolean
@@ -1009,13 +1259,15 @@ export type ReporteUsuarioSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   mensajeAdvertencia?: boolean
   motivoBloqueo?: boolean
   reportado?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReporteUsuario$reportanteArgs<ExtArgs>
+  motivoReporteUsuario?: boolean | Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs>
 }, ExtArgs["result"]["reporteUsuario"]>
 
 export type ReporteUsuarioSelectScalar = {
   id?: boolean
   descripcion?: boolean
+  fk_motivo?: boolean
   fk_reportado?: boolean
   fk_reportante?: boolean
   estado?: boolean
@@ -1028,20 +1280,23 @@ export type ReporteUsuarioSelectScalar = {
   motivoBloqueo?: boolean
 }
 
-export type ReporteUsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "descripcion" | "fk_reportado" | "fk_reportante" | "estado" | "fk_admin_asignado" | "fechaCreacion" | "fechaModificacion" | "fechaResolucion" | "resolucion" | "mensajeAdvertencia" | "motivoBloqueo", ExtArgs["result"]["reporteUsuario"]>
+export type ReporteUsuarioOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "descripcion" | "fk_motivo" | "fk_reportado" | "fk_reportante" | "estado" | "fk_admin_asignado" | "fechaCreacion" | "fechaModificacion" | "fechaResolucion" | "resolucion" | "mensajeAdvertencia" | "motivoBloqueo", ExtArgs["result"]["reporteUsuario"]>
 export type ReporteUsuarioInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reportado?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReporteUsuario$reportanteArgs<ExtArgs>
+  motivoReporteUsuario?: boolean | Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs>
 }
 export type ReporteUsuarioIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reportado?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReporteUsuario$reportanteArgs<ExtArgs>
+  motivoReporteUsuario?: boolean | Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs>
 }
 export type ReporteUsuarioIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   reportado?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReporteUsuario$reportanteArgs<ExtArgs>
+  motivoReporteUsuario?: boolean | Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs>
 }
 
@@ -1049,14 +1304,16 @@ export type $ReporteUsuarioPayload<ExtArgs extends runtime.Types.Extensions.Inte
   name: "ReporteUsuario"
   objects: {
     reportado: Prisma.$CuentaPayload<ExtArgs>
-    reportante: Prisma.$CuentaPayload<ExtArgs> | null
+    motivoReporteUsuario: Prisma.$MotivoReporteUsuarioPayload<ExtArgs>
+    reportante: Prisma.$CuentaPayload<ExtArgs>
     adminAsignado: Prisma.$CuentaPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     descripcion: string
+    fk_motivo: number
     fk_reportado: string
-    fk_reportante: string | null
+    fk_reportante: string
     estado: $Enums.EstadoReporteUsuario
     fk_admin_asignado: string | null
     fechaCreacion: Date
@@ -1460,7 +1717,8 @@ readonly fields: ReporteUsuarioFieldRefs;
 export interface Prisma__ReporteUsuarioClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   reportado<T extends Prisma.CuentaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CuentaDefaultArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  reportante<T extends Prisma.ReporteUsuario$reportanteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReporteUsuario$reportanteArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  motivoReporteUsuario<T extends Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MotivoReporteUsuarioDefaultArgs<ExtArgs>>): Prisma.Prisma__MotivoReporteUsuarioClient<runtime.Types.Result.GetResult<Prisma.$MotivoReporteUsuarioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  reportante<T extends Prisma.CuentaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CuentaDefaultArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   adminAsignado<T extends Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReporteUsuario$adminAsignadoArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1493,6 +1751,7 @@ export interface Prisma__ReporteUsuarioClient<T, Null = never, ExtArgs extends r
 export interface ReporteUsuarioFieldRefs {
   readonly id: Prisma.FieldRef<"ReporteUsuario", 'String'>
   readonly descripcion: Prisma.FieldRef<"ReporteUsuario", 'String'>
+  readonly fk_motivo: Prisma.FieldRef<"ReporteUsuario", 'Int'>
   readonly fk_reportado: Prisma.FieldRef<"ReporteUsuario", 'String'>
   readonly fk_reportante: Prisma.FieldRef<"ReporteUsuario", 'String'>
   readonly estado: Prisma.FieldRef<"ReporteUsuario", 'EstadoReporteUsuario'>
@@ -1901,25 +2160,6 @@ export type ReporteUsuarioDeleteManyArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many ReporteUsuarios to delete.
    */
   limit?: number
-}
-
-/**
- * ReporteUsuario.reportante
- */
-export type ReporteUsuario$reportanteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Cuenta
-   */
-  select?: Prisma.CuentaSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Cuenta
-   */
-  omit?: Prisma.CuentaOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CuentaInclude<ExtArgs> | null
-  where?: Prisma.CuentaWhereInput
 }
 
 /**

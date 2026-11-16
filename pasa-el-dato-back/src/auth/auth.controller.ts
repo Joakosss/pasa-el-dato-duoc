@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import {
+  ApiBadRequestResponse,
   ApiCookieAuth,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -25,6 +26,7 @@ import {
 import { AuthService, type UsuarioAutenticado } from './auth.service.js';
 import { JwtService } from '@nestjs/jwt';
 import { IniciarSesionDto } from './dto/iniciar-sesion.dto.js';
+import { IniciarSesionMarcaDto } from './dto/iniciar-sesion-marca.dto.js';
 import { CambiarContrasenaDto } from './dto/cambiar-contrasena.dto.js';
 import { AuthLogInterceptor } from './auth-log.interceptor.js';
 import { JwtAuthGuard, type SesionAutenticada } from './jwt-auth.guard.js';
@@ -71,6 +73,40 @@ export class AuthController {
     // Las cookies anteriores no cambian; los tokens se agregan al cuerpo para
     // los clientes nativos (móvil).
     return { ...usuario, accessToken, refreshToken };
+  }
+
+  @Post('login-marca')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(AuthLogInterceptor)
+  @ApiOperation({
+    summary: 'Iniciar sesión de cuenta de marca',
+    description:
+      'Autentica una cuenta con rol Marca. El correo NO requiere dominio institucional @duocuc.cl (puede ser comercial externo). Solo autentica cuentas con registro Marca: un estudiante con credenciales correctas recibe 401 genérico. Cookies idénticas al login general.',
+  })
+  @ApiOkResponse({
+    description:
+      'Sesión iniciada. Devuelve idCuenta, correo, nombre de la marca y su rol; los tokens se envían en cookies HttpOnly.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Correo o contraseña faltantes, o correo mal formado.',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'Credenciales inválidas (correo inexistente, contraseña incorrecta o cuenta sin registro Marca).',
+  })
+  @ApiForbiddenResponse({
+    description: 'La cuenta está bloqueada o inactiva.',
+  })
+  async loginMarca(
+    @Body() datos: IniciarSesionMarcaDto,
+    @Res({ passthrough: true }) respuesta: Response,
+  ): Promise<UsuarioAutenticado> {
+    const { usuario, accessToken, refreshToken } =
+      await this.authService.iniciarSesion(datos, { exigirMarca: true });
+
+    this.establecerCookies(respuesta, accessToken, refreshToken);
+    respuesta.locals.authCuentaId = usuario.idCuenta;
+    return usuario;
   }
 
   @Post('refresh')

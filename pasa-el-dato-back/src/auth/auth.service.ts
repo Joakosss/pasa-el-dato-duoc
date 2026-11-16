@@ -221,13 +221,22 @@ export class AuthService {
     return token;
   }
 
-  async iniciarSesion(datos: IniciarSesionDto,): 
-  Promise<{
+  async iniciarSesion(
+    datos: IniciarSesionDto,
+    opciones?: { exigirMarca?: boolean },
+  ): Promise<{
     usuario: UsuarioAutenticado;
     accessToken: string;
     refreshToken: string;
   }> {
     const usuario = await this.validarCredenciales(datos);
+
+    // login-marca: solo cuentas con registro Marca autentican por esa vía.
+    // Se rechaza antes de crear tokens para no dejar refresh tokens huérfanos.
+    if (opciones?.exigirMarca && !usuario.marca) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
     const accessToken = await this.generarAccessToken(usuario);
     const refreshToken = await this.crearRefreshToken(usuario.idCuenta);
 

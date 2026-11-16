@@ -51,6 +51,28 @@ Fuera de alcance de esta HU: marcar o desmarcar (HU-FAV-01), filtros u ordenamie
 - Componente de tarjeta de publicación y catálogo existentes en el frontend.
 - Consulta del estado actual de las publicaciones favoritas para diferenciar disponibles y no disponibles.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-FAV-02-BE01:** Reutilizar el módulo y servicio de favoritos de HU-FAV-01 para consultar únicamente los favoritos activos de la cuenta autenticada.
+- **HU-FAV-02-BE02:** Exponer `GET /api/favoritos` con paginación por `page` y `pageSize`, aceptando 20 elementos para web y 10 para móvil.
+- **HU-FAV-02-BE03:** Definir y validar DTOs de consulta y respuesta, incluyendo `items`, `page`, `pageSize`, `total`, `nextPage`, datos de tarjeta y el indicador `disponible`.
+- **HU-FAV-02-BE04:** Incluir publicaciones pausadas, vendidas o eliminadas lógicamente como no disponibles, sin ocultarlas silenciosamente del listado.
+- **HU-FAV-02-BE05:** Mantener aislamiento por cuenta, ordenar de forma determinista por fecha de guardado y evitar duplicados entre páginas.
+- **HU-FAV-02-BE06:** Documentar autenticación, parámetros, respuesta paginada y errores `400`/`401` en Swagger, manteniendo el detalle implementado en [HU-FAV-02-back-tasks.md](./HU-FAV-02-back-tasks.md).
+- **HU-FAV-02-BE07:** Agregar pruebas unitarias/e2e para aislamiento, estado vacío, no disponibles, paginación, orden y parámetros inválidos.
+
+### Frontend (FE)
+
+- **HU-FAV-02-FE01:** Agregar acceso a la sección “Mis favoritos” desde la navegación de la aplicación.
+- **HU-FAV-02-FE02:** Implementar la página/listado reutilizando la tarjeta de publicación del catálogo y consumiendo `GET /api/favoritos`.
+- **HU-FAV-02-FE03:** Renderizar título, precio, imagen, sede y estado, diferenciando visualmente las publicaciones no disponibles.
+- **HU-FAV-02-FE04:** Implementar paginación de 20 elementos para web y 10 para móvil, conservando el estado de página durante la navegación.
+- **HU-FAV-02-FE05:** Mostrar estado vacío claro cuando no existan favoritos y permitir navegar al detalle de las publicaciones disponibles.
+- **HU-FAV-02-FE06:** Redirigir al inicio de sesión si la sesión no está activa y manejar errores de API o red sin mostrar un listado incompleto como si fuera válido.
+- **HU-FAV-02-FE07:** Agregar pruebas de componente o e2e para listado, estado vacío, paginación, publicaciones no disponibles y redirección por sesión.
+
 ## Prioridad
 
 **Media**

@@ -4,10 +4,16 @@ import {
   Injectable,
   NotFoundException,
   Optional,
+  UnprocessableEntityException,
 } from '@nestjs/common';
-import { TipoNotificacionUsuario } from '../generated/prisma/client.js';
+import { Prisma, TipoNotificacionUsuario } from '../generated/prisma/client.js';
 import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { ReportePublicacionCreadoDto } from './dto/reporte-publicacion-creado.dto.js';
+import {
+  ESTADOS_REPORTE_EN_CURSO,
+  ESTADO_NO_REPORTEABLE,
+} from './reportes-publicacion.constantes.js';
 
 const ESTADOS_EN_RESOLUCION = ['PENDIENTE', 'EN_PROCESO'] as const;
 
@@ -17,6 +23,109 @@ export class ReportePublicacionService {
     private readonly prisma: PrismaService,
     @Optional() private readonly notificacionesService?: NotificacionesService,
   ) {}
+
+  // HU-REP-01 (BE02): catálogo de motivos para el selector del formulario.
+  listarMotivos() {
+    return this.prisma.motivoReporte.findMany({
+      orderBy: { id: 'asc' },
+      select: { id: true, nombre: true },
+    });
+  }
+
+  // HU-REP-01 (BE04-BE06): creación autenticada de reportes de publicación.
+  async crear(entrada: {
+    publicacionId: string;
+    motivoId: number;
+    comentarios?: string;
+    idReportante: string;
+  }): Promise<ReportePublicacionCreadoDto> {
+    // RN3: el motivo debe existir en el catálogo.
+    const motivo = await this.prisma.motivoReporte.findUnique({
+      where: { id: entrada.motivoId },
+      select: { id: true, nombre: true },
+    });
+
+    if (!motivo) {
+      throw new UnprocessableEntityException('Motivo inválido');
+    }
+
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: entrada.publicacionId },
+      select: {
+        id: true,
+        eliminado: true,
+        fk_usuario: true,
+        estadoPublicacion: { select: { descripcion: true } },
+      },
+    });
+
+    if (!publicacion) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    // RN4: solo 'En curso' y 'Vendido' son reportables.
+    const descripcionEstado = publicacion.estadoPublicacion.descripcion;
+    if (publicacion.eliminado || descripcionEstado === ESTADO_NO_REPORTEABLE) {
+      throw new ConflictException('La publicación no está disponible para reporte');
+    }
+
+    // RN5: no autoreporte.
+    if (publicacion.fk_usuario === entrada.idReportante) {
+      throw new ConflictException('No puedes reportar tu propia publicación');
+    }
+
+    // RN6: un reporte propio en curso bloquea el duplicado.
+    const reporteEnCurso = await this.prisma.reportePublicacion.count({
+      where: {
+        fk_publicacion: entrada.publicacionId,
+        fk_reportante: entrada.idReportante,
+        estado: { in: [...ESTADOS_REPORTE_EN_CURSO] },
+      },
+    });
+
+    if (reporteEnCurso > 0) {
+      throw new ConflictException(
+        'Ya tienes un reporte en curso para esta publicación',
+      );
+    }
+
+    // RN7: reportes de otros reportantes coexisten; RN8: nace PENDIENTE.
+    // El índice parcial uq_reporte_publicacion_en_curso cubre la carrera
+    // entre dos POST simultáneos del mismo reportante (P2002).
+    try {
+      const reporte = await this.prisma.reportePublicacion.create({
+        data: {
+          motivo: motivo.nombre,
+          fk_motivo: motivo.id,
+          comentarios: entrada.comentarios?.trim() || null,
+          fk_publicacion: entrada.publicacionId,
+          fk_reportante: entrada.idReportante,
+          estado: 'PENDIENTE',
+        },
+        select: { id: true, fechaCreacion: true },
+      });
+
+      return {
+        id: reporte.id,
+        publicacionId: entrada.publicacionId,
+        motivoId: motivo.id,
+        comentarios: entrada.comentarios?.trim() || null,
+        estado: 'PENDIENTE',
+        fechaCreacion: reporte.fechaCreacion,
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'Ya tienes un reporte en curso para esta publicación',
+        );
+      }
+
+      throw error;
+    }
+  }
 
   async listarPendientes() {
     return this.prisma.reportePublicacion.findMany({

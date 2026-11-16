@@ -85,6 +85,32 @@ export async function ejecutarSeedDev(): Promise<void> {
       skipDuplicates: true,
     });
 
+    // HU-REP-01: catálogo genérico de motivos de reporte de publicación.
+    // La gestión del catálogo queda para ADM-05; el seed fija la lista inicial.
+    await prisma.motivoReporte.createMany({
+      data: [
+        { nombre: 'Spam o publicidad engañosa' },
+        { nombre: 'Producto o servicio prohibido' },
+        { nombre: 'Contenido inapropiado' },
+        { nombre: 'Información engañosa (precio o estado)' },
+        { nombre: 'Otro' },
+      ],
+      skipDuplicates: true,
+    });
+
+    // HU-REP-02: catálogo genérico de motivos de reporte de usuario
+    // (conducta en transacciones o conversaciones).
+    await prisma.motivoReporteUsuario.createMany({
+      data: [
+        { nombre: 'Acoso o trato abusivo' },
+        { nombre: 'Estafa o fraude en la transacción' },
+        { nombre: 'Conducta indebida en la conversación' },
+        { nombre: 'Incumplimiento del acuerdo de venta' },
+        { nombre: 'Otro' },
+      ],
+      skipDuplicates: true,
+    });
+
     await prisma.categoria.createMany({
       data: [
         { nombre: 'Tecnología y accesorios' },

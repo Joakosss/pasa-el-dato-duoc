@@ -4,7 +4,9 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
+import { Prisma } from '../generated/prisma/client.js';
 type EstadoReporteUsuario =
   | 'PENDIENTE'
   | 'EN_PROCESO'
@@ -13,6 +15,8 @@ type EstadoReporteUsuario =
 
 type ResolucionReporteUsuario = 'BLOQUEO' | 'ADVERTENCIA' | 'DESCARTE';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { ReporteUsuarioCreadoDto } from './dto/reporte-usuario-creado.dto.js';
+import { ESTADOS_REPORTE_USUARIO_EN_CURSO } from './reportes-usuario.constantes.js';
 
 type ReporteUsuarioLista = {
   id: string;
@@ -73,6 +77,104 @@ type ReporteUsuarioDetalle = {
 @Injectable()
 export class ReporteUsuarioService {
   constructor(private readonly prisma: PrismaService) {}
+
+  // HU-REP-02 (BE02): catálogo de motivos para el selector del formulario.
+  listarMotivos() {
+    return this.prisma.motivoReporteUsuario.findMany({
+      orderBy: { id: 'asc' },
+      select: { id: true, nombre: true },
+    });
+  }
+
+  // HU-REP-02 (BE04-BE06): creación autenticada de reportes de usuario.
+  async crear(entrada: {
+    usuarioReportadoId: string;
+    motivoId: number;
+    comentarios?: string;
+    idReportante: string;
+  }): Promise<ReporteUsuarioCreadoDto> {
+    // RN3: el motivo debe existir en el catálogo.
+    const motivo = await this.prisma.motivoReporteUsuario.findUnique({
+      where: { id: entrada.motivoId },
+      select: { id: true, nombre: true },
+    });
+
+    if (!motivo) {
+      throw new UnprocessableEntityException('Motivo inválido');
+    }
+
+    // RN4: la cuenta reportada debe existir y no estar eliminada.
+    const reportado = await this.prisma.cuenta.findUnique({
+      where: { id_cuenta: entrada.usuarioReportadoId },
+      select: { id_cuenta: true, eliminado: true },
+    });
+
+    if (!reportado) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    if (reportado.eliminado) {
+      throw new ConflictException(
+        'El usuario no está disponible para reporte',
+      );
+    }
+
+    // RN5: no autoreporte.
+    if (entrada.usuarioReportadoId === entrada.idReportante) {
+      throw new ConflictException('No puedes reportarte a ti mismo');
+    }
+
+    // RN6: un reporte propio en curso bloquea el duplicado.
+    const reporteEnCurso = await this.prisma.reporteUsuario.count({
+      where: {
+        fk_reportado: entrada.usuarioReportadoId,
+        fk_reportante: entrada.idReportante,
+        estado: { in: [...ESTADOS_REPORTE_USUARIO_EN_CURSO] },
+      },
+    });
+
+    if (reporteEnCurso > 0) {
+      throw new ConflictException(
+        'Ya tienes un reporte en curso contra este usuario',
+      );
+    }
+
+    // RN7: reportes de otros reportantes coexisten; RN8: nace PENDIENTE.
+    // El índice parcial uq_reporte_usuario_en_curso cubre la carrera entre
+    // dos POST simultáneos del mismo reportante (P2002).
+    try {
+      const reporte = await this.prisma.reporteUsuario.create({
+        data: {
+          fk_motivo: motivo.id,
+          descripcion: entrada.comentarios?.trim() || '',
+          fk_reportado: entrada.usuarioReportadoId,
+          fk_reportante: entrada.idReportante,
+          estado: 'PENDIENTE',
+        },
+        select: { id: true, fechaCreacion: true },
+      });
+
+      return {
+        id: reporte.id,
+        usuarioReportadoId: entrada.usuarioReportadoId,
+        motivoId: motivo.id,
+        comentarios: entrada.comentarios?.trim() || null,
+        estado: 'PENDIENTE',
+        fechaCreacion: reporte.fechaCreacion,
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'Ya tienes un reporte en curso contra este usuario',
+        );
+      }
+
+      throw error;
+    }
+  }
 
   async listarPendientes(): Promise<ReporteUsuarioLista[]> {
     const reportes = await this.prisma.reporteUsuario.findMany({

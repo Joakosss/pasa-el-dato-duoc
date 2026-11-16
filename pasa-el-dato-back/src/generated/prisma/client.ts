@@ -122,6 +122,11 @@ export type Categoria = Prisma.CategoriaModel
  */
 export type EstadoPublicacion = Prisma.EstadoPublicacionModel
 /**
+ * Model MotivoReporte
+ * 
+ */
+export type MotivoReporte = Prisma.MotivoReporteModel
+/**
  * Model AuditoriaAdmin
  * 
  */
@@ -166,6 +171,11 @@ export type NotificacionUsuario = Prisma.NotificacionUsuarioModel
  * 
  */
 export type ImagenPublicacion = Prisma.ImagenPublicacionModel
+/**
+ * Model MotivoReporteUsuario
+ * 
+ */
+export type MotivoReporteUsuario = Prisma.MotivoReporteUsuarioModel
 /**
  * Model ReporteUsuario
  * 

@@ -57,6 +57,31 @@ Aprobadas documentalmente (R.4, CU011 extendido) y resoluciones del dominio admi
 
 Nota técnica de origen (no define diseño): `ReportePublicacion` no existe en el `schema.prisma`; el MER define la tabla en tablas de negocio, con el patrón `BASE`.
 
+## Subtareas
+
+### Backend (BE)
+
+- **HU-REP-01-BE01:** Revisar el modelo `ReportePublicacion` existente y completar el contrato de persistencia para motivo, comentarios, publicación, reportante, estado pendiente y fechas, incluyendo la migración necesaria si el esquema no está alineado.
+- **HU-REP-01-BE02:** Definir el catálogo de motivos de reporte y su contrato (enum o catálogo persistido), manteniendo motivo y comentarios como datos separados.
+- **HU-REP-01-BE03:** Implementar DTO de creación con validación de motivo obligatorio, comentarios opcionales y `publicacionId` válido.
+- **HU-REP-01-BE04:** Implementar en `ReportePublicacionService` la creación autenticada del reporte con estado `PENDIENTE`, asociando el reportante de la sesión.
+- **HU-REP-01-BE05:** Validar publicación inexistente, eliminada/no disponible y estado pausado; permitir reportar publicaciones vendidas según las reglas de la HU.
+- **HU-REP-01-BE06:** Rechazar el autoreporte de publicaciones y duplicar solo cuando el mismo reportante tenga un reporte propio en curso para la misma publicación; permitir reportes independientes de otros usuarios.
+- **HU-REP-01-BE07:** Exponer endpoint REST protegido para crear reportes (por ejemplo, `POST /reportes/publicaciones`) y definir respuestas de éxito y errores `401`, `404`, `409` y `422` según las convenciones del backend.
+- **HU-REP-01-BE08:** Mantener separados los endpoints y permisos del flujo de creación del flujo administrativo ya existente (listar, tomar en revisión, resolver, descartar y reabrir).
+- **HU-REP-01-BE09:** Documentar el endpoint, DTOs, catálogo de motivos, estados y errores en Swagger o la documentación técnica del backend.
+- **HU-REP-01-BE10:** Agregar pruebas unitarias y e2e para autenticación, motivo obligatorio, publicación inexistente/pausada/vendida, autoreporte, duplicación del mismo reportante y coexistencia de reportantes distintos.
+
+### Frontend (FE)
+
+- **HU-REP-01-FE01:** Agregar acción “Reportar publicación” en el detalle de una publicación, visible solo para usuarios autenticados y cuando la publicación sea reportable.
+- **HU-REP-01-FE02:** Implementar modal o formulario con selector de motivo obligatorio, campo de comentarios opcional, estados de carga y confirmación explícita.
+- **HU-REP-01-FE03:** Consumir el endpoint de creación y enviar el identificador de la publicación, motivo y comentarios con el contrato acordado.
+- **HU-REP-01-FE04:** Mostrar confirmación cuando el reporte se registre y evitar reenvíos mientras la solicitud esté en curso.
+- **HU-REP-01-FE05:** Presentar mensajes diferenciados para sesión expirada, publicación no disponible, publicación propia, reporte duplicado y errores de validación o red.
+- **HU-REP-01-FE06:** Ocultar o deshabilitar la acción para publicaciones pausadas y mantenerla disponible para publicaciones vendidas, según el estado recibido desde el detalle.
+- **HU-REP-01-FE07:** Agregar pruebas de componente o e2e para apertura del formulario, validación del motivo, envío exitoso y principales respuestas de error.
+
 ## Dependencias
 
 - Detalle de publicación consultable (HU-PUB-05, HU-PUB-06).

@@ -20,13 +20,24 @@ export type ReportePublicacionModel = runtime.Types.Result.DefaultSelection<Pris
 
 export type AggregateReportePublicacion = {
   _count: ReportePublicacionCountAggregateOutputType | null
+  _avg: ReportePublicacionAvgAggregateOutputType | null
+  _sum: ReportePublicacionSumAggregateOutputType | null
   _min: ReportePublicacionMinAggregateOutputType | null
   _max: ReportePublicacionMaxAggregateOutputType | null
+}
+
+export type ReportePublicacionAvgAggregateOutputType = {
+  fk_motivo: number | null
+}
+
+export type ReportePublicacionSumAggregateOutputType = {
+  fk_motivo: number | null
 }
 
 export type ReportePublicacionMinAggregateOutputType = {
   id: string | null
   motivo: string | null
+  fk_motivo: number | null
   comentarios: string | null
   fk_publicacion: string | null
   fk_reportante: string | null
@@ -44,6 +55,7 @@ export type ReportePublicacionMinAggregateOutputType = {
 export type ReportePublicacionMaxAggregateOutputType = {
   id: string | null
   motivo: string | null
+  fk_motivo: number | null
   comentarios: string | null
   fk_publicacion: string | null
   fk_reportante: string | null
@@ -61,6 +73,7 @@ export type ReportePublicacionMaxAggregateOutputType = {
 export type ReportePublicacionCountAggregateOutputType = {
   id: number
   motivo: number
+  fk_motivo: number
   comentarios: number
   fk_publicacion: number
   fk_reportante: number
@@ -77,9 +90,18 @@ export type ReportePublicacionCountAggregateOutputType = {
 }
 
 
+export type ReportePublicacionAvgAggregateInputType = {
+  fk_motivo?: true
+}
+
+export type ReportePublicacionSumAggregateInputType = {
+  fk_motivo?: true
+}
+
 export type ReportePublicacionMinAggregateInputType = {
   id?: true
   motivo?: true
+  fk_motivo?: true
   comentarios?: true
   fk_publicacion?: true
   fk_reportante?: true
@@ -97,6 +119,7 @@ export type ReportePublicacionMinAggregateInputType = {
 export type ReportePublicacionMaxAggregateInputType = {
   id?: true
   motivo?: true
+  fk_motivo?: true
   comentarios?: true
   fk_publicacion?: true
   fk_reportante?: true
@@ -114,6 +137,7 @@ export type ReportePublicacionMaxAggregateInputType = {
 export type ReportePublicacionCountAggregateInputType = {
   id?: true
   motivo?: true
+  fk_motivo?: true
   comentarios?: true
   fk_publicacion?: true
   fk_reportante?: true
@@ -167,6 +191,18 @@ export type ReportePublicacionAggregateArgs<ExtArgs extends runtime.Types.Extens
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ReportePublicacionAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ReportePublicacionSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ReportePublicacionMinAggregateInputType
@@ -197,6 +233,8 @@ export type ReportePublicacionGroupByArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   _count?: ReportePublicacionCountAggregateInputType | true
+  _avg?: ReportePublicacionAvgAggregateInputType
+  _sum?: ReportePublicacionSumAggregateInputType
   _min?: ReportePublicacionMinAggregateInputType
   _max?: ReportePublicacionMaxAggregateInputType
 }
@@ -204,9 +242,10 @@ export type ReportePublicacionGroupByArgs<ExtArgs extends runtime.Types.Extensio
 export type ReportePublicacionGroupByOutputType = {
   id: string
   motivo: string
+  fk_motivo: number
   comentarios: string | null
   fk_publicacion: string
-  fk_reportante: string | null
+  fk_reportante: string
   estado: $Enums.EstadoReportePublicacion
   fk_admin_asignado: string | null
   fechaCreacion: Date
@@ -217,6 +256,8 @@ export type ReportePublicacionGroupByOutputType = {
   avisoVendedorRegistrado: boolean
   avisoVendedorFecha: Date | null
   _count: ReportePublicacionCountAggregateOutputType | null
+  _avg: ReportePublicacionAvgAggregateOutputType | null
+  _sum: ReportePublicacionSumAggregateOutputType | null
   _min: ReportePublicacionMinAggregateOutputType | null
   _max: ReportePublicacionMaxAggregateOutputType | null
 }
@@ -242,9 +283,10 @@ export type ReportePublicacionWhereInput = {
   NOT?: Prisma.ReportePublicacionWhereInput | Prisma.ReportePublicacionWhereInput[]
   id?: Prisma.UuidFilter<"ReportePublicacion"> | string
   motivo?: Prisma.StringFilter<"ReportePublicacion"> | string
+  fk_motivo?: Prisma.IntFilter<"ReportePublicacion"> | number
   comentarios?: Prisma.StringNullableFilter<"ReportePublicacion"> | string | null
   fk_publicacion?: Prisma.UuidFilter<"ReportePublicacion"> | string
-  fk_reportante?: Prisma.UuidNullableFilter<"ReportePublicacion"> | string | null
+  fk_reportante?: Prisma.UuidFilter<"ReportePublicacion"> | string
   estado?: Prisma.EnumEstadoReportePublicacionFilter<"ReportePublicacion"> | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.UuidNullableFilter<"ReportePublicacion"> | string | null
   fechaCreacion?: Prisma.DateTimeFilter<"ReportePublicacion"> | Date | string
@@ -255,16 +297,18 @@ export type ReportePublicacionWhereInput = {
   avisoVendedorRegistrado?: Prisma.BoolFilter<"ReportePublicacion"> | boolean
   avisoVendedorFecha?: Prisma.DateTimeNullableFilter<"ReportePublicacion"> | Date | string | null
   publicacion?: Prisma.XOR<Prisma.PublicacionScalarRelationFilter, Prisma.PublicacionWhereInput>
-  reportante?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
+  motivoReporte?: Prisma.XOR<Prisma.MotivoReporteScalarRelationFilter, Prisma.MotivoReporteWhereInput>
+  reportante?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
   adminAsignado?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
 }
 
 export type ReportePublicacionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   motivo?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   comentarios?: Prisma.SortOrderInput | Prisma.SortOrder
   fk_publicacion?: Prisma.SortOrder
-  fk_reportante?: Prisma.SortOrderInput | Prisma.SortOrder
+  fk_reportante?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   fk_admin_asignado?: Prisma.SortOrderInput | Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
@@ -275,6 +319,7 @@ export type ReportePublicacionOrderByWithRelationInput = {
   avisoVendedorRegistrado?: Prisma.SortOrder
   avisoVendedorFecha?: Prisma.SortOrderInput | Prisma.SortOrder
   publicacion?: Prisma.PublicacionOrderByWithRelationInput
+  motivoReporte?: Prisma.MotivoReporteOrderByWithRelationInput
   reportante?: Prisma.CuentaOrderByWithRelationInput
   adminAsignado?: Prisma.CuentaOrderByWithRelationInput
 }
@@ -285,9 +330,10 @@ export type ReportePublicacionWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ReportePublicacionWhereInput[]
   NOT?: Prisma.ReportePublicacionWhereInput | Prisma.ReportePublicacionWhereInput[]
   motivo?: Prisma.StringFilter<"ReportePublicacion"> | string
+  fk_motivo?: Prisma.IntFilter<"ReportePublicacion"> | number
   comentarios?: Prisma.StringNullableFilter<"ReportePublicacion"> | string | null
   fk_publicacion?: Prisma.UuidFilter<"ReportePublicacion"> | string
-  fk_reportante?: Prisma.UuidNullableFilter<"ReportePublicacion"> | string | null
+  fk_reportante?: Prisma.UuidFilter<"ReportePublicacion"> | string
   estado?: Prisma.EnumEstadoReportePublicacionFilter<"ReportePublicacion"> | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.UuidNullableFilter<"ReportePublicacion"> | string | null
   fechaCreacion?: Prisma.DateTimeFilter<"ReportePublicacion"> | Date | string
@@ -298,16 +344,18 @@ export type ReportePublicacionWhereUniqueInput = Prisma.AtLeast<{
   avisoVendedorRegistrado?: Prisma.BoolFilter<"ReportePublicacion"> | boolean
   avisoVendedorFecha?: Prisma.DateTimeNullableFilter<"ReportePublicacion"> | Date | string | null
   publicacion?: Prisma.XOR<Prisma.PublicacionScalarRelationFilter, Prisma.PublicacionWhereInput>
-  reportante?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
+  motivoReporte?: Prisma.XOR<Prisma.MotivoReporteScalarRelationFilter, Prisma.MotivoReporteWhereInput>
+  reportante?: Prisma.XOR<Prisma.CuentaScalarRelationFilter, Prisma.CuentaWhereInput>
   adminAsignado?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
 }, "id">
 
 export type ReportePublicacionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   motivo?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   comentarios?: Prisma.SortOrderInput | Prisma.SortOrder
   fk_publicacion?: Prisma.SortOrder
-  fk_reportante?: Prisma.SortOrderInput | Prisma.SortOrder
+  fk_reportante?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   fk_admin_asignado?: Prisma.SortOrderInput | Prisma.SortOrder
   fechaCreacion?: Prisma.SortOrder
@@ -318,8 +366,10 @@ export type ReportePublicacionOrderByWithAggregationInput = {
   avisoVendedorRegistrado?: Prisma.SortOrder
   avisoVendedorFecha?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ReportePublicacionCountOrderByAggregateInput
+  _avg?: Prisma.ReportePublicacionAvgOrderByAggregateInput
   _max?: Prisma.ReportePublicacionMaxOrderByAggregateInput
   _min?: Prisma.ReportePublicacionMinOrderByAggregateInput
+  _sum?: Prisma.ReportePublicacionSumOrderByAggregateInput
 }
 
 export type ReportePublicacionScalarWhereWithAggregatesInput = {
@@ -328,9 +378,10 @@ export type ReportePublicacionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ReportePublicacionScalarWhereWithAggregatesInput | Prisma.ReportePublicacionScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"ReportePublicacion"> | string
   motivo?: Prisma.StringWithAggregatesFilter<"ReportePublicacion"> | string
+  fk_motivo?: Prisma.IntWithAggregatesFilter<"ReportePublicacion"> | number
   comentarios?: Prisma.StringNullableWithAggregatesFilter<"ReportePublicacion"> | string | null
   fk_publicacion?: Prisma.UuidWithAggregatesFilter<"ReportePublicacion"> | string
-  fk_reportante?: Prisma.UuidNullableWithAggregatesFilter<"ReportePublicacion"> | string | null
+  fk_reportante?: Prisma.UuidWithAggregatesFilter<"ReportePublicacion"> | string
   estado?: Prisma.EnumEstadoReportePublicacionWithAggregatesFilter<"ReportePublicacion"> | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.UuidNullableWithAggregatesFilter<"ReportePublicacion"> | string | null
   fechaCreacion?: Prisma.DateTimeWithAggregatesFilter<"ReportePublicacion"> | Date | string
@@ -355,16 +406,18 @@ export type ReportePublicacionCreateInput = {
   avisoVendedorRegistrado?: boolean
   avisoVendedorFecha?: Date | string | null
   publicacion: Prisma.PublicacionCreateNestedOneWithoutReportesPublicacionInput
-  reportante?: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput
+  motivoReporte: Prisma.MotivoReporteCreateNestedOneWithoutReportesPublicacionInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput
   adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionAsignadosInput
 }
 
 export type ReportePublicacionUncheckedCreateInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
   fk_publicacion: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReportePublicacion
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -389,16 +442,18 @@ export type ReportePublicacionUpdateInput = {
   avisoVendedorRegistrado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avisoVendedorFecha?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   publicacion?: Prisma.PublicacionUpdateOneRequiredWithoutReportesPublicacionNestedInput
-  reportante?: Prisma.CuentaUpdateOneWithoutReportesPublicacionEmitidosNestedInput
+  motivoReporte?: Prisma.MotivoReporteUpdateOneRequiredWithoutReportesPublicacionNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesPublicacionEmitidosNestedInput
   adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesPublicacionAsignadosNestedInput
 }
 
 export type ReportePublicacionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -413,9 +468,10 @@ export type ReportePublicacionUncheckedUpdateInput = {
 export type ReportePublicacionCreateManyInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
   fk_publicacion: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReportePublicacion
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -444,9 +500,10 @@ export type ReportePublicacionUpdateManyMutationInput = {
 export type ReportePublicacionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -471,6 +528,7 @@ export type ReportePublicacionOrderByRelationAggregateInput = {
 export type ReportePublicacionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   motivo?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   comentarios?: Prisma.SortOrder
   fk_publicacion?: Prisma.SortOrder
   fk_reportante?: Prisma.SortOrder
@@ -485,9 +543,14 @@ export type ReportePublicacionCountOrderByAggregateInput = {
   avisoVendedorFecha?: Prisma.SortOrder
 }
 
+export type ReportePublicacionAvgOrderByAggregateInput = {
+  fk_motivo?: Prisma.SortOrder
+}
+
 export type ReportePublicacionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   motivo?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   comentarios?: Prisma.SortOrder
   fk_publicacion?: Prisma.SortOrder
   fk_reportante?: Prisma.SortOrder
@@ -505,6 +568,7 @@ export type ReportePublicacionMaxOrderByAggregateInput = {
 export type ReportePublicacionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   motivo?: Prisma.SortOrder
+  fk_motivo?: Prisma.SortOrder
   comentarios?: Prisma.SortOrder
   fk_publicacion?: Prisma.SortOrder
   fk_reportante?: Prisma.SortOrder
@@ -517,6 +581,10 @@ export type ReportePublicacionMinOrderByAggregateInput = {
   mensajeAdvertencia?: Prisma.SortOrder
   avisoVendedorRegistrado?: Prisma.SortOrder
   avisoVendedorFecha?: Prisma.SortOrder
+}
+
+export type ReportePublicacionSumOrderByAggregateInput = {
+  fk_motivo?: Prisma.SortOrder
 }
 
 export type ReportePublicacionCreateNestedManyWithoutReportanteInput = {
@@ -603,6 +671,48 @@ export type ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoNestedInput
   deleteMany?: Prisma.ReportePublicacionScalarWhereInput | Prisma.ReportePublicacionScalarWhereInput[]
 }
 
+export type ReportePublicacionCreateNestedManyWithoutMotivoReporteInput = {
+  create?: Prisma.XOR<Prisma.ReportePublicacionCreateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput> | Prisma.ReportePublicacionCreateWithoutMotivoReporteInput[] | Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput[]
+  connectOrCreate?: Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput | Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput[]
+  createMany?: Prisma.ReportePublicacionCreateManyMotivoReporteInputEnvelope
+  connect?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+}
+
+export type ReportePublicacionUncheckedCreateNestedManyWithoutMotivoReporteInput = {
+  create?: Prisma.XOR<Prisma.ReportePublicacionCreateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput> | Prisma.ReportePublicacionCreateWithoutMotivoReporteInput[] | Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput[]
+  connectOrCreate?: Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput | Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput[]
+  createMany?: Prisma.ReportePublicacionCreateManyMotivoReporteInputEnvelope
+  connect?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+}
+
+export type ReportePublicacionUpdateManyWithoutMotivoReporteNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportePublicacionCreateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput> | Prisma.ReportePublicacionCreateWithoutMotivoReporteInput[] | Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput[]
+  connectOrCreate?: Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput | Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput[]
+  upsert?: Prisma.ReportePublicacionUpsertWithWhereUniqueWithoutMotivoReporteInput | Prisma.ReportePublicacionUpsertWithWhereUniqueWithoutMotivoReporteInput[]
+  createMany?: Prisma.ReportePublicacionCreateManyMotivoReporteInputEnvelope
+  set?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  disconnect?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  delete?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  connect?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  update?: Prisma.ReportePublicacionUpdateWithWhereUniqueWithoutMotivoReporteInput | Prisma.ReportePublicacionUpdateWithWhereUniqueWithoutMotivoReporteInput[]
+  updateMany?: Prisma.ReportePublicacionUpdateManyWithWhereWithoutMotivoReporteInput | Prisma.ReportePublicacionUpdateManyWithWhereWithoutMotivoReporteInput[]
+  deleteMany?: Prisma.ReportePublicacionScalarWhereInput | Prisma.ReportePublicacionScalarWhereInput[]
+}
+
+export type ReportePublicacionUncheckedUpdateManyWithoutMotivoReporteNestedInput = {
+  create?: Prisma.XOR<Prisma.ReportePublicacionCreateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput> | Prisma.ReportePublicacionCreateWithoutMotivoReporteInput[] | Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput[]
+  connectOrCreate?: Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput | Prisma.ReportePublicacionCreateOrConnectWithoutMotivoReporteInput[]
+  upsert?: Prisma.ReportePublicacionUpsertWithWhereUniqueWithoutMotivoReporteInput | Prisma.ReportePublicacionUpsertWithWhereUniqueWithoutMotivoReporteInput[]
+  createMany?: Prisma.ReportePublicacionCreateManyMotivoReporteInputEnvelope
+  set?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  disconnect?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  delete?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  connect?: Prisma.ReportePublicacionWhereUniqueInput | Prisma.ReportePublicacionWhereUniqueInput[]
+  update?: Prisma.ReportePublicacionUpdateWithWhereUniqueWithoutMotivoReporteInput | Prisma.ReportePublicacionUpdateWithWhereUniqueWithoutMotivoReporteInput[]
+  updateMany?: Prisma.ReportePublicacionUpdateManyWithWhereWithoutMotivoReporteInput | Prisma.ReportePublicacionUpdateManyWithWhereWithoutMotivoReporteInput[]
+  deleteMany?: Prisma.ReportePublicacionScalarWhereInput | Prisma.ReportePublicacionScalarWhereInput[]
+}
+
 export type EnumEstadoReportePublicacionFieldUpdateOperationsInput = {
   set?: $Enums.EstadoReportePublicacion
 }
@@ -666,12 +776,14 @@ export type ReportePublicacionCreateWithoutReportanteInput = {
   avisoVendedorRegistrado?: boolean
   avisoVendedorFecha?: Date | string | null
   publicacion: Prisma.PublicacionCreateNestedOneWithoutReportesPublicacionInput
+  motivoReporte: Prisma.MotivoReporteCreateNestedOneWithoutReportesPublicacionInput
   adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionAsignadosInput
 }
 
 export type ReportePublicacionUncheckedCreateWithoutReportanteInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
   fk_publicacion: string
   estado?: $Enums.EstadoReportePublicacion
@@ -708,15 +820,17 @@ export type ReportePublicacionCreateWithoutAdminAsignadoInput = {
   avisoVendedorRegistrado?: boolean
   avisoVendedorFecha?: Date | string | null
   publicacion: Prisma.PublicacionCreateNestedOneWithoutReportesPublicacionInput
-  reportante?: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput
+  motivoReporte: Prisma.MotivoReporteCreateNestedOneWithoutReportesPublicacionInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput
 }
 
 export type ReportePublicacionUncheckedCreateWithoutAdminAsignadoInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
   fk_publicacion: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReportePublicacion
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -759,9 +873,10 @@ export type ReportePublicacionScalarWhereInput = {
   NOT?: Prisma.ReportePublicacionScalarWhereInput | Prisma.ReportePublicacionScalarWhereInput[]
   id?: Prisma.UuidFilter<"ReportePublicacion"> | string
   motivo?: Prisma.StringFilter<"ReportePublicacion"> | string
+  fk_motivo?: Prisma.IntFilter<"ReportePublicacion"> | number
   comentarios?: Prisma.StringNullableFilter<"ReportePublicacion"> | string | null
   fk_publicacion?: Prisma.UuidFilter<"ReportePublicacion"> | string
-  fk_reportante?: Prisma.UuidNullableFilter<"ReportePublicacion"> | string | null
+  fk_reportante?: Prisma.UuidFilter<"ReportePublicacion"> | string
   estado?: Prisma.EnumEstadoReportePublicacionFilter<"ReportePublicacion"> | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.UuidNullableFilter<"ReportePublicacion"> | string | null
   fechaCreacion?: Prisma.DateTimeFilter<"ReportePublicacion"> | Date | string
@@ -789,6 +904,66 @@ export type ReportePublicacionUpdateManyWithWhereWithoutAdminAsignadoInput = {
   data: Prisma.XOR<Prisma.ReportePublicacionUpdateManyMutationInput, Prisma.ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoInput>
 }
 
+export type ReportePublicacionCreateWithoutMotivoReporteInput = {
+  id?: string
+  motivo: string
+  comentarios?: string | null
+  estado?: $Enums.EstadoReportePublicacion
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  fechaResolucion?: Date | string | null
+  resolucion?: $Enums.ResolucionReportePublicacion | null
+  mensajeAdvertencia?: string | null
+  avisoVendedorRegistrado?: boolean
+  avisoVendedorFecha?: Date | string | null
+  publicacion: Prisma.PublicacionCreateNestedOneWithoutReportesPublicacionInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput
+  adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionAsignadosInput
+}
+
+export type ReportePublicacionUncheckedCreateWithoutMotivoReporteInput = {
+  id?: string
+  motivo: string
+  comentarios?: string | null
+  fk_publicacion: string
+  fk_reportante: string
+  estado?: $Enums.EstadoReportePublicacion
+  fk_admin_asignado?: string | null
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  fechaResolucion?: Date | string | null
+  resolucion?: $Enums.ResolucionReportePublicacion | null
+  mensajeAdvertencia?: string | null
+  avisoVendedorRegistrado?: boolean
+  avisoVendedorFecha?: Date | string | null
+}
+
+export type ReportePublicacionCreateOrConnectWithoutMotivoReporteInput = {
+  where: Prisma.ReportePublicacionWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReportePublicacionCreateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput>
+}
+
+export type ReportePublicacionCreateManyMotivoReporteInputEnvelope = {
+  data: Prisma.ReportePublicacionCreateManyMotivoReporteInput | Prisma.ReportePublicacionCreateManyMotivoReporteInput[]
+  skipDuplicates?: boolean
+}
+
+export type ReportePublicacionUpsertWithWhereUniqueWithoutMotivoReporteInput = {
+  where: Prisma.ReportePublicacionWhereUniqueInput
+  update: Prisma.XOR<Prisma.ReportePublicacionUpdateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedUpdateWithoutMotivoReporteInput>
+  create: Prisma.XOR<Prisma.ReportePublicacionCreateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedCreateWithoutMotivoReporteInput>
+}
+
+export type ReportePublicacionUpdateWithWhereUniqueWithoutMotivoReporteInput = {
+  where: Prisma.ReportePublicacionWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReportePublicacionUpdateWithoutMotivoReporteInput, Prisma.ReportePublicacionUncheckedUpdateWithoutMotivoReporteInput>
+}
+
+export type ReportePublicacionUpdateManyWithWhereWithoutMotivoReporteInput = {
+  where: Prisma.ReportePublicacionScalarWhereInput
+  data: Prisma.XOR<Prisma.ReportePublicacionUpdateManyMutationInput, Prisma.ReportePublicacionUncheckedUpdateManyWithoutMotivoReporteInput>
+}
+
 export type ReportePublicacionCreateWithoutPublicacionInput = {
   id?: string
   motivo: string
@@ -801,15 +976,17 @@ export type ReportePublicacionCreateWithoutPublicacionInput = {
   mensajeAdvertencia?: string | null
   avisoVendedorRegistrado?: boolean
   avisoVendedorFecha?: Date | string | null
-  reportante?: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput
+  motivoReporte: Prisma.MotivoReporteCreateNestedOneWithoutReportesPublicacionInput
+  reportante: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionEmitidosInput
   adminAsignado?: Prisma.CuentaCreateNestedOneWithoutReportesPublicacionAsignadosInput
 }
 
 export type ReportePublicacionUncheckedCreateWithoutPublicacionInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReportePublicacion
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -850,6 +1027,7 @@ export type ReportePublicacionUpdateManyWithWhereWithoutPublicacionInput = {
 export type ReportePublicacionCreateManyReportanteInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
   fk_publicacion: string
   estado?: $Enums.EstadoReportePublicacion
@@ -866,9 +1044,10 @@ export type ReportePublicacionCreateManyReportanteInput = {
 export type ReportePublicacionCreateManyAdminAsignadoInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
   fk_publicacion: string
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReportePublicacion
   fechaCreacion?: Date | string
   fechaModificacion?: Date | string
@@ -892,12 +1071,14 @@ export type ReportePublicacionUpdateWithoutReportanteInput = {
   avisoVendedorRegistrado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avisoVendedorFecha?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   publicacion?: Prisma.PublicacionUpdateOneRequiredWithoutReportesPublicacionNestedInput
+  motivoReporte?: Prisma.MotivoReporteUpdateOneRequiredWithoutReportesPublicacionNestedInput
   adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesPublicacionAsignadosNestedInput
 }
 
 export type ReportePublicacionUncheckedUpdateWithoutReportanteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
@@ -914,6 +1095,7 @@ export type ReportePublicacionUncheckedUpdateWithoutReportanteInput = {
 export type ReportePublicacionUncheckedUpdateManyWithoutReportanteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
@@ -940,15 +1122,17 @@ export type ReportePublicacionUpdateWithoutAdminAsignadoInput = {
   avisoVendedorRegistrado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avisoVendedorFecha?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   publicacion?: Prisma.PublicacionUpdateOneRequiredWithoutReportesPublicacionNestedInput
-  reportante?: Prisma.CuentaUpdateOneWithoutReportesPublicacionEmitidosNestedInput
+  motivoReporte?: Prisma.MotivoReporteUpdateOneRequiredWithoutReportesPublicacionNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesPublicacionEmitidosNestedInput
 }
 
 export type ReportePublicacionUncheckedUpdateWithoutAdminAsignadoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -962,10 +1146,79 @@ export type ReportePublicacionUncheckedUpdateWithoutAdminAsignadoInput = {
 export type ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resolucion?: Prisma.NullableEnumResolucionReportePublicacionFieldUpdateOperationsInput | $Enums.ResolucionReportePublicacion | null
+  mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avisoVendedorRegistrado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avisoVendedorFecha?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type ReportePublicacionCreateManyMotivoReporteInput = {
+  id?: string
+  motivo: string
+  comentarios?: string | null
+  fk_publicacion: string
+  fk_reportante: string
+  estado?: $Enums.EstadoReportePublicacion
+  fk_admin_asignado?: string | null
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  fechaResolucion?: Date | string | null
+  resolucion?: $Enums.ResolucionReportePublicacion | null
+  mensajeAdvertencia?: string | null
+  avisoVendedorRegistrado?: boolean
+  avisoVendedorFecha?: Date | string | null
+}
+
+export type ReportePublicacionUpdateWithoutMotivoReporteInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resolucion?: Prisma.NullableEnumResolucionReportePublicacionFieldUpdateOperationsInput | $Enums.ResolucionReportePublicacion | null
+  mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avisoVendedorRegistrado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avisoVendedorFecha?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publicacion?: Prisma.PublicacionUpdateOneRequiredWithoutReportesPublicacionNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesPublicacionEmitidosNestedInput
+  adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesPublicacionAsignadosNestedInput
+}
+
+export type ReportePublicacionUncheckedUpdateWithoutMotivoReporteInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
+  fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resolucion?: Prisma.NullableEnumResolucionReportePublicacionFieldUpdateOperationsInput | $Enums.ResolucionReportePublicacion | null
+  mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avisoVendedorRegistrado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avisoVendedorFecha?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type ReportePublicacionUncheckedUpdateManyWithoutMotivoReporteInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_publicacion?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
+  fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fechaResolucion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -978,8 +1231,9 @@ export type ReportePublicacionUncheckedUpdateManyWithoutAdminAsignadoInput = {
 export type ReportePublicacionCreateManyPublicacionInput = {
   id?: string
   motivo: string
+  fk_motivo: number
   comentarios?: string | null
-  fk_reportante?: string | null
+  fk_reportante: string
   estado?: $Enums.EstadoReportePublicacion
   fk_admin_asignado?: string | null
   fechaCreacion?: Date | string
@@ -1003,15 +1257,17 @@ export type ReportePublicacionUpdateWithoutPublicacionInput = {
   mensajeAdvertencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avisoVendedorRegistrado?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avisoVendedorFecha?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  reportante?: Prisma.CuentaUpdateOneWithoutReportesPublicacionEmitidosNestedInput
+  motivoReporte?: Prisma.MotivoReporteUpdateOneRequiredWithoutReportesPublicacionNestedInput
+  reportante?: Prisma.CuentaUpdateOneRequiredWithoutReportesPublicacionEmitidosNestedInput
   adminAsignado?: Prisma.CuentaUpdateOneWithoutReportesPublicacionAsignadosNestedInput
 }
 
 export type ReportePublicacionUncheckedUpdateWithoutPublicacionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1026,8 +1282,9 @@ export type ReportePublicacionUncheckedUpdateWithoutPublicacionInput = {
 export type ReportePublicacionUncheckedUpdateManyWithoutPublicacionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   motivo?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_motivo?: Prisma.IntFieldUpdateOperationsInput | number
   comentarios?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fk_reportante?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fk_reportante?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.EnumEstadoReportePublicacionFieldUpdateOperationsInput | $Enums.EstadoReportePublicacion
   fk_admin_asignado?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1044,6 +1301,7 @@ export type ReportePublicacionUncheckedUpdateManyWithoutPublicacionInput = {
 export type ReportePublicacionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   motivo?: boolean
+  fk_motivo?: boolean
   comentarios?: boolean
   fk_publicacion?: boolean
   fk_reportante?: boolean
@@ -1057,13 +1315,15 @@ export type ReportePublicacionSelect<ExtArgs extends runtime.Types.Extensions.In
   avisoVendedorRegistrado?: boolean
   avisoVendedorFecha?: boolean
   publicacion?: boolean | Prisma.PublicacionDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReportePublicacion$reportanteArgs<ExtArgs>
+  motivoReporte?: boolean | Prisma.MotivoReporteDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs>
 }, ExtArgs["result"]["reportePublicacion"]>
 
 export type ReportePublicacionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   motivo?: boolean
+  fk_motivo?: boolean
   comentarios?: boolean
   fk_publicacion?: boolean
   fk_reportante?: boolean
@@ -1077,13 +1337,15 @@ export type ReportePublicacionSelectCreateManyAndReturn<ExtArgs extends runtime.
   avisoVendedorRegistrado?: boolean
   avisoVendedorFecha?: boolean
   publicacion?: boolean | Prisma.PublicacionDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReportePublicacion$reportanteArgs<ExtArgs>
+  motivoReporte?: boolean | Prisma.MotivoReporteDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs>
 }, ExtArgs["result"]["reportePublicacion"]>
 
 export type ReportePublicacionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   motivo?: boolean
+  fk_motivo?: boolean
   comentarios?: boolean
   fk_publicacion?: boolean
   fk_reportante?: boolean
@@ -1097,13 +1359,15 @@ export type ReportePublicacionSelectUpdateManyAndReturn<ExtArgs extends runtime.
   avisoVendedorRegistrado?: boolean
   avisoVendedorFecha?: boolean
   publicacion?: boolean | Prisma.PublicacionDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReportePublicacion$reportanteArgs<ExtArgs>
+  motivoReporte?: boolean | Prisma.MotivoReporteDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs>
 }, ExtArgs["result"]["reportePublicacion"]>
 
 export type ReportePublicacionSelectScalar = {
   id?: boolean
   motivo?: boolean
+  fk_motivo?: boolean
   comentarios?: boolean
   fk_publicacion?: boolean
   fk_reportante?: boolean
@@ -1118,20 +1382,23 @@ export type ReportePublicacionSelectScalar = {
   avisoVendedorFecha?: boolean
 }
 
-export type ReportePublicacionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "motivo" | "comentarios" | "fk_publicacion" | "fk_reportante" | "estado" | "fk_admin_asignado" | "fechaCreacion" | "fechaModificacion" | "fechaResolucion" | "resolucion" | "mensajeAdvertencia" | "avisoVendedorRegistrado" | "avisoVendedorFecha", ExtArgs["result"]["reportePublicacion"]>
+export type ReportePublicacionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "motivo" | "fk_motivo" | "comentarios" | "fk_publicacion" | "fk_reportante" | "estado" | "fk_admin_asignado" | "fechaCreacion" | "fechaModificacion" | "fechaResolucion" | "resolucion" | "mensajeAdvertencia" | "avisoVendedorRegistrado" | "avisoVendedorFecha", ExtArgs["result"]["reportePublicacion"]>
 export type ReportePublicacionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   publicacion?: boolean | Prisma.PublicacionDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReportePublicacion$reportanteArgs<ExtArgs>
+  motivoReporte?: boolean | Prisma.MotivoReporteDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs>
 }
 export type ReportePublicacionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   publicacion?: boolean | Prisma.PublicacionDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReportePublicacion$reportanteArgs<ExtArgs>
+  motivoReporte?: boolean | Prisma.MotivoReporteDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs>
 }
 export type ReportePublicacionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   publicacion?: boolean | Prisma.PublicacionDefaultArgs<ExtArgs>
-  reportante?: boolean | Prisma.ReportePublicacion$reportanteArgs<ExtArgs>
+  motivoReporte?: boolean | Prisma.MotivoReporteDefaultArgs<ExtArgs>
+  reportante?: boolean | Prisma.CuentaDefaultArgs<ExtArgs>
   adminAsignado?: boolean | Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs>
 }
 
@@ -1139,15 +1406,17 @@ export type $ReportePublicacionPayload<ExtArgs extends runtime.Types.Extensions.
   name: "ReportePublicacion"
   objects: {
     publicacion: Prisma.$PublicacionPayload<ExtArgs>
-    reportante: Prisma.$CuentaPayload<ExtArgs> | null
+    motivoReporte: Prisma.$MotivoReportePayload<ExtArgs>
+    reportante: Prisma.$CuentaPayload<ExtArgs>
     adminAsignado: Prisma.$CuentaPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     motivo: string
+    fk_motivo: number
     comentarios: string | null
     fk_publicacion: string
-    fk_reportante: string | null
+    fk_reportante: string
     estado: $Enums.EstadoReportePublicacion
     fk_admin_asignado: string | null
     fechaCreacion: Date
@@ -1552,7 +1821,8 @@ readonly fields: ReportePublicacionFieldRefs;
 export interface Prisma__ReportePublicacionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   publicacion<T extends Prisma.PublicacionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PublicacionDefaultArgs<ExtArgs>>): Prisma.Prisma__PublicacionClient<runtime.Types.Result.GetResult<Prisma.$PublicacionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  reportante<T extends Prisma.ReportePublicacion$reportanteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReportePublicacion$reportanteArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  motivoReporte<T extends Prisma.MotivoReporteDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MotivoReporteDefaultArgs<ExtArgs>>): Prisma.Prisma__MotivoReporteClient<runtime.Types.Result.GetResult<Prisma.$MotivoReportePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  reportante<T extends Prisma.CuentaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CuentaDefaultArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   adminAsignado<T extends Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ReportePublicacion$adminAsignadoArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1585,6 +1855,7 @@ export interface Prisma__ReportePublicacionClient<T, Null = never, ExtArgs exten
 export interface ReportePublicacionFieldRefs {
   readonly id: Prisma.FieldRef<"ReportePublicacion", 'String'>
   readonly motivo: Prisma.FieldRef<"ReportePublicacion", 'String'>
+  readonly fk_motivo: Prisma.FieldRef<"ReportePublicacion", 'Int'>
   readonly comentarios: Prisma.FieldRef<"ReportePublicacion", 'String'>
   readonly fk_publicacion: Prisma.FieldRef<"ReportePublicacion", 'String'>
   readonly fk_reportante: Prisma.FieldRef<"ReportePublicacion", 'String'>
@@ -1995,25 +2266,6 @@ export type ReportePublicacionDeleteManyArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many ReportePublicacions to delete.
    */
   limit?: number
-}
-
-/**
- * ReportePublicacion.reportante
- */
-export type ReportePublicacion$reportanteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Cuenta
-   */
-  select?: Prisma.CuentaSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Cuenta
-   */
-  omit?: Prisma.CuentaOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CuentaInclude<ExtArgs> | null
-  where?: Prisma.CuentaWhereInput
 }
 
 /**

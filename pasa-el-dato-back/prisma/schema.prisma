@@ -237,6 +237,16 @@ model EstadoPublicacion {
   @@map("estado_publicacion")
 }
 
+// HU-REP-01: catálogo persistido de motivos de reporte de publicación.
+// El snapshot del nombre se guarda en ReportePublicacion.motivo.
+model MotivoReporte {
+  id                  Int                  @id @default(autoincrement())
+  nombre              String               @unique
+  reportesPublicacion ReportePublicacion[]
+
+  @@map("motivo_reporte")
+}
+
 enum EstadoReportePublicacion {
   PENDIENTE
   EN_PROCESO
@@ -278,9 +288,11 @@ model AuditoriaAdmin {
 model ReportePublicacion {
   id                    String                         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   motivo                String
+  // HU-REP-01: motivo del catálogo. `motivo` queda como snapshot del nombre.
+  fk_motivo             Int
   comentarios           String?
   fk_publicacion        String                         @db.Uuid
-  fk_reportante         String?                        @db.Uuid
+  fk_reportante         String                         @db.Uuid
   estado                EstadoReportePublicacion       @default(PENDIENTE)
   fk_admin_asignado     String?                        @db.Uuid
   fechaCreacion         DateTime                       @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
@@ -292,7 +304,8 @@ model ReportePublicacion {
   avisoVendedorFecha    DateTime?                      @map("aviso_vendedor_fecha") @db.Timestamptz(6)
 
   publicacion    Publicacion @relation(fields: [fk_publicacion], references: [id], onUpdate: NoAction)
-  reportante     Cuenta?     @relation("reportePublicacionReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
+  motivoReporte  MotivoReporte @relation(fields: [fk_motivo], references: [id], onUpdate: NoAction)
+  reportante     Cuenta      @relation("reportePublicacionReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
   adminAsignado  Cuenta?     @relation("reportePublicacionAdminAsignado", fields: [fk_admin_asignado], references: [id_cuenta], onUpdate: NoAction)
 
   @@index([estado, fechaCreacion], map: "idx_reporte_publicacion_estado_fecha")
@@ -478,11 +491,23 @@ enum ResolucionReporteUsuario {
   DESCARTE
 }
 
+// HU-REP-02: catálogo persistido de motivos de reporte de usuario.
+// `descripcion` sigue siendo el texto libre que muestra el admin.
+model MotivoReporteUsuario {
+  id              Int              @id @default(autoincrement())
+  nombre          String           @unique
+  reportesUsuario ReporteUsuario[]
+
+  @@map("motivo_reporte_usuario")
+}
+
 model ReporteUsuario {
   id                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   descripcion       String
+  // HU-REP-02: motivo del catálogo; `descripcion` queda como comentarios.
+  fk_motivo         Int
   fk_reportado      String                  @db.Uuid
-  fk_reportante     String?                 @db.Uuid
+  fk_reportante     String                  @db.Uuid
   estado            EstadoReporteUsuario    @default(PENDIENTE)
   fk_admin_asignado String?                 @db.Uuid
   fechaCreacion     DateTime                @default(now()) @map("fecha_creacion") @db.Timestamptz(6)
@@ -493,7 +518,8 @@ model ReporteUsuario {
   motivoBloqueo     String?                 @map("motivo_bloqueo")
 
   reportado   Cuenta  @relation("reporteUsuarioReportado", fields: [fk_reportado], references: [id_cuenta], onUpdate: NoAction)
-  reportante  Cuenta? @relation("reporteUsuarioReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
+  motivoReporteUsuario MotivoReporteUsuario @relation(fields: [fk_motivo], references: [id], onUpdate: NoAction)
+  reportante  Cuenta  @relation("reporteUsuarioReportante", fields: [fk_reportante], references: [id_cuenta], onUpdate: NoAction)
   adminAsignado Cuenta? @relation("reporteUsuarioAdminAsignado", fields: [fk_admin_asignado], references: [id_cuenta], onUpdate: NoAction)
 
   @@index([estado, fechaCreacion], map: "idx_reporte_usuario_estado_fecha")
