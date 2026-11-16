@@ -14,6 +14,8 @@ import type { Request } from 'express';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
@@ -21,6 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js';
+import { EstadoFavoritoRespuestaDto } from './dto/estado-favorito-respuesta.dto.js';
 import { ListarFavoritosQueryDto } from './dto/listar-favoritos-query.dto.js';
 import { ListarFavoritosRespuestaDto } from './dto/listar-favoritos-respuesta.dto.js';
 import { FavoritosService } from './favoritos.service.js';
@@ -68,11 +71,19 @@ export class FavoritosController {
   }
 
   @Get(':publicacionId')
+  @ApiOperation({
+    summary: 'Consultar el estado del favorito de una publicación',
+    description:
+      'Indica si la publicación está guardada como favorita activa por la cuenta autenticada (HU-FAV-01).',
+  })
+  @ApiOkResponse({ type: EstadoFavoritoRespuestaDto })
+  @ApiBadRequestResponse({ description: 'publicacionId no es un UUID válido.' })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida.' })
   async obtenerEstado(
     @Param('publicacionId', new ParseUUIDPipe({ version: '4' }))
     publicacionId: string,
     @Req() solicitud: SolicitudAutenticada,
-  ) {
+  ): Promise<EstadoFavoritoRespuestaDto> {
     return this.favoritosService.obtenerEstadoFavorito(
       publicacionId,
       solicitud.user!.idCuenta,
@@ -80,20 +91,37 @@ export class FavoritosController {
   }
 
   @Post(':publicacionId')
+  @ApiOperation({
+    summary: 'Marcar una publicación como favorita',
+    description:
+      'Guarda la publicación como favorita de la cuenta autenticada. Es idempotente: si el favorito estaba dado de baja lógicamente, se reactiva. Permite publicaciones Pausada o Vendida. Rechaza publicaciones propias (400) y no disponibles (404).',
+  })
+  @ApiCreatedResponse({ type: EstadoFavoritoRespuestaDto, description: 'Favorito activo.' })
+  @ApiBadRequestResponse({ description: 'publicacionId no es un UUID válido o es su propia publicación.' })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida.' })
+  @ApiNotFoundResponse({ description: 'Publicación no disponible.' })
   async marcar(
     @Param('publicacionId', new ParseUUIDPipe({ version: '4' }))
     publicacionId: string,
     @Req() solicitud: SolicitudAutenticada,
-  ) {
+  ): Promise<EstadoFavoritoRespuestaDto> {
     return this.favoritosService.marcarFavorito(publicacionId, solicitud.user!.idCuenta);
   }
 
   @Delete(':publicacionId')
+  @ApiOperation({
+    summary: 'Quitar una publicación de favoritos',
+    description:
+      'Da de baja lógicamente el favorito de la cuenta autenticada. Es idempotente: quitar un favorito inexistente responde igual, sin error. No afecta la publicación ni los favoritos de otros usuarios.',
+  })
+  @ApiOkResponse({ type: EstadoFavoritoRespuestaDto })
+  @ApiBadRequestResponse({ description: 'publicacionId no es un UUID válido.' })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida.' })
   async quitar(
     @Param('publicacionId', new ParseUUIDPipe({ version: '4' }))
     publicacionId: string,
     @Req() solicitud: SolicitudAutenticada,
-  ) {
+  ): Promise<EstadoFavoritoRespuestaDto> {
     return this.favoritosService.quitarFavorito(publicacionId, solicitud.user!.idCuenta);
   }
 }

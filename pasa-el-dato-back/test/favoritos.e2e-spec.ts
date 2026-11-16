@@ -493,4 +493,70 @@ describe('HU-FAV-01/02 (e2e) - Favoritos', () => {
       expect(vistos).toContain(id);
     }
   }, 30_000);
+
+  it('F8: rechaza marcar favorito de publicación inexistente, eliminada o de dueño bloqueado (404)', async () => {
+    const idCuentaA = await obtenerCuentaId(correoA);
+
+    // Publicación inexistente
+    await request(app.getHttpServer())
+      .post(`/api/favoritos/${randomUUID()}`)
+      .set('Cookie', cookieB)
+      .expect(404);
+
+    // Publicación eliminada
+    const eliminadaId = await crearPublicacion(idCuentaA);
+    await prisma.publicacion.update({
+      where: { id: eliminadaId },
+      data: { eliminado: true },
+    });
+    await request(app.getHttpServer())
+      .post(`/api/favoritos/${eliminadaId}`)
+      .set('Cookie', cookieB)
+      .expect(404);
+
+    // Publicación disponible pero con la cuenta del dueño bloqueada.
+    // Se restaura el dueño al final para no afectar otras pruebas.
+    const bloqueadaId = await crearPublicacion(idCuentaA);
+    try {
+      await prisma.cuenta.update({
+        where: { id_cuenta: idCuentaA },
+        data: { bloqueado: true },
+      });
+      await request(app.getHttpServer())
+        .post(`/api/favoritos/${bloqueadaId}`)
+        .set('Cookie', cookieB)
+        .expect(404);
+    } finally {
+      await prisma.cuenta.update({
+        where: { id_cuenta: idCuentaA },
+        data: { bloqueado: false },
+      });
+    }
+  }, 30_000);
+
+  it('F9: permite marcar favorito de publicación pausada o vendida', async () => {
+    const idCuentaA = await obtenerCuentaId(correoA);
+    const pausadaId = await crearPublicacion(idCuentaA, 'Pausada');
+    const vendidaId = await crearPublicacion(idCuentaA, 'Vendida');
+
+    for (const publicacionId of [pausadaId, vendidaId]) {
+      const marcado = await request(app.getHttpServer())
+        .post(`/api/favoritos/${publicacionId}`)
+        .set('Cookie', cookieB)
+        .expect(201);
+      expect(marcado.body).toEqual({ publicacionId, esFavorito: true });
+
+      const estado = await request(app.getHttpServer())
+        .get(`/api/favoritos/${publicacionId}`)
+        .set('Cookie', cookieB)
+        .expect(200);
+      expect(estado.body).toEqual({ publicacionId, esFavorito: true });
+
+      // Limpieza para no alterar el total de favoritos de otras pruebas.
+      await request(app.getHttpServer())
+        .delete(`/api/favoritos/${publicacionId}`)
+        .set('Cookie', cookieB)
+        .expect(200);
+    }
+  }, 30_000);
 });

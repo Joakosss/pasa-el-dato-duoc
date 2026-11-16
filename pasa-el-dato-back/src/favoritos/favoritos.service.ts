@@ -4,12 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
+import type { EstadoFavoritoRespuestaDto } from './dto/estado-favorito-respuesta.dto.js';
 import type { ListarFavoritosRespuestaDto } from './dto/listar-favoritos-respuesta.dto.js';
 
-export type EstadoFavoritoRespuestaDto = {
-  publicacionId: string;
-  esFavorito: boolean;
-};
+export type { EstadoFavoritoRespuestaDto } from './dto/estado-favorito-respuesta.dto.js';
 
 @Injectable()
 export class FavoritosService {
