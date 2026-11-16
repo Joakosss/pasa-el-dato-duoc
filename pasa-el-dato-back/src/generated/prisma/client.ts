@@ -172,6 +172,11 @@ export type NotificacionUsuario = Prisma.NotificacionUsuarioModel
  */
 export type ImagenPublicacion = Prisma.ImagenPublicacionModel
 /**
+ * Model MotivoReporteUsuario
+ * 
+ */
+export type MotivoReporteUsuario = Prisma.MotivoReporteUsuarioModel
+/**
  * Model ReporteUsuario
  * 
  */

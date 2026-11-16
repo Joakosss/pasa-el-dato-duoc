@@ -31,6 +31,7 @@ describe('HU-ADM-01 gestionar reportes de usuario (e2e)', () => {
   let idCuentaReportado: string;
   let idCuentaNoAdmin: string;
   let idSede: number;
+  let idMotivoReporte: number;
   let idReporte: string;
 
   const contrasenaAdministrador = 'admin-reportes-e2e-123';
@@ -54,6 +55,7 @@ describe('HU-ADM-01 gestionar reportes de usuario (e2e)', () => {
     const reporte = await prisma.reporteUsuario.create({
       data: {
         descripcion: 'Reporte e2e: conducta indebida',
+        fk_motivo: idMotivoReporte,
         fk_reportado: idCuentaReportado,
         fk_reportante: idCuentaNoAdmin,
         estado: 'PENDIENTE',
@@ -85,12 +87,18 @@ describe('HU-ADM-01 gestionar reportes de usuario (e2e)', () => {
 
     prisma = modulo.get(PrismaService);
 
-    const sede = await prisma.sede.findFirst({
-      where: { activa: true, eliminado: false },
-      select: { id: true },
-    });
-    if (!sede) throw new Error('El e2e requiere una sede activa');
+    const [sede, motivoReporte] = await Promise.all([
+      prisma.sede.findFirst({
+        where: { activa: true, eliminado: false },
+        select: { id: true },
+      }),
+      prisma.motivoReporteUsuario.findFirst({ select: { id: true } }),
+    ]);
+    if (!sede || !motivoReporte) {
+      throw new Error('El e2e requiere sede activa y catálogo de motivos');
+    }
     idSede = sede.id;
+    idMotivoReporte = motivoReporte.id;
 
     const sufijo = randomUUID();
 

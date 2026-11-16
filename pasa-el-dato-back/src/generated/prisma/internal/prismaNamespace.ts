@@ -423,6 +423,7 @@ export const ModelName = {
   NotificacionMarca: 'NotificacionMarca',
   NotificacionUsuario: 'NotificacionUsuario',
   ImagenPublicacion: 'ImagenPublicacion',
+  MotivoReporteUsuario: 'MotivoReporteUsuario',
   ReporteUsuario: 'ReporteUsuario',
   Favorito: 'Favorito',
   PalabraBloqueada: 'PalabraBloqueada'
@@ -441,7 +442,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "motivoReporte" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "calificacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "notificacionUsuario" | "imagenPublicacion" | "reporteUsuario" | "favorito" | "palabraBloqueada"
+    modelProps: "cuenta" | "marca" | "rolUsuario" | "sede" | "region" | "ciudad" | "comuna" | "escuela" | "carrera" | "usuario" | "log_api" | "refreshToken" | "accessTokenRevocado" | "tipoVenta" | "categoria" | "estadoPublicacion" | "motivoReporte" | "auditoriaAdmin" | "reportePublicacion" | "publicacion" | "calificacion" | "bannerPublicidad" | "bannerSede" | "notificacionMarca" | "notificacionUsuario" | "imagenPublicacion" | "motivoReporteUsuario" | "reporteUsuario" | "favorito" | "palabraBloqueada"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2369,6 +2370,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MotivoReporteUsuario: {
+      payload: Prisma.$MotivoReporteUsuarioPayload<ExtArgs>
+      fields: Prisma.MotivoReporteUsuarioFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MotivoReporteUsuarioFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MotivoReporteUsuarioFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>
+        }
+        findFirst: {
+          args: Prisma.MotivoReporteUsuarioFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MotivoReporteUsuarioFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>
+        }
+        findMany: {
+          args: Prisma.MotivoReporteUsuarioFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>[]
+        }
+        create: {
+          args: Prisma.MotivoReporteUsuarioCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>
+        }
+        createMany: {
+          args: Prisma.MotivoReporteUsuarioCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MotivoReporteUsuarioCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>[]
+        }
+        delete: {
+          args: Prisma.MotivoReporteUsuarioDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>
+        }
+        update: {
+          args: Prisma.MotivoReporteUsuarioUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>
+        }
+        deleteMany: {
+          args: Prisma.MotivoReporteUsuarioDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MotivoReporteUsuarioUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MotivoReporteUsuarioUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>[]
+        }
+        upsert: {
+          args: Prisma.MotivoReporteUsuarioUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MotivoReporteUsuarioPayload>
+        }
+        aggregate: {
+          args: Prisma.MotivoReporteUsuarioAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMotivoReporteUsuario>
+        }
+        groupBy: {
+          args: Prisma.MotivoReporteUsuarioGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MotivoReporteUsuarioGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MotivoReporteUsuarioCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MotivoReporteUsuarioCountAggregateOutputType> | number
+        }
+      }
+    }
     ReporteUsuario: {
       payload: Prisma.$ReporteUsuarioPayload<ExtArgs>
       fields: Prisma.ReporteUsuarioFieldRefs
@@ -2942,9 +3017,18 @@ export const ImagenPublicacionScalarFieldEnum = {
 export type ImagenPublicacionScalarFieldEnum = (typeof ImagenPublicacionScalarFieldEnum)[keyof typeof ImagenPublicacionScalarFieldEnum]
 
 
+export const MotivoReporteUsuarioScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre'
+} as const
+
+export type MotivoReporteUsuarioScalarFieldEnum = (typeof MotivoReporteUsuarioScalarFieldEnum)[keyof typeof MotivoReporteUsuarioScalarFieldEnum]
+
+
 export const ReporteUsuarioScalarFieldEnum = {
   id: 'id',
   descripcion: 'descripcion',
+  fk_motivo: 'fk_motivo',
   fk_reportado: 'fk_reportado',
   fk_reportante: 'fk_reportante',
   estado: 'estado',
@@ -3394,6 +3478,7 @@ export type GlobalOmitConfig = {
   notificacionMarca?: Prisma.NotificacionMarcaOmit
   notificacionUsuario?: Prisma.NotificacionUsuarioOmit
   imagenPublicacion?: Prisma.ImagenPublicacionOmit
+  motivoReporteUsuario?: Prisma.MotivoReporteUsuarioOmit
   reporteUsuario?: Prisma.ReporteUsuarioOmit
   favorito?: Prisma.FavoritoOmit
   palabraBloqueada?: Prisma.PalabraBloqueadaOmit

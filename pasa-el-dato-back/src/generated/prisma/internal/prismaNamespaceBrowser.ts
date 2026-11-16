@@ -77,6 +77,7 @@ export const ModelName = {
   NotificacionMarca: 'NotificacionMarca',
   NotificacionUsuario: 'NotificacionUsuario',
   ImagenPublicacion: 'ImagenPublicacion',
+  MotivoReporteUsuario: 'MotivoReporteUsuario',
   ReporteUsuario: 'ReporteUsuario',
   Favorito: 'Favorito',
   PalabraBloqueada: 'PalabraBloqueada'
@@ -410,9 +411,18 @@ export const ImagenPublicacionScalarFieldEnum = {
 export type ImagenPublicacionScalarFieldEnum = (typeof ImagenPublicacionScalarFieldEnum)[keyof typeof ImagenPublicacionScalarFieldEnum]
 
 
+export const MotivoReporteUsuarioScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre'
+} as const
+
+export type MotivoReporteUsuarioScalarFieldEnum = (typeof MotivoReporteUsuarioScalarFieldEnum)[keyof typeof MotivoReporteUsuarioScalarFieldEnum]
+
+
 export const ReporteUsuarioScalarFieldEnum = {
   id: 'id',
   descripcion: 'descripcion',
+  fk_motivo: 'fk_motivo',
   fk_reportado: 'fk_reportado',
   fk_reportante: 'fk_reportante',
   estado: 'estado',

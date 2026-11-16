@@ -990,12 +990,10 @@ export type CuentaUpdateOneRequiredWithoutReportesRecibidosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutReportesRecibidosInput, Prisma.CuentaUpdateWithoutReportesRecibidosInput>, Prisma.CuentaUncheckedUpdateWithoutReportesRecibidosInput>
 }
 
-export type CuentaUpdateOneWithoutReportesEmitidosNestedInput = {
+export type CuentaUpdateOneRequiredWithoutReportesEmitidosNestedInput = {
   create?: Prisma.XOR<Prisma.CuentaCreateWithoutReportesEmitidosInput, Prisma.CuentaUncheckedCreateWithoutReportesEmitidosInput>
   connectOrCreate?: Prisma.CuentaCreateOrConnectWithoutReportesEmitidosInput
   upsert?: Prisma.CuentaUpsertWithoutReportesEmitidosInput
-  disconnect?: Prisma.CuentaWhereInput | boolean
-  delete?: Prisma.CuentaWhereInput | boolean
   connect?: Prisma.CuentaWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CuentaUpdateToOneWithWhereWithoutReportesEmitidosInput, Prisma.CuentaUpdateWithoutReportesEmitidosInput>, Prisma.CuentaUncheckedUpdateWithoutReportesEmitidosInput>
 }
