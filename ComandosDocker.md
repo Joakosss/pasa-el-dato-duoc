@@ -136,5 +136,9 @@ podman compose exec back pnpm db:seed:dev
 
 - `curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000` # front vivo? (200)
 
-# Levantar la app
-- env EXPO_PUBLIC_API_URL=http://192.168.1.102:3001/api npx expo start --tunnel
+# Levantar la app expo go
+- `env EXPO_PUBLIC_API_URL=http://192.168.1.102:3001/api npx expo start --tunnel`
+
+# Levantar app con servidor Metro
+- `cd pasa-el-dato-mobile && npx expo start --dev-client --lan`
+

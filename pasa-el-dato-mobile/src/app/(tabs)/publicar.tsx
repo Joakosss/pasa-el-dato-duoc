@@ -16,8 +16,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AsistenteIaPublicacion } from '@/components/publicar/AsistenteIaPublicacion';
 import { SelectorImagenes, type ImagenVistaPrevia } from '@/components/publicar/SelectorImagenes';
 import { ApiError } from '@/lib/api';
+import {
+  analizarPublicacionConIa,
+  type AnalisisIaPublicacion,
+} from '@/lib/api/ia-publicaciones';
 import {
   type CatalogoBasico,
   type SedeCatalogo,
@@ -155,6 +160,14 @@ export default function PublicarScreen() {
   const [errorEnvio, setErrorEnvio] = useState<string | undefined>();
   const [publicacionExitosa, setPublicacionExitosa] = useState(false);
   const [publicacionCreadaId, setPublicacionCreadaId] = useState<string | undefined>();
+  const [analisisIa, setAnalisisIa] = useState<AnalisisIaPublicacion | undefined>();
+  const [analizandoIa, setAnalizandoIa] = useState(false);
+  const [errorIa, setErrorIa] = useState<string | undefined>();
+
+  const invalidarAnalisisIa = () => {
+    setAnalisisIa(undefined);
+    setErrorIa(undefined);
+  };
 
   const cargarCatalogos = async () => {
     setCargandoCatalogos(true);
@@ -217,6 +230,7 @@ export default function PublicarScreen() {
     }));
 
     setImagenes((previas) => [...previas, ...nuevasImagenes].slice(0, IMAGENES_MAX));
+    invalidarAnalisisIa();
     limpiarError('imagenes');
   };
 
@@ -265,6 +279,45 @@ export default function PublicarScreen() {
 
   const quitarImagen = (id: string) => {
     setImagenes((previas) => previas.filter((imagen) => imagen.id !== id));
+    invalidarAnalisisIa();
+  };
+
+  const analizarConIa = async () => {
+    if (!accessToken || !titulo.trim() || !descripcion.trim()) {
+      setErrorIa('Completa título y descripción antes de analizar con IA.');
+      return;
+    }
+
+    setAnalizandoIa(true);
+    setErrorIa(undefined);
+
+    try {
+      setAnalisisIa(
+        await analizarPublicacionConIa(
+          {
+            titulo,
+            descripcion,
+            precio,
+            imagenes: imagenes.map((imagen) => ({
+              uri: imagen.uri,
+              nombre: imagen.nombre,
+              mimeType: imagen.mimeType,
+            })),
+          },
+          accessToken,
+        ),
+      );
+    } catch (error: unknown) {
+      if (error instanceof ApiError && error.status === 401) {
+        cerrarSesion();
+        router.replace('/auth/login');
+        return;
+      }
+
+      setErrorIa(mensajeError(error, 'No pudimos analizar la publicación. Reintenta.'));
+    } finally {
+      setAnalizandoIa(false);
+    }
   };
 
   const limpiarFormulario = () => {
@@ -277,6 +330,7 @@ export default function PublicarScreen() {
     setDescripcion('');
     setErrores({});
     setErrorEnvio(undefined);
+    invalidarAnalisisIa();
   };
 
   const publicar = async () => {
@@ -298,6 +352,14 @@ export default function PublicarScreen() {
 
     if (!accessToken || !categoriaId || !tipoVentaId || !sedeId) {
       setErrorEnvio('Tu sesión o los catálogos no están disponibles. Reintenta.');
+      return;
+    }
+
+    if (analisisIa?.estadoModeracion === 'BLOQUEADA') {
+      setErrorEnvio(
+        'El asistente IA detectó contenido de alto riesgo. Corrige la publicación antes de enviarla.',
+      );
+      scroll.current?.scrollTo({ y: 0, animated: true });
       return;
     }
 
@@ -398,6 +460,7 @@ export default function PublicarScreen() {
               valor={titulo}
               onCambio={(valor) => {
                 setTitulo(valor);
+                invalidarAnalisisIa();
                 limpiarError('titulo');
               }}
               placeholder="Ej: Calculadora científica programable"
@@ -411,6 +474,7 @@ export default function PublicarScreen() {
               valor={precio}
               onCambio={(valor) => {
                 setPrecio(formatearPrecioClp(valor));
+                invalidarAnalisisIa();
                 limpiarError('precio');
               }}
               placeholder="12.000"
@@ -441,6 +505,7 @@ export default function PublicarScreen() {
               valor={descripcion}
               onCambio={(valor) => {
                 setDescripcion(valor);
+                invalidarAnalisisIa();
                 limpiarError('descripcion');
               }}
               placeholder="Cuenta el estado del producto, qué incluye y cómo coordinar la entrega."
@@ -459,6 +524,35 @@ export default function PublicarScreen() {
               onAbrir={() => setSelectorActivo('sede')}
             />
           </View>
+
+          <AsistenteIaPublicacion
+            analisis={analisisIa}
+            cargando={analizandoIa}
+            error={errorIa}
+            deshabilitado={publicando}
+            puedeAnalizar={Boolean(accessToken && titulo.trim() && descripcion.trim())}
+            onAnalizar={() => void analizarConIa()}
+            onAplicarTitulo={() => {
+              if (!analisisIa?.tituloSugerido) return;
+              setTitulo(analisisIa.tituloSugerido);
+              setAnalisisIa((analisisActual) =>
+                analisisActual
+                  ? { ...analisisActual, tituloSugerido: undefined }
+                  : undefined,
+              );
+              setErrorIa(undefined);
+            }}
+            onAplicarDescripcion={() => {
+              if (!analisisIa?.descripcionSugerida) return;
+              setDescripcion(analisisIa.descripcionSugerida);
+              setAnalisisIa((analisisActual) =>
+                analisisActual
+                  ? { ...analisisActual, descripcionSugerida: undefined }
+                  : undefined,
+              );
+              setErrorIa(undefined);
+            }}
+          />
 
           {errorCatalogos ? (
             <View style={styles.errorBox}>
