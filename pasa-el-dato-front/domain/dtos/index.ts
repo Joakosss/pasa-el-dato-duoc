@@ -40,4 +40,13 @@ export type {
   RechazarBannerRequestDTO,
   BannerActivoDTO,
   BannersActivosRespuestaDTO,
+  BannerMarcaDTO,
+  ListarBannersMarcaQueryDTO,
+  PaginaBannersMarcaDTO,
 } from "./banner.dto";
+export type {
+  FavoritoDTO,
+  ListarFavoritosQueryDTO,
+  PaginaFavoritosDTO,
+} from "./favorito.dto";
+

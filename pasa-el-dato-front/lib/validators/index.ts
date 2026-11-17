@@ -5,4 +5,4 @@ export {
   validarCorreoComercial,
 } from "./correo-comercial";
 export { validarClave, validarContrasenaMvp, validarCambioClave, MIN_CLAVE_MVP, MAX_CLAVE_MVP } from "./clave";
-export { normalizarTelefono, validarTelefono } from "./telefono";
+export { normalizarTelefono, validarTelefono, formatearTelefonoChile } from "./telefono";

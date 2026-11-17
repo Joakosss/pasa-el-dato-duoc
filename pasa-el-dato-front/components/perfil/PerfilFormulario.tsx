@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
+import { Icono } from "@/components/ui/Icono";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { ROUTES } from "@/config/constants";
@@ -235,6 +236,7 @@ export function PerfilFormulario({ idCuenta, perfil }: PerfilFormularioProps) {
             size="md"
             disabled={actualizarMutation.isPending}
           >
+            <Icono nombre="check" size={18} />
             {actualizarMutation.isPending ? "Guardando…" : "Guardar cambios"}
           </Button>
         </div>

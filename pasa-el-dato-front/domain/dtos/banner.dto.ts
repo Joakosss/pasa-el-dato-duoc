@@ -74,3 +74,29 @@ export interface BannersActivosRespuestaDTO {
   items: BannerActivoDTO[];
   nextCursor: string | null;
 }
+
+// ---- Portal de marca (listado propio) ----
+
+// Item de GET /publicidad/banners: banners de la marca autenticada, con o
+// sin filtro de estado (la pertenencia la resuelve el back desde la sesión).
+export interface BannerMarcaDTO {
+  id: string;
+  imagen: string;
+  mensaje: string;
+  fechaInicio: string;
+  fechaFin: string;
+  estado: EstadoBannerDTO;
+  sedes: Array<{ id: number; nombre: string }>;
+}
+
+// Parámetros de GET /publicidad/banners (cursor + filtro opcional de estado).
+export interface ListarBannersMarcaQueryDTO {
+  estado?: EstadoBannerDTO;
+  limit?: number;
+  cursor?: string;
+}
+
+export interface PaginaBannersMarcaDTO {
+  items: BannerMarcaDTO[];
+  nextCursor: string | null;
+}

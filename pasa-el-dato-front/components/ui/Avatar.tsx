@@ -9,9 +9,19 @@ const SIZES: Record<AvatarSize, string> = {
   xl: "w-14 h-14 text-base",
 };
 
+// "perfil": variante con acento gold (hero del perfil, espejo del mobile).
+// No usar en feed/chat: ahí sigue la variante neutra por defecto.
+const VARIANTES = {
+  default: "bg-gray-200 text-navy",
+  perfil: "bg-navy text-gold ring-2 ring-gold",
+} as const;
+
+type AvatarVariant = keyof typeof VARIANTES;
+
 interface AvatarProps {
   name?: string;
   size?: AvatarSize;
+  variant?: AvatarVariant;
   className?: string;
 }
 
@@ -21,13 +31,19 @@ function initials(name?: string): string {
   return parts.map((p) => p[0]?.toUpperCase()).join("");
 }
 
-export function Avatar({ name, size = "md", className }: AvatarProps) {
+export function Avatar({
+  name,
+  size = "md",
+  variant = "default",
+  className,
+}: AvatarProps) {
   return (
     <div
       aria-label={name ? `Avatar de ${name}` : "Avatar placeholder"}
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-full bg-gray-200 font-bold text-navy",
+        "flex shrink-0 items-center justify-center rounded-full font-bold",
         SIZES[size],
+        VARIANTES[variant],
         className,
       )}
     >

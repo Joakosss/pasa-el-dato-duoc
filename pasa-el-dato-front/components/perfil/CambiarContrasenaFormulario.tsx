@@ -3,8 +3,8 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { Button, PasswordInput } from "@/components/ui";
+import { Button, Modal, PasswordInput } from "@/components/ui";
+import { Icono } from "@/components/ui/Icono";
 import { ROUTES } from "@/config/constants";
 import { useCambiarContrasena } from "@/hooks/use-cambiar-contrasena";
 import { ApiError } from "@/lib/api";
@@ -31,6 +31,8 @@ export function CambiarContrasenaFormulario({
   const [confirmacion, setConfirmacion] = useState("");
   const [errores, setErrores] = useState<ErroresFormulario>({});
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
+  // S8.3: el éxito muestra un modal de confirmación en vez de saltar a login.
+  const [exitoAbierto, setExitoAbierto] = useState(false);
 
   const cambiarMutation = useCambiarContrasena(idCuenta);
 
@@ -65,9 +67,7 @@ export function CambiarContrasenaFormulario({
           setNueva("");
           setConfirmacion("");
           setErrores({});
-          toast.success("Contraseña actualizada. Inicia sesión de nuevo.");
-          cerrarSesion();
-          router.replace(ROUTES.login);
+          setExitoAbierto(true);
         },
         onError: (error: unknown) => {
           if (error instanceof ApiError && esSesionInvalida(error)) {
@@ -96,14 +96,23 @@ export function CambiarContrasenaFormulario({
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6">
-      <header>
-        <h1 className="text-xl font-bold text-navy sm:text-2xl">
-          Cambiar contraseña
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Ingresa tu contraseña actual y una nueva de 8 a 72 caracteres, sin
-          espacios al inicio o al final.
-        </p>
+      {/* S8.1: cabecera con ícono en círculo (patrón mobile). */}
+      <header className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-navy text-gold"
+        >
+          <Icono nombre="contrasena" size={22} />
+        </span>
+        <div className="min-w-0">
+          <h1 className="text-xl font-bold text-navy sm:text-2xl">
+            Cambiar contraseña
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Ingresa tu contraseña actual y una nueva de 8 a 72 caracteres, sin
+            espacios al inicio o al final. Se cerrarán todas tus sesiones.
+          </p>
+        </div>
       </header>
 
       <form
@@ -174,6 +183,44 @@ export function CambiarContrasenaFormulario({
           </Button>
         </div>
       </form>
+
+      {/* S8.3: confirmación de éxito; la sesión se cierra al salir. */}
+      <Modal
+        abierto={exitoAbierto}
+        titulo="Contraseña actualizada"
+        onCerrar={() => {
+          setExitoAbierto(false);
+          cerrarSesion();
+          router.replace(ROUTES.login);
+        }}
+        pie={
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            onClick={() => {
+              setExitoAbierto(false);
+              cerrarSesion();
+              router.replace(ROUTES.login);
+            }}
+          >
+            Ir a iniciar sesión
+          </Button>
+        }
+      >
+        <div className="flex flex-col items-center gap-4 text-center">
+          <span
+            aria-hidden="true"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-gold text-navy"
+          >
+            <Icono nombre="check" size={34} />
+          </span>
+          <p className="text-sm leading-relaxed text-gray-600">
+            Tu contraseña fue cambiada correctamente. Por seguridad, debes
+            iniciar sesión nuevamente.
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 }

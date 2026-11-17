@@ -280,6 +280,26 @@ describe('Listados de banners de marca y catálogo de marcas (e2e)', () => {
         );
       }
     });
+
+    it('filtra por estado cuando se envía el parámetro', async () => {
+      const respuesta = await request(app.getHttpServer())
+        .get('/api/publicidad/banners?estado=RECHAZADO')
+        .set('Cookie', cookieMarcaUno)
+        .expect(200);
+
+      expect(respuesta.body.items).toHaveLength(1);
+      expect(respuesta.body.items[0].estado).toBe('RECHAZADO');
+      expect(respuesta.body.items[0].mensaje).toBe(
+        'Banner propio-rechazado',
+      );
+    });
+
+    it('rechaza con 400 un estado inválido', async () => {
+      await request(app.getHttpServer())
+        .get('/api/publicidad/banners?estado=ACTIVO')
+        .set('Cookie', cookieMarcaUno)
+        .expect(400);
+    });
   });
 
   describe('GET /api/publicidad/banners/aprobados', () => {

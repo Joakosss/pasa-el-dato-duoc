@@ -30,3 +30,27 @@ export function validarTelefono(valor: string): ValidacionTelefono {
   }
   return { ok: true, normalizado };
 }
+
+// Formato de UI `+56 9 3651 7901` (espejo de formatearTelefonoChile del
+// mobile). El back guarda 8 dígitos sin prefijo, así que se recupera el 9.
+export function formatearTelefonoChile(valor: string): string {
+  let digitos = valor.replace(/\D/g, "");
+
+  if (digitos.startsWith("56")) {
+    digitos = digitos.slice(2);
+  }
+  if (digitos.length === 8) {
+    digitos = `9${digitos}`;
+  }
+  digitos = digitos.slice(0, 9);
+
+  if (!digitos) return "";
+
+  const grupos = [
+    digitos.slice(0, 1),
+    digitos.slice(1, 5),
+    digitos.slice(5, 9),
+  ].filter(Boolean);
+
+  return `+56 ${grupos.join(" ")}`;
+}

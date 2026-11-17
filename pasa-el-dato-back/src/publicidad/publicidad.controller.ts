@@ -46,6 +46,7 @@ import { CrearBannerPublicidadDto } from './dto/crear-banner-publicidad.dto.js';
 import { EditarBannerPublicidadDto } from './dto/editar-banner-publicidad.dto.js';
 import { ListarBannersActivosQueryDto } from './dto/listar-banners-activos.query.dto.js';
 import { ListarBannersActivosRespuestaDto } from './dto/listar-banners-activos-respuesta.dto.js';
+import { ListarBannersMarcaQueryDto } from './dto/listar-banners-marca.query.dto.js';
 import { ListarBannersMarcaRespuestaDto } from './dto/listar-banners-marca-respuesta.dto.js';
 import {
   CAMPO_IMAGEN_BANNER,
@@ -125,6 +126,12 @@ export class PublicidadController {
     format: 'uuid',
     description: 'ID del último banner recibido en la página anterior',
   })
+  @ApiQuery({
+    name: 'estado',
+    required: false,
+    enum: ['PENDIENTE', 'APROBADO', 'RECHAZADO'],
+    description: 'Filtra por estado; si se omite devuelve todos',
+  })
   @ApiOkResponse({ type: ListarBannersMarcaRespuestaDto })
   @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
   @ApiForbiddenResponse({
@@ -133,7 +140,7 @@ export class PublicidadController {
   @ApiBadRequestResponse({ description: 'Parámetros de paginación inválidos' })
   async listarPropios(
     @Req() solicitud: Request & { user?: SesionAutenticada },
-    @Query() query: ListarBannersActivosQueryDto,
+    @Query() query: ListarBannersMarcaQueryDto,
   ): Promise<ListarBannersMarcaRespuestaDto> {
     const user = solicitud.user;
     if (!user) {
@@ -144,6 +151,7 @@ export class PublicidadController {
       user.idCuenta,
       query.limit,
       query.cursor,
+      query.estado,
     );
   }
 

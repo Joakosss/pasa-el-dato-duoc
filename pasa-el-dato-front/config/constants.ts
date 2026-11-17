@@ -14,6 +14,7 @@ export const ROUTES = {
   misPublicaciones: "/miperfil/publicaciones",
   miPerfilEditar: "/miperfil/editar",
   miPerfilSeguridad: "/miperfil/seguridad",
+  favoritos: "/favoritos",
   product: "/product/placeholder",
   chats: "/chats",
   publish: "/publicar",

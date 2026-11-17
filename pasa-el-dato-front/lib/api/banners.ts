@@ -2,6 +2,8 @@ import type {
   BannerCreadoDTO,
   CrearBannerRequestDTO,
   BannersActivosRespuestaDTO,
+  ListarBannersMarcaQueryDTO,
+  PaginaBannersMarcaDTO,
 } from "@/domain/dtos/banner.dto";
 import { apiClient } from "./index";
 
@@ -32,4 +34,19 @@ export async function listarBannersActivosApi(
     "/publicidad/banners/activos",
     { query: { limit } },
   );
+}
+
+// GET /publicidad/banners (portal de marca) — exige sesión con rol Marca
+// (403 para el resto). Devuelve los banners de la marca autenticada; el
+// filtro `estado` es opcional y la pertenencia la resuelve el back.
+export async function listarBannersMarcaApi(
+  dto: ListarBannersMarcaQueryDTO = {},
+): Promise<PaginaBannersMarcaDTO> {
+  return apiClient.get<PaginaBannersMarcaDTO>("/publicidad/banners", {
+    query: {
+      estado: dto.estado,
+      limit: dto.limit,
+      cursor: dto.cursor,
+    },
+  });
 }

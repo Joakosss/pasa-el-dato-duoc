@@ -35,7 +35,7 @@ function construirFecha(fecha: string, cierreDeDia: boolean): string {
 
 // Creación de banner publicitario (HU-PU-01): imagen, mensaje, vigencia y
 // sedes destinatarias. En éxito muestra el estado PENDIENTE que devuelve el
-// back; "Mis publicidades" no lista banners porque no tiene endpoint propio.
+// back; el listado queda en "Mis publicidades".
 export function CrearPublicidad() {
   const { sedes, isCargando, error: errorSedes, reintentar } = useSedes();
   const crearBanner = useCrearBanner();

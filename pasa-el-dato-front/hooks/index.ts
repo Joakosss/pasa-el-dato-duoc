@@ -37,3 +37,6 @@ export {
   useRechazarBanner,
 } from "./use-banners-admin";
 export { useBannersActivos, LIMITE_BANNERS_ACTIVOS } from "./use-banners-activos";
+export { useBannersMarca, LIMITE_BANNERS_MARCA } from "./use-banners-marca";
+export { useFavoritos, PAGE_SIZE_FAVORITOS } from "./use-favoritos";
+export { useContadorFavoritos } from "./use-contador-favoritos";

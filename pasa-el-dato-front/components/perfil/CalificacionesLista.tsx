@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { Estrellas } from "@/components/ui/Estrellas";
 import { useCalificacionesRecibidas } from "@/hooks/use-calificaciones-recibidas";
 
 // HU-CAL-02: listado de calificaciones recibidas, más recientes primero,
@@ -75,10 +76,11 @@ export function CalificacionesLista({ idCuenta }: { idCuenta: string }) {
           >
             <div className="flex items-center justify-between gap-2">
               <span
-                className="text-sm font-bold text-navy"
+                className="flex items-center gap-2 text-sm font-bold text-navy"
                 aria-label={`Puntaje ${calificacion.puntaje} de 5`}
               >
-                ★ {calificacion.puntaje}/5
+                <Estrellas valor={calificacion.puntaje} size={14} />
+                <span aria-hidden="true">{calificacion.puntaje}/5</span>
               </span>
               <time
                 className="text-xs text-gray-400"

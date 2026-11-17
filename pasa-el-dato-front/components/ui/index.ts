@@ -5,5 +5,7 @@ export { Modal } from "./Modal";
 export { Card } from "./Card";
 export { Badge } from "./Badge";
 export { Avatar } from "./Avatar";
+export { Estrellas } from "./Estrellas";
+export { Icono, type IconoNombre } from "./Icono";
 export { Select } from "./Select";
 export { Textarea } from "./Textarea";
