@@ -15,6 +15,9 @@ export interface ProductCardData {
   seller?: string;
   sponsored?: boolean;
   featured?: boolean;
+  // Banner publicitario intercalado (HU-PU-05): ProductGrid lo renderiza
+  // como BannerCard, sin enlazar a un producto.
+  banner?: boolean;
   size?: CardSize;
 }
 

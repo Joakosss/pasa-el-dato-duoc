@@ -9,6 +9,7 @@ export const ROUTES = {
   register: "/register",
   dashboard: "/dashboard",
   dashboardMarca: "/dashboard/marca",
+  dashboardPublicidad: "/dashboard/publicidad",
   miPerfil: "/miperfil",
   misPublicaciones: "/miperfil/publicaciones",
   miPerfilEditar: "/miperfil/editar",

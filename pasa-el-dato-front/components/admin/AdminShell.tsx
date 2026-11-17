@@ -7,7 +7,7 @@ import { ROUTES } from "@/config/constants";
 import { cn } from "@/lib/utils/cn";
 import { selectRol, useSesionStore } from "@/stores/sesion-store";
 
-type TabAdmin = "dashboard" | "marcas";
+type TabAdmin = "dashboard" | "marcas" | "publicidad";
 
 interface ItemNav {
   label: string;
@@ -18,11 +18,27 @@ interface ItemNav {
 const NAV: ItemNav[] = [
   { label: "Dashboard", href: ROUTES.dashboard, tab: "dashboard" },
   { label: "Marcas", href: ROUTES.dashboardMarca, tab: "marcas" },
+  { label: "Publicidad", href: ROUTES.dashboardPublicidad, tab: "publicidad" },
   { label: "Publicaciones", href: "#" },
   { label: "Usuarios", href: "#" },
   { label: "Reportes", href: "#" },
   { label: "Configuración", href: "#" },
 ];
+
+const ENCABEZADO: Record<TabAdmin, { titulo: string; descripcion: string }> = {
+  dashboard: {
+    titulo: "Panel de Administración",
+    descripcion: "Resumen general de la plataforma.",
+  },
+  marcas: {
+    titulo: "Gestión de marcas",
+    descripcion: "Crea y autoriza cuentas de marca para publicidad.",
+  },
+  publicidad: {
+    titulo: "Publicidad",
+    descripcion: "Revisa los banners pendientes y resuélvelos.",
+  },
+};
 
 interface AdminShellProps {
   tab: TabAdmin;
@@ -62,8 +78,12 @@ export function AdminShell({ tab, children }: AdminShellProps) {
   const esActivo = (item: ItemNav) => {
     if (item.tab === "dashboard") return pathname === ROUTES.dashboard;
     if (item.tab === "marcas") return pathname.startsWith(ROUTES.dashboardMarca);
+    if (item.tab === "publicidad")
+      return pathname.startsWith(ROUTES.dashboardPublicidad);
     return false;
   };
+
+  const encabezado = ENCABEZADO[tab];
 
   const claseNavEscritorio = (activo: boolean) =>
     cn(
@@ -135,15 +155,9 @@ export function AdminShell({ tab, children }: AdminShellProps) {
 
         <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold text-navy">
-              {tab === "dashboard"
-                ? "Panel de Administración"
-                : "Gestión de marcas"}
-            </h1>
+            <h1 className="text-xl font-bold text-navy">{encabezado.titulo}</h1>
             <p className="mt-1 text-sm text-gray-500">
-              {tab === "dashboard"
-                ? "Resumen general de la plataforma."
-                : "Crea y autoriza cuentas de marca para publicidad."}
+              {encabezado.descripcion}
             </p>
           </div>
           {tab === "dashboard" ? (

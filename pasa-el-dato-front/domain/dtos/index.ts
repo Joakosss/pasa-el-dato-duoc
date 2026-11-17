@@ -30,3 +30,14 @@ export type {
   CrearMarcaAdminRequestDTO,
   MarcaAdminCreadaDTO,
 } from "./marca.dto";
+export type {
+  EstadoBannerDTO,
+  CrearBannerRequestDTO,
+  BannerCreadoDTO,
+  BannerAdminDTO,
+  ListarBannersAdminQueryDTO,
+  PaginaBannersAdminDTO,
+  RechazarBannerRequestDTO,
+  BannerActivoDTO,
+  BannersActivosRespuestaDTO,
+} from "./banner.dto";

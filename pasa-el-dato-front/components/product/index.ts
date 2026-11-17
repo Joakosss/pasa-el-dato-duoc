@@ -1,4 +1,5 @@
 export { ProductCard, type ProductCardData, type CardSize } from "./ProductCard";
+export { BannerCard } from "./BannerCard";
 export { ProductCardSkeleton } from "./ProductCardSkeleton";
 export { ProductGrid } from "./ProductGrid";
 export { ProductGridSkeleton } from "./ProductGridSkeleton";
