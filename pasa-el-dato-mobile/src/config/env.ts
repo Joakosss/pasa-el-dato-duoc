@@ -1,8 +1,6 @@
-function getEnv(key: string, fallback = ""): string {
-    return process.env[key] ?? fallback;
-}
-
 export const env = {
-    apiUrl: getEnv("EXPO_PUBLIC_API_URL", "http://192.168.1.102:3001/api"),
-    appName: getEnv("EXPO_PUBLIC_APP_NAME", "Pasa el Dato"),
+    apiUrl:
+        process.env.EXPO_PUBLIC_API_URL ?? "http://10.0.2.2:3001/api",
+    appName: process.env.EXPO_PUBLIC_APP_NAME ?? "Pasa el Dato",
+    mapboxAccessToken: process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ?? "",
 } as const;

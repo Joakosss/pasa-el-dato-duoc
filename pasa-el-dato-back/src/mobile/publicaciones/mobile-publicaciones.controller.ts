@@ -102,7 +102,12 @@ export class MobilePublicacionesController {
           descripcion: publicacion.descripcion,
           precio: publicacion.precio,
           estado: publicacion.estadoPublicacion,
-          sede: { id: publicacion.sede.id, nombre: publicacion.sede.nombre },
+          sede: {
+            id: publicacion.sede.id,
+            nombre: publicacion.sede.nombre,
+            latitud: publicacion.sede.latitud,
+            longitud: publicacion.sede.longitud,
+          },
           tipoVenta: publicacion.tipoVenta,
           categoria: publicacion.categoria,
           imagenes: publicacion.imagenes,

@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/Avatar';
 import { EstrellasMomentaneo } from '@/components/ui/EstrellasMomentaneo';
+import { ApiError } from '@/lib/api';
 import {
   activarCalificacionPublicacion,
   cerrarVentaPublicacion,
@@ -33,12 +34,10 @@ import {
   crearSocketChat,
   type SocketChat,
 } from '@/lib/chat/chat-socket';
-import {
-  useEvaluacionesMomentaneoStore,
-  type RolEvaluacionMomentaneo,
-} from '@/stores/evaluaciones-momentaneo-store';
 import { selectAccessToken, selectSesion, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
+
+type RolTransaccion = 'vendedor' | 'comprador';
 
 function hora(iso: string): string {
   const fecha = new Date(iso);
@@ -68,7 +67,7 @@ export default function ConversacionChatScreen() {
     contraparteCuentaId?: string;
     contraparteEnLinea?: string;
     publicacionId?: string;
-    rolEnTransaccion?: RolEvaluacionMomentaneo;
+    rolEnTransaccion?: RolTransaccion;
   }>();
   const accessToken = useSesionStore(selectAccessToken);
   const sesion = useSesionStore(selectSesion);
@@ -84,18 +83,8 @@ export default function ConversacionChatScreen() {
   const [errorCalificacion, setErrorCalificacion] = useState<string | null>(null);
   const [estrellasSeleccionadas, setEstrellasSeleccionadas] = useState(0);
   const [comentarioEvaluacion, setComentarioEvaluacion] = useState('');
-  const publicacionesVendidasMomentaneo = useEvaluacionesMomentaneoStore(
-    (estado) => estado.publicacionesVendidasMomentaneo,
-  );
-  const evaluacionesMomentaneo = useEvaluacionesMomentaneoStore(
-    (estado) => estado.evaluacionesMomentaneo,
-  );
-  const marcarPublicacionVendidaMomentaneo = useEvaluacionesMomentaneoStore(
-    (estado) => estado.marcarPublicacionVendidaMomentaneo,
-  );
-  const guardarEvaluacionMomentaneo = useEvaluacionesMomentaneoStore(
-    (estado) => estado.guardarEvaluacionMomentaneo,
-  );
+  const [ventaConfirmada, setVentaConfirmada] = useState(false);
+  const [evaluacionEnviada, setEvaluacionEnviada] = useState(false);
   const [cargando, setCargando] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,19 +94,11 @@ export default function ConversacionChatScreen() {
   const conversacionId = id ?? '';
   const tituloPublicacion = titulo ?? 'Conversación';
   const nombreContraparte = contraparteNombre ?? 'Usuario';
-  // TODO[MOMENTANEO]: usar siempre publicacionId cuando el contrato mobile
-  // esté disponible en conversaciones ya abiertas. El respaldo mantiene
-  // visible el prototipo en chats cargados antes de la ampliación del contrato.
-  const idPublicacion = publicacionId ?? conversacionId;
-  const rolActualMomentaneo: RolEvaluacionMomentaneo =
+  // Las acciones de venta y calificación solo están disponibles en
+  // conversaciones asociadas explícitamente a una publicación.
+  const idPublicacion = publicacionId;
+  const rolActual: RolTransaccion =
     rolEnTransaccion === 'vendedor' ? 'vendedor' : 'comprador';
-  const ventaConfirmadaMomentaneo =
-    Boolean(idPublicacion) && publicacionesVendidasMomentaneo[idPublicacion] === true;
-  const evaluacionPropiaMomentaneo = evaluacionesMomentaneo.find(
-    (evaluacion) =>
-      evaluacion.publicacionId === idPublicacion &&
-      evaluacion.rol === rolActualMomentaneo,
-  );
 
   const cargarHistorial = useCallback(async () => {
     if (!accessToken || !conversacionId) {
@@ -150,12 +131,11 @@ export default function ConversacionChatScreen() {
     const sincronizarEstadoTransaccion = () => {
       void obtenerTransaccionPublicacion(publicacionId, accessToken)
         .then((transaccion) => {
-          if (transaccion.calificacionActivada) {
-            marcarPublicacionVendidaMomentaneo(publicacionId);
-          }
+          setVentaConfirmada(transaccion.calificacionActivada);
         })
         .catch(() => {
           // La conversación puede existir antes de que la venta sea confirmada.
+          setVentaConfirmada(false);
         });
     };
 
@@ -163,7 +143,7 @@ export default function ConversacionChatScreen() {
     const intervalo = setInterval(sincronizarEstadoTransaccion, 5_000);
 
     return () => clearInterval(intervalo);
-  }, [accessToken, marcarPublicacionVendidaMomentaneo, publicacionId]);
+  }, [accessToken, publicacionId]);
 
   useEffect(() => {
     if (!accessToken || !conversacionId) return;
@@ -201,8 +181,8 @@ export default function ConversacionChatScreen() {
   }, [accessToken, conversacionId, contraparteCuentaId]);
 
   const abrirEvaluacion = () => {
-    setEstrellasSeleccionadas(evaluacionPropiaMomentaneo?.estrellas ?? 0);
-    setComentarioEvaluacion(evaluacionPropiaMomentaneo?.comentario ?? '');
+    setEstrellasSeleccionadas(0);
+    setComentarioEvaluacion('');
     setErrorCalificacion(null);
     setModalEvaluacionAbierto(true);
   };
@@ -221,7 +201,7 @@ export default function ConversacionChatScreen() {
     try {
       await cerrarVentaPublicacion(publicacionId, contraparteCuentaId, accessToken);
       await activarCalificacionPublicacion(publicacionId, accessToken);
-      marcarPublicacionVendidaMomentaneo(publicacionId);
+      setVentaConfirmada(true);
       setModalConfirmarVentaAbierto(false);
     } catch (causa: unknown) {
       setErrorCierreVenta(
@@ -251,12 +231,7 @@ export default function ConversacionChatScreen() {
         },
         accessToken,
       );
-      guardarEvaluacionMomentaneo({
-        publicacionId,
-        rol: rolActualMomentaneo,
-        estrellas: estrellasSeleccionadas,
-        comentario: comentarioEvaluacion,
-      });
+      setEvaluacionEnviada(true);
       setModalEvaluacionAbierto(false);
     } catch (causa: unknown) {
       setErrorCalificacion(
@@ -281,8 +256,12 @@ export default function ConversacionChatScreen() {
       setMensajes((actuales) => agregarMensajeSinDuplicados(actuales, mensaje));
       setTexto('');
       requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
-    } catch {
-      setError('No se pudo enviar el mensaje. Intenta nuevamente.');
+    } catch (causa: unknown) {
+      setError(
+        causa instanceof ApiError
+          ? causa.message
+          : 'No se pudo enviar el mensaje. Intenta nuevamente.',
+      );
     } finally {
       setEnviando(false);
     }
@@ -331,25 +310,25 @@ export default function ConversacionChatScreen() {
         <View style={styles.tarjetaCierreVenta}>
           <View style={styles.iconoCierreVenta}>
             <MaterialCommunityIcons
-              name={ventaConfirmadaMomentaneo ? 'check-decagram-outline' : 'handshake-outline'}
+              name={ventaConfirmada ? 'check-decagram-outline' : 'handshake-outline'}
               size={22}
               color={colors.gold}
             />
           </View>
           <View style={styles.cierreVentaTexto}>
             <Text style={styles.cierreVentaTitulo}>
-              {ventaConfirmadaMomentaneo ? 'Venta confirmada' : '¿Concretaron la venta?'}
+              {ventaConfirmada ? 'Venta confirmada' : '¿Concretaron la venta?'}
             </Text>
             <Text style={styles.cierreVentaDescripcion}>
-              {ventaConfirmadaMomentaneo
+              {ventaConfirmada
                 ? 'Ambas partes pueden evaluar esta experiencia.'
-                : rolActualMomentaneo === 'vendedor'
+                : rolActual === 'vendedor'
                   ? `Usa el menú de la publicación para marcarla como vendida a ${nombreContraparte}.`
                   : 'El vendedor podrá confirmar la venta desde el menú de esta publicación.'}
             </Text>
           </View>
-          {ventaConfirmadaMomentaneo ? (
-            evaluacionPropiaMomentaneo ? (
+          {ventaConfirmada ? (
+            evaluacionEnviada ? (
               <View accessibilityLabel="Calificación enviada" style={styles.botonEvaluacionEnviada}>
                 <MaterialCommunityIcons name="check-circle-outline" size={18} color={colors.navy} />
                 <Text style={styles.botonEvaluarTexto}>Evaluación enviada</Text>
@@ -491,7 +470,7 @@ export default function ConversacionChatScreen() {
             <Text style={styles.modalTituloEvaluacion}>Acciones de la conversación</Text>
             <Text style={styles.modalTextoEvaluacion}>{tituloPublicacion}</Text>
 
-            {rolActualMomentaneo === 'vendedor' && !ventaConfirmadaMomentaneo ? (
+            {rolActual === 'vendedor' && !ventaConfirmada ? (
               <Pressable
                 accessibilityRole="button"
                 onPress={() => {
@@ -507,7 +486,18 @@ export default function ConversacionChatScreen() {
 
             <Pressable
               accessibilityRole="button"
-              onPress={() => setModalAccionesAbierto(false)}
+              onPress={() => {
+                setModalAccionesAbierto(false);
+
+                if (!contraparteCuentaId) {
+                  return;
+                }
+
+                router.push({
+                  pathname: '/reporte/usuario/[id]',
+                  params: { id: contraparteCuentaId, nombre: nombreContraparte },
+                } as never);
+              }}
               style={styles.accionMenuReportar}>
               <MaterialCommunityIcons name="flag-outline" size={20} color={colors.error} />
               <Text style={styles.accionMenuReportarTexto}>Reportar usuario</Text>

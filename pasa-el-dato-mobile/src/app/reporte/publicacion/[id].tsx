@@ -2,6 +2,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   Modal,
   Pressable,
   ScrollView,
@@ -12,9 +13,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ApiError } from '@/lib/api';
+import { crearReportePublicacion } from '@/lib/api/publicaciones';
+import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
-const MOTIVOS_REPORTE_MOMENTANEO = [
+const MOTIVOS_REPORTE = [
   {
     id: 'contenido-prohibido',
     titulo: 'Producto o servicio prohibido',
@@ -53,20 +57,22 @@ const MOTIVOS_REPORTE_MOMENTANEO = [
   },
 ] as const;
 
-type MotivoReporteMomentaneoId = (typeof MOTIVOS_REPORTE_MOMENTANEO)[number]['id'];
+type MotivoReporteId = (typeof MOTIVOS_REPORTE)[number]['id'];
 
 export default function ReportarPublicacionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [motivo, setMotivo] = useState<MotivoReporteMomentaneoId | undefined>();
+  const [motivo, setMotivo] = useState<MotivoReporteId | undefined>();
   const [detalle, setDetalle] = useState('');
+  const accessToken = useSesionStore(selectAccessToken);
   const [error, setError] = useState<string | undefined>();
   const [confirmacionVisible, setConfirmacionVisible] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
-  const motivoSeleccionado = MOTIVOS_REPORTE_MOMENTANEO.find(
+  const motivoSeleccionado = MOTIVOS_REPORTE.find(
     (opcion) => opcion.id === motivo,
   );
 
-  const enviarReporteMomentaneo = () => {
+  const enviarReporte = async () => {
     if (!motivo) {
       setError('Selecciona un motivo para continuar.');
       return;
@@ -77,8 +83,33 @@ export default function ReportarPublicacionScreen() {
       return;
     }
 
+    if (!id || !accessToken || enviando) {
+      setError('Debes iniciar sesión para enviar un reporte.');
+      return;
+    }
+
+    setEnviando(true);
     setError(undefined);
-    setConfirmacionVisible(true);
+
+    try {
+      await crearReportePublicacion(
+        id,
+        {
+          motivo,
+          comentarios: detalle.trim() || undefined,
+        },
+        accessToken,
+      );
+      setConfirmacionVisible(true);
+    } catch (causa: unknown) {
+      setError(
+        causa instanceof ApiError
+          ? causa.message
+          : 'No pudimos enviar el reporte. Inténtalo nuevamente.',
+      );
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -121,7 +152,7 @@ export default function ReportarPublicacionScreen() {
           <Text style={styles.ayuda}>Elige la opción que mejor describa la situación.</Text>
 
           <View style={styles.motivos}>
-            {MOTIVOS_REPORTE_MOMENTANEO.map((opcion) => {
+            {MOTIVOS_REPORTE.map((opcion) => {
               const seleccionado = motivo === opcion.id;
 
               return (
@@ -201,10 +232,22 @@ export default function ReportarPublicacionScreen() {
 
         <Pressable
           accessibilityRole="button"
-          onPress={enviarReporteMomentaneo}
-          style={({ pressed }) => [styles.botonEnviar, pressed && styles.pressed]}>
-          <MaterialCommunityIcons name="flag-outline" size={19} color={colors.card} />
-          <Text style={styles.botonEnviarTexto}>Enviar reporte</Text>
+          accessibilityState={{ busy: enviando, disabled: enviando }}
+          disabled={enviando}
+          onPress={() => void enviarReporte()}
+          style={({ pressed }) => [
+            styles.botonEnviar,
+            enviando && styles.botonEnviarDeshabilitado,
+            pressed && styles.pressed,
+          ]}>
+          {enviando ? (
+            <ActivityIndicator color={colors.card} size="small" />
+          ) : (
+            <MaterialCommunityIcons name="flag-outline" size={19} color={colors.card} />
+          )}
+          <Text style={styles.botonEnviarTexto}>
+            {enviando ? 'Enviando reporte…' : 'Enviar reporte'}
+          </Text>
         </Pressable>
       </ScrollView>
 
@@ -214,11 +257,10 @@ export default function ReportarPublicacionScreen() {
             <View style={styles.iconoExito}>
               <MaterialCommunityIcons name="check" size={38} color={colors.navy} />
             </View>
-            <Text style={styles.modalTitulo}>Reporte preparado</Text>
+            <Text style={styles.modalTitulo}>Reporte enviado</Text>
             <Text style={styles.modalTexto}>
-              Gracias por ayudar a mantener una comunidad segura. Esta vista es temporal:
-              el envío real a moderación se conectará cuando esté disponible el contrato de
-              reportes.
+              Gracias por ayudar a mantener una comunidad segura. Nuestro equipo revisará el
+              caso.
             </Text>
             <Pressable
               accessibilityRole="button"
@@ -327,6 +369,7 @@ const styles = StyleSheet.create({
     minHeight: spacing.touchMin,
   },
   botonEnviarTexto: { color: colors.card, fontSize: 15, fontWeight: '800' },
+  botonEnviarDeshabilitado: { opacity: 0.7 },
   pressed: { opacity: 0.9 },
   overlay: { backgroundColor: 'rgba(0,43,73,0.6)', flex: 1, justifyContent: 'center', padding: spacing.padLg },
   modal: {

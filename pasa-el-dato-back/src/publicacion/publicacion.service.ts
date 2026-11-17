@@ -9,6 +9,7 @@ import {
 import type { TipoNotificacionUsuario } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { NotificacionesService } from '../notificaciones/notificaciones.service.js';
+import { PalabrasBloqueadasService } from '../palabras-bloqueadas/palabras-bloqueadas.service.js';
 import type {
   AlmacenamientoImagenesService,
   ImagenAlmacenada,
@@ -27,7 +28,16 @@ export class PublicacionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly notificacionesService: NotificacionesService,
+    private readonly palabrasBloqueadasService: PalabrasBloqueadasService,
   ) {}
+
+  private async validarContenidoPublicacion(entrada: {
+    titulo: string;
+    descripcion: string;
+  }): Promise<void> {
+    await this.palabrasBloqueadasService.validarTexto(entrada.titulo);
+    await this.palabrasBloqueadasService.validarTexto(entrada.descripcion);
+  }
 
   // T-10: crea publicacion + imagenes en una sola transaccion Prisma.
   // AlmacenamientoImagenesService ejecuta el callback dentro de su propia
@@ -39,6 +49,8 @@ export class PublicacionService {
     idCuenta: string,
     almacenamiento: AlmacenamientoImagenesService,
   ): Promise<PublicacionCreadaRespuestaDto> {
+    await this.validarContenidoPublicacion(dto);
+
     const { estado } = await this.asegurarCatalogosParaCrearPublicacion({
       sedeId: dto.sedeId,
       tipoVentaId: dto.tipoVentaId,
@@ -240,6 +252,35 @@ export class PublicacionService {
     return this.toListaRespuesta(publicaciones);
   }
 
+  async listarComprasDeCuenta(
+    idCuenta: string,
+  ): Promise<PublicacionListaRespuestaDto[]> {
+    const publicaciones = await this.prisma.publicacion.findMany({
+      where: {
+        eliminado: false,
+        fk_user_comprador: idCuenta,
+        estadoPublicacion: { descripcion: 'Vendido' },
+      },
+      orderBy: { fechaModificacion: 'desc' },
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        estadoPublicacion: { select: { id: true, descripcion: true } },
+        sede: { select: { id: true, nombre: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        imagenes: {
+          select: { idImagen: true, url: true, orden: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    return this.toListaRespuesta(publicaciones);
+  }
+
   async listarPublicacionesDeCuenta(
     idCuenta: string,
   ): Promise<PublicacionListaRespuestaDto[]> {
@@ -381,6 +422,7 @@ export class PublicacionService {
       throw new NotFoundException('Publicación no encontrada');
     }
 
+    await this.validarContenidoPublicacion(dto);
     await this.asegurarSedeDisponible(dto.sedeId);
     await this.asegurarTipoVentaExistente(dto.tipoVentaId);
     await this.asegurarCategoriaExistente(dto.categoriaId);

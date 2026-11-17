@@ -74,6 +74,38 @@ type ReporteUsuarioDetalle = {
 export class ReporteUsuarioService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async crearReporteUsuario(entrada: {
+    reportadoId: string;
+    reportanteId: string;
+    descripcion: string;
+  }) {
+    if (entrada.reportadoId === entrada.reportanteId) {
+      throw new ForbiddenException('No puedes reportarte a ti mismo');
+    }
+
+    const reportado = await this.prisma.cuenta.findUnique({
+      where: { id_cuenta: entrada.reportadoId },
+      select: { id_cuenta: true, eliminado: true },
+    });
+
+    if (!reportado || reportado.eliminado) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return this.prisma.reporteUsuario.create({
+      data: {
+        descripcion: entrada.descripcion.trim(),
+        fk_reportado: reportado.id_cuenta,
+        fk_reportante: entrada.reportanteId,
+      },
+      select: {
+        id: true,
+        estado: true,
+        fechaCreacion: true,
+      },
+    });
+  }
+
   async listarPendientes(): Promise<ReporteUsuarioLista[]> {
     const reportes = await this.prisma.reporteUsuario.findMany({
       where: { estado: 'PENDIENTE' },

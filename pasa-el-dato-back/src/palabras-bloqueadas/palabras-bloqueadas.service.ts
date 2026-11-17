@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -93,5 +94,28 @@ export class PalabrasBloqueadasService {
     });
 
     return encontrado !== null;
+  }
+
+  async validarTexto(texto: string): Promise<void> {
+    const terminos = await this.obtenerTerminosVigentes();
+    if (terminos.length === 0) {
+      return;
+    }
+
+    const palabras = texto
+      .normalize('NFC')
+      .toLocaleLowerCase('es-CL')
+      .split(/[^\p{L}\p{N}]+/u)
+      .filter(Boolean);
+
+    const bloqueadas = new Set(
+      terminos.map((termino) =>
+        termino.normalize('NFC').toLocaleLowerCase('es-CL').trim(),
+      ),
+    );
+
+    if (palabras.some((palabra) => bloqueadas.has(palabra))) {
+      throw new UnprocessableEntityException('Contenido no permitido');
+    }
   }
 }

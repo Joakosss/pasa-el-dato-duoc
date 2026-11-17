@@ -1,7 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import * as Location from 'expo-location';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -18,13 +17,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { openBrowserAsync } from 'expo-web-browser';
 
 import { colors, spacing } from '@/theme';
+import { BannerPublicidad } from '@/components/feed/BannerPublicidad';
+import { BannersPublicidadMomentaneo } from '@/components/feed/BannersPublicidadMomentaneo';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
 import { ApiError } from '@/lib/api';
 import { listarCategorias, type CategoriaCatalogo } from '@/lib/api/catalogos';
 import { listarNotificaciones } from '@/lib/api/notificaciones';
 import {
+  listarBannersPublicidadActivos,
+  type BannerPublicidadActivo,
+} from '@/lib/api/publicidad';
+import {
   listarPublicaciones,
-  listarPublicacionesCercanas,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
 import { PUBLICACIONES_DEMOSTRACION_MOMENTANEO } from '@/lib/feed/publicaciones-demostracion-momentaneo';
@@ -50,15 +54,11 @@ export default function InicioScreen() {
   const nombre = sesion?.nombreCompleto.trim().split(/\s+/)[0] ?? 'estudiante';
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
   const [categorias, setCategorias] = useState<CategoriaCatalogo[]>([]);
+  const [bannersPublicidad, setBannersPublicidad] = useState<BannerPublicidadActivo[]>([]);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
-  const [cargandoCercanas, setCargandoCercanas] = useState(false);
-  const [mostrandoCercanas, setMostrandoCercanas] = useState(false);
   const [modalUbicacionAbierto, setModalUbicacionAbierto] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const ubicacionActualRef = useRef<{ latitud: number; longitud: number } | null>(
-    null,
-  );
 
   const cargarPublicaciones = useCallback(async (esActualizacion = false) => {
     if (esActualizacion) setActualizando(true);
@@ -75,6 +75,14 @@ export default function InicioScreen() {
         ...publicacionesRespuesta,
       ]);
       setCategorias(categoriasRespuesta);
+
+      if (accessToken) {
+        void listarBannersPublicidadActivos(accessToken)
+          .then(setBannersPublicidad)
+          .catch(() => setBannersPublicidad([]));
+      } else {
+        setBannersPublicidad([]);
+      }
     } catch (causa: unknown) {
       setError(
         causa instanceof ApiError
@@ -85,95 +93,15 @@ export default function InicioScreen() {
       setCargando(false);
       setActualizando(false);
     }
-  }, []);
+  }, [accessToken]);
 
   useFocusEffect(
     useCallback(() => {
-      if (!mostrandoCercanas) void cargarPublicaciones();
-    }, [cargarPublicaciones, mostrandoCercanas]),
+      void cargarPublicaciones();
+    }, [cargarPublicaciones]),
   );
 
-  const abrirSolicitudUbicacion = () => {
-    if (!cargandoCercanas) setModalUbicacionAbierto(true);
-  };
-
-  const cargarPublicacionesCercanas = async () => {
-    if (cargandoCercanas) return;
-
-    setCargandoCercanas(true);
-    setError(undefined);
-
-    try {
-      const permiso = await Location.requestForegroundPermissionsAsync();
-      if (!permiso.granted) {
-        setError(
-          'Necesitamos tu ubicación para mostrar publicaciones cercanas. No guardamos tu ubicación.',
-        );
-        return;
-      }
-
-      const posicionActual = await Promise.race([
-        Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        }),
-        new Promise<null>((resolver) => {
-          setTimeout(() => resolver(null), 8000);
-        }),
-      ]);
-
-      let ubicacion = posicionActual
-        ? {
-            latitud: posicionActual.coords.latitude,
-            longitud: posicionActual.coords.longitude,
-          }
-        : null;
-
-      if (!ubicacion) {
-        const ultimaUbicacion = await Location.getLastKnownPositionAsync({
-          maxAge: 5 * 60 * 1000,
-          requiredAccuracy: 5000,
-        });
-
-        if (ultimaUbicacion) {
-          ubicacion = {
-            latitud: ultimaUbicacion.coords.latitude,
-            longitud: ultimaUbicacion.coords.longitude,
-          };
-        }
-      }
-
-      if (!ubicacion) {
-        ubicacion = ubicacionActualRef.current;
-      }
-
-      if (!ubicacion) {
-        setError(
-          'No pudimos determinar tu ubicación. Activa la ubicación del dispositivo e inténtalo nuevamente.',
-        );
-        return;
-      }
-
-      ubicacionActualRef.current = ubicacion;
-      const respuesta = await listarPublicacionesCercanas(
-        ubicacion.latitud,
-        ubicacion.longitud,
-      );
-
-      setPublicaciones(respuesta);
-      setMostrandoCercanas(true);
-    } catch {
-      setError(
-        'No pudimos obtener tu ubicación. Revisa que la ubicación esté activada e inténtalo nuevamente.',
-      );
-    } finally {
-      setCargandoCercanas(false);
-    }
-  };
-
-  const mostrarTodas = () => {
-    setMostrandoCercanas(false);
-    void cargarPublicaciones();
-  };
+  const abrirSolicitudUbicacion = () => setModalUbicacionAbierto(true);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -193,23 +121,17 @@ export default function InicioScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={actualizando || cargandoCercanas}
-            onRefresh={() =>
-              mostrandoCercanas
-                ? void cargarPublicacionesCercanas()
-                : void cargarPublicaciones(true)
-            }
+            refreshing={actualizando}
+            onRefresh={() => void cargarPublicaciones(true)}
             tintColor={colors.navy}
           />
         }
         ListHeaderComponent={
           <CabeceraFeed
             categorias={categorias}
-            cargandoCercanas={cargandoCercanas}
-            mostrandoCercanas={mostrandoCercanas}
-            errorUbicacion={error}
+            bannerPublicidad={bannersPublicidad[0]}
+            errorUbicacion={undefined}
             onCargarCercanas={abrirSolicitudUbicacion}
-            onMostrarTodas={mostrarTodas}
           />
         }
         ListEmptyComponent={
@@ -272,7 +194,7 @@ export default function InicioScreen() {
                 accessibilityRole="button"
                 onPress={() => {
                   setModalUbicacionAbierto(false);
-                  void cargarPublicacionesCercanas();
+                  router.push('/mapa-cercanas');
                 }}
                 style={styles.botonContinuarUbicacion}>
                 <Text style={styles.botonContinuarUbicacionTexto}>Continuar</Text>
@@ -367,18 +289,14 @@ function BarraSuperior({
 // Contenido que viaja con el scroll: buscador, anuncio, categorías y título.
 function CabeceraFeed({
   categorias,
-  cargandoCercanas,
-  mostrandoCercanas,
+  bannerPublicidad,
   errorUbicacion,
   onCargarCercanas,
-  onMostrarTodas,
 }: {
   categorias: CategoriaCatalogo[];
-  cargandoCercanas: boolean;
-  mostrandoCercanas: boolean;
+  bannerPublicidad?: BannerPublicidadActivo;
   errorUbicacion?: string;
   onCargarCercanas: () => void;
-  onMostrarTodas: () => void;
 }) {
   return (
     <View>
@@ -423,6 +341,12 @@ function CabeceraFeed({
         </Pressable>
       </View>
 
+      {bannerPublicidad ? (
+        <BannerPublicidad banner={bannerPublicidad} />
+      ) : (
+        <BannersPublicidadMomentaneo />
+      )}
+
       <Text style={styles.seccionTitulo}>Explora por categoría</Text>
       <ScrollView
         horizontal
@@ -455,37 +379,15 @@ function CabeceraFeed({
 
       <View style={styles.seccionBarra}>
         <Text style={styles.seccionTitulo}>
-          {mostrandoCercanas ? 'Publicaciones cerca de ti' : 'Productos para ti'}
+          Productos para ti
         </Text>
-        {mostrandoCercanas ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Ver todas las publicaciones"
-            onPress={onMostrarTodas}
-            style={({ pressed }) => [styles.verTodo, pressed && styles.pressed]}>
-            <Text style={styles.verTodoTexto}>Ver todo</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityState={{ busy: cargandoCercanas }}
-            disabled={cargandoCercanas}
-            onPress={onCargarCercanas}
-            style={({ pressed }) => [
-              styles.cercaDeTi,
-              cargandoCercanas && styles.deshabilitado,
-              pressed && styles.pressed,
-            ]}>
-            {cargandoCercanas ? (
-              <ActivityIndicator color={colors.navy} size="small" />
-            ) : (
-              <>
-                <MaterialCommunityIcons name="crosshairs-gps" size={15} color={colors.navy} />
-                <Text style={styles.cercaDeTiTexto}>Cerca de ti</Text>
-              </>
-            )}
-          </Pressable>
-        )}
+        <Pressable
+          accessibilityRole="button"
+          onPress={onCargarCercanas}
+          style={({ pressed }) => [styles.cercaDeTi, pressed && styles.pressed]}>
+          <MaterialCommunityIcons name="map-marker-radius-outline" size={15} color={colors.navy} />
+          <Text style={styles.cercaDeTiTexto}>Cerca de ti</Text>
+        </Pressable>
       </View>
     </View>
   );

@@ -93,6 +93,23 @@ export class PublicacionController {
     return this.publicacionService.listarPublicacionesDeCuenta(user.idCuenta);
   }
 
+  @Get('compras/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Listar compras de la cuenta autenticada' })
+  @ApiCookieAuth('accessToken')
+  @ApiOkResponse({ type: [PublicacionListaRespuestaDto] })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  async listarMisCompras(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+  ): Promise<PublicacionListaRespuestaDto[]> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicacionService.listarComprasDeCuenta(user.idCuenta);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary:

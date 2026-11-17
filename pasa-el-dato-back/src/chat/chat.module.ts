@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { NotificacionesModule } from '../notificaciones/notificaciones.module.js';
+import { PalabrasBloqueadasModule } from '../palabras-bloqueadas/palabras-bloqueadas.module.js';
 import { ChatController } from './chat.controller.js';
 import { ChatGateway } from './chat.gateway.js';
 import { ChatService } from './chat.service.js';
@@ -16,6 +17,7 @@ const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
   imports: [
     PrismaModule,
     NotificacionesModule,
+    PalabrasBloqueadasModule,
     // JwtAuthGuard depende de JwtService; lo registramos aquí para evitar
     // asumir que AuthModule exporta JwtModule.
     JwtModule.register({ secret: JWT_ACCESS_SECRET }),

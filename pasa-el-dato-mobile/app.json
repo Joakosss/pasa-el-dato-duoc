@@ -21,7 +21,8 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
-      ]
+      ],
+      "package": "com.k.oublier.pasaeldatomobile"
     },
     "web": {
       "output": "static",
@@ -55,7 +56,8 @@
           "image": "./assets/images/logo-icon.png",
           "imageWidth": 180
         }
-      ]
+      ],
+      "@rnmapbox/maps"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -33,6 +33,8 @@ export interface ActualizarPublicacionRequest {
 interface CatalogoPublicacion {
   id: number;
   nombre: string;
+  latitud?: number;
+  longitud?: number;
 }
 
 interface EstadoPublicacionApi {
@@ -142,6 +144,14 @@ export function listarMisPublicaciones(
   return apiClient.get<PublicacionPublica[]>('/publicaciones/me', { accessToken });
 }
 
+export function listarMisCompras(
+  accessToken: string,
+): Promise<PublicacionPublica[]> {
+  return apiClient.get<PublicacionPublica[]>('/publicaciones/compras/me', {
+    accessToken,
+  });
+}
+
 export function obtenerPublicacion(id: string): Promise<PublicacionDetalle> {
   return apiClient.get<PublicacionDetalle>(
     `/mobile/publicaciones/${encodeURIComponent(id)}`,
@@ -165,6 +175,29 @@ export function crearPublicacion(
   return apiClient.postFormData<PublicacionCreada>('/publicaciones', crearFormData(datos), {
     accessToken,
   });
+}
+
+export interface CrearReportePublicacionRequest {
+  motivo: string;
+  comentarios?: string;
+}
+
+export interface ReportePublicacionCreado {
+  id: string;
+  estado: 'PENDIENTE' | 'EN_PROCESO' | 'RESUELTO' | 'DESCARTADO';
+  createdAt: string;
+}
+
+export function crearReportePublicacion(
+  id: string,
+  datos: CrearReportePublicacionRequest,
+  accessToken: string,
+): Promise<ReportePublicacionCreado> {
+  return apiClient.post<ReportePublicacionCreado>(
+    `/publicaciones/${encodeURIComponent(id)}/reportes`,
+    datos,
+    { accessToken },
+  );
 }
 
 export interface ActivarCalificacionRespuesta {

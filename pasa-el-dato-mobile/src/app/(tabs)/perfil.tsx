@@ -475,6 +475,23 @@ export default function PerfilScreen() {
           <MaterialCommunityIcons name="chevron-right" size={22} color={colors.navy} />
         </Pressable>
 
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Ver mis compras"
+          onPress={() => router.push('/mis-compras' as Href)}
+          style={({ pressed }) => [styles.tarjetaPublicaciones, pressed && styles.pressed]}>
+          <View style={styles.iconoCompras}>
+            <MaterialCommunityIcons name="cart-check" size={23} color={colors.navy} />
+          </View>
+          <View style={styles.favoritosTexto}>
+            <Text style={styles.favoritosTitulo}>Mis compras</Text>
+            <Text style={styles.favoritosSubtitulo}>
+              Revisa las publicaciones que fueron vendidas a tu cuenta.
+            </Text>
+          </View>
+          <MaterialCommunityIcons name="chevron-right" size={22} color={colors.navy} />
+        </Pressable>
+
         <Pressable accessibilityRole="button" onPress={abrirEdicion} style={styles.botonPrimario}>
           <MaterialCommunityIcons color={colors.navy} name="pencil-outline" size={19} />
           <Text style={styles.botonPrimarioTexto}>Editar perfil</Text>
@@ -863,6 +880,14 @@ const styles = StyleSheet.create({
   iconoPublicaciones: {
     alignItems: 'center',
     backgroundColor: '#e6f4ff',
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44,
+  },
+  iconoCompras: {
+    alignItems: 'center',
+    backgroundColor: '#e9f8ef',
     borderRadius: 22,
     height: 44,
     justifyContent: 'center',

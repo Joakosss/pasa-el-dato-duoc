@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   Optional,
@@ -17,6 +18,40 @@ export class ReportePublicacionService {
     private readonly prisma: PrismaService,
     @Optional() private readonly notificacionesService?: NotificacionesService,
   ) {}
+
+  async crearReportePublicacion(entrada: {
+    publicacionId: string;
+    reportanteId: string;
+    motivo: string;
+    comentarios?: string;
+  }) {
+    const publicacion = await this.prisma.publicacion.findUnique({
+      where: { id: entrada.publicacionId },
+      select: { id: true, eliminado: true, fk_usuario: true },
+    });
+
+    if (!publicacion || publicacion.eliminado) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    if (publicacion.fk_usuario === entrada.reportanteId) {
+      throw new ForbiddenException('No puedes reportar tu propia publicación');
+    }
+
+    return this.prisma.reportePublicacion.create({
+      data: {
+        motivo: entrada.motivo.trim(),
+        comentarios: entrada.comentarios?.trim() || null,
+        fk_publicacion: publicacion.id,
+        fk_reportante: entrada.reportanteId,
+      },
+      select: {
+        id: true,
+        estado: true,
+        fechaCreacion: true,
+      },
+    });
+  }
 
   async listarPendientes() {
     return this.prisma.reportePublicacion.findMany({
