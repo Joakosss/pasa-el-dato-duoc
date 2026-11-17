@@ -99,6 +99,12 @@ export default function DetalleProductoScreen() {
     }, [accessToken, id]),
   );
 
+  const nombreVendedor = publicacion?.vendedor
+    ? [publicacion.vendedor.primerNombre, publicacion.vendedor.primerApellido]
+        .filter(Boolean)
+        .join(' ')
+    : 'la persona vendedora';
+
   const abrirConfirmacionEliminacion = () => {
     setErrorEliminacion(undefined);
     setModalEliminarAbierto(true);
@@ -191,7 +197,7 @@ export default function DetalleProductoScreen() {
               {!esPropietario && publicacion.vendedor ? (
                 <Detalle
                   etiqueta="Vendido por"
-                  valor={publicacion.vendedor.primerNombre}
+                  valor={nombreVendedor}
                 />
               ) : null}
             </View>
@@ -245,7 +251,7 @@ export default function DetalleProductoScreen() {
                       params: {
                         publicacionId: publicacion.id,
                         titulo: publicacion.titulo,
-                        vendedorNombre: publicacion.vendedor?.primerNombre ?? 'la persona vendedora',
+                        vendedorNombre: nombreVendedor,
                       },
                     })
                   }

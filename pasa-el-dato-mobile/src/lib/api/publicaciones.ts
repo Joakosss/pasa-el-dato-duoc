@@ -67,6 +67,7 @@ export interface PublicacionPublica extends PublicacionApiBase {
 export interface PublicacionDetalle extends PublicacionApiBase {
   vendedor?: {
     primerNombre: string;
+    primerApellido: string;
   };
 }
 

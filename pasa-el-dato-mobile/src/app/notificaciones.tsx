@@ -151,7 +151,12 @@ export default function NotificacionesScreen() {
                 titulo:
                   conversacion.publicacion.titulo ??
                   'Publicación no disponible',
-                contraparteNombre: conversacion.contraparte.primerNombre,
+                contraparteNombre: [
+                  conversacion.contraparte.primerNombre,
+                  conversacion.contraparte.primerApellido,
+                ]
+                  .filter(Boolean)
+                  .join(' '),
                 contraparteCuentaId: conversacion.contraparteCuentaId,
                 contraparteEnLinea: String(
                   conversacion.contraparte.enLinea,

@@ -20,6 +20,7 @@ export interface ConversacionChat {
   rolEnTransaccion: 'vendedor' | 'comprador';
   contraparte: {
     primerNombre: string;
+    primerApellido: string;
     enLinea: boolean;
   };
   estadoPublicacionAlCrear: string;

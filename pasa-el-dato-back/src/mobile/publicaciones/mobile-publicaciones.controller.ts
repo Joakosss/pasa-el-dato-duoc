@@ -134,6 +134,7 @@ export class MobilePublicacionesController {
         usuario: {
           select: {
             pNombre: true,
+            pApellido: true,
             cuenta: {
               select: { aprobada: true, bloqueado: true, eliminado: true },
             },
@@ -166,7 +167,10 @@ export class MobilePublicacionesController {
       sede: publicacion.sede,
       tipoVenta: publicacion.tipoVenta,
       categoria: publicacion.categoria,
-      vendedor: { primerNombre: publicacion.usuario.pNombre },
+      vendedor: {
+        primerNombre: publicacion.usuario.pNombre,
+        primerApellido: publicacion.usuario.pApellido,
+      },
       imagenes: publicacion.imagenes,
     };
   }

@@ -39,6 +39,12 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
       ? 'Venta realizada'
       : 'Compra realizada'
     : null;
+  const nombreContraparte = [
+    conversacion.contraparte.primerNombre,
+    conversacion.contraparte.primerApellido,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <Pressable
@@ -50,7 +56,7 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
           params: {
             id: conversacion.conversacionId,
             titulo: tituloPublicacion,
-            contraparteNombre: conversacion.contraparte.primerNombre,
+            contraparteNombre: nombreContraparte,
             contraparteCuentaId: conversacion.contraparteCuentaId,
             contraparteEnLinea: String(conversacion.contraparte.enLinea),
             publicacionId: conversacion.publicacionId ?? conversacion.publicacion.id,
@@ -95,7 +101,7 @@ export function ChatCard({ conversacion }: { conversacion: ConversacionChat }) {
             ]}
           />
           <Text style={styles.contraparte} numberOfLines={1}>
-            {conversacion.contraparte.primerNombre}
+            {nombreContraparte}
             {conversacion.contraparte.enLinea ? ' · En línea' : ''}
           </Text>
         </View>

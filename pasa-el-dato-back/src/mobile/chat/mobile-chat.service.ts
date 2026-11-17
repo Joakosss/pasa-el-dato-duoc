@@ -45,9 +45,14 @@ export class MobileChatService {
     );
     const usuarios = await this.prisma.usuario.findMany({
       where: { id_cuenta: { in: contraparteIds } },
-      select: { id_cuenta: true, pNombre: true },
+      select: { id_cuenta: true, pNombre: true, pApellido: true },
     });
-    const nombres = new Map(usuarios.map((usuario) => [usuario.id_cuenta, usuario.pNombre]));
+    const nombres = new Map(
+      usuarios.map((usuario) => [
+        usuario.id_cuenta,
+        { primerNombre: usuario.pNombre, primerApellido: usuario.pApellido },
+      ]),
+    );
 
     return {
       items: conMensajes.map((conversacion) => ({
@@ -55,7 +60,10 @@ export class MobileChatService {
         publicacionId: conversacion.publicacion.id,
         rolEnTransaccion: conversacion.rolEnTransaccion,
         contraparte: {
-          primerNombre: nombres.get(conversacion.contraparteCuentaId) ?? 'Usuario',
+          ...(nombres.get(conversacion.contraparteCuentaId) ?? {
+            primerNombre: 'Usuario',
+            primerApellido: '',
+          }),
           enLinea: this.chatGateway.estaEnLinea(
             conversacion.contraparteCuentaId,
           ),
