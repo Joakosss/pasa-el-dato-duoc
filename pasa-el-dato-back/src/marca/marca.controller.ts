@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   UnauthorizedException,
   HttpStatus,
@@ -16,6 +17,7 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -26,6 +28,7 @@ import { JwtAuthGuard, type SesionAutenticada } from '../auth/jwt-auth.guard.js'
 import { Roles } from '../auth/roles.decorator.js';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { CrearMarcaDto } from './dto/crear-marca.dto.js';
+import { MarcaListadaDto } from './dto/marca-listada.dto.js';
 import { MarcaService, type MarcaCreada } from './marca.service.js';
 
 @ApiTags('Administración de marcas')
@@ -35,6 +38,27 @@ import { MarcaService, type MarcaCreada } from './marca.service.js';
 @ApiCookieAuth('accessToken')
 export class MarcaController {
   constructor(private readonly marcaService: MarcaService) {}
+
+  @Get()
+  @Roles('Administrador')
+  @ApiOperation({
+    summary: 'Listar todas las marcas registradas',
+    description:
+      'Devuelve el catálogo de marcas con su cuenta asociada, ordenado por nombre.',
+  })
+  @ApiOkResponse({
+    type: [MarcaListadaDto],
+    description: 'Marcas registradas.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'No existe una sesión válida.',
+  })
+  @ApiForbiddenResponse({
+    description: 'La sesión no corresponde a un administrador.',
+  })
+  async listar(): Promise<MarcaListadaDto[]> {
+    return this.marcaService.listar();
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

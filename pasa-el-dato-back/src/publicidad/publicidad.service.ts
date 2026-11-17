@@ -15,6 +15,7 @@ import type { ImagenRecibida } from '../publicacion/validar-imagenes.js';
 import type { CrearBannerPublicidadDto } from './dto/crear-banner-publicidad.dto.js';
 import type { EditarBannerPublicidadDto } from './dto/editar-banner-publicidad.dto.js';
 import type { ListarBannersActivosRespuestaDto } from './dto/listar-banners-activos-respuesta.dto.js';
+import type { ListarBannersMarcaRespuestaDto } from './dto/listar-banners-marca-respuesta.dto.js';
 import type { EstadoBannerPublicidad } from '../generated/prisma/enums.js';
 
 export interface BannerPublicidadCreado {
@@ -65,6 +66,64 @@ interface AdminBannerRow {
 @Injectable()
 export class PublicidadService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async listarBannersMarca(
+    idCuenta: string,
+    limit: number,
+    cursor?: string,
+    estado?: EstadoBannerPublicidad,
+  ): Promise<ListarBannersMarcaRespuestaDto> {
+    const marca = await this.prisma.marca.findUnique({
+      where: { id_cuenta: idCuenta },
+      select: { id_cuenta: true },
+    });
+
+    if (!marca) {
+      throw new ForbiddenException(
+        'La cuenta no corresponde a una marca autorizada',
+      );
+    }
+
+    const banners = await this.prisma.bannerPublicidad.findMany({
+      where: {
+        fk_marca: marca.id_cuenta,
+        eliminado: false,
+        ...(estado ? { estado } : {}),
+      },
+      orderBy: [{ fechaCreacion: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+      select: {
+        id: true,
+        imagen: true,
+        mensaje: true,
+        fechaInicio: true,
+        fechaFin: true,
+        estado: true,
+        sedes: {
+          select: {
+            sede: { select: { id: true, nombre: true } },
+          },
+        },
+      },
+    });
+
+    const haySiguientePagina = banners.length > limit;
+    const items = haySiguientePagina ? banners.slice(0, limit) : banners;
+
+    return {
+      items: items.map((banner) => ({
+        id: banner.id,
+        imagen: banner.imagen,
+        mensaje: banner.mensaje,
+        fechaInicio: banner.fechaInicio,
+        fechaFin: banner.fechaFin,
+        estado: banner.estado,
+        sedes: banner.sedes.map(({ sede }) => sede),
+      })),
+      nextCursor: haySiguientePagina ? (items.at(-1)?.id ?? null) : null,
+    };
+  }
 
   async listarBannersActivos(
     idCuenta: string,
