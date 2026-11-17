@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -323,8 +325,11 @@ export default function BuscarScreen() {
         animationType="slide"
         transparent
         onRequestClose={() => setModalFiltrosAbierto(false)}>
-        <View style={styles.overlay}>
-          <View style={styles.modal}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View style={styles.overlay}>
+            <View style={styles.modal}>
             <View style={styles.modalEncabezado}>
               <View>
                 <Text style={styles.modalTitulo}>Filtrar publicaciones</Text>
@@ -424,8 +429,9 @@ export default function BuscarScreen() {
                 <Text style={styles.botonAplicarTexto}>Aplicar filtros</Text>
               </Pressable>
             </View>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -573,6 +579,7 @@ function SinResultados({
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
+  flex: { flex: 1 },
   barra: {
     alignItems: 'center',
     backgroundColor: colors.card,

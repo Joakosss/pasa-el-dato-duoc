@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -539,9 +541,12 @@ export default function PerfilScreen() {
         animationType="slide"
         transparent
         onRequestClose={() => !guardando && setModalEdicionAbierto(false)}>
-        <View style={styles.overlay}>
-          <View style={styles.modal}>
-            <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View style={styles.overlay}>
+            <View style={styles.modal}>
+              <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
               <Text style={styles.modalTitulo}>Editar perfil</Text>
 
               <Text style={styles.etiquetaCampo}>Primer nombre</Text>
@@ -627,9 +632,10 @@ export default function PerfilScreen() {
                   )}
                 </Pressable>
               </View>
-            </ScrollView>
+              </ScrollView>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <Modal
@@ -637,9 +643,12 @@ export default function PerfilScreen() {
         animationType="slide"
         transparent
         onRequestClose={() => !cambiandoContrasena && setModalContrasenaAbierto(false)}>
-        <View style={styles.overlay}>
-          <View style={styles.modal}>
-            <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <View style={styles.overlay}>
+            <View style={styles.modal}>
+              <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
               <View style={styles.modalCabeceraSeguridad}>
                 <View style={styles.iconoSeguridad}>
                   <MaterialCommunityIcons name="lock-reset" size={25} color={colors.gold} />
@@ -729,9 +738,10 @@ export default function PerfilScreen() {
                   )}
                 </Pressable>
               </View>
-            </ScrollView>
+              </ScrollView>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <Modal
@@ -782,6 +792,7 @@ export default function PerfilScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
+  flex: { flex: 1 },
   contenido: { gap: spacing.padMd, padding: spacing.padLg },
   estadoPantalla: {
     alignItems: 'center',

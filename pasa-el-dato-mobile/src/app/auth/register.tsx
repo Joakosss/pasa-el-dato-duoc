@@ -3,6 +3,8 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -224,7 +226,13 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <LogoPD />
           <Text style={styles.title}>Crear cuenta</Text>
@@ -364,7 +372,8 @@ export default function RegisterScreen() {
             </Link>
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <RegistroExitosoModal
         visible={registroExitoso}
@@ -389,6 +398,7 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
+  flex: { flex: 1 },
   scroll: { padding: spacing.padSm, flexGrow: 1, justifyContent: 'center' },
   card: {
     backgroundColor: colors.card,
@@ -408,7 +418,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  flex: { flex: 1 },
   pri: { backgroundColor: colors.gold },
   sec: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border },
   btnDisabled: { opacity: 0.7 },

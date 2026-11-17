@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -141,6 +142,7 @@ export default function PublicarScreen() {
   const sesion = useSesionStore(selectSesion);
   const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
   const scroll = useRef<ScrollView>(null);
+  const campoActivoRef = useRef<'titulo' | 'precio' | 'descripcion' | undefined>(undefined);
 
   const [imagenes, setImagenes] = useState<ImagenFormulario[]>([]);
   const [titulo, setTitulo] = useState('');
@@ -168,6 +170,43 @@ export default function PublicarScreen() {
     setAnalisisIa(undefined);
     setErrorIa(undefined);
   };
+
+  const enfocarCampo = (campo: 'titulo' | 'precio' | 'descripcion') => {
+    campoActivoRef.current = campo;
+
+    const posicionPorCampo = {
+      titulo: 160,
+      precio: 330,
+      descripcion: 430,
+    };
+
+    // Android termina de redimensionar el ScrollView después de abrir el teclado.
+    // Este segundo desplazamiento evita que el campo quede detrás del teclado numérico.
+    setTimeout(() => {
+      scroll.current?.scrollTo({ y: posicionPorCampo[campo], animated: true });
+    }, 350);
+  };
+
+  useEffect(() => {
+    const eventoTeclado = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const suscripcion = Keyboard.addListener(eventoTeclado, () => {
+      const posicionPorCampo = {
+        titulo: 160,
+        precio: 330,
+        descripcion: 430,
+      };
+
+      const campoActivo = campoActivoRef.current;
+      const posicionY = campoActivo ? posicionPorCampo[campoActivo] : undefined;
+      if (posicionY === undefined) return;
+
+      requestAnimationFrame(() => {
+        scroll.current?.scrollTo({ y: posicionY, animated: true });
+      });
+    });
+
+    return () => suscripcion.remove();
+  }, []);
 
   const cargarCatalogos = async () => {
     setCargandoCatalogos(true);
@@ -437,7 +476,7 @@ export default function PublicarScreen() {
 
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
           ref={scroll}
           contentContainerStyle={styles.contenido}
@@ -458,6 +497,7 @@ export default function PublicarScreen() {
             <CampoFormulario
               etiqueta="Título *"
               valor={titulo}
+              onFoco={() => enfocarCampo('titulo')}
               onCambio={(valor) => {
                 setTitulo(valor);
                 invalidarAnalisisIa();
@@ -472,6 +512,7 @@ export default function PublicarScreen() {
             <CampoFormulario
               etiqueta="Precio *"
               valor={precio}
+              onFoco={() => enfocarCampo('precio')}
               onCambio={(valor) => {
                 setPrecio(formatearPrecioClp(valor));
                 invalidarAnalisisIa();
@@ -503,6 +544,7 @@ export default function PublicarScreen() {
             <CampoFormulario
               etiqueta="Descripción *"
               valor={descripcion}
+              onFoco={() => enfocarCampo('descripcion')}
               onCambio={(valor) => {
                 setDescripcion(valor);
                 invalidarAnalisisIa();
@@ -697,6 +739,7 @@ function CampoFormulario({
   etiqueta,
   valor,
   onCambio,
+  onFoco,
   placeholder,
   multilinea,
   teclado,
@@ -709,6 +752,7 @@ function CampoFormulario({
   etiqueta: string;
   valor: string;
   onCambio: (valor: string) => void;
+  onFoco?: () => void;
   placeholder: string;
   multilinea?: boolean;
   teclado?: 'default' | 'number-pad';
@@ -730,6 +774,7 @@ function CampoFormulario({
           editable={!deshabilitado}
           value={valor}
           onChangeText={onCambio}
+          onFocus={onFoco}
           placeholder={placeholder}
           placeholderTextColor={colors.muted}
           keyboardType={teclado ?? 'default'}

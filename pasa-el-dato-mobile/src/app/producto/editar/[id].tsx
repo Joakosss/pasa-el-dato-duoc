@@ -138,7 +138,7 @@ export default function EditarPublicacionScreen() {
       ) : publicacion ? (
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <ScrollView contentContainerStyle={styles.contenido} keyboardShouldPersistTaps="handled">
             <Text style={styles.ayuda}>
               Puedes modificar el título, precio y descripción. Se conservan categoría, tipo de venta,

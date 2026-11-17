@@ -3,7 +3,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -80,7 +82,10 @@ export default function ReportarUsuarioScreen() {
         <Text style={styles.barraTitulo}>Reportar usuario</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.contenido} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView contentContainerStyle={styles.contenido} keyboardShouldPersistTaps="handled">
         <View style={styles.aviso}>
           <MaterialCommunityIcons name="shield-alert-outline" size={25} color={colors.error} />
           <View style={styles.avisoTexto}>
@@ -143,7 +148,8 @@ export default function ReportarUsuarioScreen() {
             {enviando ? 'Enviando reporte…' : 'Enviar reporte'}
           </Text>
         </Pressable>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <Modal visible={confirmacionVisible} transparent animationType="fade">
         <View style={styles.overlay}>
@@ -167,6 +173,7 @@ export default function ReportarUsuarioScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.surface },
+  flex: { flex: 1 },
   barra: {
     alignItems: 'center', backgroundColor: colors.card, borderBottomColor: colors.border,
     borderBottomWidth: 1, flexDirection: 'row', gap: spacing.padSm, minHeight: 58,
