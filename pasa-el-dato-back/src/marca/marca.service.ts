@@ -7,6 +7,7 @@ import { Prisma } from '../generated/prisma/client.js';
 import { generarHashContrasena } from '../common/security/contrasena-hash.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CrearMarcaDto } from './dto/crear-marca.dto.js';
+import type { MarcaListadaDto } from './dto/marca-listada.dto.js';
 
 export interface MarcaCreada {
   idCuenta: string;
@@ -21,6 +22,23 @@ export interface MarcaCreada {
 @Injectable()
 export class MarcaService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async listar(): Promise<MarcaListadaDto[]> {
+    const marcas = await this.prisma.marca.findMany({
+      orderBy: { nombre: 'asc' },
+      select: {
+        id_cuenta: true,
+        nombre: true,
+        cuenta: { select: { correo: true } },
+      },
+    });
+
+    return marcas.map((marca) => ({
+      idCuenta: marca.id_cuenta,
+      nombre: marca.nombre,
+      correo: marca.cuenta.correo,
+    }));
+  }
 
   async crear(
     datos: CrearMarcaDto,

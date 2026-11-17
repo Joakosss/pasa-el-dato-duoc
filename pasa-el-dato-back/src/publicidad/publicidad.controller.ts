@@ -46,6 +46,7 @@ import { CrearBannerPublicidadDto } from './dto/crear-banner-publicidad.dto.js';
 import { EditarBannerPublicidadDto } from './dto/editar-banner-publicidad.dto.js';
 import { ListarBannersActivosQueryDto } from './dto/listar-banners-activos.query.dto.js';
 import { ListarBannersActivosRespuestaDto } from './dto/listar-banners-activos-respuesta.dto.js';
+import { ListarBannersMarcaRespuestaDto } from './dto/listar-banners-marca-respuesta.dto.js';
 import {
   CAMPO_IMAGEN_BANNER,
   validarImagenBanner,
@@ -103,6 +104,87 @@ export class PublicidadController {
       user.idCuenta,
       query.limit,
       query.cursor,
+    );
+  }
+
+  @Get()
+  @Roles('Marca')
+  @ApiOperation({
+    summary: 'Listar todos los banners de la marca autenticada',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Cantidad máxima de resultados (1-100, por defecto 20)',
+  })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    type: String,
+    format: 'uuid',
+    description: 'ID del último banner recibido en la página anterior',
+  })
+  @ApiOkResponse({ type: ListarBannersMarcaRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'La cuenta no corresponde a una marca autorizada',
+  })
+  @ApiBadRequestResponse({ description: 'Parámetros de paginación inválidos' })
+  async listarPropios(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Query() query: ListarBannersActivosQueryDto,
+  ): Promise<ListarBannersMarcaRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicidadService.listarBannersMarca(
+      user.idCuenta,
+      query.limit,
+      query.cursor,
+    );
+  }
+
+  @Get('aprobados')
+  @Roles('Marca')
+  @ApiOperation({
+    summary: 'Listar los banners aprobados de la marca autenticada',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Cantidad máxima de resultados (1-100, por defecto 20)',
+  })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    type: String,
+    format: 'uuid',
+    description: 'ID del último banner recibido en la página anterior',
+  })
+  @ApiOkResponse({ type: ListarBannersMarcaRespuestaDto })
+  @ApiUnauthorizedResponse({ description: 'Sesión inválida' })
+  @ApiForbiddenResponse({
+    description: 'La cuenta no corresponde a una marca autorizada',
+  })
+  @ApiBadRequestResponse({ description: 'Parámetros de paginación inválidos' })
+  async listarAprobados(
+    @Req() solicitud: Request & { user?: SesionAutenticada },
+    @Query() query: ListarBannersActivosQueryDto,
+  ): Promise<ListarBannersMarcaRespuestaDto> {
+    const user = solicitud.user;
+    if (!user) {
+      throw new UnauthorizedException('Sesión inválida');
+    }
+
+    return this.publicidadService.listarBannersMarca(
+      user.idCuenta,
+      query.limit,
+      query.cursor,
+      'APROBADO',
     );
   }
 
