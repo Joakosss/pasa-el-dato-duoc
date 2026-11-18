@@ -12,7 +12,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { ReportePublicacionCreadoDto } from './dto/reporte-publicacion-creado.dto.js';
 import {
   ESTADOS_REPORTE_EN_CURSO,
-  ESTADO_NO_REPORTEABLE,
+  ESTADOS_NO_REPORTEABLES,
 } from './reportes-publicacion.constantes.js';
 
 const ESTADOS_EN_RESOLUCION = ['PENDIENTE', 'EN_PROCESO'] as const;
@@ -63,9 +63,13 @@ export class ReportePublicacionService {
       throw new NotFoundException('Publicación no encontrada');
     }
 
-    // RN4: solo 'En curso' y 'Vendido' son reportables.
+    // RN4: solo 'En curso' y 'Vendido' son reportables. Se aceptan ambas
+    // variantes históricas de pausada ('Pausado'/'Pausada') como no reportable.
     const descripcionEstado = publicacion.estadoPublicacion.descripcion;
-    if (publicacion.eliminado || descripcionEstado === ESTADO_NO_REPORTEABLE) {
+    if (
+      publicacion.eliminado ||
+      (ESTADOS_NO_REPORTEABLES as readonly string[]).includes(descripcionEstado)
+    ) {
       throw new ConflictException('La publicación no está disponible para reporte');
     }
 

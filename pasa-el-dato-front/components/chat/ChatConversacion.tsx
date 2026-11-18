@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { EnvioMensajeForm } from "./EnvioMensajeForm";
 import { CalificarDesdeChat } from "./CalificarDesdeChat";
 import { CierreVentaDesdeChat } from "./CierreVentaDesdeChat";
+import { AccionReportarUsuario } from "@/components/reportes";
+import { useConversacionPorId } from "@/hooks/use-conversacion-por-id";
 import { EstadoConexionChat } from "./EstadoConexionChat";
 import { MensajeBurbuja } from "./MensajeBurbuja";
 import { ROUTES } from "@/config/constants";
@@ -79,6 +81,22 @@ export function ChatConversacion({ conversacionId }: { conversacionId: string })
     historial.esSesionInvalida ||
     tiempoReal.sesionExpirada ||
     lectura.esSesionInvalida;
+
+  // HU-REP-02: contraparte para "Reportar usuario". Fuente primaria: listado
+  // (contraparteCuentaId); respaldo: primer emisor distinto en mensajes.
+  const { conversacion } = useConversacionPorId(
+    conversacionId,
+    idCuentaActual ?? null,
+  );
+  const contraparteDesdeMensajes = mensajes.find(
+    (mensaje) => mensaje.emisorCuentaId !== idCuentaActual,
+  )?.emisorCuentaId;
+  const contraparteId =
+    conversacion?.contraparteCuentaId ?? contraparteDesdeMensajes ?? null;
+  const puedeReportar =
+    idCuentaActual !== null &&
+    contraparteId !== null &&
+    contraparteId !== idCuentaActual;
 
   useEffect(() => {
     if (sesionInvalida) {
@@ -184,6 +202,11 @@ export function ChatConversacion({ conversacionId }: { conversacionId: string })
       />
       <CierreVentaDesdeChat conversacionId={conversacionId} />
       <CalificarDesdeChat conversacionId={conversacionId} />
+      {puedeReportar && contraparteId ? (
+        <div className="flex justify-center border-b border-gray-200 bg-card px-3 py-1.5">
+          <AccionReportarUsuario usuarioReportadoId={contraparteId} />
+        </div>
+      ) : null}
 
       {tiempoReal.errorConexion ? (
         <div className="flex items-center justify-between gap-2 border-b border-gray-200 bg-card px-3 py-2">

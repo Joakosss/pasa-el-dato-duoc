@@ -16,6 +16,7 @@ import { EstadoPublicacionBotonera } from "./EstadoPublicacionBotonera";
 import { BotonFavorito } from "@/components/favoritos/BotonFavorito";
 import { ActivarCalificacionBoton } from "./ActivarCalificacionBoton";
 import { AccionCalificar } from "./AccionCalificar";
+import { AccionReportarPublicacion } from "@/components/reportes";
 
 interface AccionesPublicacionProps {
   id: string;
@@ -147,6 +148,11 @@ export function AccionesPublicacion({ id, estadoInicial }: AccionesPublicacionPr
           {errorContacto}
         </p>
       ) : null}
+      {/* HU-REP-01: reportar publicación ajena (En curso hoy vía detalle
+          público; vendidas/pausadas las rechaza la API con 409). */}
+      <div className="mt-1 text-center">
+        <AccionReportarPublicacion publicacionId={id} />
+      </div>
     </>
   );
 }
