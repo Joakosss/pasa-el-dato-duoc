@@ -143,6 +143,14 @@ export function Navbar() {
                       Mi perfil
                     </Link>
                   )}
+                  {esMarca ? null : (
+                    <Link
+                      href={ROUTES.favoritos}
+                      className="text-sm font-medium text-navy transition hover:text-gold"
+                    >
+                      Favoritos
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={() => setModalAbierto(true)}
@@ -228,6 +236,16 @@ export function Navbar() {
                           className="block px-4 py-2 text-sm font-medium text-navy transition hover:bg-gold-hover/10 hover:text-navy hover:font-bold"
                         >
                           Mi perfil
+                        </Link>
+                      )}
+                      {esMarca ? null : (
+                        <Link
+                          role="menuitem"
+                          href={ROUTES.favoritos}
+                          onClick={cerrarMenu}
+                          className="block px-4 py-2 text-sm font-medium text-navy transition hover:bg-gold-hover/10 hover:text-navy hover:font-bold"
+                        >
+                          Favoritos
                         </Link>
                       )}
                       <button

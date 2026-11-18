@@ -28,6 +28,11 @@ export function useFavoritos() {
       }
       return intentos < 1;
     },
+    // T7: conservar página al volver desde el detalle (caché 30s, sin
+    // refetch agresivo al remontar ni al reconectar).
+    staleTime: 30_000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
 

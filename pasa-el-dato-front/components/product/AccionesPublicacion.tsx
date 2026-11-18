@@ -13,6 +13,7 @@ import { usePropiedadPublicacion } from "@/hooks/use-propiedad-publicacion";
 import { selectEstaAutenticado, useSesionStore } from "@/stores/sesion-store";
 import { EliminarPublicacionModal } from "./EliminarPublicacionModal";
 import { EstadoPublicacionBotonera } from "./EstadoPublicacionBotonera";
+import { BotonFavorito } from "@/components/favoritos/BotonFavorito";
 import { ActivarCalificacionBoton } from "./ActivarCalificacionBoton";
 import { AccionCalificar } from "./AccionCalificar";
 
@@ -126,16 +127,21 @@ export function AccionesPublicacion({ id, estadoInicial }: AccionesPublicacionPr
 
   return (
     <>
-      <Button
-        variant="primary"
-        size="lg"
-        className="w-full py-3.5"
-        disabled={enCurso}
-        aria-disabled={enCurso}
-        onClick={contactar}
-      >
-        {enCurso ? "Abriendo chat…" : "Contactar vendedor"}
-      </Button>
+      {/* HU-FAV-01: guardar visible solo en publicación ajena (esPropia ya
+          retornó arriba). Sin optimismo, con login y errores del hook. */}
+      <div className="mb-3 flex gap-3">
+        <BotonFavorito publicacionId={id} variante="detalle" />
+        <Button
+          variant="primary"
+          size="lg"
+          className="flex-1 py-3.5"
+          disabled={enCurso}
+          aria-disabled={enCurso}
+          onClick={contactar}
+        >
+          {enCurso ? "Abriendo chat…" : "Contactar vendedor"}
+        </Button>
+      </div>
       {errorContacto ? (
         <p role="alert" className="mt-2 text-center text-sm font-medium text-red-600">
           {errorContacto}

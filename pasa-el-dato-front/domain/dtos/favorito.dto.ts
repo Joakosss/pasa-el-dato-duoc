@@ -6,6 +6,13 @@ export interface FavoritoDTO extends PublicacionListaDTO {
   disponible: boolean;
 }
 
+// Espejo de EstadoFavoritoRespuestaDto del back
+// (GET/POST/DELETE /favoritos/:publicacionId).
+export interface EstadoFavoritoDTO {
+  publicacionId: string;
+  esFavorito: boolean;
+}
+
 // Parámetros de GET /favoritos. El back solo admite pageSize 10 | 20;
 // la web usa 20 (la app móvil usa 10).
 export interface ListarFavoritosQueryDTO {

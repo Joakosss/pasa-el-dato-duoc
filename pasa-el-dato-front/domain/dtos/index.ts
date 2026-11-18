@@ -46,6 +46,7 @@ export type {
 } from "./banner.dto";
 export type {
   FavoritoDTO,
+  EstadoFavoritoDTO,
   ListarFavoritosQueryDTO,
   PaginaFavoritosDTO,
 } from "./favorito.dto";

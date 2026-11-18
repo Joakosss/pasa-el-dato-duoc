@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button, Textarea } from "@/components/ui";
@@ -12,13 +12,20 @@ import {
   CALIFICACION_PUNTAJE_MIN,
 } from "@/domain/dtos/calificacion.dto";
 import { useCalificar } from "@/hooks/use-calificar";
+import { useCalificacionesRecibidas } from "@/hooks/use-calificaciones-recibidas";
 import { useTransaccion } from "@/hooks/use-transaccion";
 import { selectSesion, useSesionStore } from "@/stores/sesion-store";
 import { cn } from "@/lib/utils/cn";
 
+// TODO[MOMENTANEO]: reemplazar indicio por contrato back estado-mi-calificacion
+// cuando exista (GET /publicaciones/:id/calificaciones/estado). Sin ese contrato,
+// "ya califiqué" se infiere solo-front desde el listado recibido de la contraparte.
+
 // HU-CAL-01 inline en el chat: estrellas + comentario + enviar en el mismo
 // panel, sin botón ni modal aparte. Visible solo si el usuario participa y
-// la calificación está activada. El "ya califiqué" se fija por 201/409.
+// la calificación está activada. El "ya califiqué" se fija por 201/409 en
+// sesión o por indicio Momentaneo desde el listado recibido de la contraparte
+// (HU-CAL-04 solo front, sin contrato dedicado).
 export function CalificarEnChat({
   publicacionId,
 }: {
@@ -34,9 +41,42 @@ export function CalificarEnChat({
   const [puntaje, setPuntaje] = useState(0);
   const [comentario, setComentario] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [yaCalifico, setYaCalifico] = useState(false);
+  const [yaCalificoSesion, setYaCalificoSesion] = useState(false);
 
   const transaccion = transaccionQuery.transaccion;
+  const esParticipanteMomentaneo =
+    idCuentaActual !== null &&
+    transaccion !== null &&
+    (idCuentaActual === transaccion.vendedor.id ||
+      idCuentaActual === transaccion.comprador.id);
+  const contraparteIdMomentaneo =
+    transaccion !== null && esParticipanteMomentaneo && idCuentaActual !== null
+      ? idCuentaActual === transaccion.vendedor.id
+        ? transaccion.comprador.id
+        : transaccion.vendedor.id
+      : null;
+  const indicioHabilitadoMomentaneo =
+    Boolean(idCuentaActual) &&
+    transaccion !== null &&
+    transaccion.calificacionActivada &&
+    esParticipanteMomentaneo &&
+    contraparteIdMomentaneo !== null;
+  const recibidasContraparte = useCalificacionesRecibidas(
+    contraparteIdMomentaneo,
+    {
+      enabled: indicioHabilitadoMomentaneo,
+      pageSize: 10,
+    },
+  );
+  const yaCalificoInferidoMomentaneo = useMemo(
+    () =>
+      recibidasContraparte.calificaciones.some(
+        (item) => item.publicacionId === publicacionId,
+      ),
+    [recibidasContraparte.calificaciones, publicacionId],
+  );
+  const yaCalifico = yaCalificoSesion || yaCalificoInferidoMomentaneo;
+
   if (transaccionQuery.isCargando || !transaccion) return null;
   if (!transaccion.calificacionActivada) return null;
 
@@ -80,7 +120,7 @@ export function CalificarEnChat({
       },
       {
         onSuccess: () => {
-          setYaCalifico(true);
+          setYaCalificoSesion(true);
           toast.success("Calificación registrada. ¡Gracias por tu aporte!");
         },
         onError: (err: unknown) => {
@@ -90,7 +130,7 @@ export function CalificarEnChat({
             return;
           }
           if (err instanceof ApiError && err.status === 409) {
-            setYaCalifico(true);
+            setYaCalificoSesion(true);
             toast.success("Ya calificaste a tu contraparte en esta venta.");
             return;
           }

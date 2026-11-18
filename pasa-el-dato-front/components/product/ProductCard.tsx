@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils/cn";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import Link from "next/link";
+import { BotonFavorito } from "@/components/favoritos/BotonFavorito";
 
 export type CardSize = "1x1" | "2x2";
 
@@ -24,14 +25,18 @@ export interface ProductCardData {
 export function ProductCard({ item }: { item: ProductCardData }) {
   const large = item.size === "2x2" || (!item.size && item.featured);
   return (
-    <Link
-      href={`/product/${item.id}`}
+    <div
       className={cn(
-        "card-hover relative cursor-pointer overflow-hidden rounded-xl border bg-card",
+        "relative overflow-hidden rounded-xl border bg-card",
         item.sponsored ? "border-gold/30" : "border-gray-200",
         large && "col-span-2 md:row-span-2",
       )}
     >
+      <Link
+        href={`/product/${item.id}`}
+        className="card-hover block cursor-pointer"
+        aria-label={item.title ?? "Ver publicación"}
+      >
       {item.sponsored ? (
         <div className="absolute right-2 top-2 z-10">
           <Badge variant="sponsored">Sponsored</Badge>
@@ -91,6 +96,17 @@ export function ProductCard({ item }: { item: ProductCardData }) {
           ) : null}
         </div>
       </div>
-    </Link>
+      </Link>
+      {/* HU-FAV-01: favorito fuera del <Link> para evitar botón anidado.
+          Sobre la imagen, desplazado si hay badge Sponsored. */}
+      <div
+        className={cn(
+          "absolute right-2 z-10",
+          item.sponsored ? "top-12" : "top-2",
+        )}
+      >
+        <BotonFavorito publicacionId={item.id} variante="tarjeta" />
+      </div>
+    </div>
   );
 }

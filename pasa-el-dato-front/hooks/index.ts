@@ -40,3 +40,5 @@ export { useBannersActivos, LIMITE_BANNERS_ACTIVOS } from "./use-banners-activos
 export { useBannersMarca, LIMITE_BANNERS_MARCA } from "./use-banners-marca";
 export { useFavoritos, PAGE_SIZE_FAVORITOS } from "./use-favoritos";
 export { useContadorFavoritos } from "./use-contador-favoritos";
+export { useEstadoFavorito, esUuidFavoritoValido } from "./use-estado-favorito";
+export { useToggleFavorito } from "./use-toggle-favorito";
