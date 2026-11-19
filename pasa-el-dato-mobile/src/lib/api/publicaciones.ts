@@ -64,14 +64,25 @@ export interface PublicacionPublica extends PublicacionApiBase {
   distanciaKm?: number;
 }
 
+export interface PublicacionBusqueda extends PublicacionPublica {
+  vendedor: {
+    primerNombre: string;
+    primerApellido: string;
+  };
+}
+
+export type RolEnPublicacion = 'vendedor' | 'comprador' | 'visitante';
+
 export interface PublicacionDetalle extends PublicacionApiBase {
+  estado: EstadoPublicacionApi;
+  rolEnPublicacion: RolEnPublicacion;
   vendedor?: {
     primerNombre: string;
     primerApellido: string;
   };
 }
 
-export type PublicacionEdicion = PublicacionDetalle;
+export type PublicacionEdicion = PublicacionApiBase;
 
 export type PublicacionCreada = PublicacionPublica & {
   estado: CatalogoPublicacion;
@@ -129,6 +140,14 @@ export function listarPublicaciones(): Promise<PublicacionPublica[]> {
   return apiClient.get<PublicacionPublica[]>('/publicaciones');
 }
 
+export function listarPublicacionesParaBusqueda(
+  accessToken: string,
+): Promise<PublicacionBusqueda[]> {
+  return apiClient.get<PublicacionBusqueda[]>('/mobile/publicaciones/buscar', {
+    accessToken,
+  });
+}
+
 export function listarPublicacionesCercanas(
   latitud: number,
   longitud: number,
@@ -153,9 +172,13 @@ export function listarMisCompras(
   });
 }
 
-export function obtenerPublicacion(id: string): Promise<PublicacionDetalle> {
+export function obtenerPublicacion(
+  id: string,
+  accessToken: string,
+): Promise<PublicacionDetalle> {
   return apiClient.get<PublicacionDetalle>(
     `/mobile/publicaciones/${encodeURIComponent(id)}`,
+    { accessToken },
   );
 }
 

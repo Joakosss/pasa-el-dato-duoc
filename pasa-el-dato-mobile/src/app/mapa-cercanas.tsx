@@ -7,11 +7,13 @@ import {
   ActivityIndicator,
   Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, { FadeIn, FadeInDown, FadeOutDown, LinearTransition, ReduceMotion } from 'react-native-reanimated';
 
 import { env } from '@/config/env';
 import { ApiError } from '@/lib/api';
@@ -78,21 +80,54 @@ interface SedeConPublicaciones {
 }
 
 export default function MapaCercanasScreen() {
-  const mapbox = useMemo(cargarMapbox, []);
+  const mapbox = useMemo(() => cargarMapbox(), []);
   const camaraRef = useRef<ReferenciaCamara | null>(null);
   const [mapboxInicializado, setMapboxInicializado] = useState(false);
   const [ubicacion, setUbicacion] = useState<Ubicacion | null>(null);
+  const [ubicacionInicial, setUbicacionInicial] = useState<Ubicacion | null>(null);
   const [radioKm, setRadioKm] = useState<(typeof RADIOS_KM)[number]>(25);
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
   const [sedeSeleccionada, setSedeSeleccionada] = useState<SedeConPublicaciones | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | undefined>();
-  const [imagenesMarcadorCargadas, setImagenesMarcadorCargadas] = useState<Set<string>>(
-    () => new Set(),
-  );
   const ultimaUbicacionConsultadaRef = useRef<Ubicacion | null>(null);
+  const solicitudActualRef = useRef(0);
+  const solicitudEnCursoRef = useRef(false);
+  const marcadoresRef = useRef(new Map<number, { refresh: () => void }>());
+  const seleccionAnteriorRef = useRef<number | null>(null);
+  const cierrePendienteRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sedes = useMemo(() => agruparPorSede(publicaciones), [publicaciones]);
+  const configuracionInicialCamara = useMemo(
+    () => ubicacionInicial
+      ? { centerCoordinate: [ubicacionInicial.longitud, ubicacionInicial.latitud] as [number, number], zoomLevel: ZOOM_INICIAL }
+      : undefined,
+    [ubicacionInicial],
+  );
+
+  useEffect(() => {
+    const anterior = seleccionAnteriorRef.current;
+    const actual = sedeSeleccionada?.id ?? null;
+    seleccionAnteriorRef.current = actual;
+    const cuadro = requestAnimationFrame(() => {
+      if (anterior !== null) marcadoresRef.current.get(anterior)?.refresh();
+      if (actual !== null && actual !== anterior) marcadoresRef.current.get(actual)?.refresh();
+    });
+    return () => cancelAnimationFrame(cuadro);
+  }, [sedeSeleccionada?.id]);
+
+  useEffect(() => {
+    const cuadro = requestAnimationFrame(() => {
+      for (const marcador of marcadoresRef.current.values()) marcador.refresh();
+    });
+    return () => cancelAnimationFrame(cuadro);
+  }, [sedes]);
+
+  useEffect(() => () => {
+    solicitudActualRef.current += 1;
+    solicitudEnCursoRef.current = false;
+    if (cierrePendienteRef.current !== null) clearTimeout(cierrePendienteRef.current);
+  }, []);
 
   useEffect(() => {
     if (!mapbox || !env.mapboxAccessToken) return;
@@ -109,11 +144,14 @@ export default function MapaCercanasScreen() {
   }, [mapbox]);
 
   const cargarMapa = useCallback(async () => {
+    const numeroSolicitud = ++solicitudActualRef.current;
+    solicitudEnCursoRef.current = true;
     setCargando(true);
     setError(undefined);
 
     try {
       const permiso = await Location.requestForegroundPermissionsAsync();
+      if (numeroSolicitud !== solicitudActualRef.current) return;
       if (!permiso.granted) {
         setError(
           'Necesitamos tu ubicación para mostrar las sedes dentro del rango seleccionado. Tu ubicación no se guarda.',
@@ -124,40 +162,51 @@ export default function MapaCercanasScreen() {
       const posicion = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
+      if (numeroSolicitud !== solicitudActualRef.current) return;
       const nuevaUbicacion = {
         latitud: posicion.coords.latitude,
         longitud: posicion.coords.longitude,
       };
 
       setUbicacion(nuevaUbicacion);
-      ultimaUbicacionConsultadaRef.current = nuevaUbicacion;
+      setUbicacionInicial((anterior) => anterior ?? nuevaUbicacion);
       const respuesta = await listarPublicacionesCercanas(
         nuevaUbicacion.latitud,
         nuevaUbicacion.longitud,
         radioKm,
       );
+      if (numeroSolicitud !== solicitudActualRef.current) return;
+      ultimaUbicacionConsultadaRef.current = nuevaUbicacion;
       setPublicaciones(respuesta);
-      setSedeSeleccionada(null);
+      setSedeSeleccionada((anterior) =>
+        anterior ? agruparPorSede(respuesta).find((sede) => sede.id === anterior.id) ?? null : null,
+      );
     } catch (causa: unknown) {
+      if (numeroSolicitud !== solicitudActualRef.current) return;
       setError(
         causa instanceof ApiError
           ? causa.message
           : 'No pudimos cargar el mapa. Revisa tu conexión y que la ubicación esté activada.',
       );
     } finally {
-      setCargando(false);
+      if (numeroSolicitud === solicitudActualRef.current) {
+        solicitudEnCursoRef.current = false;
+        setCargando(false);
+      }
     }
   }, [radioKm]);
 
   useEffect(() => {
+    if (!mapbox) return;
     const solicitud = setTimeout(() => {
       void cargarMapa();
     }, 0);
 
     return () => clearTimeout(solicitud);
-  }, [cargarMapa]);
+  }, [cargarMapa, mapbox]);
 
   useEffect(() => {
+    if (!mapbox) return;
     let activo = true;
     let suscripcion: Location.LocationSubscription | undefined;
 
@@ -172,6 +221,7 @@ export default function MapaCercanasScreen() {
           timeInterval: 10_000,
         },
         (posicion) => {
+          if (!activo) return;
           const nuevaUbicacion = {
             latitud: posicion.coords.latitude,
             longitud: posicion.coords.longitude,
@@ -181,6 +231,7 @@ export default function MapaCercanasScreen() {
 
           const ubicacionConsultada = ultimaUbicacionConsultadaRef.current;
           if (
+            !solicitudEnCursoRef.current &&
             ubicacionConsultada &&
             distanciaEnMetros(ubicacionConsultada, nuevaUbicacion) >= DISTANCIA_MINIMA_ACTUALIZACION_M
           ) {
@@ -188,16 +239,45 @@ export default function MapaCercanasScreen() {
           }
         },
       );
-    })();
+      if (!activo) suscripcion.remove();
+    })().catch(() => {
+      // La actualización automática es opcional; la búsqueda manual sigue disponible.
+    });
 
     return () => {
       activo = false;
       suscripcion?.remove();
     };
-  }, [cargarMapa]);
+  }, [cargarMapa, mapbox]);
+
+  const cancelarCierrePendiente = () => {
+    if (cierrePendienteRef.current !== null) {
+      clearTimeout(cierrePendienteRef.current);
+      cierrePendienteRef.current = null;
+    }
+  };
+
+  const seleccionarSede = (sede: SedeConPublicaciones) => {
+    cancelarCierrePendiente();
+    setSedeSeleccionada(sede);
+  };
+
+  const deseleccionarSede = (id: number) => {
+    cancelarCierrePendiente();
+    cierrePendienteRef.current = setTimeout(() => {
+      cierrePendienteRef.current = null;
+      setSedeSeleccionada((actual) => actual?.id === id ? null : actual);
+    }, 100);
+  };
 
   const cambiarRadio = (nuevoRadio: (typeof RADIOS_KM)[number]) => {
     if (nuevoRadio === radioKm) return;
+    solicitudActualRef.current += 1;
+    solicitudEnCursoRef.current = true;
+    ultimaUbicacionConsultadaRef.current = null;
+    setCargando(true);
+    setPublicaciones([]);
+    setSedeSeleccionada(null);
     setRadioKm(nuevoRadio);
   };
 
@@ -232,7 +312,7 @@ export default function MapaCercanasScreen() {
   } = mapbox.default;
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <View style={styles.barra}>
         <Pressable
           accessibilityRole="button"
@@ -279,12 +359,11 @@ export default function MapaCercanasScreen() {
       </View>
 
       <View style={styles.mapaContenedor}>
-        {ubicacion ? (
+        {ubicacionInicial ? (
           <MapView style={styles.mapa} styleURL={StyleURL.Street}>
             <Camera
               ref={camaraRef as never}
-              centerCoordinate={[ubicacion.longitud, ubicacion.latitud]}
-              zoomLevel={ZOOM_INICIAL}
+              defaultSettings={configuracionInicialCamara}
             />
             <LocationPuck puckBearingEnabled puckBearing="heading" pulsing={{ isEnabled: true }} />
             {sedes.map((sede) => {
@@ -296,15 +375,16 @@ export default function MapaCercanasScreen() {
 
               return (
                 <PointAnnotation
-                  key={[
-                    'sede',
-                    sede.id,
-                    sedeSeleccionada?.id ?? 'ninguna',
-                    portada && imagenesMarcadorCargadas.has(portada.url) ? 'imagen-lista' : 'imagen-cargando',
-                  ].join('-')}
+                  key={`sede-${sede.id}`}
+                  ref={(marcador) => {
+                    if (marcador) marcadoresRef.current.set(sede.id, marcador);
+                    else marcadoresRef.current.delete(sede.id);
+                  }}
                   id={`sede-${sede.id}`}
+                  selected={sedeEstaSeleccionada}
                   coordinate={[sede.longitud, sede.latitud]}
-                  onSelected={() => setSedeSeleccionada(sede)}>
+                  onSelected={() => seleccionarSede(sede)}
+                  onDeselected={() => deseleccionarSede(sede.id)}>
                   <View style={[styles.marcador, sedeEstaSeleccionada && styles.marcadorSeleccionado]}>
                     <View
                       style={[
@@ -320,12 +400,8 @@ export default function MapaCercanasScreen() {
                       {portada ? (
                         <Image
                           source={{ uri: resolverUrlImagen(portada.url) }}
-                          onLoad={() =>
-                            setImagenesMarcadorCargadas((anteriores) => {
-                              if (anteriores.has(portada.url)) return anteriores;
-                              return new Set(anteriores).add(portada.url);
-                            })
-                          }
+                          fadeDuration={0}
+                          onLoad={() => marcadoresRef.current.get(sede.id)?.refresh()}
                           style={styles.marcadorImagen}
                         />
                       ) : (
@@ -355,7 +431,11 @@ export default function MapaCercanasScreen() {
           accessibilityLabel="Centrar mapa en mi ubicación"
           disabled={!ubicacion}
           onPress={centrarEnUsuario}
-          style={[styles.botonCentrar, !ubicacion && styles.deshabilitado]}>
+          style={[
+            styles.botonCentrar,
+            sedeSeleccionada && styles.botonCentrarConTarjeta,
+            !ubicacion && styles.deshabilitado,
+          ]}>
           <MaterialCommunityIcons name="crosshairs-gps" size={22} color={colors.navy} />
         </Pressable>
 
@@ -365,58 +445,76 @@ export default function MapaCercanasScreen() {
             <Text style={styles.cargandoMapaTexto}>Buscando publicaciones…</Text>
           </View>
         ) : null}
-      </View>
-
-      {error ? (
-        <View style={styles.errorCaja}>
-          <MaterialCommunityIcons name="alert-circle-outline" size={19} color={colors.error} />
-          <Text style={styles.errorTexto}>{error}</Text>
-          <Pressable accessibilityRole="button" onPress={() => void cargarMapa()}>
-            <Text style={styles.errorReintentar}>Reintentar</Text>
-          </Pressable>
-        </View>
-      ) : null}
-
-      {!cargando && !error ? (
-        <Text style={styles.resumen}>
-          {publicaciones.length} {publicaciones.length === 1 ? 'publicación' : 'publicaciones'} en{' '}
-          {sedes.length} {sedes.length === 1 ? 'sede' : 'sedes'} dentro de {radioKm} km.
-        </Text>
-      ) : null}
-
-      {sedeSeleccionada ? (
-        <View style={styles.tarjetaSede}>
-          <View style={styles.tarjetaEncabezado}>
-            <View style={styles.tarjetaIcono}>
-              <MaterialCommunityIcons name="storefront-outline" size={21} color={colors.gold} />
-            </View>
-            <View style={styles.tarjetaTexto}>
-              <Text style={styles.sedeNombre} numberOfLines={1}>{sedeSeleccionada.nombre}</Text>
-              <Text style={styles.sedeDetalle}>
-                A {sedeSeleccionada.distanciaKm.toFixed(1)} km · {sedeSeleccionada.publicaciones.length}{' '}
-                {sedeSeleccionada.publicaciones.length === 1 ? 'publicación' : 'publicaciones'}
-              </Text>
-            </View>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Cerrar detalle de sede"
-              onPress={() => setSedeSeleccionada(null)}
-              style={styles.cerrarTarjeta}>
-              <MaterialCommunityIcons name="close" size={20} color={colors.navy} />
+        {error ? (
+          <View style={styles.errorCaja}>
+            <MaterialCommunityIcons name="alert-circle-outline" size={19} color={colors.error} />
+            <Text style={styles.errorTexto}>{error}</Text>
+            <Pressable accessibilityRole="button" onPress={() => void cargarMapa()}>
+              <Text style={styles.errorReintentar}>Reintentar</Text>
             </Pressable>
           </View>
-          {sedeSeleccionada.publicaciones.slice(0, 2).map((publicacion) => (
-            <Pressable
-              key={publicacion.id}
-              accessibilityRole="button"
-              onPress={() => router.push(`/producto/${publicacion.id}`)}
-              style={styles.filaPublicacion}>
-              <Text numberOfLines={1} style={styles.publicacionTitulo}>{publicacion.titulo}</Text>
-              <MaterialCommunityIcons name="chevron-right" size={19} color={colors.navy} />
-            </Pressable>
-          ))}
-        </View>
-      ) : null}
+        ) : null}
+
+        {sedeSeleccionada ? (
+          <Animated.View
+            entering={FadeInDown.duration(220).reduceMotion(ReduceMotion.System)}
+            exiting={FadeOutDown.duration(180).reduceMotion(ReduceMotion.System)}
+            layout={LinearTransition.duration(220).reduceMotion(ReduceMotion.System)}
+            style={styles.tarjetaSede}>
+            <Animated.View
+              key={`contenido-${sedeSeleccionada.id}`}
+              entering={FadeIn.duration(180).reduceMotion(ReduceMotion.System)}
+              style={styles.contenidoTarjeta}>
+              <View style={styles.tarjetaEncabezado}>
+                <View style={styles.tarjetaIcono}>
+                  <MaterialCommunityIcons name="storefront-outline" size={21} color={colors.gold} />
+                </View>
+                <View style={styles.tarjetaTexto}>
+                  <Text style={styles.sedeNombre} numberOfLines={1}>{sedeSeleccionada.nombre}</Text>
+                  <Text style={styles.sedeDetalle}>
+                    A {sedeSeleccionada.distanciaKm.toFixed(1)} km · {sedeSeleccionada.publicaciones.length}{' '}
+                    {sedeSeleccionada.publicaciones.length === 1 ? 'publicación' : 'publicaciones'}
+                  </Text>
+                </View>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Cerrar detalle de sede"
+                  onPress={() => {
+                    cancelarCierrePendiente();
+                    setSedeSeleccionada(null);
+                  }}
+                  style={styles.cerrarTarjeta}>
+                  <MaterialCommunityIcons name="close" size={20} color={colors.navy} />
+                </Pressable>
+              </View>
+              <ScrollView
+                style={styles.listaPublicaciones}
+                persistentScrollbar
+                nestedScrollEnabled>
+                {sedeSeleccionada.publicaciones.map((publicacion) => (
+                  <Pressable
+                    key={publicacion.id}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Ver ${publicacion.titulo}`}
+                    onPress={() => router.push(`/producto/${publicacion.id}`)}
+                    style={styles.filaPublicacion}>
+                    <Text numberOfLines={1} style={styles.publicacionTitulo}>{publicacion.titulo}</Text>
+                    <MaterialCommunityIcons name="chevron-right" size={19} color={colors.navy} />
+                  </Pressable>
+                ))}
+              </ScrollView>
+              {sedeSeleccionada.publicaciones.length > 3 ? (
+                <Text style={styles.indicacionDesplazamiento}>Desliza para ver todas las publicaciones</Text>
+              ) : null}
+            </Animated.View>
+          </Animated.View>
+        ) : null}
+      </View>
+      <Text style={styles.resumen} numberOfLines={1}>
+        {cargando ? 'Buscando publicaciones…' : error ? 'No se pudieron actualizar las publicaciones.' : (
+          `${publicaciones.length} ${publicaciones.length === 1 ? 'publicación' : 'publicaciones'} en ${sedes.length} ${sedes.length === 1 ? 'sede' : 'sedes'} dentro de ${radioKm} km.`
+        )}
+      </Text>
     </SafeAreaView>
   );
 }
@@ -606,6 +704,7 @@ const styles = StyleSheet.create({
     right: spacing.padMd,
     width: 44,
   },
+  botonCentrarConTarjeta: { bottom: undefined, top: spacing.padMd },
   cargandoMapa: {
     alignItems: 'center',
     backgroundColor: colors.card,
@@ -627,7 +726,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     gap: 8,
+    left: spacing.padSm,
     padding: spacing.padSm,
+    position: 'absolute',
+    right: spacing.padSm,
+    top: 70,
   },
   errorTexto: { color: colors.error, flex: 1, fontSize: 12, lineHeight: 17 },
   errorReintentar: { color: colors.navy, fontSize: 12, fontWeight: '800' },
@@ -643,10 +746,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderColor: colors.gold,
     borderTopWidth: 3,
+    bottom: 0,
     elevation: 10,
-    gap: 7,
+    left: 0,
+    maxHeight: '70%',
     padding: spacing.padMd,
+    position: 'absolute',
+    right: 0,
   },
+  contenidoTarjeta: { flexShrink: 1, gap: 7 },
   tarjetaEncabezado: { alignItems: 'center', flexDirection: 'row', gap: spacing.padSm },
   tarjetaIcono: {
     alignItems: 'center',
@@ -660,13 +768,15 @@ const styles = StyleSheet.create({
   sedeNombre: { color: colors.navy, fontSize: 15, fontWeight: '800' },
   sedeDetalle: { color: colors.muted, fontSize: 12, marginTop: 2 },
   cerrarTarjeta: { alignItems: 'center', height: 36, justifyContent: 'center', width: 36 },
+  listaPublicaciones: { maxHeight: 132, flexShrink: 1 },
+  indicacionDesplazamiento: { color: colors.muted, fontSize: 11, textAlign: 'center' },
   filaPublicacion: {
     alignItems: 'center',
     borderTopColor: colors.border,
     borderTopWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    minHeight: 38,
+    minHeight: 44,
     paddingLeft: 48,
   },
   publicacionTitulo: { color: colors.navy, flex: 1, fontSize: 13, fontWeight: '600' },

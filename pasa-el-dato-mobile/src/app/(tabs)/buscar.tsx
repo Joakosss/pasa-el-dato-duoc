@@ -28,10 +28,13 @@ import {
   type TipoVentaCatalogo,
 } from '@/lib/api/catalogos';
 import {
-  listarPublicaciones,
+  listarPublicacionesParaBusqueda,
+  type PublicacionBusqueda,
   type PublicacionPublica,
 } from '@/lib/api/publicaciones';
+import { coincideTextoBusqueda } from '@/lib/busqueda/coincide-texto';
 import { PUBLICACIONES_DEMOSTRACION_MOMENTANEO } from '@/lib/feed/publicaciones-demostracion-momentaneo';
+import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
 const FILTRO_TODAS = { id: null, nombre: 'Todas' } as const;
@@ -43,6 +46,8 @@ interface FiltrosPublicacion {
   precioMinimo: string;
   precioMaximo: string;
 }
+
+type PublicacionParaBusqueda = PublicacionPublica & Partial<Pick<PublicacionBusqueda, 'vendedor'>>;
 
 interface FilaGrilla {
   clave: string;
@@ -57,10 +62,6 @@ const FILTROS_VACIOS: FiltrosPublicacion = {
   precioMaximo: '',
 };
 
-function normalizar(valor: string): string {
-  return valor.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-}
-
 function monto(valor: string): number | null {
   const digitos = valor.replace(/\D/g, '');
   return digitos ? Number(digitos) : null;
@@ -73,11 +74,13 @@ function formatoPrecio(valor: string): string {
 
 export default function BuscarScreen() {
   const parametros = useLocalSearchParams<{ categoriaId?: string; q?: string; filtros?: string }>();
+  const accessToken = useSesionStore(selectAccessToken);
+  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
   const [texto, setTexto] = useState(parametros.q ?? '');
   const [filtros, setFiltros] = useState<FiltrosPublicacion>(FILTROS_VACIOS);
   const [borradorFiltros, setBorradorFiltros] = useState<FiltrosPublicacion>(FILTROS_VACIOS);
   const [modalFiltrosAbierto, setModalFiltrosAbierto] = useState(false);
-  const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
+  const [publicaciones, setPublicaciones] = useState<PublicacionParaBusqueda[]>([]);
   const [categorias, setCategorias] = useState<CategoriaCatalogo[]>([]);
   const [sedes, setSedes] = useState<SedeCatalogo[]>([]);
   const [tiposVenta, setTiposVenta] = useState<TipoVentaCatalogo[]>([]);
@@ -106,6 +109,14 @@ export default function BuscarScreen() {
   );
 
   const cargarDatos = useCallback(async (esActualizacion = false) => {
+    if (!accessToken) {
+      setPublicaciones([]);
+      setError('Tu sesión no está disponible. Inicia sesión nuevamente.');
+      setCargando(false);
+      setActualizando(false);
+      return;
+    }
+
     if (esActualizacion) setActualizando(true);
     else setCargando(true);
 
@@ -113,7 +124,7 @@ export default function BuscarScreen() {
     try {
       const [publicacionesRespuesta, categoriasRespuesta, sedesRespuesta, tiposRespuesta] =
         await Promise.all([
-          listarPublicaciones(),
+          listarPublicacionesParaBusqueda(accessToken),
           listarCategorias(),
           listarSedes(),
           listarTiposVenta(),
@@ -127,6 +138,12 @@ export default function BuscarScreen() {
       setSedes(sedesRespuesta);
       setTiposVenta(tiposRespuesta);
     } catch (causa: unknown) {
+      if (causa instanceof ApiError && causa.status === 401) {
+        setPublicaciones([]);
+        cerrarSesion();
+        router.replace('/auth/login');
+        return;
+      }
       setError(
         causa instanceof ApiError
           ? causa.message
@@ -136,7 +153,7 @@ export default function BuscarScreen() {
       setCargando(false);
       setActualizando(false);
     }
-  }, []);
+  }, [accessToken, cerrarSesion]);
 
   useFocusEffect(
     useCallback(() => {
@@ -145,7 +162,6 @@ export default function BuscarScreen() {
   );
 
   const resultados = useMemo(() => {
-    const consulta = normalizar(texto.trim());
     const precioMinimo = monto(filtros.precioMinimo);
     const precioMaximo = monto(filtros.precioMaximo);
 
@@ -164,17 +180,21 @@ export default function BuscarScreen() {
       }
       if (precioMinimo !== null && publicacion.precio < precioMinimo) return false;
       if (precioMaximo !== null && publicacion.precio > precioMaximo) return false;
-      if (!consulta) return true;
+      const nombreVendedor = publicacion.vendedor
+        ? `${publicacion.vendedor.primerNombre} ${publicacion.vendedor.primerApellido}`
+        : '';
 
-      return normalizar(
+      return coincideTextoBusqueda(
+        texto,
         [
           publicacion.titulo,
           publicacion.descripcion,
           publicacion.categoria.nombre,
           publicacion.tipoVenta.nombre,
           publicacion.sede.nombre,
-        ].join(' '),
-      ).includes(consulta);
+        ],
+        nombreVendedor,
+      );
     });
   }, [filtros, publicaciones, texto]);
 
@@ -227,7 +247,7 @@ export default function BuscarScreen() {
           <TextInput
             value={texto}
             onChangeText={setTexto}
-            placeholder="Buscar por título, categoría, sede…"
+            placeholder="Buscar producto o persona…"
             placeholderTextColor={colors.muted}
             autoCapitalize="none"
             autoCorrect={false}

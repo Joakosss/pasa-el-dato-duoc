@@ -18,7 +18,6 @@ import { ApiError } from '@/lib/api';
 import {
   eliminarPublicacion,
   obtenerPublicacion,
-  obtenerPublicacionParaEdicion,
   type PublicacionDetalle,
 } from '@/lib/api/publicaciones';
 import { obtenerPublicacionDemostracionMomentaneo } from '@/lib/feed/publicaciones-demostracion-momentaneo';
@@ -32,13 +31,13 @@ function precioClp(precio: number): string {
 export default function DetalleProductoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const accessToken = useSesionStore(selectAccessToken);
+  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
   const { esFavorito, actualizando: actualizandoFavorito, alternar: alternarFavorito } =
     useFavorito(
       id && !obtenerPublicacionDemostracionMomentaneo(id) ? id : undefined,
       accessToken,
     );
   const [publicacion, setPublicacion] = useState<PublicacionDetalle | null>(null);
-  const [esPropietario, setEsPropietario] = useState(false);
   const [eliminando, setEliminando] = useState(false);
   const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
   const [errorEliminacion, setErrorEliminacion] = useState<string | undefined>();
@@ -63,9 +62,21 @@ export default function DetalleProductoScreen() {
       return;
     }
 
+    if (!accessToken) {
+      setPublicacion(null);
+      setCargando(false);
+      setError('Tu sesión no está disponible. Inicia sesión nuevamente.');
+      return;
+    }
+
     try {
-      setPublicacion(await obtenerPublicacion(id));
+      setPublicacion(await obtenerPublicacion(id, accessToken));
     } catch (causa: unknown) {
+      if (causa instanceof ApiError && causa.status === 401) {
+        cerrarSesion();
+        router.replace('/auth/login');
+        return;
+      }
       if (causa instanceof ApiError && causa.status === 404) {
         setError('Esta publicación ya no está disponible.');
       } else {
@@ -78,7 +89,7 @@ export default function DetalleProductoScreen() {
     } finally {
       setCargando(false);
     }
-  }, [id]);
+  }, [accessToken, cerrarSesion, id]);
 
   useFocusEffect(
     useCallback(() => {
@@ -86,18 +97,9 @@ export default function DetalleProductoScreen() {
     }, [cargarPublicacion]),
   );
 
-  useFocusEffect(
-    useCallback(() => {
-    if (!id || !accessToken || obtenerPublicacionDemostracionMomentaneo(id)) {
-      setEsPropietario(false);
-      return;
-    }
-
-    void obtenerPublicacionParaEdicion(id, accessToken)
-        .then(() => setEsPropietario(true))
-        .catch(() => setEsPropietario(false));
-    }, [accessToken, id]),
-  );
+  const esPropietario = publicacion?.rolEnPublicacion === 'vendedor';
+  const estaEnCurso = publicacion?.estado.descripcion === 'En curso';
+  const estaVendida = publicacion?.estado.descripcion === 'Vendido';
 
   const nombreVendedor = publicacion?.vendedor
     ? [publicacion.vendedor.primerNombre, publicacion.vendedor.primerApellido]
@@ -148,34 +150,70 @@ export default function DetalleProductoScreen() {
           showsVerticalScrollIndicator={false}>
           <GaleriaProducto imagenes={publicacion.imagenes} />
 
+          {estaVendida ? (
+            <View style={styles.ventaFinalizada}>
+              <View style={styles.ventaFinalizadaIcono}>
+                <MaterialCommunityIcons name="check-decagram" size={26} color={colors.navy} />
+              </View>
+              <View style={styles.ventaFinalizadaContenido}>
+                <Text style={styles.ventaFinalizadaTitulo}>
+                  {publicacion.rolEnPublicacion === 'comprador'
+                    ? '¡Compra finalizada!'
+                    : '¡Venta finalizada!'}
+                </Text>
+                <Text style={styles.ventaFinalizadaTexto}>
+                  {publicacion.rolEnPublicacion === 'comprador'
+                    ? 'Esta publicación forma parte de tus compras.'
+                    : 'Esta publicación está marcada como vendida.'}
+                </Text>
+              </View>
+            </View>
+          ) : null}
+
           <View style={styles.etiquetas}>
             <View style={styles.etiquetaCategoria}>
               <Text style={styles.etiquetaCategoriaTexto}>
                 {publicacion.categoria.nombre}
               </Text>
             </View>
+            {!estaEnCurso ? (
+              <View style={estaVendida ? styles.etiquetaVendida : styles.etiquetaCategoria}>
+                {estaVendida ? (
+                  <MaterialCommunityIcons name="check-circle" size={13} color={colors.navy} />
+                ) : null}
+                <Text style={estaVendida ? styles.etiquetaVendidaTexto : styles.etiquetaCategoriaTexto}>
+                  {estaVendida
+                    ? publicacion.rolEnPublicacion === 'comprador'
+                      ? 'Comprada'
+                      : 'Vendida'
+                    : publicacion.estado.descripcion}
+                </Text>
+              </View>
+            ) : null}
           </View>
 
           <View style={styles.tituloFila}>
             <Text style={styles.titulo}>{publicacion.titulo}</Text>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={
-                esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
-              }
-              accessibilityState={{
-                disabled: actualizandoFavorito,
-                selected: esFavorito,
-              }}
-              disabled={actualizandoFavorito}
-              onPress={() => void alternarFavorito()}
-              style={styles.botonFavorito}>
-              <MaterialCommunityIcons
-                name={esFavorito ? 'heart' : 'heart-outline'}
-                size={23}
-                color={esFavorito ? colors.error : colors.navy}
-              />
-            </Pressable>
+            {estaEnCurso && !esPropietario ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={
+                  esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
+                }
+                accessibilityState={{
+                  disabled: actualizandoFavorito,
+                  selected: esFavorito,
+                }}
+                disabled={actualizandoFavorito}
+                onPress={() => void alternarFavorito()}
+                style={styles.botonFavorito}>
+                <MaterialCommunityIcons
+                  name={esFavorito ? 'heart' : 'heart-outline'}
+                  size={23}
+                  color={esFavorito ? colors.error : colors.navy}
+                />
+              </Pressable>
+            ) : null}
           </View>
           <Text style={styles.precio}>{precioClp(publicacion.precio)}</Text>
 
@@ -203,7 +241,7 @@ export default function DetalleProductoScreen() {
             </View>
           </View>
 
-          {esPropietario ? (
+          {estaVendida ? null : esPropietario ? (
             <View style={styles.accionesPropietario}>
               <Text style={styles.accionTitulo}>Gestiona tu publicación</Text>
               <Pressable
@@ -235,7 +273,7 @@ export default function DetalleProductoScreen() {
                 )}
               </Pressable>
             </View>
-          ) : (
+          ) : estaEnCurso ? (
             <>
               <View style={styles.accion}>
                 <Text style={styles.accionTitulo}>¿Te interesa esta publicación?</Text>
@@ -283,7 +321,7 @@ export default function DetalleProductoScreen() {
                 <Text style={styles.botonReportarTexto}>Reportar publicación</Text>
               </Pressable>
             </>
-          )}
+          ) : null}
         </ScrollView>
       )}
 
@@ -433,7 +471,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.padMd,
     paddingTop: spacing.padMd,
   },
-  etiquetas: { alignItems: 'center', flexDirection: 'row', gap: 8 },
+  ventaFinalizada: {
+    alignItems: 'center',
+    backgroundColor: colors.navy,
+    borderRadius: spacing.radiusLg,
+    flexDirection: 'row',
+    gap: spacing.padSm,
+    padding: spacing.padMd,
+  },
+  ventaFinalizadaIcono: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: 24,
+    height: 48,
+    justifyContent: 'center',
+    width: 48,
+  },
+  ventaFinalizadaContenido: { flex: 1, gap: 3 },
+  ventaFinalizadaTitulo: { color: colors.card, fontSize: 16, fontWeight: '800' },
+  ventaFinalizadaTexto: { color: colors.card, fontSize: 13, lineHeight: 18 },
+  etiquetas: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  etiquetaVendida: {
+    alignItems: 'center',
+    backgroundColor: colors.gold,
+    borderRadius: 6,
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  etiquetaVendidaTexto: { color: colors.navy, fontSize: 11, fontWeight: '700' },
   etiquetaCategoria: {
     backgroundColor: colors.navy,
     borderRadius: 6,

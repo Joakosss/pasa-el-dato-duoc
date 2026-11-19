@@ -45,6 +45,45 @@ function calcularDistanciaKm(
 export class MobilePublicacionesController {
   constructor(private readonly prisma: PrismaService) {}
 
+  @Get('buscar')
+  @UseGuards(JwtAuthGuard)
+  async listarParaBusqueda() {
+    const publicaciones = await this.prisma.publicacion.findMany({
+      where: {
+        eliminado: false,
+        estadoPublicacion: { descripcion: 'En curso' },
+        usuario: {
+          cuenta: { eliminado: false, bloqueado: false, aprobada: true },
+        },
+      },
+      orderBy: { fechaCreacion: 'desc' },
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        estadoPublicacion: { select: { id: true, descripcion: true } },
+        sede: { select: { id: true, nombre: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        usuario: { select: { pNombre: true, pApellido: true } },
+        imagenes: {
+          select: { idImagen: true, url: true, orden: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    return publicaciones.map(({ estadoPublicacion, usuario, ...publicacion }) => ({
+      ...publicacion,
+      estado: estadoPublicacion,
+      vendedor: {
+        primerNombre: usuario.pNombre,
+        primerApellido: usuario.pApellido,
+      },
+    }));
+  }
+
   // La ubicación del dispositivo se usa solo para esta consulta; no se persiste.
   @Get('cercanas')
   async listarCercanas(
@@ -118,7 +157,11 @@ export class MobilePublicacionesController {
   }
 
   @Get(':id')
-  async obtenerDetalle(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard)
+  async obtenerDetalle(
+    @Param('id') id: string,
+    @Req() solicitud: SolicitudAutenticada,
+  ) {
     const publicacion = await this.prisma.publicacion.findUnique({
       where: { id },
       select: {
@@ -127,6 +170,8 @@ export class MobilePublicacionesController {
         descripcion: true,
         precio: true,
         eliminado: true,
+        fk_usuario: true,
+        fk_user_comprador: true,
         estadoPublicacion: { select: { id: true, descripcion: true } },
         sede: { select: { id: true, nombre: true } },
         tipoVenta: { select: { id: true, nombre: true } },
@@ -152,9 +197,17 @@ export class MobilePublicacionesController {
       publicacion.eliminado ||
       publicacion.usuario.cuenta.bloqueado ||
       publicacion.usuario.cuenta.eliminado ||
-      !publicacion.usuario.cuenta.aprobada ||
-      publicacion.estadoPublicacion.descripcion !== 'En curso'
+      !publicacion.usuario.cuenta.aprobada
     ) {
+      throw new NotFoundException('Publicación no encontrada');
+    }
+
+    const cuentaId = solicitud.user!.idCuenta;
+    const esVendedor = publicacion.fk_usuario === cuentaId;
+    const esComprador = publicacion.fk_user_comprador === cuentaId;
+    const esPublicacionActiva = publicacion.estadoPublicacion.descripcion === 'En curso';
+
+    if (!esPublicacionActiva && !esVendedor && !esComprador) {
       throw new NotFoundException('Publicación no encontrada');
     }
 
@@ -164,6 +217,7 @@ export class MobilePublicacionesController {
       descripcion: publicacion.descripcion,
       precio: publicacion.precio,
       estado: publicacion.estadoPublicacion,
+      rolEnPublicacion: esVendedor ? 'vendedor' : esComprador ? 'comprador' : 'visitante',
       sede: publicacion.sede,
       tipoVenta: publicacion.tipoVenta,
       categoria: publicacion.categoria,
