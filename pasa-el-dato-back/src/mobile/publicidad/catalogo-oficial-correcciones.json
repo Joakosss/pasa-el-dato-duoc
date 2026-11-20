@@ -1,0 +1,16 @@
+{
+  "fuente": "https://www.duoc.cl/oferta-academica/carreras/",
+  "verificado": "2026-11-19",
+  "base": "prisma/datasets/carreras.json",
+  "totalEsperado": 81,
+  "escuela": "Escuela de Ingeniería y Recursos Naturales",
+  "agregar": [
+    "Ingeniería Agrícola",
+    "Técnico en Calidad de Alimentos",
+    "Técnico en Geología",
+    "Técnico en Operación y Supervisión de Procesos Mineros"
+  ],
+  "retirar": [
+    "Ingeniería en Medio Ambiente"
+  ]
+}

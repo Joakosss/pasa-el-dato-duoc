@@ -123,6 +123,21 @@ export type Calificacion = Prisma.CalificacionModel
  */
 export type BannerPublicidad = Prisma.BannerPublicidadModel
 /**
+ * Model BannerCarreraMobile
+ * 
+ */
+export type BannerCarreraMobile = Prisma.BannerCarreraMobileModel
+/**
+ * Model PublicidadDemoMobile
+ * 
+ */
+export type PublicidadDemoMobile = Prisma.PublicidadDemoMobileModel
+/**
+ * Model PublicidadDemoCarreraMobile
+ * 
+ */
+export type PublicidadDemoCarreraMobile = Prisma.PublicidadDemoCarreraMobileModel
+/**
  * Model BannerSede
  * 
  */

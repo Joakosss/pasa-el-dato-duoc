@@ -11,6 +11,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,7 +19,6 @@ import { openBrowserAsync } from 'expo-web-browser';
 
 import { colors, spacing } from '@/theme';
 import { BannerPublicidad } from '@/components/feed/BannerPublicidad';
-import { BannersPublicidadMomentaneo } from '@/components/feed/BannersPublicidadMomentaneo';
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
 import { ApiError } from '@/lib/api';
 import { listarCategorias, type CategoriaCatalogo } from '@/lib/api/catalogos';
@@ -129,7 +129,7 @@ export default function InicioScreen() {
         ListHeaderComponent={
           <CabeceraFeed
             categorias={categorias}
-            bannerPublicidad={bannersPublicidad[0]}
+            bannersPublicidad={bannersPublicidad}
             errorUbicacion={undefined}
             onCargarCercanas={abrirSolicitudUbicacion}
           />
@@ -289,15 +289,18 @@ function BarraSuperior({
 // Contenido que viaja con el scroll: buscador, anuncio, categorías y título.
 function CabeceraFeed({
   categorias,
-  bannerPublicidad,
+  bannersPublicidad,
   errorUbicacion,
   onCargarCercanas,
 }: {
   categorias: CategoriaCatalogo[];
-  bannerPublicidad?: BannerPublicidadActivo;
+  bannersPublicidad: BannerPublicidadActivo[];
   errorUbicacion?: string;
   onCargarCercanas: () => void;
 }) {
+  const { width } = useWindowDimensions();
+  const anchoBanner = Math.max(200, width - spacing.padMd * 2 - 36);
+
   return (
     <View>
       <View style={styles.busqueda}>
@@ -341,11 +344,21 @@ function CabeceraFeed({
         </Pressable>
       </View>
 
-      {bannerPublicidad ? (
-        <BannerPublicidad banner={bannerPublicidad} />
-      ) : (
-        <BannersPublicidadMomentaneo />
-      )}
+      {bannersPublicidad.length > 0 ? (
+        <View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.listaPublicidad}>
+            {bannersPublicidad.map((banner) => (
+              <BannerPublicidad key={banner.id} banner={banner} ancho={anchoBanner} />
+            ))}
+          </ScrollView>
+          {bannersPublicidad.length > 1 ? (
+            <Text style={styles.indicacionPublicidad}>Desliza para ver más anuncios</Text>
+          ) : null}
+        </View>
+      ) : null}
 
       <Text style={styles.seccionTitulo}>Explora por categoría</Text>
       <ScrollView
@@ -568,6 +581,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
+  listaPublicidad: { gap: spacing.padSm },
+  indicacionPublicidad: { color: colors.muted, fontSize: 11, marginTop: 5, textAlign: 'right' },
   seccionTitulo: {
     color: colors.navy,
     fontSize: 16,

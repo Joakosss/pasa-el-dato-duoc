@@ -8,6 +8,8 @@ import { MobileIaPublicacionesController } from './ia/mobile-ia-publicaciones.co
 import { MobileChatController } from './chat/mobile-chat.controller.js';
 import { MobileChatService } from './chat/mobile-chat.service.js';
 import { MobilePublicacionesController } from './publicaciones/mobile-publicaciones.controller.js';
+import { MobilePublicidadController } from './publicidad/mobile-publicidad.controller.js';
+import { MobilePublicidadService } from './publicidad/mobile-publicidad.service.js';
 
 @Module({
   imports: [AuthModule, ChatModule, PrismaModule],
@@ -16,7 +18,8 @@ import { MobilePublicacionesController } from './publicaciones/mobile-publicacio
     MobileChatController,
     MobileIaPublicacionesController,
     MobilePublicacionesController,
+    MobilePublicidadController,
   ],
-  providers: [GeminiPublicacionesService, MobileChatService],
+  providers: [GeminiPublicacionesService, MobileChatService, MobilePublicidadService],
 })
 export class MobileModule {}

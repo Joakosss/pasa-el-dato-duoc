@@ -7,20 +7,26 @@ import { colors, spacing } from '@/theme';
 
 type Props = {
   banner: BannerPublicidadActivo;
+  ancho?: number;
 };
 
-export function BannerPublicidad({ banner }: Props) {
+export function BannerPublicidad({ banner, ancho }: Props) {
+  const etiqueta = banner.demostracion ? 'Publicidad de demostración' : 'Patrocinado';
+  const imagenUrl = banner.imagenUrl.startsWith('data:')
+    ? banner.imagenUrl
+    : resolverUrlImagen(banner.imagenUrl);
+
   return (
-    <View accessibilityLabel={`Contenido patrocinado de ${banner.marcaNombre}`} style={styles.tarjeta}>
+    <View accessibilityLabel={`${etiqueta}: ${banner.marcaNombre}`} style={[styles.tarjeta, ancho !== undefined && { width: ancho }]}>
       <View style={styles.etiqueta}>
         <MaterialCommunityIcons name="star-four-points-outline" size={13} color={colors.muted} />
-        <Text style={styles.etiquetaTexto}>Patrocinado</Text>
+        <Text style={styles.etiquetaTexto}>{etiqueta}</Text>
       </View>
 
       <Image
         accessibilityLabel={`Banner de ${banner.marcaNombre}`}
         resizeMode="cover"
-        source={{ uri: resolverUrlImagen(banner.imagenUrl) }}
+        source={{ uri: imagenUrl }}
         style={styles.imagen}
       />
 

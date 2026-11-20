@@ -72,6 +72,9 @@ export const ModelName = {
   Publicacion: 'Publicacion',
   Calificacion: 'Calificacion',
   BannerPublicidad: 'BannerPublicidad',
+  BannerCarreraMobile: 'BannerCarreraMobile',
+  PublicidadDemoMobile: 'PublicidadDemoMobile',
+  PublicidadDemoCarreraMobile: 'PublicidadDemoCarreraMobile',
   BannerSede: 'BannerSede',
   NotificacionMarca: 'NotificacionMarca',
   NotificacionUsuario: 'NotificacionUsuario',
@@ -356,6 +359,33 @@ export const BannerPublicidadScalarFieldEnum = {
 } as const
 
 export type BannerPublicidadScalarFieldEnum = (typeof BannerPublicidadScalarFieldEnum)[keyof typeof BannerPublicidadScalarFieldEnum]
+
+
+export const BannerCarreraMobileScalarFieldEnum = {
+  bannerId: 'bannerId',
+  carreraId: 'carreraId'
+} as const
+
+export type BannerCarreraMobileScalarFieldEnum = (typeof BannerCarreraMobileScalarFieldEnum)[keyof typeof BannerCarreraMobileScalarFieldEnum]
+
+
+export const PublicidadDemoMobileScalarFieldEnum = {
+  id: 'id',
+  empresa: 'empresa',
+  mensaje: 'mensaje',
+  imagen: 'imagen',
+  activa: 'activa'
+} as const
+
+export type PublicidadDemoMobileScalarFieldEnum = (typeof PublicidadDemoMobileScalarFieldEnum)[keyof typeof PublicidadDemoMobileScalarFieldEnum]
+
+
+export const PublicidadDemoCarreraMobileScalarFieldEnum = {
+  demoId: 'demoId',
+  carreraId: 'carreraId'
+} as const
+
+export type PublicidadDemoCarreraMobileScalarFieldEnum = (typeof PublicidadDemoCarreraMobileScalarFieldEnum)[keyof typeof PublicidadDemoCarreraMobileScalarFieldEnum]
 
 
 export const BannerSedeScalarFieldEnum = {

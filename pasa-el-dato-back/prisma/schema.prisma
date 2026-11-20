@@ -144,6 +144,8 @@ model Carrera {
   fk_escuela Int
   escuela    Escuela   @relation(fields: [fk_escuela], references: [id], onDelete: NoAction, onUpdate: NoAction)
   usuarios   Usuario[]
+  bannersMobile BannerCarreraMobile[]
+  demosMobile PublicidadDemoCarreraMobile[]
 
   @@unique([nombre, fk_escuela], map: "ux_carrera_nombre_escuela")
   @@index([fk_escuela], map: "idx_carrera_escuela")
@@ -390,6 +392,7 @@ model BannerPublicidad {
   marca             Marca               @relation(fields: [fk_marca], references: [id_cuenta], onUpdate: NoAction)
   modificadoPor     Cuenta?             @relation("bannerModificadoPor", fields: [fk_modificado_por], references: [id_cuenta], onUpdate: NoAction)
   sedes             BannerSede[]
+  carrerasMobile    BannerCarreraMobile[]
   notificaciones    NotificacionMarca[]
 
   @@index([fk_marca], map: "idx_banner_publicidad_marca")
@@ -397,6 +400,39 @@ model BannerPublicidad {
   @@index([fechaInicio, fechaFin], map: "idx_banner_publicidad_vigencia")
   @@index([fk_modificado_por], map: "idx_banner_publicidad_modificado_por")
   @@map("banner_publicidad")
+}
+
+model BannerCarreraMobile {
+  bannerId  String @map("banner_id") @db.Uuid
+  carreraId Int    @map("carrera_id")
+  banner    BannerPublicidad @relation(fields: [bannerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  carrera   Carrera @relation(fields: [carreraId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([bannerId, carreraId])
+  @@index([carreraId])
+  @@map("mobile_banner_carrera")
+}
+
+model PublicidadDemoMobile {
+  id         String @id
+  empresa    String
+  mensaje    String
+  imagen     Bytes
+  activa     Boolean @default(true)
+  carreras   PublicidadDemoCarreraMobile[]
+
+  @@map("mobile_publicidad_demo")
+}
+
+model PublicidadDemoCarreraMobile {
+  demoId    String @map("demo_id")
+  carreraId Int    @map("carrera_id")
+  demo      PublicidadDemoMobile @relation(fields: [demoId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  carrera   Carrera @relation(fields: [carreraId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([demoId, carreraId])
+  @@index([carreraId])
+  @@map("mobile_publicidad_demo_carrera")
 }
 
 model BannerSede {

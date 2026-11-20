@@ -206,6 +206,8 @@ export type CarreraWhereInput = {
   fk_escuela?: Prisma.IntFilter<"Carrera"> | number
   escuela?: Prisma.XOR<Prisma.EscuelaScalarRelationFilter, Prisma.EscuelaWhereInput>
   usuarios?: Prisma.UsuarioListRelationFilter
+  bannersMobile?: Prisma.BannerCarreraMobileListRelationFilter
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileListRelationFilter
 }
 
 export type CarreraOrderByWithRelationInput = {
@@ -214,6 +216,8 @@ export type CarreraOrderByWithRelationInput = {
   fk_escuela?: Prisma.SortOrder
   escuela?: Prisma.EscuelaOrderByWithRelationInput
   usuarios?: Prisma.UsuarioOrderByRelationAggregateInput
+  bannersMobile?: Prisma.BannerCarreraMobileOrderByRelationAggregateInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileOrderByRelationAggregateInput
 }
 
 export type CarreraWhereUniqueInput = Prisma.AtLeast<{
@@ -226,6 +230,8 @@ export type CarreraWhereUniqueInput = Prisma.AtLeast<{
   fk_escuela?: Prisma.IntFilter<"Carrera"> | number
   escuela?: Prisma.XOR<Prisma.EscuelaScalarRelationFilter, Prisma.EscuelaWhereInput>
   usuarios?: Prisma.UsuarioListRelationFilter
+  bannersMobile?: Prisma.BannerCarreraMobileListRelationFilter
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileListRelationFilter
 }, "id" | "nombre_fk_escuela">
 
 export type CarreraOrderByWithAggregationInput = {
@@ -252,6 +258,8 @@ export type CarreraCreateInput = {
   nombre: string
   escuela: Prisma.EscuelaCreateNestedOneWithoutCarrerasInput
   usuarios?: Prisma.UsuarioCreateNestedManyWithoutCarreraInput
+  bannersMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileCreateNestedManyWithoutCarreraInput
 }
 
 export type CarreraUncheckedCreateInput = {
@@ -259,12 +267,16 @@ export type CarreraUncheckedCreateInput = {
   nombre: string
   fk_escuela: number
   usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutCarreraInput
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
 }
 
 export type CarreraUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   escuela?: Prisma.EscuelaUpdateOneRequiredWithoutCarrerasNestedInput
   usuarios?: Prisma.UsuarioUpdateManyWithoutCarreraNestedInput
+  bannersMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUpdateManyWithoutCarreraNestedInput
 }
 
 export type CarreraUncheckedUpdateInput = {
@@ -272,6 +284,8 @@ export type CarreraUncheckedUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   fk_escuela?: Prisma.IntFieldUpdateOperationsInput | number
   usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutCarreraNestedInput
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
 }
 
 export type CarreraCreateManyInput = {
@@ -394,15 +408,47 @@ export type CarreraUpdateOneRequiredWithoutUsuariosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CarreraUpdateToOneWithWhereWithoutUsuariosInput, Prisma.CarreraUpdateWithoutUsuariosInput>, Prisma.CarreraUncheckedUpdateWithoutUsuariosInput>
 }
 
+export type CarreraCreateNestedOneWithoutBannersMobileInput = {
+  create?: Prisma.XOR<Prisma.CarreraCreateWithoutBannersMobileInput, Prisma.CarreraUncheckedCreateWithoutBannersMobileInput>
+  connectOrCreate?: Prisma.CarreraCreateOrConnectWithoutBannersMobileInput
+  connect?: Prisma.CarreraWhereUniqueInput
+}
+
+export type CarreraUpdateOneRequiredWithoutBannersMobileNestedInput = {
+  create?: Prisma.XOR<Prisma.CarreraCreateWithoutBannersMobileInput, Prisma.CarreraUncheckedCreateWithoutBannersMobileInput>
+  connectOrCreate?: Prisma.CarreraCreateOrConnectWithoutBannersMobileInput
+  upsert?: Prisma.CarreraUpsertWithoutBannersMobileInput
+  connect?: Prisma.CarreraWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CarreraUpdateToOneWithWhereWithoutBannersMobileInput, Prisma.CarreraUpdateWithoutBannersMobileInput>, Prisma.CarreraUncheckedUpdateWithoutBannersMobileInput>
+}
+
+export type CarreraCreateNestedOneWithoutDemosMobileInput = {
+  create?: Prisma.XOR<Prisma.CarreraCreateWithoutDemosMobileInput, Prisma.CarreraUncheckedCreateWithoutDemosMobileInput>
+  connectOrCreate?: Prisma.CarreraCreateOrConnectWithoutDemosMobileInput
+  connect?: Prisma.CarreraWhereUniqueInput
+}
+
+export type CarreraUpdateOneRequiredWithoutDemosMobileNestedInput = {
+  create?: Prisma.XOR<Prisma.CarreraCreateWithoutDemosMobileInput, Prisma.CarreraUncheckedCreateWithoutDemosMobileInput>
+  connectOrCreate?: Prisma.CarreraCreateOrConnectWithoutDemosMobileInput
+  upsert?: Prisma.CarreraUpsertWithoutDemosMobileInput
+  connect?: Prisma.CarreraWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CarreraUpdateToOneWithWhereWithoutDemosMobileInput, Prisma.CarreraUpdateWithoutDemosMobileInput>, Prisma.CarreraUncheckedUpdateWithoutDemosMobileInput>
+}
+
 export type CarreraCreateWithoutEscuelaInput = {
   nombre: string
   usuarios?: Prisma.UsuarioCreateNestedManyWithoutCarreraInput
+  bannersMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileCreateNestedManyWithoutCarreraInput
 }
 
 export type CarreraUncheckedCreateWithoutEscuelaInput = {
   id?: number
   nombre: string
   usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutCarreraInput
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
 }
 
 export type CarreraCreateOrConnectWithoutEscuelaInput = {
@@ -443,12 +489,16 @@ export type CarreraScalarWhereInput = {
 export type CarreraCreateWithoutUsuariosInput = {
   nombre: string
   escuela: Prisma.EscuelaCreateNestedOneWithoutCarrerasInput
+  bannersMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileCreateNestedManyWithoutCarreraInput
 }
 
 export type CarreraUncheckedCreateWithoutUsuariosInput = {
   id?: number
   nombre: string
   fk_escuela: number
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
 }
 
 export type CarreraCreateOrConnectWithoutUsuariosInput = {
@@ -470,12 +520,108 @@ export type CarreraUpdateToOneWithWhereWithoutUsuariosInput = {
 export type CarreraUpdateWithoutUsuariosInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   escuela?: Prisma.EscuelaUpdateOneRequiredWithoutCarrerasNestedInput
+  bannersMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUpdateManyWithoutCarreraNestedInput
 }
 
 export type CarreraUncheckedUpdateWithoutUsuariosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   fk_escuela?: Prisma.IntFieldUpdateOperationsInput | number
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
+}
+
+export type CarreraCreateWithoutBannersMobileInput = {
+  nombre: string
+  escuela: Prisma.EscuelaCreateNestedOneWithoutCarrerasInput
+  usuarios?: Prisma.UsuarioCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileCreateNestedManyWithoutCarreraInput
+}
+
+export type CarreraUncheckedCreateWithoutBannersMobileInput = {
+  id?: number
+  nombre: string
+  fk_escuela: number
+  usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutCarreraInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
+}
+
+export type CarreraCreateOrConnectWithoutBannersMobileInput = {
+  where: Prisma.CarreraWhereUniqueInput
+  create: Prisma.XOR<Prisma.CarreraCreateWithoutBannersMobileInput, Prisma.CarreraUncheckedCreateWithoutBannersMobileInput>
+}
+
+export type CarreraUpsertWithoutBannersMobileInput = {
+  update: Prisma.XOR<Prisma.CarreraUpdateWithoutBannersMobileInput, Prisma.CarreraUncheckedUpdateWithoutBannersMobileInput>
+  create: Prisma.XOR<Prisma.CarreraCreateWithoutBannersMobileInput, Prisma.CarreraUncheckedCreateWithoutBannersMobileInput>
+  where?: Prisma.CarreraWhereInput
+}
+
+export type CarreraUpdateToOneWithWhereWithoutBannersMobileInput = {
+  where?: Prisma.CarreraWhereInput
+  data: Prisma.XOR<Prisma.CarreraUpdateWithoutBannersMobileInput, Prisma.CarreraUncheckedUpdateWithoutBannersMobileInput>
+}
+
+export type CarreraUpdateWithoutBannersMobileInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  escuela?: Prisma.EscuelaUpdateOneRequiredWithoutCarrerasNestedInput
+  usuarios?: Prisma.UsuarioUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUpdateManyWithoutCarreraNestedInput
+}
+
+export type CarreraUncheckedUpdateWithoutBannersMobileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_escuela?: Prisma.IntFieldUpdateOperationsInput | number
+  usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
+}
+
+export type CarreraCreateWithoutDemosMobileInput = {
+  nombre: string
+  escuela: Prisma.EscuelaCreateNestedOneWithoutCarrerasInput
+  usuarios?: Prisma.UsuarioCreateNestedManyWithoutCarreraInput
+  bannersMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutCarreraInput
+}
+
+export type CarreraUncheckedCreateWithoutDemosMobileInput = {
+  id?: number
+  nombre: string
+  fk_escuela: number
+  usuarios?: Prisma.UsuarioUncheckedCreateNestedManyWithoutCarreraInput
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutCarreraInput
+}
+
+export type CarreraCreateOrConnectWithoutDemosMobileInput = {
+  where: Prisma.CarreraWhereUniqueInput
+  create: Prisma.XOR<Prisma.CarreraCreateWithoutDemosMobileInput, Prisma.CarreraUncheckedCreateWithoutDemosMobileInput>
+}
+
+export type CarreraUpsertWithoutDemosMobileInput = {
+  update: Prisma.XOR<Prisma.CarreraUpdateWithoutDemosMobileInput, Prisma.CarreraUncheckedUpdateWithoutDemosMobileInput>
+  create: Prisma.XOR<Prisma.CarreraCreateWithoutDemosMobileInput, Prisma.CarreraUncheckedCreateWithoutDemosMobileInput>
+  where?: Prisma.CarreraWhereInput
+}
+
+export type CarreraUpdateToOneWithWhereWithoutDemosMobileInput = {
+  where?: Prisma.CarreraWhereInput
+  data: Prisma.XOR<Prisma.CarreraUpdateWithoutDemosMobileInput, Prisma.CarreraUncheckedUpdateWithoutDemosMobileInput>
+}
+
+export type CarreraUpdateWithoutDemosMobileInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  escuela?: Prisma.EscuelaUpdateOneRequiredWithoutCarrerasNestedInput
+  usuarios?: Prisma.UsuarioUpdateManyWithoutCarreraNestedInput
+  bannersMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutCarreraNestedInput
+}
+
+export type CarreraUncheckedUpdateWithoutDemosMobileInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_escuela?: Prisma.IntFieldUpdateOperationsInput | number
+  usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutCarreraNestedInput
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
 }
 
 export type CarreraCreateManyEscuelaInput = {
@@ -486,12 +632,16 @@ export type CarreraCreateManyEscuelaInput = {
 export type CarreraUpdateWithoutEscuelaInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   usuarios?: Prisma.UsuarioUpdateManyWithoutCarreraNestedInput
+  bannersMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUpdateManyWithoutCarreraNestedInput
 }
 
 export type CarreraUncheckedUpdateWithoutEscuelaInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   usuarios?: Prisma.UsuarioUncheckedUpdateManyWithoutCarreraNestedInput
+  bannersMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
+  demosMobile?: Prisma.PublicidadDemoCarreraMobileUncheckedUpdateManyWithoutCarreraNestedInput
 }
 
 export type CarreraUncheckedUpdateManyWithoutEscuelaInput = {
@@ -506,10 +656,14 @@ export type CarreraUncheckedUpdateManyWithoutEscuelaInput = {
 
 export type CarreraCountOutputType = {
   usuarios: number
+  bannersMobile: number
+  demosMobile: number
 }
 
 export type CarreraCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuarios?: boolean | CarreraCountOutputTypeCountUsuariosArgs
+  bannersMobile?: boolean | CarreraCountOutputTypeCountBannersMobileArgs
+  demosMobile?: boolean | CarreraCountOutputTypeCountDemosMobileArgs
 }
 
 /**
@@ -529,6 +683,20 @@ export type CarreraCountOutputTypeCountUsuariosArgs<ExtArgs extends runtime.Type
   where?: Prisma.UsuarioWhereInput
 }
 
+/**
+ * CarreraCountOutputType without action
+ */
+export type CarreraCountOutputTypeCountBannersMobileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BannerCarreraMobileWhereInput
+}
+
+/**
+ * CarreraCountOutputType without action
+ */
+export type CarreraCountOutputTypeCountDemosMobileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PublicidadDemoCarreraMobileWhereInput
+}
+
 
 export type CarreraSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -536,6 +704,8 @@ export type CarreraSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   fk_escuela?: boolean
   escuela?: boolean | Prisma.EscuelaDefaultArgs<ExtArgs>
   usuarios?: boolean | Prisma.Carrera$usuariosArgs<ExtArgs>
+  bannersMobile?: boolean | Prisma.Carrera$bannersMobileArgs<ExtArgs>
+  demosMobile?: boolean | Prisma.Carrera$demosMobileArgs<ExtArgs>
   _count?: boolean | Prisma.CarreraCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["carrera"]>
 
@@ -563,6 +733,8 @@ export type CarreraOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type CarreraInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   escuela?: boolean | Prisma.EscuelaDefaultArgs<ExtArgs>
   usuarios?: boolean | Prisma.Carrera$usuariosArgs<ExtArgs>
+  bannersMobile?: boolean | Prisma.Carrera$bannersMobileArgs<ExtArgs>
+  demosMobile?: boolean | Prisma.Carrera$demosMobileArgs<ExtArgs>
   _count?: boolean | Prisma.CarreraCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CarreraIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -577,6 +749,8 @@ export type $CarreraPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     escuela: Prisma.$EscuelaPayload<ExtArgs>
     usuarios: Prisma.$UsuarioPayload<ExtArgs>[]
+    bannersMobile: Prisma.$BannerCarreraMobilePayload<ExtArgs>[]
+    demosMobile: Prisma.$PublicidadDemoCarreraMobilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -978,6 +1152,8 @@ export interface Prisma__CarreraClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   escuela<T extends Prisma.EscuelaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EscuelaDefaultArgs<ExtArgs>>): Prisma.Prisma__EscuelaClient<runtime.Types.Result.GetResult<Prisma.$EscuelaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   usuarios<T extends Prisma.Carrera$usuariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Carrera$usuariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UsuarioPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bannersMobile<T extends Prisma.Carrera$bannersMobileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Carrera$bannersMobileArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BannerCarreraMobilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  demosMobile<T extends Prisma.Carrera$demosMobileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Carrera$demosMobileArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicidadDemoCarreraMobilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1432,6 +1608,54 @@ export type Carrera$usuariosArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.UsuarioScalarFieldEnum | Prisma.UsuarioScalarFieldEnum[]
+}
+
+/**
+ * Carrera.bannersMobile
+ */
+export type Carrera$bannersMobileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BannerCarreraMobile
+   */
+  select?: Prisma.BannerCarreraMobileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BannerCarreraMobile
+   */
+  omit?: Prisma.BannerCarreraMobileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BannerCarreraMobileInclude<ExtArgs> | null
+  where?: Prisma.BannerCarreraMobileWhereInput
+  orderBy?: Prisma.BannerCarreraMobileOrderByWithRelationInput | Prisma.BannerCarreraMobileOrderByWithRelationInput[]
+  cursor?: Prisma.BannerCarreraMobileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BannerCarreraMobileScalarFieldEnum | Prisma.BannerCarreraMobileScalarFieldEnum[]
+}
+
+/**
+ * Carrera.demosMobile
+ */
+export type Carrera$demosMobileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PublicidadDemoCarreraMobile
+   */
+  select?: Prisma.PublicidadDemoCarreraMobileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PublicidadDemoCarreraMobile
+   */
+  omit?: Prisma.PublicidadDemoCarreraMobileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PublicidadDemoCarreraMobileInclude<ExtArgs> | null
+  where?: Prisma.PublicidadDemoCarreraMobileWhereInput
+  orderBy?: Prisma.PublicidadDemoCarreraMobileOrderByWithRelationInput | Prisma.PublicidadDemoCarreraMobileOrderByWithRelationInput[]
+  cursor?: Prisma.PublicidadDemoCarreraMobileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PublicidadDemoCarreraMobileScalarFieldEnum | Prisma.PublicidadDemoCarreraMobileScalarFieldEnum[]
 }
 
 /**

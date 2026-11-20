@@ -257,6 +257,7 @@ export type BannerPublicidadWhereInput = {
   marca?: Prisma.XOR<Prisma.MarcaScalarRelationFilter, Prisma.MarcaWhereInput>
   modificadoPor?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   sedes?: Prisma.BannerSedeListRelationFilter
+  carrerasMobile?: Prisma.BannerCarreraMobileListRelationFilter
   notificaciones?: Prisma.NotificacionMarcaListRelationFilter
 }
 
@@ -278,6 +279,7 @@ export type BannerPublicidadOrderByWithRelationInput = {
   marca?: Prisma.MarcaOrderByWithRelationInput
   modificadoPor?: Prisma.CuentaOrderByWithRelationInput
   sedes?: Prisma.BannerSedeOrderByRelationAggregateInput
+  carrerasMobile?: Prisma.BannerCarreraMobileOrderByRelationAggregateInput
   notificaciones?: Prisma.NotificacionMarcaOrderByRelationAggregateInput
 }
 
@@ -302,6 +304,7 @@ export type BannerPublicidadWhereUniqueInput = Prisma.AtLeast<{
   marca?: Prisma.XOR<Prisma.MarcaScalarRelationFilter, Prisma.MarcaWhereInput>
   modificadoPor?: Prisma.XOR<Prisma.CuentaNullableScalarRelationFilter, Prisma.CuentaWhereInput> | null
   sedes?: Prisma.BannerSedeListRelationFilter
+  carrerasMobile?: Prisma.BannerCarreraMobileListRelationFilter
   notificaciones?: Prisma.NotificacionMarcaListRelationFilter
 }, "id">
 
@@ -361,6 +364,7 @@ export type BannerPublicidadCreateInput = {
   marca: Prisma.MarcaCreateNestedOneWithoutBannersInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutBannersModificadosInput
   sedes?: Prisma.BannerSedeCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaCreateNestedManyWithoutBannerInput
 }
 
@@ -380,6 +384,7 @@ export type BannerPublicidadUncheckedCreateInput = {
   fechaAprobacion?: Date | string | null
   fechaRechazo?: Date | string | null
   sedes?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutBannerInput
 }
 
@@ -399,6 +404,7 @@ export type BannerPublicidadUpdateInput = {
   marca?: Prisma.MarcaUpdateOneRequiredWithoutBannersNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutBannersModificadosNestedInput
   sedes?: Prisma.BannerSedeUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUpdateManyWithoutBannerNestedInput
 }
 
@@ -418,6 +424,7 @@ export type BannerPublicidadUncheckedUpdateInput = {
   fechaAprobacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sedes?: Prisma.BannerSedeUncheckedUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutBannerNestedInput
 }
 
@@ -629,6 +636,20 @@ export type EnumEstadoBannerPublicidadFieldUpdateOperationsInput = {
   set?: $Enums.EstadoBannerPublicidad
 }
 
+export type BannerPublicidadCreateNestedOneWithoutCarrerasMobileInput = {
+  create?: Prisma.XOR<Prisma.BannerPublicidadCreateWithoutCarrerasMobileInput, Prisma.BannerPublicidadUncheckedCreateWithoutCarrerasMobileInput>
+  connectOrCreate?: Prisma.BannerPublicidadCreateOrConnectWithoutCarrerasMobileInput
+  connect?: Prisma.BannerPublicidadWhereUniqueInput
+}
+
+export type BannerPublicidadUpdateOneRequiredWithoutCarrerasMobileNestedInput = {
+  create?: Prisma.XOR<Prisma.BannerPublicidadCreateWithoutCarrerasMobileInput, Prisma.BannerPublicidadUncheckedCreateWithoutCarrerasMobileInput>
+  connectOrCreate?: Prisma.BannerPublicidadCreateOrConnectWithoutCarrerasMobileInput
+  upsert?: Prisma.BannerPublicidadUpsertWithoutCarrerasMobileInput
+  connect?: Prisma.BannerPublicidadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BannerPublicidadUpdateToOneWithWhereWithoutCarrerasMobileInput, Prisma.BannerPublicidadUpdateWithoutCarrerasMobileInput>, Prisma.BannerPublicidadUncheckedUpdateWithoutCarrerasMobileInput>
+}
+
 export type BannerPublicidadCreateNestedOneWithoutSedesInput = {
   create?: Prisma.XOR<Prisma.BannerPublicidadCreateWithoutSedesInput, Prisma.BannerPublicidadUncheckedCreateWithoutSedesInput>
   connectOrCreate?: Prisma.BannerPublicidadCreateOrConnectWithoutSedesInput
@@ -674,6 +695,7 @@ export type BannerPublicidadCreateWithoutModificadoPorInput = {
   fechaRechazo?: Date | string | null
   marca: Prisma.MarcaCreateNestedOneWithoutBannersInput
   sedes?: Prisma.BannerSedeCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaCreateNestedManyWithoutBannerInput
 }
 
@@ -692,6 +714,7 @@ export type BannerPublicidadUncheckedCreateWithoutModificadoPorInput = {
   fechaAprobacion?: Date | string | null
   fechaRechazo?: Date | string | null
   sedes?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutBannerInput
 }
 
@@ -756,6 +779,7 @@ export type BannerPublicidadCreateWithoutMarcaInput = {
   fechaRechazo?: Date | string | null
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutBannersModificadosInput
   sedes?: Prisma.BannerSedeCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaCreateNestedManyWithoutBannerInput
 }
 
@@ -774,6 +798,7 @@ export type BannerPublicidadUncheckedCreateWithoutMarcaInput = {
   fechaAprobacion?: Date | string | null
   fechaRechazo?: Date | string | null
   sedes?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutBannerInput
 }
 
@@ -803,6 +828,98 @@ export type BannerPublicidadUpdateManyWithWhereWithoutMarcaInput = {
   data: Prisma.XOR<Prisma.BannerPublicidadUpdateManyMutationInput, Prisma.BannerPublicidadUncheckedUpdateManyWithoutMarcaInput>
 }
 
+export type BannerPublicidadCreateWithoutCarrerasMobileInput = {
+  id?: string
+  imagen: string
+  mensaje: string
+  fechaInicio: Date | string
+  fechaFin: Date | string
+  estado?: $Enums.EstadoBannerPublicidad
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  motivoRechazo?: string | null
+  fechaAprobacion?: Date | string | null
+  fechaRechazo?: Date | string | null
+  marca: Prisma.MarcaCreateNestedOneWithoutBannersInput
+  modificadoPor?: Prisma.CuentaCreateNestedOneWithoutBannersModificadosInput
+  sedes?: Prisma.BannerSedeCreateNestedManyWithoutBannerInput
+  notificaciones?: Prisma.NotificacionMarcaCreateNestedManyWithoutBannerInput
+}
+
+export type BannerPublicidadUncheckedCreateWithoutCarrerasMobileInput = {
+  id?: string
+  fk_marca: string
+  imagen: string
+  mensaje: string
+  fechaInicio: Date | string
+  fechaFin: Date | string
+  estado?: $Enums.EstadoBannerPublicidad
+  fechaCreacion?: Date | string
+  fechaModificacion?: Date | string
+  eliminado?: boolean
+  fk_modificado_por?: string | null
+  motivoRechazo?: string | null
+  fechaAprobacion?: Date | string | null
+  fechaRechazo?: Date | string | null
+  sedes?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutBannerInput
+  notificaciones?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutBannerInput
+}
+
+export type BannerPublicidadCreateOrConnectWithoutCarrerasMobileInput = {
+  where: Prisma.BannerPublicidadWhereUniqueInput
+  create: Prisma.XOR<Prisma.BannerPublicidadCreateWithoutCarrerasMobileInput, Prisma.BannerPublicidadUncheckedCreateWithoutCarrerasMobileInput>
+}
+
+export type BannerPublicidadUpsertWithoutCarrerasMobileInput = {
+  update: Prisma.XOR<Prisma.BannerPublicidadUpdateWithoutCarrerasMobileInput, Prisma.BannerPublicidadUncheckedUpdateWithoutCarrerasMobileInput>
+  create: Prisma.XOR<Prisma.BannerPublicidadCreateWithoutCarrerasMobileInput, Prisma.BannerPublicidadUncheckedCreateWithoutCarrerasMobileInput>
+  where?: Prisma.BannerPublicidadWhereInput
+}
+
+export type BannerPublicidadUpdateToOneWithWhereWithoutCarrerasMobileInput = {
+  where?: Prisma.BannerPublicidadWhereInput
+  data: Prisma.XOR<Prisma.BannerPublicidadUpdateWithoutCarrerasMobileInput, Prisma.BannerPublicidadUncheckedUpdateWithoutCarrerasMobileInput>
+}
+
+export type BannerPublicidadUpdateWithoutCarrerasMobileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  imagen?: Prisma.StringFieldUpdateOperationsInput | string
+  mensaje?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaInicio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estado?: Prisma.EnumEstadoBannerPublicidadFieldUpdateOperationsInput | $Enums.EstadoBannerPublicidad
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  motivoRechazo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fechaAprobacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marca?: Prisma.MarcaUpdateOneRequiredWithoutBannersNestedInput
+  modificadoPor?: Prisma.CuentaUpdateOneWithoutBannersModificadosNestedInput
+  sedes?: Prisma.BannerSedeUpdateManyWithoutBannerNestedInput
+  notificaciones?: Prisma.NotificacionMarcaUpdateManyWithoutBannerNestedInput
+}
+
+export type BannerPublicidadUncheckedUpdateWithoutCarrerasMobileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  fk_marca?: Prisma.StringFieldUpdateOperationsInput | string
+  imagen?: Prisma.StringFieldUpdateOperationsInput | string
+  mensaje?: Prisma.StringFieldUpdateOperationsInput | string
+  fechaInicio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaFin?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estado?: Prisma.EnumEstadoBannerPublicidadFieldUpdateOperationsInput | $Enums.EstadoBannerPublicidad
+  fechaCreacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fechaModificacion?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  eliminado?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  fk_modificado_por?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  motivoRechazo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fechaAprobacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sedes?: Prisma.BannerSedeUncheckedUpdateManyWithoutBannerNestedInput
+  notificaciones?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutBannerNestedInput
+}
+
 export type BannerPublicidadCreateWithoutSedesInput = {
   id?: string
   imagen: string
@@ -818,6 +935,7 @@ export type BannerPublicidadCreateWithoutSedesInput = {
   fechaRechazo?: Date | string | null
   marca: Prisma.MarcaCreateNestedOneWithoutBannersInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutBannersModificadosInput
+  carrerasMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaCreateNestedManyWithoutBannerInput
 }
 
@@ -836,6 +954,7 @@ export type BannerPublicidadUncheckedCreateWithoutSedesInput = {
   motivoRechazo?: string | null
   fechaAprobacion?: Date | string | null
   fechaRechazo?: Date | string | null
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutBannerInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedCreateNestedManyWithoutBannerInput
 }
 
@@ -870,6 +989,7 @@ export type BannerPublicidadUpdateWithoutSedesInput = {
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   marca?: Prisma.MarcaUpdateOneRequiredWithoutBannersNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutBannersModificadosNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUpdateManyWithoutBannerNestedInput
 }
 
@@ -888,6 +1008,7 @@ export type BannerPublicidadUncheckedUpdateWithoutSedesInput = {
   motivoRechazo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fechaAprobacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutBannerNestedInput
 }
 
@@ -907,6 +1028,7 @@ export type BannerPublicidadCreateWithoutNotificacionesInput = {
   marca: Prisma.MarcaCreateNestedOneWithoutBannersInput
   modificadoPor?: Prisma.CuentaCreateNestedOneWithoutBannersModificadosInput
   sedes?: Prisma.BannerSedeCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileCreateNestedManyWithoutBannerInput
 }
 
 export type BannerPublicidadUncheckedCreateWithoutNotificacionesInput = {
@@ -925,6 +1047,7 @@ export type BannerPublicidadUncheckedCreateWithoutNotificacionesInput = {
   fechaAprobacion?: Date | string | null
   fechaRechazo?: Date | string | null
   sedes?: Prisma.BannerSedeUncheckedCreateNestedManyWithoutBannerInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedCreateNestedManyWithoutBannerInput
 }
 
 export type BannerPublicidadCreateOrConnectWithoutNotificacionesInput = {
@@ -959,6 +1082,7 @@ export type BannerPublicidadUpdateWithoutNotificacionesInput = {
   marca?: Prisma.MarcaUpdateOneRequiredWithoutBannersNestedInput
   modificadoPor?: Prisma.CuentaUpdateOneWithoutBannersModificadosNestedInput
   sedes?: Prisma.BannerSedeUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutBannerNestedInput
 }
 
 export type BannerPublicidadUncheckedUpdateWithoutNotificacionesInput = {
@@ -977,6 +1101,7 @@ export type BannerPublicidadUncheckedUpdateWithoutNotificacionesInput = {
   fechaAprobacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sedes?: Prisma.BannerSedeUncheckedUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutBannerNestedInput
 }
 
 export type BannerPublicidadCreateManyModificadoPorInput = {
@@ -1010,6 +1135,7 @@ export type BannerPublicidadUpdateWithoutModificadoPorInput = {
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   marca?: Prisma.MarcaUpdateOneRequiredWithoutBannersNestedInput
   sedes?: Prisma.BannerSedeUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUpdateManyWithoutBannerNestedInput
 }
 
@@ -1028,6 +1154,7 @@ export type BannerPublicidadUncheckedUpdateWithoutModificadoPorInput = {
   fechaAprobacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sedes?: Prisma.BannerSedeUncheckedUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutBannerNestedInput
 }
 
@@ -1078,6 +1205,7 @@ export type BannerPublicidadUpdateWithoutMarcaInput = {
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   modificadoPor?: Prisma.CuentaUpdateOneWithoutBannersModificadosNestedInput
   sedes?: Prisma.BannerSedeUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUpdateManyWithoutBannerNestedInput
 }
 
@@ -1096,6 +1224,7 @@ export type BannerPublicidadUncheckedUpdateWithoutMarcaInput = {
   fechaAprobacion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fechaRechazo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sedes?: Prisma.BannerSedeUncheckedUpdateManyWithoutBannerNestedInput
+  carrerasMobile?: Prisma.BannerCarreraMobileUncheckedUpdateManyWithoutBannerNestedInput
   notificaciones?: Prisma.NotificacionMarcaUncheckedUpdateManyWithoutBannerNestedInput
 }
 
@@ -1122,11 +1251,13 @@ export type BannerPublicidadUncheckedUpdateManyWithoutMarcaInput = {
 
 export type BannerPublicidadCountOutputType = {
   sedes: number
+  carrerasMobile: number
   notificaciones: number
 }
 
 export type BannerPublicidadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sedes?: boolean | BannerPublicidadCountOutputTypeCountSedesArgs
+  carrerasMobile?: boolean | BannerPublicidadCountOutputTypeCountCarrerasMobileArgs
   notificaciones?: boolean | BannerPublicidadCountOutputTypeCountNotificacionesArgs
 }
 
@@ -1145,6 +1276,13 @@ export type BannerPublicidadCountOutputTypeDefaultArgs<ExtArgs extends runtime.T
  */
 export type BannerPublicidadCountOutputTypeCountSedesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.BannerSedeWhereInput
+}
+
+/**
+ * BannerPublicidadCountOutputType without action
+ */
+export type BannerPublicidadCountOutputTypeCountCarrerasMobileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BannerCarreraMobileWhereInput
 }
 
 /**
@@ -1173,6 +1311,7 @@ export type BannerPublicidadSelect<ExtArgs extends runtime.Types.Extensions.Inte
   marca?: boolean | Prisma.MarcaDefaultArgs<ExtArgs>
   modificadoPor?: boolean | Prisma.BannerPublicidad$modificadoPorArgs<ExtArgs>
   sedes?: boolean | Prisma.BannerPublicidad$sedesArgs<ExtArgs>
+  carrerasMobile?: boolean | Prisma.BannerPublicidad$carrerasMobileArgs<ExtArgs>
   notificaciones?: boolean | Prisma.BannerPublicidad$notificacionesArgs<ExtArgs>
   _count?: boolean | Prisma.BannerPublicidadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["bannerPublicidad"]>
@@ -1237,6 +1376,7 @@ export type BannerPublicidadInclude<ExtArgs extends runtime.Types.Extensions.Int
   marca?: boolean | Prisma.MarcaDefaultArgs<ExtArgs>
   modificadoPor?: boolean | Prisma.BannerPublicidad$modificadoPorArgs<ExtArgs>
   sedes?: boolean | Prisma.BannerPublicidad$sedesArgs<ExtArgs>
+  carrerasMobile?: boolean | Prisma.BannerPublicidad$carrerasMobileArgs<ExtArgs>
   notificaciones?: boolean | Prisma.BannerPublicidad$notificacionesArgs<ExtArgs>
   _count?: boolean | Prisma.BannerPublicidadCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1255,6 +1395,7 @@ export type $BannerPublicidadPayload<ExtArgs extends runtime.Types.Extensions.In
     marca: Prisma.$MarcaPayload<ExtArgs>
     modificadoPor: Prisma.$CuentaPayload<ExtArgs> | null
     sedes: Prisma.$BannerSedePayload<ExtArgs>[]
+    carrerasMobile: Prisma.$BannerCarreraMobilePayload<ExtArgs>[]
     notificaciones: Prisma.$NotificacionMarcaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1669,6 +1810,7 @@ export interface Prisma__BannerPublicidadClient<T, Null = never, ExtArgs extends
   marca<T extends Prisma.MarcaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MarcaDefaultArgs<ExtArgs>>): Prisma.Prisma__MarcaClient<runtime.Types.Result.GetResult<Prisma.$MarcaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   modificadoPor<T extends Prisma.BannerPublicidad$modificadoPorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BannerPublicidad$modificadoPorArgs<ExtArgs>>): Prisma.Prisma__CuentaClient<runtime.Types.Result.GetResult<Prisma.$CuentaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   sedes<T extends Prisma.BannerPublicidad$sedesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BannerPublicidad$sedesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BannerSedePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  carrerasMobile<T extends Prisma.BannerPublicidad$carrerasMobileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BannerPublicidad$carrerasMobileArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BannerCarreraMobilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificaciones<T extends Prisma.BannerPublicidad$notificacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BannerPublicidad$notificacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificacionMarcaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2154,6 +2296,30 @@ export type BannerPublicidad$sedesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.BannerSedeScalarFieldEnum | Prisma.BannerSedeScalarFieldEnum[]
+}
+
+/**
+ * BannerPublicidad.carrerasMobile
+ */
+export type BannerPublicidad$carrerasMobileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BannerCarreraMobile
+   */
+  select?: Prisma.BannerCarreraMobileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BannerCarreraMobile
+   */
+  omit?: Prisma.BannerCarreraMobileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BannerCarreraMobileInclude<ExtArgs> | null
+  where?: Prisma.BannerCarreraMobileWhereInput
+  orderBy?: Prisma.BannerCarreraMobileOrderByWithRelationInput | Prisma.BannerCarreraMobileOrderByWithRelationInput[]
+  cursor?: Prisma.BannerCarreraMobileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BannerCarreraMobileScalarFieldEnum | Prisma.BannerCarreraMobileScalarFieldEnum[]
 }
 
 /**
