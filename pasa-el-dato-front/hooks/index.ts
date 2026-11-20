@@ -48,3 +48,21 @@ export {
   useCrearReportePublicacion,
   useCrearReporteUsuario,
 } from "./use-reportes";
+export {
+  useReportesUsuariosPendientes,
+  useReporteUsuarioDetalle,
+  useTomarReporteUsuario,
+  useDescartarReporteUsuario,
+  useReabrirReporteUsuario,
+  useBloquearReporteUsuario,
+  useAdvertirReporteUsuario,
+} from "./use-reportes-admin-usuarios";
+export {
+  useReportesPublicacionesPendientes,
+  useReportePublicacionDetalle,
+  useTomarReportePublicacion,
+  useDescartarReportePublicacion,
+  useReabrirReportePublicacion,
+  useRetirarReportePublicacion,
+  useAdvertirReportePublicacion,
+} from "./use-reportes-admin-publicaciones";

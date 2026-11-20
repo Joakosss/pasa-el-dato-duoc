@@ -13,16 +13,21 @@ interface ModalProps {
 
 export function Modal({ abierto, titulo, onCerrar, children, pie }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const onCerrarRef = useRef(onCerrar);
+
+  useEffect(() => {
+    onCerrarRef.current = onCerrar;
+  }, [onCerrar]);
 
   useEffect(() => {
     if (!abierto) return;
     panelRef.current?.focus();
     const alTeclar = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCerrar();
+      if (e.key === "Escape") onCerrarRef.current();
     };
     window.addEventListener("keydown", alTeclar);
     return () => window.removeEventListener("keydown", alTeclar);
-  }, [abierto, onCerrar]);
+  }, [abierto]);
 
   if (!abierto) return null;
 

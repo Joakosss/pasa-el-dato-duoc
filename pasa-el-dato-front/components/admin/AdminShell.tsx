@@ -7,7 +7,12 @@ import { ROUTES } from "@/config/constants";
 import { cn } from "@/lib/utils/cn";
 import { selectRol, useSesionStore } from "@/stores/sesion-store";
 
-type TabAdmin = "dashboard" | "marcas" | "publicidad";
+type TabAdmin =
+  | "dashboard"
+  | "marcas"
+  | "publicidad"
+  | "reportes-usuarios"
+  | "reportes-publicaciones";
 
 interface ItemNav {
   label: string;
@@ -19,9 +24,18 @@ const NAV: ItemNav[] = [
   { label: "Dashboard", href: ROUTES.dashboard, tab: "dashboard" },
   { label: "Marcas", href: ROUTES.dashboardMarca, tab: "marcas" },
   { label: "Publicidad", href: ROUTES.dashboardPublicidad, tab: "publicidad" },
+  {
+    label: "Reportes usuarios",
+    href: ROUTES.dashboardReportesUsuarios,
+    tab: "reportes-usuarios",
+  },
+  {
+    label: "Reportes publicaciones",
+    href: ROUTES.dashboardReportesPublicaciones,
+    tab: "reportes-publicaciones",
+  },
   { label: "Publicaciones", href: "#" },
   { label: "Usuarios", href: "#" },
-  { label: "Reportes", href: "#" },
   { label: "Configuración", href: "#" },
 ];
 
@@ -37,6 +51,16 @@ const ENCABEZADO: Record<TabAdmin, { titulo: string; descripcion: string }> = {
   publicidad: {
     titulo: "Publicidad",
     descripcion: "Revisa los banners pendientes y resuélvelos.",
+  },
+  "reportes-usuarios": {
+    titulo: "Reportes de usuarios",
+    descripcion:
+      "Revisa los reportes contra usuarios pendientes y resuélvelos.",
+  },
+  "reportes-publicaciones": {
+    titulo: "Reportes de publicaciones",
+    descripcion:
+      "Revisa los reportes contra publicaciones pendientes y resuélvelos.",
   },
 };
 
@@ -80,6 +104,10 @@ export function AdminShell({ tab, children }: AdminShellProps) {
     if (item.tab === "marcas") return pathname.startsWith(ROUTES.dashboardMarca);
     if (item.tab === "publicidad")
       return pathname.startsWith(ROUTES.dashboardPublicidad);
+    if (item.tab === "reportes-usuarios")
+      return pathname.startsWith(ROUTES.dashboardReportesUsuarios);
+    if (item.tab === "reportes-publicaciones")
+      return pathname.startsWith(ROUTES.dashboardReportesPublicaciones);
     return false;
   };
 
