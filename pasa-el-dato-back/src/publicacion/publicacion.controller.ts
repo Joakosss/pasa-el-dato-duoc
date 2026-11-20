@@ -93,6 +93,19 @@ export class PublicacionController {
     return this.publicacionService.listarPublicacionesDeCuenta(user.idCuenta);
   }
 
+  // Declarada antes de @Get(':id') para que NestJS no capture
+  // 'mas-vistas' como parámetro de ruta.
+  @Get('mas-vistas')
+  @ApiOperation({
+    summary:
+      'Listar publicaciones en curso ordenadas por vistas (desc), ' +
+      'desempate por fecha de creación (más reciente primero)',
+  })
+  @ApiOkResponse({ type: [PublicacionListaRespuestaDto] })
+  async listarMasVistas(): Promise<PublicacionListaRespuestaDto[]> {
+    return this.publicacionService.listarPublicacionesMasVistas();
+  }
+
   @Get(':id')
   @ApiOperation({
     summary:
