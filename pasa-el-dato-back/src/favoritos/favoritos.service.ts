@@ -36,6 +36,7 @@ export class FavoritosService {
               titulo: true,
               descripcion: true,
               precio: true,
+              contador_vistas: true,
               eliminado: true,
               estadoPublicacion: { select: { id: true, descripcion: true } },
               sede: { select: { id: true, nombre: true } },
@@ -71,6 +72,7 @@ export class FavoritosService {
         titulo: publicacion.titulo,
         descripcion: publicacion.descripcion,
         precio: publicacion.precio,
+        vistas: publicacion.contador_vistas,
         estado: {
           id: publicacion.estadoPublicacion.id,
           descripcion: publicacion.estadoPublicacion.descripcion,

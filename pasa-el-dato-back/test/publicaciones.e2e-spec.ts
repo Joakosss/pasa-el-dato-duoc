@@ -1133,4 +1133,243 @@ describe('Publicaciones (e2e)', () => {
       imagenes: expect.any(Array),
     });
   });
+
+  async function leerContadorVistas(idPublicacion: string): Promise<number> {
+    const registro = await prisma.publicacion.findUnique({
+      where: { id: idPublicacion },
+      select: { contador_vistas: true },
+    });
+    if (registro === null) {
+      throw new Error('La publicación no existe en la base de datos');
+    }
+    return registro.contador_vistas;
+  }
+
+  async function asignarEstadoPorDescripcion(
+    idPublicacion: string,
+    descripcion: string,
+  ): Promise<void> {
+    const estado = await prisma.estadoPublicacion.findFirst({
+      where: { descripcion },
+      select: { id: true },
+    });
+    if (!estado) {
+      throw new Error(`El catálogo de estados no contiene "${descripcion}"`);
+    }
+    await prisma.publicacion.update({
+      where: { id: idPublicacion },
+      data: { fk_estado_publicacion: estado.id },
+    });
+  }
+
+  it('E33: GET /publicaciones/:id incrementa el contador de vistas en cada consulta visible', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    expect(await leerContadorVistas(creacion.body.id)).toBe(0);
+
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}`)
+      .expect(200);
+    expect(await leerContadorVistas(creacion.body.id)).toBe(1);
+
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}`)
+      .expect(200);
+    expect(await leerContadorVistas(creacion.body.id)).toBe(2);
+  });
+
+  it('E34: GET /publicaciones/:id incrementa sin cookie (endpoint público)', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}`)
+      .set('Cookie', '')
+      .expect(200);
+
+    expect(await leerContadorVistas(creacion.body.id)).toBe(1);
+  });
+
+  it('E35: GET /publicaciones/:id de publicación Pausada responde 404 y no incrementa', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    await asignarEstadoPorDescripcion(creacion.body.id, 'Pausada');
+
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}`)
+      .expect(404);
+
+    expect(await leerContadorVistas(creacion.body.id)).toBe(0);
+  });
+
+  it('E36: GET /publicaciones/:id de publicación eliminada responde 404 y no incrementa', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    await prisma.publicacion.update({
+      where: { id: creacion.body.id },
+      data: { eliminado: true },
+    });
+
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${creacion.body.id}`)
+      .expect(404);
+
+    expect(await leerContadorVistas(creacion.body.id)).toBe(0);
+  });
+
+  it('E37: GET /publicaciones incluye el campo vistas en cada publicación', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    await prisma.publicacion.update({
+      where: { id: creacion.body.id },
+      data: { contador_vistas: 7 },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/publicaciones')
+      .expect(200);
+
+    const elemento = respuesta.body.find((p: { id: string }) => p.id === creacion.body.id);
+    expect(elemento).toBeDefined();
+    expect(elemento.vistas).toBe(7);
+  });
+
+  it('E38: GET /publicaciones/me incluye el campo vistas en cada publicación', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const creacion = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(creacion.body.id);
+
+    await prisma.publicacion.update({
+      where: { id: creacion.body.id },
+      data: { contador_vistas: 3 },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/publicaciones/me')
+      .set('Cookie', cookieAcceso)
+      .expect(200);
+
+    const elemento = respuesta.body.find((p: { id: string }) => p.id === creacion.body.id);
+    expect(elemento).toBeDefined();
+    expect(elemento.vistas).toBe(3);
+  });
+
+  it('E39: GET /publicaciones/mas-vistas responde 200 sin autenticación', async () => {
+    await request(app.getHttpServer())
+      .get('/api/publicaciones/mas-vistas')
+      .set('Cookie', '')
+      .expect(200);
+  });
+
+  it('E40: GET /publicaciones/mas-vistas ordena por vistas desc y desempata por fecha desc', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    // Orden de creación: laB se crea después de laA (misma vista: desempate
+    // fecha desc) y laC se crea última con contador cero.
+    const laA = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(laA.body.id);
+    const laB = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(laB.body.id);
+    const laC = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(laC.body.id);
+    const laD = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(laD.body.id);
+
+    await prisma.publicacion.update({
+      where: { id: laA.body.id },
+      data: { contador_vistas: 5 },
+    });
+    await prisma.publicacion.update({
+      where: { id: laB.body.id },
+      data: { contador_vistas: 12 },
+    });
+    await prisma.publicacion.update({
+      where: { id: laC.body.id },
+      data: { contador_vistas: 3 },
+    });
+    // laD queda con 0: debe ir última de este grupo.
+
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/publicaciones/mas-vistas')
+      .expect(200);
+
+    const ids: string[] = respuesta.body.map((p: { id: string }) => p.id);
+    const ordenEsperado = [laB.body.id, laA.body.id, laC.body.id, laD.body.id];
+
+    // El listado es global: las publicaciones de este grupo deben aparecer
+    // como subsecuencia en el orden esperado (otras pruebas pueden agregar
+    // publicaciones con sus propios contadores).
+    const indices = ordenEsperado.map((id) => ids.indexOf(id));
+    expect(indices).not.toContain(-1);
+    expect([...indices].sort((a, b) => a - b)).toEqual(indices);
+
+    const porId = new Map(respuesta.body.map((p: { id: string; vistas: number }) => [p.id, p.vistas]));
+    expect(porId.get(laB.body.id)).toBe(12);
+    expect(porId.get(laA.body.id)).toBe(5);
+    expect(porId.get(laC.body.id)).toBe(3);
+    expect(porId.get(laD.body.id)).toBe(0);
+  });
+
+  it('E41: GET /publicaciones/mas-vistas excluye publicaciones no visibles', async () => {
+    if (categoriaExistenteId === null) {
+      throw new Error('La prueba requiere al menos una categoría existente');
+    }
+
+    const pausada = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(pausada.body.id);
+    await asignarEstadoPorDescripcion(pausada.body.id, 'Pausada');
+
+    const eliminada = await requestCrearPublicacionValida().expect(201);
+    publicacionesCreadasIds.add(eliminada.body.id);
+    await prisma.publicacion.update({
+      where: { id: eliminada.body.id },
+      data: { eliminado: true },
+    });
+
+    await prisma.publicacion.update({
+      where: { id: pausada.body.id },
+      data: { contador_vistas: 99 },
+    });
+    await prisma.publicacion.update({
+      where: { id: eliminada.body.id },
+      data: { contador_vistas: 99 },
+    });
+
+    const respuesta = await request(app.getHttpServer())
+      .get('/api/publicaciones/mas-vistas')
+      .expect(200);
+
+    const ids: string[] = respuesta.body.map((p: { id: string }) => p.id);
+    expect(ids).not.toContain(pausada.body.id);
+    expect(ids).not.toContain(eliminada.body.id);
+  });
 });

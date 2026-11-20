@@ -182,6 +182,9 @@ export class PublicacionService {
       throw new NotFoundException('Publicación no encontrada');
     }
 
+    // Registro de vista: solo publicaciones visibles incrementan (SP-B3).
+    await this.incrementarVista(publicacion.id);
+
     return {
       id: publicacion.id,
       titulo: publicacion.titulo,
@@ -207,6 +210,16 @@ export class PublicacionService {
     };
   }
 
+  // Registro de vista atómico (SP-B4): UPDATE con incremento a nivel de fila,
+  // idéntico al patrón updateMany usado en cerrarVenta. El where re-chequea
+  // eliminado para cubrir la ventana entre lectura y escritura.
+  private async incrementarVista(idPublicacion: string): Promise<void> {
+    await this.prisma.publicacion.updateMany({
+      where: { id: idPublicacion, eliminado: false },
+      data: { contador_vistas: { increment: 1 } },
+    });
+  }
+
   async listarPublicaciones(): Promise<PublicacionListaRespuestaDto[]> {
     const publicaciones = await this.prisma.publicacion.findMany({
       where: {
@@ -226,6 +239,7 @@ export class PublicacionService {
         titulo: true,
         descripcion: true,
         precio: true,
+        contador_vistas: true,
         estadoPublicacion: { select: { id: true, descripcion: true } },
         sede: { select: { id: true, nombre: true } },
         tipoVenta: { select: { id: true, nombre: true } },
@@ -251,6 +265,43 @@ export class PublicacionService {
         titulo: true,
         descripcion: true,
         precio: true,
+        contador_vistas: true,
+        estadoPublicacion: { select: { id: true, descripcion: true } },
+        sede: { select: { id: true, nombre: true } },
+        tipoVenta: { select: { id: true, nombre: true } },
+        categoria: { select: { id: true, nombre: true } },
+        imagenes: {
+          select: { idImagen: true, url: true, orden: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+    });
+
+    return this.toListaRespuesta(publicaciones);
+  }
+
+  // SP-B11..B13: mismo where y select que listarPublicaciones. Si se modifica
+  // el criterio de visibilidad, actualizar ambos métodos.
+  async listarPublicacionesMasVistas(): Promise<PublicacionListaRespuestaDto[]> {
+    const publicaciones = await this.prisma.publicacion.findMany({
+      where: {
+        eliminado: false,
+        estadoPublicacion: { descripcion: 'En curso' },
+        usuario: {
+          cuenta: {
+            eliminado: false,
+            bloqueado: false,
+            aprobada: true,
+          },
+        },
+      },
+      orderBy: [{ contador_vistas: 'desc' }, { fechaCreacion: 'desc' }],
+      select: {
+        id: true,
+        titulo: true,
+        descripcion: true,
+        precio: true,
+        contador_vistas: true,
         estadoPublicacion: { select: { id: true, descripcion: true } },
         sede: { select: { id: true, nombre: true } },
         tipoVenta: { select: { id: true, nombre: true } },
@@ -271,6 +322,7 @@ export class PublicacionService {
       titulo: string;
       descripcion: string;
       precio: number;
+      contador_vistas: number;
       estadoPublicacion: { id: number; descripcion: string };
       sede: { id: number; nombre: string };
       tipoVenta: { id: number; nombre: string };
@@ -283,6 +335,7 @@ export class PublicacionService {
       titulo: p.titulo,
       descripcion: p.descripcion,
       precio: p.precio,
+      vistas: p.contador_vistas,
       estado: {
         id: p.estadoPublicacion.id,
         descripcion: p.estadoPublicacion.descripcion,

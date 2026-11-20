@@ -379,3 +379,272 @@ describe('HU-CAL-01 Calificaciones (e2e)', () => {
       .expect(400);
   });
 });
+
+describe('HU-CAL-04 Estado de calificación (e2e)', () => {
+  let app: INestApplication;
+  let prisma: PrismaService;
+
+  let cookieVendedor: string;
+  let cookieComprador: string;
+  let cookieTercero: string;
+
+  let idCuentaComprador: string;
+
+  let idPublicacion: string;
+
+  const contrasena = 'clave-temporal-calificacion-04';
+  const correoVendedor = `calif04.vendedor.${randomUUID()}@duocuc.cl`;
+  const correoComprador = `calif04.comprador.${randomUUID()}@duocuc.cl`;
+  const correoTercero = `calif04.tercero.${randomUUID()}@duocuc.cl`;
+  const runVendedor = `${Date.now()}${randomInt(100000, 999999)}-4`;
+  const runComprador = `${Date.now()}${randomInt(100000, 999999)}-5`;
+  const runTercero = `${Date.now()}${randomInt(100000, 999999)}-6`;
+
+  let sedeActivaId: number;
+
+  async function registrarCuenta(correoCuenta: string, runCuenta: string): Promise<void> {
+    const carrera = await prisma.carrera.findFirst({ select: { id: true } });
+    if (!carrera) {
+      throw new Error('La prueba requiere una carrera existente');
+    }
+
+    await request(app.getHttpServer())
+      .post('/api/usuario/registro')
+      .send({
+        correo: correoCuenta,
+        run: runCuenta,
+        telefono: '91234567',
+        contrasena,
+        pNombre: 'Prueba',
+        pApellido: 'EstadoCalificacion',
+        sApellido: 'E2E',
+        sedeId: sedeActivaId,
+        carreraId: carrera.id,
+      })
+      .expect(201);
+  }
+
+  async function iniciarSesion(correoCuenta: string): Promise<string> {
+    const loginRes = await request(app.getHttpServer())
+      .post('/api/auth/login')
+      .send({ correo: correoCuenta, contrasena })
+      .expect(200);
+
+    const cookie = obtenerCookie(loginRes.headers['set-cookie'], 'accessToken');
+    if (!cookie) {
+      throw new Error('El login no entregó la cookie accessToken');
+    }
+    return cookie;
+  }
+
+  const firmaPngValida = Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0,
+  ]);
+
+  function requestCrearPublicacionValida(cookie: string) {
+    return request(app.getHttpServer())
+      .post('/api/publicaciones')
+      .set('Cookie', cookie)
+      .field('titulo', 'Publicación para estado de calificación')
+      .field(
+        'descripcion',
+        'Descripción suficientemente larga para cumplir validaciones (estado de calificación).',
+      )
+      .field('precio', '12345')
+      .field('sedeId', String(sedeActivaId))
+      .field('tipoVentaId', '1')
+      .field('categoriaId', '1')
+      .attach('imagenes', firmaPngValida, {
+        filename: 'foto.png',
+        contentType: 'image/png',
+      });
+  }
+
+  beforeAll(async () => {
+    const modulo = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = modulo.createNestApplication();
+    app.setGlobalPrefix('api');
+    app.use(cookieParser());
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
+    await app.init();
+
+    prisma = modulo.get(PrismaService);
+
+    const sedeActiva = await prisma.sede.findFirst({
+      where: { activa: true, eliminado: false },
+      select: { id: true },
+    });
+    if (!sedeActiva) {
+      throw new Error('La prueba requiere una sede activa existente');
+    }
+    sedeActivaId = sedeActiva.id;
+
+    await registrarCuenta(correoVendedor, runVendedor);
+    await registrarCuenta(correoComprador, runComprador);
+    await registrarCuenta(correoTercero, runTercero);
+
+    [cookieVendedor, cookieComprador, cookieTercero] = await Promise.all([
+      iniciarSesion(correoVendedor),
+      iniciarSesion(correoComprador),
+      iniciarSesion(correoTercero),
+    ]);
+
+    const cuentaComprador = await prisma.cuenta.findUnique({
+      where: { correo: correoComprador },
+      select: { id_cuenta: true },
+    });
+    if (!cuentaComprador) {
+      throw new Error('No se pudo resolver el id de la cuenta comprador');
+    }
+    idCuentaComprador = cuentaComprador.id_cuenta;
+
+    await prisma.estadoPublicacion.upsert({
+      where: { descripcion: 'Vendida' },
+      update: {},
+      create: { descripcion: 'Vendida' },
+    });
+
+    const pubRes = await requestCrearPublicacionValida(cookieVendedor).expect(201);
+    idPublicacion = pubRes.body.id;
+
+    // Cierre de venta: registra comprador + pone estado Vendida (HU-COM-01)
+    await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/cierre-venta`)
+      .set('Cookie', cookieVendedor)
+      .send({ compradorId: idCuentaComprador })
+      .expect(200);
+  }, 60_000);
+
+  afterAll(async () => {
+    if (prisma) {
+      if (idPublicacion) {
+        await prisma.calificacion.deleteMany({ where: { fk_publicacion: idPublicacion } });
+        await prisma.imagenPublicacion.deleteMany({ where: { fk_publicacion: idPublicacion } });
+        await prisma.publicacion.deleteMany({ where: { id: idPublicacion } });
+      }
+
+      await prisma.cuenta.deleteMany({
+        where: { correo: { in: [correoVendedor, correoComprador, correoTercero] } },
+      });
+    }
+
+    if (app) {
+      await app.close();
+    }
+  });
+
+  it('CAL-04 CA3: venta cerrada sin calificación activada se indica en 200', async () => {
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    expect(respuesta.body).toEqual({
+      publicacionId: idPublicacion,
+      transaccionFinalizada: true,
+      calificacionActivada: false,
+      yaCalifico: false,
+    });
+  });
+
+  it('CAL-04 CA1: tras activar, participante sin calificar consulta en 200', async () => {
+    await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/activar-calificacion`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    expect(respuesta.body).toEqual({
+      publicacionId: idPublicacion,
+      transaccionFinalizada: true,
+      calificacionActivada: true,
+      yaCalifico: false,
+    });
+  });
+
+  it('CAL-04 CA7: consulta repetida es idempotente y no altera datos', async () => {
+    const cuentaIniciada = await prisma.calificacion.count({
+      where: { fk_publicacion: idPublicacion },
+    });
+
+    const [res1, res2] = await Promise.all([
+      request(app.getHttpServer())
+        .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+        .set('Cookie', cookieComprador)
+        .expect(200),
+      request(app.getHttpServer())
+        .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+        .set('Cookie', cookieComprador)
+        .expect(200),
+    ]);
+
+    expect(res1.body).toEqual(res2.body);
+
+    const cuentaFinal = await prisma.calificacion.count({
+      where: { fk_publicacion: idPublicacion },
+    });
+    expect(cuentaFinal).toBe(cuentaIniciada);
+  });
+
+  it('CAL-04 CA2: comprador ya calificado consulta yaCalifico=true', async () => {
+    await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/calificaciones`)
+      .set('Cookie', cookieComprador)
+      .send({ puntaje: 5 })
+      .expect(201);
+
+    const respuesta = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+      .set('Cookie', cookieComprador)
+      .expect(200);
+
+    expect(respuesta.body).toMatchObject({ yaCalifico: true });
+  });
+
+  it('CAL-04 CA2: simetría vendedor, yaCalifico=false y luego true', async () => {
+    const antes = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+    expect(antes.body).toMatchObject({ yaCalifico: false });
+
+    await request(app.getHttpServer())
+      .post(`/api/publicaciones/${idPublicacion}/calificaciones`)
+      .set('Cookie', cookieVendedor)
+      .send({ puntaje: 4 })
+      .expect(201);
+
+    const despues = await request(app.getHttpServer())
+      .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+      .set('Cookie', cookieVendedor)
+      .expect(200);
+    expect(despues.body).toMatchObject({ yaCalifico: true });
+  });
+
+  it('CAL-04 CA5: no participante es rechazado (403)', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+      .set('Cookie', cookieTercero)
+      .expect(403);
+  });
+
+  it('CAL-04 CA6: sin sesión es rechazado (401)', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${idPublicacion}/calificaciones/estado`)
+      .expect(401);
+  });
+
+  it('CAL-04: publicación inexistente es rechazada (404)', async () => {
+    await request(app.getHttpServer())
+      .get(`/api/publicaciones/${randomUUID()}/calificaciones/estado`)
+      .set('Cookie', cookieComprador)
+      .expect(404);
+  });
+});

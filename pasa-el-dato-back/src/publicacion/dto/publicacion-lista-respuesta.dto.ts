@@ -54,4 +54,7 @@ export class PublicacionListaRespuestaDto {
 
   @ApiProperty({ type: [ImagenPublicacionListaRespuestaDto] })
   imagenes!: ImagenPublicacionListaRespuestaDto[];
+
+  @ApiProperty({ example: 42, minimum: 0 })
+  vistas!: number;
 }

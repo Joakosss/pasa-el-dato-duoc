@@ -81,4 +81,16 @@ No bloquea calificar, pero es necesaria para el criterio FE05 de HU-CAL-01 ("est
 
 ## Estado
 
-`lista` — lista para comenzar `explore → proposal → spec + design → tasks → apply-progress → verify-report → archive-report`. Depende de HU-CAL-01, HU-CAL-03 y HU-COM-01.
+**Backend completado y verificado (2026-11-17).** BE01–BE06 implementados en conjunto como un solo cambio; desbloquea FE01–FE04 y el criterio FE05 de HU-CAL-01.
+
+- **Contrato:** `GET /api/publicaciones/:id/calificaciones/estado`, guard `JwtAuthGuard`. Respuesta 200 con `publicacionId`, `transaccionFinalizada`, `calificacionActivada`, `yaCalifico`. Errores: 401 (sin sesión), 403 (no participante), 404 (publicación inexistente/eliminada). Estados no-calificables viajan en 200 con flags.
+- **Implementación:** módulo `calificaciones` (`calificaciones.controller.ts`, `calificaciones.service.ts`, `dto/estado-calificacion-respuesta.dto.ts`). Helpers compartidos con `crear`: `cargarPublicacionCalificable` y `resolverContraparte`. Consulta de solo lectura, sin cambios de schema.
+- **Verificación:** suite e2e completa 270/270 en verde (incluye 8 casos nuevos de HU-CAL-04 en `test/calificaciones.e2e-spec.ts`); lint 0 errores. Nota: 1 fallo puntual no relacionado en `chat-mensajeria.gateway` por timeout WebSocket en una corrida global (flaky preexistente).
+- **Plan:** `HU-CAL-04-be-tasks.md` (T1–T5 completados).
+- **Pendiente:** FE01–FE04 (cambio frontend separado).
+
+Archivos afectados backend:
+- `pasa-el-dato-back/src/calificaciones/calificaciones.controller.ts`
+- `pasa-el-dato-back/src/calificaciones/calificaciones.service.ts`
+- `pasa-el-dato-back/src/calificaciones/dto/estado-calificacion-respuesta.dto.ts`
+- `pasa-el-dato-back/test/calificaciones.e2e-spec.ts`
