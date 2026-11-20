@@ -12,7 +12,8 @@ type TabAdmin =
   | "marcas"
   | "publicidad"
   | "reportes-usuarios"
-  | "reportes-publicaciones";
+  | "reportes-publicaciones"
+  | "palabras-bloqueadas";
 
 interface ItemNav {
   label: string;
@@ -34,9 +35,11 @@ const NAV: ItemNav[] = [
     href: ROUTES.dashboardReportesPublicaciones,
     tab: "reportes-publicaciones",
   },
-  { label: "Publicaciones", href: "#" },
-  { label: "Usuarios", href: "#" },
-  { label: "Configuración", href: "#" },
+  {
+    label: "Palabras bloqueadas",
+    href: ROUTES.dashboardPalabrasBloqueadas,
+    tab: "palabras-bloqueadas",
+  }
 ];
 
 const ENCABEZADO: Record<TabAdmin, { titulo: string; descripcion: string }> = {
@@ -61,6 +64,11 @@ const ENCABEZADO: Record<TabAdmin, { titulo: string; descripcion: string }> = {
     titulo: "Reportes de publicaciones",
     descripcion:
       "Revisa los reportes contra publicaciones pendientes y resuélvelos.",
+  },
+  "palabras-bloqueadas": {
+    titulo: "Palabras bloqueadas",
+    descripcion:
+      "Gestiona la lista global del filtro automático de moderación.",
   },
 };
 
@@ -108,6 +116,8 @@ export function AdminShell({ tab, children }: AdminShellProps) {
       return pathname.startsWith(ROUTES.dashboardReportesUsuarios);
     if (item.tab === "reportes-publicaciones")
       return pathname.startsWith(ROUTES.dashboardReportesPublicaciones);
+    if (item.tab === "palabras-bloqueadas")
+      return pathname.startsWith(ROUTES.dashboardPalabrasBloqueadas);
     return false;
   };
 

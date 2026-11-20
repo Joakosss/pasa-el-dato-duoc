@@ -17,6 +17,12 @@ export async function listarPublicaciones(): Promise<PublicacionListaDTO[]> {
   return apiClient.get<PublicacionListaDTO[]>("/publicaciones");
 }
 
+// GET /publicaciones/mas-vistas -> PublicacionListaDTO[] (En curso,
+// ordenadas por vistas desc y desempate por fecha desc). Público.
+export async function listarMasVistas(): Promise<PublicacionListaDTO[]> {
+  return apiClient.get<PublicacionListaDTO[]>("/publicaciones/mas-vistas");
+}
+
 // GET /publicaciones/me -> solo publicaciones propias no eliminadas.
 // Requiere sesión válida (cookie accessToken).
 export async function listarMisPublicaciones(): Promise<PublicacionListaDTO[]> {

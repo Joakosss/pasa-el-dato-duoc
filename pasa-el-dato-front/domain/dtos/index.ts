@@ -50,4 +50,16 @@ export type {
   ListarFavoritosQueryDTO,
   PaginaFavoritosDTO,
 } from "./favorito.dto";
+export type {
+  DashboardMetricasRespuestaDTO,
+  DistribucionCategoriaDTO,
+  DistribucionSedeDTO,
+  MetricasDashboardDTO,
+  MetricasDashboardQueryDTO,
+} from "./metricas-admin.dto";
+export type {
+  CrearPalabraBloqueadaRequestDTO,
+  PalabraBloqueadaDTO,
+} from "./palabra-bloqueada.dto";
+export { TERMINO_BLOQUEADO_MAX_LEN } from "./palabra-bloqueada.dto";
 

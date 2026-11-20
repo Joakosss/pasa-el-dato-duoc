@@ -66,3 +66,9 @@ export {
   useRetirarReportePublicacion,
   useAdvertirReportePublicacion,
 } from "./use-reportes-admin-publicaciones";
+export { useMetricasDashboard } from "./use-metricas-admin";
+export {
+  usePalabrasBloqueadas,
+  useCrearPalabraBloqueada,
+  useEliminarPalabraBloqueada,
+} from "./use-palabras-bloqueadas-admin";

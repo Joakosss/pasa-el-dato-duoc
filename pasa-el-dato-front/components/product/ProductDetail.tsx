@@ -10,6 +10,7 @@ import { usePublicacionParaEdicion } from "@/hooks/use-publicacion-para-edicion"
 import { formatearPrecioCLP } from "@/lib/utils/format";
 import { ProductGallery } from "./ProductGallery";
 import { RelatedProducts } from "./RelatedProducts";
+import { MasVisitados } from "./MasVisitados";
 
 interface ProductDetailProps {
   id: string;
@@ -195,6 +196,8 @@ export function ProductDetail({ id }: ProductDetailProps) {
         idActual={publicacion.id}
         categoriaId={publicacion.categoria.id}
       />
+
+      <MasVisitados idActual={publicacion.id} />
     </>
   );
 }

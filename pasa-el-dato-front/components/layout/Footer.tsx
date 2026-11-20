@@ -19,24 +19,6 @@ export function Footer() {
             </p>
           </div>
           <div>
-            <h4 className="mb-3 text-sm font-semibold text-navy">Categorías</h4>
-            <ul className="space-y-2 text-xs text-gray-500">
-              <li>Libros y apuntes</li>
-              <li>Electrónica</li>
-              <li>Servicios académicos</li>
-              <li>Ropa y accesorios</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="mb-3 text-sm font-semibold text-navy">Soporte</h4>
-            <ul className="space-y-2 text-xs text-gray-500">
-              <li>Centro de ayuda</li>
-              <li>Reglas de la comunidad</li>
-              <li>Seguridad</li>
-              <li>Contacto</li>
-            </ul>
-          </div>
-          <div>
             <h4 className="mb-3 text-sm font-semibold text-navy">Legal</h4>
             <ul className="space-y-2 text-xs text-gray-500">
               <li>
@@ -47,17 +29,12 @@ export function Footer() {
                   Términos de uso
                 </Link>
               </li>
-              <li>Privacidad</li>
-              <li>Cookies</li>
             </ul>
           </div>
         </div>
         <div className="mt-6 flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-6 sm:flex-row">
           <p className="text-xs text-gray-400">
             © {new Date().getFullYear()} {APP_NAME}. Todos los derechos reservados.
-          </p>
-          <p className="text-xs text-gray-400">
-            Proyecto Duoc_UC - Ingeniería en Informática
           </p>
         </div>
       </div>

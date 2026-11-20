@@ -111,11 +111,14 @@ export interface ImagenPublicacionCreadaDTO {
 }
 
 // Espejo de PublicacionListaRespuestaDto del back (GET /publicaciones).
+// `vistas` es opcional en front por drift histórico: el back ya lo expone
+// (GET /publicaciones, /me, /mas-vistas) pero no se muestra en cards.
 export interface PublicacionListaDTO {
   id: PublicacionId;
   titulo: string;
   descripcion: string;
   precio: number;
+  vistas?: number;
   estado: {
     id: number;
     descripcion: string;

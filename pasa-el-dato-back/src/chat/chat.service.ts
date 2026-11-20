@@ -462,7 +462,7 @@ export class ChatService {
       cuentaId: entrada.cuentaId,
     });
 
-    this.filtroPalabrasBloqueadas.validarTexto({
+    await this.filtroPalabrasBloqueadas.validarTexto({
       texto,
       conversacionId: entrada.conversacionId,
       cuentaId: entrada.cuentaId,

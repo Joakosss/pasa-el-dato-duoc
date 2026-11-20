@@ -209,10 +209,20 @@ describe('Chat Gateway - mensajería tiempo real (e2e)', () => {
       .expect(201);
 
     conversacionId = conversacion.body.conversacionId;
+
+    // Fuente vigente HU-ADM-05: el filtro chat consume esta tabla.
+    await prisma.palabraBloqueada.upsert({
+      where: { termino: 'prohibida' },
+      update: {},
+      create: { termino: 'prohibida' },
+    });
   }, 30_000);
 
   afterAll(async () => {
     if (prisma) {
+      await prisma.palabraBloqueada.deleteMany({
+        where: { termino: 'prohibida' },
+      });
       await prisma.publicacion.deleteMany({
         where: { titulo: 'Publicación chat gateway e2e' },
       });

@@ -13,6 +13,7 @@ export const ROUTES = {
   dashboardReportes: "/dashboard/reportes",
   dashboardReportesUsuarios: "/dashboard/reportes/usuarios",
   dashboardReportesPublicaciones: "/dashboard/reportes/publicaciones",
+  dashboardPalabrasBloqueadas: "/dashboard/palabras-bloqueadas",
   miPerfil: "/miperfil",
   misPublicaciones: "/miperfil/publicaciones",
   miPerfilEditar: "/miperfil/editar",
