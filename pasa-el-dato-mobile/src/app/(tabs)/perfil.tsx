@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, type Href } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -17,8 +17,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EstrellasMomentaneo } from '@/components/ui/EstrellasMomentaneo';
-import { ApiError } from '@/lib/api';
-import { cambiarContrasena, cerrarSesionRemota } from '@/lib/api/auth';
+import { ApiError, cerrarSesionCoordinada, ErrorConexion, ErrorRenovacionIncierta } from '@/lib/api';
+import { cambiarContrasena } from '@/lib/api/auth';
 import { type SedeCatalogo, listarSedes } from '@/lib/api/catalogos';
 import {
   actualizarPerfil,
@@ -84,7 +84,7 @@ function formularioDesdePerfil(perfil: PerfilRespuesta): FormularioPerfil {
 }
 
 function mensajeError(error: unknown, respaldo: string): string {
-  if (error instanceof ApiError) return error.message || respaldo;
+  if (error instanceof ApiError || error instanceof ErrorConexion) return error.message || respaldo;
 
   return respaldo;
 }
@@ -106,6 +106,62 @@ function ItemInformativo({
         <Text style={styles.itemValor}>{valor || '—'}</Text>
       </View>
     </View>
+  );
+}
+
+function ConfirmarCierreSesion({
+  visible,
+  cerrando,
+  error,
+  recuperacion,
+  onCancelar,
+  onConfirmar,
+  onRecuperar,
+}: {
+  visible: boolean;
+  cerrando: boolean;
+  error?: string;
+  recuperacion: boolean;
+  onCancelar: () => void;
+  onConfirmar: () => void;
+  onRecuperar: () => void;
+}) {
+  return (
+    <Modal visible={visible} transparent animationType="fade"
+      onRequestClose={() => { if (!cerrando) onCancelar(); }}>
+      <View style={styles.overlay}>
+        <View style={styles.modalConfirmacion} accessibilityViewIsModal>
+          <Text accessibilityRole="header" style={styles.modalTitulo}>¿Cerrar sesión?</Text>
+          <Text style={styles.modalTextoConfirmacion}>
+            Deberás iniciar sesión nuevamente para acceder a tu cuenta.
+          </Text>
+          {error ? <Text accessibilityRole="alert" style={styles.errorTexto}>{error}</Text> : null}
+          {recuperacion ? (
+            <>
+              <Text style={styles.modalTextoConfirmacion}>
+                La sesión remota anterior podría seguir activa hasta expirar.
+              </Text>
+              <Pressable accessibilityRole="button" onPress={onRecuperar} style={styles.botonPrimario}>
+                <Text style={styles.botonPrimarioTexto}>Iniciar sesión nuevamente</Text>
+              </Pressable>
+            </>
+          ) : null}
+          <View style={styles.accionesModal}>
+            <Pressable accessibilityRole="button" disabled={cerrando}
+              onPress={onCancelar} style={styles.botonCancelar}>
+              <Text style={styles.botonCancelarTexto}>Cancelar</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button"
+              accessibilityState={{ disabled: cerrando, busy: cerrando }}
+              disabled={cerrando} onPress={onConfirmar}
+              style={[styles.botonPrimario, styles.botonGuardar, cerrando && styles.botonDeshabilitado]}>
+              {cerrando ? <ActivityIndicator color={colors.navy} /> :
+                <Text style={styles.botonPrimarioTexto}>Cerrar sesión</Text>}
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
@@ -140,23 +196,53 @@ export default function PerfilScreen() {
   const [guardando, setGuardando] = useState(false);
   const [errorEdicion, setErrorEdicion] = useState<string | undefined>();
   const [mensajeExito, setMensajeExito] = useState<string | undefined>();
+  const [modalCierreAbierto, setModalCierreAbierto] = useState(false);
+  const [cerrandoSesion, setCerrandoSesion] = useState(false);
+  const [errorCierre, setErrorCierre] = useState<string | undefined>();
+  const [recuperacionNecesaria, setRecuperacionNecesaria] = useState(false);
+
+  const abrirCierre = () => {
+    setErrorCierre(undefined);
+    setRecuperacionNecesaria(false);
+    setModalCierreAbierto(true);
+  };
 
   const cerrarSesion = async () => {
-    const tokens = useSesionStore.getState().tokens;
-
+    if (cerrandoSesion) return;
+    setCerrandoSesion(true);
+    setErrorCierre(undefined);
     try {
-      if (tokens) {
-        await cerrarSesionRemota(tokens.accessToken, tokens.refreshToken);
-      }
-    } catch {
-      // El cierre local debe completarse aunque no haya conexión.
-    } finally {
-      useSesionStore.getState().cerrarSesion();
+      await cerrarSesionCoordinada();
+      setModalCierreAbierto(false);
       router.replace('/auth/login');
+    } catch (error) {
+      if (error instanceof ErrorRenovacionIncierta) {
+        setRecuperacionNecesaria(true);
+        setErrorCierre(error.message);
+      } else {
+        setErrorCierre('No pudimos confirmar el cierre de sesión. Revisa tu conexión y vuelve a intentarlo.');
+      }
+    } finally {
+      setCerrandoSesion(false);
     }
   };
 
-  const cargarPerfil = async () => {
+  const confirmacionCierre = (
+    <ConfirmarCierreSesion
+      visible={modalCierreAbierto}
+      cerrando={cerrandoSesion}
+      error={errorCierre}
+      recuperacion={recuperacionNecesaria}
+      onCancelar={() => setModalCierreAbierto(false)}
+      onConfirmar={() => void cerrarSesion()}
+      onRecuperar={() => {
+        setModalCierreAbierto(false);
+        router.push({ pathname: '/auth/login', params: { recuperacion: '1' } });
+      }}
+    />
+  );
+
+  const cargarPerfil = useCallback(async () => {
     if (!accessToken) {
       setErrorCarga('Tu sesión no está disponible. Inicia sesión nuevamente.');
       setCargando(false);
@@ -180,16 +266,11 @@ export default function PerfilScreen() {
         }
       }
     } catch (error: unknown) {
-      if (error instanceof ApiError && error.status === 401) {
-        void cerrarSesion();
-        return;
-      }
-
       setErrorCarga(mensajeError(error, 'No pudimos cargar tu perfil.'));
     } finally {
       setCargando(false);
     }
-  };
+  }, [accessToken, sesion]);
 
   const cargarSedes = async () => {
     setCargandoSedes(true);
@@ -210,17 +291,20 @@ export default function PerfilScreen() {
     }, 0);
 
     return () => clearTimeout(solicitud);
-  }, [accessToken, sesion?.idCuenta]);
+  }, [cargarPerfil]);
 
   useEffect(() => {
-    if (!accessToken) {
-      setCantidadFavoritos(0);
-      return;
-    }
+    if (!accessToken) return;
 
+    let vigente = true;
     void listarFavoritos(accessToken)
-      .then((respuesta) => setCantidadFavoritos(respuesta.total))
-      .catch(() => setCantidadFavoritos(0));
+      .then((respuesta) => {
+        if (vigente) setCantidadFavoritos(respuesta.total);
+      })
+      .catch(() => {
+        if (vigente) setCantidadFavoritos(0);
+      });
+    return () => { vigente = false; };
   }, [accessToken]);
 
   const abrirEdicion = () => {
@@ -266,11 +350,6 @@ export default function PerfilScreen() {
       setModalEdicionAbierto(false);
       setMensajeExito('Perfil actualizado correctamente.');
     } catch (error: unknown) {
-      if (error instanceof ApiError && error.status === 401) {
-        void cerrarSesion();
-        return;
-      }
-
       setErrorEdicion(mensajeError(error, 'No pudimos guardar los cambios.'));
     } finally {
       setGuardando(false);
@@ -355,9 +434,10 @@ export default function PerfilScreen() {
         <Pressable accessibilityRole="button" onPress={() => void cargarPerfil()} style={styles.botonPrimario}>
           <Text style={styles.botonPrimarioTexto}>Reintentar</Text>
         </Pressable>
-        <Pressable accessibilityRole="button" onPress={() => void cerrarSesion()} style={styles.botonSecundario}>
+        <Pressable accessibilityRole="button" onPress={abrirCierre} style={styles.botonSecundario}>
           <Text style={styles.botonCerrarTexto}>Cerrar sesión</Text>
         </Pressable>
+        {confirmacionCierre}
       </SafeAreaView>
     );
   }
@@ -507,12 +587,13 @@ export default function PerfilScreen() {
           <Text style={styles.botonSecundarioTexto}>Cambiar contraseña</Text>
         </Pressable>
 
-        <Pressable accessibilityRole="button" onPress={() => void cerrarSesion()} style={styles.botonSecundario}>
+        <Pressable accessibilityRole="button" onPress={abrirCierre} style={styles.botonSecundario}>
           <MaterialCommunityIcons color={colors.error} name="logout" size={19} />
           <Text style={styles.botonCerrarTexto}>Cerrar sesión</Text>
         </Pressable>
       </ScrollView>
 
+      {confirmacionCierre}
       <Modal visible={cambioContrasenaExitoso} transparent animationType="fade">
         <View style={styles.overlay}>
           <View style={styles.modalConfirmacion}>
@@ -527,7 +608,10 @@ export default function PerfilScreen() {
               accessibilityRole="button"
               onPress={() => {
                 setCambioContrasenaExitoso(false);
-                void cerrarSesion();
+                if (useSesionStore.getState().sesion === sesion) {
+                  useSesionStore.getState().cerrarSesion();
+                  router.replace('/auth/login');
+                }
               }}
               style={styles.botonPrimario}>
               <Text style={styles.botonPrimarioTexto}>Ir a iniciar sesión</Text>

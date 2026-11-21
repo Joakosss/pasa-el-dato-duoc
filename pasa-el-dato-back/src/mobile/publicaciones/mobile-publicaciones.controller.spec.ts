@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard.js';
 import type { PrismaService } from '../../prisma/prisma.service.js';
 import { MobilePublicacionesController } from './mobile-publicaciones.controller.js';
+import { MobileRecomendacionesSemanticasService } from '../ia/mobile-recomendaciones-semanticas.service.js';
 
 function publicacion(estado = 'En curso') {
   return {
@@ -31,7 +32,7 @@ function publicacion(estado = 'En curso') {
 function preparar(datos: ReturnType<typeof publicacion> | null = publicacion()) {
   const findUnique = vi.fn().mockResolvedValue(datos);
   const prisma = { publicacion: { findUnique } } as unknown as PrismaService;
-  return { controller: new MobilePublicacionesController(prisma), findUnique };
+  return { controller: new MobilePublicacionesController(prisma, new MobileRecomendacionesSemanticasService(prisma)), findUnique };
 }
 
 function solicitud(idCuenta: string) {
@@ -63,7 +64,7 @@ describe('MobilePublicacionesController.listarParaBusqueda', () => {
       imagenes: [],
     }]);
     const prisma = { publicacion: { findMany } } as unknown as PrismaService;
-    const controller = new MobilePublicacionesController(prisma);
+    const controller = new MobilePublicacionesController(prisma, new MobileRecomendacionesSemanticasService(prisma));
 
     const resultado = await controller.listarParaBusqueda();
 
@@ -83,6 +84,68 @@ describe('MobilePublicacionesController.listarParaBusqueda', () => {
     });
     expect(resultado[0]).not.toHaveProperty('usuario');
     expect(resultado[0]).not.toHaveProperty('estadoPublicacion');
+  });
+});
+
+describe('MobilePublicacionesController.listarRecomendaciones', () => {
+  it('requiere autenticación JWT', () => {
+    expect(Reflect.getMetadata(
+      GUARDS_METADATA,
+      MobilePublicacionesController.prototype.listarRecomendaciones,
+    )).toContain(JwtAuthGuard);
+  });
+
+  it('prioriza categorías favoritas y completa sin duplicados', async () => {
+    const favoritos = vi.fn().mockResolvedValue([
+      { publicacion: { fk_categoria: 2 } },
+      { publicacion: { fk_categoria: 2 } },
+    ]);
+    const { estadoPublicacion, ...datos } = publicacion();
+    const afin = { ...datos, id: 'afin', estadoPublicacion };
+    const reciente = { ...datos, id: 'reciente', estadoPublicacion };
+    const findMany = vi.fn().mockResolvedValueOnce([afin]).mockResolvedValueOnce([reciente]);
+    const prisma = {
+      favorito: { findMany: favoritos },
+      publicacion: { findMany },
+    } as unknown as PrismaService;
+
+    const resultado = await new MobilePublicacionesController(prisma, new MobileRecomendacionesSemanticasService(prisma))
+      .listarRecomendaciones(solicitud('cuenta'));
+
+    expect(favoritos).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ fk_usuario: 'cuenta', eliminado: false }),
+    }));
+    expect(findMany.mock.calls[0][0].where).toMatchObject({
+      fk_categoria: { in: [2] },
+      fk_usuario: { not: 'cuenta' },
+      favoritos: { none: { fk_usuario: 'cuenta', eliminado: false } },
+      estadoPublicacion: { descripcion: 'En curso' },
+      usuario: { cuenta: { eliminado: false, bloqueado: false, aprobada: true } },
+    });
+    expect(findMany.mock.calls[1][0]).toMatchObject({
+      where: { id: { notIn: ['afin'] } },
+      take: 7,
+    });
+    expect(resultado.basadasEnFavoritos).toBe(true);
+    expect(resultado.items.map((item) => item.id)).toEqual(['afin', 'reciente']);
+    expect(resultado.items[0]).toHaveProperty('estado', estadoPublicacion);
+    expect(resultado.items[0]).not.toHaveProperty('estadoPublicacion');
+  });
+
+  it('usa publicaciones recientes si no hay favoritos', async () => {
+    const favoritos = vi.fn().mockResolvedValue([]);
+    const findMany = vi.fn().mockResolvedValue([]);
+    const prisma = {
+      favorito: { findMany: favoritos },
+      publicacion: { findMany },
+    } as unknown as PrismaService;
+
+    const resultado = await new MobilePublicacionesController(prisma, new MobileRecomendacionesSemanticasService(prisma))
+      .listarRecomendaciones(solicitud('cuenta'));
+
+    expect(findMany).toHaveBeenCalledOnce();
+    expect(findMany.mock.calls[0][0]).toMatchObject({ take: 8 });
+    expect(resultado).toEqual({ basadasEnFavoritos: false, basadasEnIa: false, items: [] });
   });
 });
 

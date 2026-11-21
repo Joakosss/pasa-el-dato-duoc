@@ -30,6 +30,30 @@ export class MobileChatService {
     return { ...conversacion, mensaje };
   }
 
+  async obtenerConversacion(entrada: { cuentaId: string; conversacionId: string }) {
+    const conversacion = await this.chatService.asegurarParticipante(entrada);
+    const esVendedor = conversacion.vendedorCuentaId === entrada.cuentaId;
+    const contraparteCuentaId = esVendedor
+      ? conversacion.compradorCuentaId
+      : conversacion.vendedorCuentaId;
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id_cuenta: contraparteCuentaId },
+      select: { pNombre: true, pApellido: true },
+    });
+
+    return {
+      conversacionId: String(conversacion._id),
+      publicacionId: conversacion.publicacionId,
+      rolEnTransaccion: esVendedor ? 'vendedor' as const : 'comprador' as const,
+      contraparteCuentaId,
+      contraparte: {
+        primerNombre: usuario?.pNombre ?? 'Usuario',
+        primerApellido: usuario?.pApellido ?? '',
+        enLinea: this.chatGateway.estaEnLinea(contraparteCuentaId),
+      },
+    };
+  }
+
   async listarConversaciones(entrada: {
     cuentaId: string;
     cursor?: string;

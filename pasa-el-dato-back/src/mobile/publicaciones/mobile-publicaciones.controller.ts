@@ -16,6 +16,7 @@ import {
   type SesionAutenticada,
 } from '../../auth/jwt-auth.guard.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
+import { MobileRecomendacionesSemanticasService } from '../ia/mobile-recomendaciones-semanticas.service.js';
 import { CambiarEstadoPublicacionMobileDto } from './dto/cambiar-estado-publicacion-mobile.dto.js';
 import { ListarPublicacionesCercanasMobileDto } from './dto/listar-publicaciones-cercanas-mobile.dto.js';
 
@@ -43,7 +44,10 @@ function calcularDistanciaKm(
 
 @Controller('mobile/publicaciones')
 export class MobilePublicacionesController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly recomendacionesSemanticas: MobileRecomendacionesSemanticasService,
+  ) {}
 
   @Get('buscar')
   @UseGuards(JwtAuthGuard)
@@ -154,6 +158,71 @@ export class MobilePublicacionesController {
         }];
       })
       .sort((primera, segunda) => primera.distanciaKm - segunda.distanciaKm);
+  }
+
+  @Get('recomendaciones')
+  @UseGuards(JwtAuthGuard)
+  async listarRecomendaciones(@Req() solicitud: SolicitudAutenticada) {
+    const cuentaId = solicitud.user!.idCuenta;
+    const favoritos = await this.prisma.favorito.findMany({
+      where: {
+        fk_usuario: cuentaId,
+        eliminado: false,
+        publicacion: {
+          eliminado: false,
+          estadoPublicacion: { descripcion: 'En curso' },
+          usuario: { cuenta: { eliminado: false, bloqueado: false, aprobada: true } },
+        },
+      },
+      orderBy: { fechaModificacion: 'desc' },
+      take: 100,
+      select: { publicacion: { select: { fk_categoria: true } } },
+    });
+    const categorias = [...new Set(favoritos.map((favorito) => favorito.publicacion.fk_categoria))];
+    const where = {
+      eliminado: false,
+      fk_usuario: { not: cuentaId },
+      estadoPublicacion: { descripcion: 'En curso' },
+      usuario: { cuenta: { eliminado: false, bloqueado: false, aprobada: true } },
+      favoritos: { none: { fk_usuario: cuentaId, eliminado: false } },
+    };
+    const select = {
+      id: true,
+      titulo: true,
+      descripcion: true,
+      precio: true,
+      estadoPublicacion: { select: { id: true, descripcion: true } },
+      sede: { select: { id: true, nombre: true } },
+      tipoVenta: { select: { id: true, nombre: true } },
+      categoria: { select: { id: true, nombre: true } },
+      imagenes: { select: { idImagen: true, url: true, orden: true }, orderBy: { orden: 'asc' as const } },
+    };
+    const afines = categorias.length
+      ? await this.prisma.publicacion.findMany({
+          where: { ...where, fk_categoria: { in: categorias } },
+          orderBy: [{ fechaCreacion: 'desc' }, { id: 'asc' }],
+          take: 8,
+          select,
+        })
+      : [];
+    const recientes = afines.length < 8
+      ? await this.prisma.publicacion.findMany({
+          where: { ...where, id: { notIn: afines.map((publicacion) => publicacion.id) } },
+          orderBy: [{ fechaCreacion: 'desc' }, { id: 'asc' }],
+          take: 8 - afines.length,
+          select,
+        })
+      : [];
+
+    const ordenadas = await this.recomendacionesSemanticas.ordenar(cuentaId, [...afines, ...recientes]);
+    return {
+      basadasEnFavoritos: afines.length > 0,
+      basadasEnIa: ordenadas.basadasEnIa,
+      items: ordenadas.items.map(({ estadoPublicacion, ...publicacion }) => ({
+        ...publicacion,
+        estado: estadoPublicacion,
+      })),
+    };
   }
 
   @Get(':id')

@@ -74,6 +74,8 @@ export default function EditarPublicacionScreen() {
   }, [accessToken, id]);
 
   useEffect(() => {
+    // La carga inicia una solicitud externa y también gestiona el estado de reintento.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void cargar();
   }, [cargar]);
 

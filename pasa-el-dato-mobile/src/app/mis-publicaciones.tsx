@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
-import { ApiError } from '@/lib/api';
+import { ApiError, ErrorConexion } from '@/lib/api';
 import {
   cambiarEstadoPublicacion,
   listarMisPublicaciones,
@@ -31,7 +31,6 @@ interface FilaGrilla {
 
 export default function MisPublicacionesScreen() {
   const accessToken = useSesionStore(selectAccessToken);
-  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
@@ -57,14 +56,8 @@ export default function MisPublicacionesScreen() {
     try {
       setPublicaciones(await listarMisPublicaciones(accessToken));
     } catch (causa: unknown) {
-      if (causa instanceof ApiError && causa.status === 401) {
-        cerrarSesion();
-        router.replace('/auth/login');
-        return;
-      }
-
       setError(
-        causa instanceof ApiError
+        causa instanceof ApiError || causa instanceof ErrorConexion
           ? causa.message
           : 'No pudimos cargar tus publicaciones. Reintenta.',
       );
@@ -72,7 +65,7 @@ export default function MisPublicacionesScreen() {
       setCargando(false);
       setActualizando(false);
     }
-  }, [accessToken, cerrarSesion]);
+  }, [accessToken]);
 
   useFocusEffect(
     useCallback(() => {

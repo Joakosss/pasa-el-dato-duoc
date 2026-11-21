@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router } from 'expo-router';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { resolverUrlImagen, type PublicacionPublica } from '@/lib/api/publicaciones';
 import type { PublicacionFeed } from '@/lib/feed/publicaciones-placeholder';
@@ -33,7 +33,7 @@ export function PublicacionCard({
     ? `$${new Intl.NumberFormat('es-CL').format(publicacion.precio)}`
     : publicacion.precio;
   const accessToken = useSesionStore(selectAccessToken);
-  const { esFavorito, actualizando, alternar } = useFavorito(
+  const { esFavorito, cargando, actualizando, errorCarga, reintentar, alternar } = useFavorito(
     publicacionReal ? publicacion.id : undefined,
     accessToken,
   );
@@ -65,21 +65,32 @@ export function PublicacionCard({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
-            esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
+            errorCarga ? 'Reintentar consulta de favoritos' :
+              cargando ? 'Consultando favorito' :
+                esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
           }
-          accessibilityState={{ disabled: !publicacionReal || actualizando, selected: esFavorito }}
-          disabled={!publicacionReal || actualizando}
+          accessibilityState={{
+            disabled: !publicacionReal || cargando || actualizando,
+            busy: cargando || actualizando,
+            ...(errorCarga || cargando ? {} : { selected: esFavorito }),
+          }}
+          disabled={!publicacionReal || cargando || actualizando}
           hitSlop={8}
           onPress={(evento) => {
             evento.stopPropagation();
-            void alternar();
+            if (errorCarga) reintentar();
+            else void alternar();
           }}
           style={styles.botonFavorito}>
-          <MaterialCommunityIcons
-            name={esFavorito ? 'heart' : 'heart-outline'}
-            size={19}
-            color={esFavorito ? colors.error : colors.navy}
-          />
+          {cargando ? (
+            <ActivityIndicator size="small" color={colors.navy} />
+          ) : (
+            <MaterialCommunityIcons
+              name={errorCarga ? 'alert-circle-outline' : esFavorito ? 'heart' : 'heart-outline'}
+              size={19}
+              color={errorCarga || esFavorito ? colors.error : colors.navy}
+            />
+          )}
         </Pressable>
       </View>
 

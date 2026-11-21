@@ -35,6 +35,11 @@ export interface ListaConversacionesChat {
   nextCursor: string | null;
 }
 
+export type DetalleConversacionChat = Pick<
+  ConversacionChat,
+  'conversacionId' | 'publicacionId' | 'rolEnTransaccion' | 'contraparteCuentaId' | 'contraparte'
+>;
+
 export interface MensajeChat {
   id: string;
   conversacionId: string;
@@ -80,6 +85,20 @@ export function iniciarConversacionConMensaje(
   );
 }
 
+export function obtenerTotalNoLeidos(accessToken: string): Promise<{ total: number }> {
+  return apiClient.get<{ total: number }>('/mobile/chat/no-leidos', conToken(accessToken));
+}
+
+export function obtenerConversacion(
+  accessToken: string,
+  conversacionId: string,
+): Promise<DetalleConversacionChat> {
+  return apiClient.get<DetalleConversacionChat>(
+    `/mobile/chat/conversaciones/${encodeURIComponent(conversacionId)}`,
+    conToken(accessToken),
+  );
+}
+
 export function listarConversaciones(
   accessToken: string,
   cursor?: string,
@@ -116,12 +135,13 @@ export function listarMensajes(
   );
 }
 
-export function marcarConversacionLeida(
+export function confirmarMensajeLeido(
   accessToken: string,
   conversacionId: string,
+  mensajeId: string,
 ): Promise<ConversacionLeida> {
   return apiClient.post<ConversacionLeida>(
-    `/mobile/chat/conversaciones/${encodeURIComponent(conversacionId)}/leer`,
+    `/mobile/chat/conversaciones/${encodeURIComponent(conversacionId)}/mensajes/${encodeURIComponent(mensajeId)}/leer`,
     undefined,
     conToken(accessToken),
   );

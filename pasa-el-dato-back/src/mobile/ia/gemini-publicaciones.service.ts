@@ -148,12 +148,8 @@ Descripción: ${solicitud.descripcion}`,
             signal: AbortSignal.timeout(60_000),
           },
         );
-      } catch (error: unknown) {
-        const detalle =
-          error instanceof Error
-            ? `${error.name}: ${error.message}`
-            : 'Error de red no identificable';
-        this.logger.error(`No fue posible contactar Gemini: ${detalle}`);
+      } catch {
+        this.logger.error('No fue posible contactar Gemini.');
         throw new BadGatewayException(
           'No pudimos contactar al asistente IA. Reintenta en unos momentos.',
         );
@@ -171,9 +167,8 @@ Descripción: ${solicitud.descripcion}`,
     }
 
     if (!respuesta || !respuesta.ok) {
-      const detalle = respuesta ? (await respuesta.text()).slice(0, 1000) : '';
       this.logger.warn(
-        `Gemini rechazó la solicitud: HTTP ${respuesta?.status ?? 'sin respuesta'}. ${detalle}`,
+        `Gemini rechazó la solicitud: HTTP ${respuesta?.status ?? 'sin respuesta'}.`,
       );
       throw new BadGatewayException(
         'El asistente IA no pudo completar el análisis. Reintenta más tarde.',
@@ -190,16 +185,20 @@ Descripción: ${solicitud.descripcion}`,
       throw new BadGatewayException('El asistente IA devolvió una respuesta vacía.');
     }
 
-    let resultado: RespuestaGeminiEstructurada;
+    let resultado: unknown;
     try {
-      resultado = JSON.parse(texto) as RespuestaGeminiEstructurada;
+      resultado = JSON.parse(texto);
     } catch {
       throw new BadGatewayException('El asistente IA devolvió una respuesta inválida.');
     }
+    if (!resultado || typeof resultado !== 'object' || Array.isArray(resultado)) {
+      throw new BadGatewayException('El asistente IA devolvió una respuesta inválida.');
+    }
+    const evaluacion = resultado as RespuestaGeminiEstructurada;
 
-    const estado = resultado.estadoModeracion;
-    const puntaje = resultado.puntajeCalidad;
-    const resumen = textoSeguro(resultado.resumen, 500);
+    const estado = evaluacion.estadoModeracion;
+    const puntaje = evaluacion.puntajeCalidad;
+    const resumen = textoSeguro(evaluacion.resumen, 500);
 
     if (
       typeof estado !== 'string' ||
@@ -217,10 +216,10 @@ Descripción: ${solicitud.descripcion}`,
       estadoModeracion: estado as EstadoModeracionGemini,
       puntajeCalidad: puntaje,
       resumen,
-      hallazgos: listaTextoSegura(resultado.hallazgos, 4, 240),
-      sugerencias: listaTextoSegura(resultado.sugerencias, 4, 240),
-      tituloSugerido: textoSeguro(resultado.tituloSugerido, 100),
-      descripcionSugerida: textoSeguro(resultado.descripcionSugerida, 2000),
+      hallazgos: listaTextoSegura(evaluacion.hallazgos, 4, 240),
+      sugerencias: listaTextoSegura(evaluacion.sugerencias, 4, 240),
+      tituloSugerido: textoSeguro(evaluacion.tituloSugerido, 100),
+      descripcionSugerida: textoSeguro(evaluacion.descripcionSugerida, 2000),
     };
   }
 }

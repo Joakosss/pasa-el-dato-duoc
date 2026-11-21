@@ -1,4 +1,6 @@
-import { Redirect, Stack, usePathname } from 'expo-router';
+import { Redirect, Stack, useGlobalSearchParams, usePathname } from 'expo-router';
+
+import { requiereReautenticacion } from '@/lib/api';
 
 import { resolverDestinoPorRol } from '@/lib/auth/destino-por-rol';
 import {
@@ -11,13 +13,15 @@ import {
 // Grupo /auth: login + register. Solo gráfico, sin header nativo.
 export default function AuthLayout() {
   const pathname = usePathname();
+  const { recuperacion } = useGlobalSearchParams<{ recuperacion?: string }>();
   const hasHydrated = useSesionStore(selectHasHydrated);
   const estaAutenticado = useSesionStore(selectEstaAutenticado);
   const rol = useSesionStore(selectRol);
 
   // Guarda inversa: quien ya inició sesión no vuelve al login, se le manda a la
   // ruta de su rol. Registro sigue accesible (solo se protege el login).
-  if (hasHydrated && estaAutenticado && rol && pathname === '/auth/login') {
+  const recuperacionPermitida = recuperacion === '1' && requiereReautenticacion();
+  if (hasHydrated && estaAutenticado && rol && pathname === '/auth/login' && !recuperacionPermitida) {
     return <Redirect href={resolverDestinoPorRol(rol)} />;
   }
 

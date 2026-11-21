@@ -136,6 +136,18 @@ function crearFormDataActualizacion(datos: ActualizarPublicacionRequest): FormDa
   return formData;
 }
 
+export interface RecomendacionesPublicaciones {
+  basadasEnFavoritos: boolean;
+  basadasEnIa?: boolean;
+  items: PublicacionPublica[];
+}
+
+export function listarRecomendaciones(accessToken: string): Promise<RecomendacionesPublicaciones> {
+  return apiClient.get<RecomendacionesPublicaciones>('/mobile/publicaciones/recomendaciones', {
+    accessToken,
+  });
+}
+
 export function listarPublicaciones(): Promise<PublicacionPublica[]> {
   return apiClient.get<PublicacionPublica[]>('/publicaciones');
 }

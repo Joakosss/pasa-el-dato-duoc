@@ -1,8 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
@@ -18,6 +17,7 @@ import {
   listarFavoritos,
   type FavoritoPublicacion,
 } from '@/lib/api/favoritos';
+import { useFavoritosStore } from '@/stores/favoritos-store';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -33,8 +33,25 @@ export default function FavoritosScreen() {
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [siguientePagina, setSiguientePagina] = useState<number | null>(null);
+  const [cargandoMas, setCargandoMas] = useState(false);
+  const [errorMas, setErrorMas] = useState(false);
+  const generacion = useRef(0);
+  const cargaAdicional = useRef(false);
+  const sesionLista = useRef(useSesionStore.getState().sesion);
 
   const cargarFavoritos = useCallback(async (esActualizacion = false) => {
+    const solicitud = ++generacion.current;
+    cargaAdicional.current = false;
+    setCargandoMas(false);
+    setErrorMas(false);
+    setSiguientePagina(null);
+    const sesion = useSesionStore.getState().sesion;
+    if (sesionLista.current !== sesion) {
+      sesionLista.current = sesion;
+      setFavoritos([]);
+      setTotalFavoritos(0);
+    }
     if (!accessToken) {
       setFavoritos([]);
       setTotalFavoritos(0);
@@ -49,23 +66,67 @@ export default function FavoritosScreen() {
     setError(undefined);
     try {
       const respuesta = await listarFavoritos(accessToken);
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
       setFavoritos(respuesta.items);
       setTotalFavoritos(respuesta.total);
+      setSiguientePagina(respuesta.nextPage);
     } catch (causa: unknown) {
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
       setError(
         causa instanceof ApiError
           ? causa.message
           : 'No pudimos cargar tus favoritos. Reintenta.',
       );
     } finally {
-      setCargando(false);
-      setActualizando(false);
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
+        setCargando(false);
+        setActualizando(false);
+      }
     }
   }, [accessToken]);
+
+  const cargarMas = useCallback(async () => {
+    if (!accessToken || siguientePagina === null || cargaAdicional.current) return;
+    const solicitud = generacion.current;
+    const sesion = useSesionStore.getState().sesion;
+    cargaAdicional.current = true;
+    setCargandoMas(true);
+    setErrorMas(false);
+    try {
+      const respuesta = await listarFavoritos(accessToken, siguientePagina);
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
+      setFavoritos((actuales) => {
+        const ids = new Set(actuales.map((item) => item.id));
+        return [...actuales, ...respuesta.items.filter((item) => !ids.has(item.id))];
+      });
+      setTotalFavoritos(respuesta.total);
+      setSiguientePagina(respuesta.nextPage);
+    } catch {
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
+        setErrorMas(true);
+      }
+    } finally {
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
+        cargaAdicional.current = false;
+        setCargandoMas(false);
+      }
+    }
+  }, [accessToken, siguientePagina]);
 
   useFocusEffect(
     useCallback(() => {
       void cargarFavoritos();
+      const desuscribir = useFavoritosStore.subscribe((actual, anterior) => {
+        const quitado = Object.entries(actual.entradas).some(
+          ([id, entrada]) =>
+            entrada.esFavorito === false && anterior.entradas[id]?.esFavorito === true,
+        );
+        if (quitado) void cargarFavoritos(true);
+      });
+      return () => {
+        generacion.current += 1;
+        desuscribir();
+      };
     }, [cargarFavoritos]),
   );
 
@@ -109,6 +170,21 @@ export default function FavoritosScreen() {
             onRefresh={() => void cargarFavoritos(true)}
             tintColor={colors.navy}
           />
+        }
+        ListFooterComponent={
+          error && favoritos.length > 0 ? (
+            <Estado icono="alert-circle-outline" titulo={error} esError accion={() => void cargarFavoritos()} textoAccion="Reintentar" />
+          ) : siguientePagina !== null ? (
+            <Pressable
+              accessibilityRole="button"
+              disabled={cargandoMas}
+              onPress={() => void cargarMas()}
+              style={styles.boton}>
+              <Text style={styles.botonTexto}>
+                {cargandoMas ? 'Cargando…' : errorMas ? 'Reintentar carga' : 'Cargar más'}
+              </Text>
+            </Pressable>
+          ) : null
         }
         ListEmptyComponent={
           cargando ? (

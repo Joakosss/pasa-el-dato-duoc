@@ -18,9 +18,11 @@
       "predictiveBackGestureEnabled": false,
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
-        "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.k.oublier.pasaeldatomobile"
     },
@@ -34,13 +36,14 @@
         "expo-image-picker",
         {
           "cameraPermission": "Permite que Pasa el Dato use tu cámara para fotografiar tus productos.",
-          "photosPermission": "Permite que Pasa el Dato acceda a tus fotos para publicar productos."
+          "photosPermission": "Permite que Pasa el Dato acceda a tus fotos para publicar productos.",
+          "microphonePermission": false
         }
       ],
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Permite que Pasa el Dato use tu ubicación para mostrar publicaciones cercanas. Tu ubicación no se guarda."
+          "locationWhenInUsePermission": "Permite que Pasa el Dato use tu ubicación y envíe tus coordenadas al servicio para mostrar publicaciones cercanas."
         }
       ],
       [

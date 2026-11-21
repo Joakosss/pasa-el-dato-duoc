@@ -3,7 +3,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -15,12 +14,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/Avatar';
+import { useAviso } from '@/components/ui/AvisoProvider';
 import { iniciarConversacionConMensaje } from '@/lib/chat/chat-api';
 import { ApiError } from '@/lib/api';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
 export default function NuevoChatScreen() {
+  const mostrarAviso = useAviso();
   const { publicacionId, titulo, vendedorNombre } = useLocalSearchParams<{
     publicacionId: string;
     titulo?: string;
@@ -53,10 +54,12 @@ export default function NuevoChatScreen() {
           id: resultado.conversacionId,
           titulo: tituloPublicacion,
           contraparteNombre: nombreVendedor,
+          publicacionId,
+          rolEnTransaccion: 'comprador',
         },
       });
     } catch (causa: unknown) {
-      Alert.alert(
+      mostrarAviso(
         'No se pudo enviar el mensaje',
         causa instanceof ApiError
           ? causa.message

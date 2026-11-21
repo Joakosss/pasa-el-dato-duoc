@@ -13,8 +13,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { GaleriaProducto } from '@/components/producto/GaleriaProducto';
+import { ConsentimientoRecomendaciones } from '@/components/publicar/ConsentimientoRecomendaciones';
 import { useFavorito } from '@/hooks/use-favorito';
 import { ApiError } from '@/lib/api';
+import { clasificarErrorDetallePublicacion, type ErrorDetallePublicacion } from '@/lib/api/error-detalle-publicacion';
 import {
   eliminarPublicacion,
   obtenerPublicacion,
@@ -31,8 +33,8 @@ function precioClp(precio: number): string {
 export default function DetalleProductoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const accessToken = useSesionStore(selectAccessToken);
-  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
-  const { esFavorito, actualizando: actualizandoFavorito, alternar: alternarFavorito } =
+  const { esFavorito, cargando: cargandoFavorito, actualizando: actualizandoFavorito, errorCarga: errorFavorito,
+    reintentar: reintentarFavorito, alternar: alternarFavorito } =
     useFavorito(
       id && !obtenerPublicacionDemostracionMomentaneo(id) ? id : undefined,
       accessToken,
@@ -42,12 +44,12 @@ export default function DetalleProductoScreen() {
   const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
   const [errorEliminacion, setErrorEliminacion] = useState<string | undefined>();
   const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<ErrorDetallePublicacion | undefined>();
 
   const cargarPublicacion = useCallback(async () => {
     if (!id) {
       setCargando(false);
-      setError('La publicación no es válida.');
+      setError({ mensaje: 'La publicación no es válida.', reintentable: false });
       return;
     }
 
@@ -65,31 +67,18 @@ export default function DetalleProductoScreen() {
     if (!accessToken) {
       setPublicacion(null);
       setCargando(false);
-      setError('Tu sesión no está disponible. Inicia sesión nuevamente.');
+      setError({ mensaje: 'Tu sesión no está disponible. Inicia sesión nuevamente.', reintentable: false });
       return;
     }
 
     try {
       setPublicacion(await obtenerPublicacion(id, accessToken));
     } catch (causa: unknown) {
-      if (causa instanceof ApiError && causa.status === 401) {
-        cerrarSesion();
-        router.replace('/auth/login');
-        return;
-      }
-      if (causa instanceof ApiError && causa.status === 404) {
-        setError('Esta publicación ya no está disponible.');
-      } else {
-        setError(
-          causa instanceof ApiError
-            ? causa.message
-            : 'No pudimos cargar la publicación. Reintenta.',
-        );
-      }
+      setError(clasificarErrorDetallePublicacion(causa));
     } finally {
       setCargando(false);
     }
-  }, [accessToken, cerrarSesion, id]);
+  }, [accessToken, id]);
 
   useFocusEffect(
     useCallback(() => {
@@ -140,9 +129,9 @@ export default function DetalleProductoScreen() {
       ) : error || !publicacion ? (
         <EstadoPantalla
           icono="package-variant-closed-remove"
-          titulo={error ?? 'Publicación no encontrada'}
-          texto="Puede que ya no esté disponible o que el enlace no sea válido."
-          accion={error?.includes('no pudimos') ? () => void cargarPublicacion() : undefined}
+          titulo={error?.mensaje ?? 'Publicación no encontrada'}
+          texto={error?.reintentable ? 'Comprueba tu conexión e inténtalo nuevamente.' : 'Puede que ya no esté disponible o que el enlace no sea válido.'}
+          accion={error?.reintentable ? () => void cargarPublicacion() : undefined}
         />
       ) : (
         <ScrollView
@@ -198,23 +187,35 @@ export default function DetalleProductoScreen() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={
-                  esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
+                  errorFavorito ? 'No se pudo consultar favoritos. Reintentar' :
+                    cargandoFavorito ? 'Consultando favorito' :
+                      esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'
                 }
                 accessibilityState={{
-                  disabled: actualizandoFavorito,
-                  selected: esFavorito,
+                  disabled: cargandoFavorito || actualizandoFavorito,
+                  busy: cargandoFavorito || actualizandoFavorito,
+                  ...(errorFavorito || cargandoFavorito ? {} : { selected: esFavorito }),
                 }}
-                disabled={actualizandoFavorito}
-                onPress={() => void alternarFavorito()}
+                disabled={cargandoFavorito || actualizandoFavorito}
+                onPress={() => errorFavorito ? reintentarFavorito() : void alternarFavorito()}
                 style={styles.botonFavorito}>
-                <MaterialCommunityIcons
-                  name={esFavorito ? 'heart' : 'heart-outline'}
-                  size={23}
-                  color={esFavorito ? colors.error : colors.navy}
-                />
+                {cargandoFavorito ? (
+                  <ActivityIndicator size="small" color={colors.navy} />
+                ) : (
+                  <MaterialCommunityIcons
+                    name={errorFavorito ? 'alert-circle-outline' : esFavorito ? 'heart' : 'heart-outline'}
+                    size={23}
+                    color={errorFavorito || esFavorito ? colors.error : colors.navy}
+                  />
+                )}
               </Pressable>
             ) : null}
           </View>
+          {errorFavorito && estaEnCurso && !esPropietario ? (
+            <Text accessibilityRole="alert" style={styles.estadoListaError}>
+              No pudimos consultar tus favoritos. Presiona el icono para reintentar.
+            </Text>
+          ) : null}
           <Text style={styles.precio}>{precioClp(publicacion.precio)}</Text>
 
           <View style={styles.meta}>
@@ -240,6 +241,16 @@ export default function DetalleProductoScreen() {
               ) : null}
             </View>
           </View>
+
+          {esPropietario && accessToken ? (
+            <ConsentimientoRecomendaciones
+              key={publicacion.id}
+              id={publicacion.id}
+              titulo={publicacion.titulo}
+              descripcion={publicacion.descripcion}
+              accessToken={accessToken}
+            />
+          ) : null}
 
           {estaVendida ? null : esPropietario ? (
             <View style={styles.accionesPropietario}>
@@ -520,6 +531,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 40,
   },
+  estadoListaError: { color: colors.error, fontSize: 13 },
   precio: { color: colors.navy, fontSize: 24, fontWeight: '900', marginTop: -8 },
   meta: {
     alignItems: 'center',

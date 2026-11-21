@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -25,15 +25,21 @@ import {
   obtenerTransaccionPublicacion,
 } from '@/lib/api/publicaciones';
 import {
+  confirmarMensajeLeido,
   enviarMensaje as enviarMensajeApi,
   listarMensajes,
-  marcarConversacionLeida,
+  obtenerConversacion,
+  type DetalleConversacionChat,
   type MensajeChat,
 } from '@/lib/chat/chat-api';
 import {
   crearSocketChat,
   type SocketChat,
 } from '@/lib/chat/chat-socket';
+import { calcularLectura, type ContinuacionLectura } from '@/lib/chat/calcular-lectura';
+import { cerrarVentaYActivarCalificacion } from '@/lib/chat/cierre-venta';
+import { agregarMensajeSinDuplicados } from '@/lib/chat/combinar-mensajes';
+import { recuperarMensajesReconexión } from '@/lib/chat/sincronizar-reconexion';
 import { selectAccessToken, selectSesion, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -49,18 +55,8 @@ function hora(iso: string): string {
   });
 }
 
-function agregarMensajeSinDuplicados(
-  actuales: MensajeChat[],
-  mensaje: MensajeChat,
-): MensajeChat[] {
-  if (actuales.some((item) => item.id === mensaje.id)) return actuales;
-  return [...actuales, mensaje].sort(
-    (a, b) => new Date(a.enviadoEn).getTime() - new Date(b.enviadoEn).getTime(),
-  );
-}
-
 export default function ConversacionChatScreen() {
-  const { id, titulo, contraparteNombre, contraparteCuentaId, contraparteEnLinea, publicacionId, rolEnTransaccion } = useLocalSearchParams<{
+  const { id, titulo, contraparteNombre, contraparteCuentaId: contraparteCuentaIdRuta, contraparteEnLinea, publicacionId: publicacionIdRuta, rolEnTransaccion } = useLocalSearchParams<{
     id: string;
     titulo?: string;
     contraparteNombre?: string;
@@ -73,6 +69,7 @@ export default function ConversacionChatScreen() {
   const sesion = useSesionStore(selectSesion);
   const [texto, setTexto] = useState('');
   const [mensajes, setMensajes] = useState<MensajeChat[]>([]);
+  const [detalleConversacion, setDetalleConversacion] = useState<{ sesion: NonNullable<typeof sesion>; detalle: DetalleConversacionChat } | null>(null);
   const [estaEnLinea, setEstaEnLinea] = useState(contraparteEnLinea === 'true');
   const [modalAccionesAbierto, setModalAccionesAbierto] = useState(false);
   const [modalConfirmarVentaAbierto, setModalConfirmarVentaAbierto] = useState(false);
@@ -88,19 +85,57 @@ export default function ConversacionChatScreen() {
   const [cargando, setCargando] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cursorAnterior, setCursorAnterior] = useState<string | null>(null);
+  const [cargandoAnteriores, setCargandoAnteriores] = useState(false);
+  const [errorAnteriores, setErrorAnteriores] = useState(false);
+  const cargaAnteriorEnCurso = useRef(false);
+  const conservarPosicion = useRef(false);
+  const generacionHistorial = useRef(0);
+  const generacionTransaccion = useRef(0);
+  const mensajesActuales = useRef<MensajeChat[]>([]);
+  const contraparteActual = useRef<string | undefined>(undefined);
+  const reintentarSincronizacion = useRef<(() => void) | null>(null);
+  const actualizarLectura = useRef<(() => void) | null>(null);
+  const [errorLectura, setErrorLectura] = useState(false);
+  const [sincronizacionIncompleta, setSincronizacionIncompleta] = useState(false);
+  const identidadHistorial = useRef<{ sesion: typeof sesion; conversacionId: string } | null>(null);
   const scrollRef = useRef<ScrollView>(null);
   const socketRef = useRef<SocketChat | null>(null);
 
   const conversacionId = id ?? '';
+  const detalleActual = detalleConversacion?.sesion === sesion &&
+    detalleConversacion.detalle.conversacionId === conversacionId ? detalleConversacion.detalle : null;
+  const contraparteCuentaId = contraparteCuentaIdRuta ?? detalleActual?.contraparteCuentaId;
+  const publicacionId = publicacionIdRuta ?? detalleActual?.publicacionId;
   const tituloPublicacion = titulo ?? 'Conversación';
-  const nombreContraparte = contraparteNombre ?? 'Usuario';
-  // Las acciones de venta y calificación solo están disponibles en
-  // conversaciones asociadas explícitamente a una publicación.
+  const nombreContraparte = contraparteNombre || [detalleActual?.contraparte.primerNombre, detalleActual?.contraparte.primerApellido].filter(Boolean).join(' ') || 'Usuario';
   const idPublicacion = publicacionId;
-  const rolActual: RolTransaccion =
-    rolEnTransaccion === 'vendedor' ? 'vendedor' : 'comprador';
+  const rolActual: RolTransaccion | undefined = rolEnTransaccion ?? detalleActual?.rolEnTransaccion;
+
+  useEffect(() => {
+    if (!accessToken || !conversacionId || !sesion ||
+        (contraparteCuentaIdRuta && publicacionIdRuta && rolEnTransaccion)) return;
+    let activo = true;
+    void obtenerConversacion(accessToken, conversacionId)
+      .then((detalle) => {
+        if (activo && useSesionStore.getState().sesion === sesion) {
+          setDetalleConversacion({ sesion, detalle });
+          setEstaEnLinea(detalle.contraparte.enLinea);
+        }
+      })
+      .catch(() => {
+        // La conversación sigue disponible sin los datos adicionales.
+      });
+    return () => { activo = false; };
+  }, [accessToken, conversacionId, contraparteCuentaIdRuta, publicacionIdRuta, rolEnTransaccion, sesion]);
 
   const cargarHistorial = useCallback(async () => {
+    const generacion = ++generacionHistorial.current;
+    const sesionActual = useSesionStore.getState().sesion;
+    setCursorAnterior(null);
+    cargaAnteriorEnCurso.current = false;
+    setCargandoAnteriores(false);
+    setErrorAnteriores(false);
     if (!accessToken || !conversacionId) {
       setError('Inicia sesión para acceder a esta conversación.');
       setCargando(false);
@@ -112,73 +147,254 @@ export default function ConversacionChatScreen() {
 
     try {
       const respuesta = await listarMensajes(accessToken, conversacionId);
-      setMensajes([...respuesta.items].reverse());
-      await marcarConversacionLeida(accessToken, conversacionId);
+      if (generacion !== generacionHistorial.current || useSesionStore.getState().sesion !== sesionActual) return;
+      setMensajes((actuales) => respuesta.items.reduce(agregarMensajeSinDuplicados, actuales));
+      setCursorAnterior(respuesta.nextCursor);
     } catch {
-      setError('No pudimos cargar los mensajes. Revisa tu conexión e intenta nuevamente.');
+      if (generacion === generacionHistorial.current && useSesionStore.getState().sesion === sesionActual) {
+        setError('No pudimos cargar los mensajes. Revisa tu conexión e intenta nuevamente.');
+      }
     } finally {
-      setCargando(false);
+      if (generacion === generacionHistorial.current && useSesionStore.getState().sesion === sesionActual) setCargando(false);
     }
   }, [accessToken, conversacionId]);
 
-  useEffect(() => {
-    void Promise.resolve().then(cargarHistorial);
-  }, [cargarHistorial]);
+  const cargarAnteriores = useCallback(async () => {
+    if (!accessToken || !conversacionId || !cursorAnterior || cargaAnteriorEnCurso.current) return;
+    const generacion = generacionHistorial.current;
+    const sesionActual = useSesionStore.getState().sesion;
+    cargaAnteriorEnCurso.current = true;
+    setCargandoAnteriores(true);
+    setErrorAnteriores(false);
+    try {
+      const respuesta = await listarMensajes(accessToken, conversacionId, cursorAnterior);
+      if (generacion !== generacionHistorial.current || useSesionStore.getState().sesion !== sesionActual) return;
+      if (respuesta.items.length) conservarPosicion.current = true;
+      setMensajes((actuales) => respuesta.items.reduce(agregarMensajeSinDuplicados, actuales));
+      setCursorAnterior(respuesta.nextCursor);
+    } catch {
+      if (generacion === generacionHistorial.current && useSesionStore.getState().sesion === sesionActual) setErrorAnteriores(true);
+    } finally {
+      if (generacion === generacionHistorial.current && useSesionStore.getState().sesion === sesionActual) {
+        cargaAnteriorEnCurso.current = false;
+        setCargandoAnteriores(false);
+      }
+    }
+  }, [accessToken, conversacionId, cursorAnterior]);
 
   useEffect(() => {
-    if (!accessToken || !publicacionId) return;
+    let activo = true;
+    void Promise.resolve().then(() => {
+      if (!activo) return;
+      const sesionActual = useSesionStore.getState().sesion;
+      if (identidadHistorial.current?.sesion !== sesionActual ||
+          identidadHistorial.current?.conversacionId !== conversacionId) {
+        identidadHistorial.current = { sesion: sesionActual, conversacionId };
+        setMensajes([]);
+      }
+      void cargarHistorial();
+    });
+    return () => {
+      activo = false;
+      generacionHistorial.current += 1;
+    };
+  }, [cargarHistorial, conversacionId]);
 
-    const sincronizarEstadoTransaccion = () => {
-      void obtenerTransaccionPublicacion(publicacionId, accessToken)
-        .then((transaccion) => {
-          setVentaConfirmada(transaccion.calificacionActivada);
-        })
-        .catch(() => {
-          // La conversación puede existir antes de que la venta sea confirmada.
-          setVentaConfirmada(false);
-        });
+  useEffect(() => {
+    if (!accessToken || !publicacionId || !sesion || !rolActual) return;
+
+    let activo = true;
+    let temporizador: ReturnType<typeof setTimeout> | undefined;
+    const sincronizarEstadoTransaccion = async () => {
+      const solicitud = ++generacionTransaccion.current;
+      try {
+        const transaccion = await obtenerTransaccionPublicacion(publicacionId, accessToken);
+        if (!activo || solicitud !== generacionTransaccion.current || useSesionStore.getState().sesion !== sesion) return;
+        const compradorEsperado = rolActual === 'vendedor' ? contraparteCuentaId : sesion.idCuenta;
+        setVentaConfirmada(
+          Boolean(compradorEsperado && transaccion.comprador.id === compradorEsperado && transaccion.calificacionActivada),
+        );
+      } catch {
+        // Un fallo de red no invalida un estado previamente confirmado.
+      } finally {
+        if (activo && useSesionStore.getState().sesion === sesion) {
+          temporizador = setTimeout(() => void sincronizarEstadoTransaccion(), 5_000);
+        }
+      }
     };
 
-    sincronizarEstadoTransaccion();
-    const intervalo = setInterval(sincronizarEstadoTransaccion, 5_000);
+    void sincronizarEstadoTransaccion();
+    return () => {
+      activo = false;
+      generacionTransaccion.current += 1;
+      if (temporizador) clearTimeout(temporizador);
+    };
+  }, [accessToken, publicacionId, contraparteCuentaId, rolActual, sesion]);
 
-    return () => clearInterval(intervalo);
-  }, [accessToken, publicacionId]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!accessToken || !conversacionId || !sesion) return;
+      let activo = true;
+      let enCurso = false;
+      let pendiente = false;
+      let continuacion: ContinuacionLectura | undefined;
+      const vigente = () => activo && useSesionStore.getState().sesion === sesion;
+
+      const actualizar = () => {
+        pendiente = true;
+        if (enCurso) return;
+        enCurso = true;
+        void (async () => {
+          while (pendiente && vigente()) {
+            pendiente = false;
+            while (vigente()) {
+              const resultado = await calcularLectura(
+                sesion.idCuenta,
+                (cursor) => listarMensajes(accessToken, conversacionId, cursor),
+                vigente,
+                50,
+                continuacion,
+              );
+              if (!vigente()) break;
+              if (!resultado) {
+                setErrorLectura(true);
+                break;
+              }
+              if (!resultado.completa) {
+                continuacion = resultado.continuacion;
+                continue;
+              }
+              continuacion = undefined;
+              setMensajes((actuales) => resultado.mensajes.reduce(agregarMensajeSinDuplicados, actuales));
+              try {
+                if (resultado.mensajeId && vigente()) {
+                  await confirmarMensajeLeido(accessToken, conversacionId, resultado.mensajeId);
+                }
+                if (vigente()) setErrorLectura(false);
+              } catch {
+                if (vigente()) setErrorLectura(true);
+              }
+              break;
+            }
+          }
+          enCurso = false;
+        })();
+      };
+
+      actualizarLectura.current = actualizar;
+      actualizar();
+      return () => {
+        activo = false;
+        if (actualizarLectura.current === actualizar) actualizarLectura.current = null;
+      };
+    }, [accessToken, conversacionId, sesion]),
+  );
+
+  useEffect(() => {
+    mensajesActuales.current = mensajes;
+  }, [mensajes]);
+
+  useEffect(() => {
+    contraparteActual.current = contraparteCuentaId;
+  }, [contraparteCuentaId]);
 
   useEffect(() => {
     if (!accessToken || !conversacionId) return;
 
     const socket = crearSocketChat(accessToken);
+    let activo = true;
     socketRef.current = socket;
 
     const quitarListener = socket.alRecibirMensaje((mensaje) => {
       if (mensaje.conversacionId !== conversacionId) return;
       setMensajes((actuales) => agregarMensajeSinDuplicados(actuales, mensaje));
+      if (mensaje.emisorCuentaId !== sesionConexion?.idCuenta) actualizarLectura.current?.();
     });
     const quitarListenerPresencia = socket.alCambiarPresencia((presencia) => {
-      if (presencia.cuentaId === contraparteCuentaId) {
+      if (presencia.cuentaId === contraparteActual.current) {
         setEstaEnLinea(presencia.enLinea);
       }
     });
 
-    void socket
-      .conectar()
-      .then(() => socket.unirseAConversacion(conversacionId))
-      .then((respuesta) => {
-        setMensajes(respuesta.items);
-        return socket.marcarComoLeida(conversacionId);
-      })
-      .catch(() => {
-        // El historial REST sigue disponible aunque falle el canal en tiempo real.
-      });
+    let conexion = 0;
+    let seConecto = false;
+    let referencia: string | null = null;
+    let recuperacionPendiente = false;
+    let cursorPendiente: string | null = null;
+    let sincronizando = false;
+    const sesionConexion = useSesionStore.getState().sesion;
+    const quitarDesconexion = socket.alDesconectar(() => {
+      conexion += 1;
+      sincronizando = false;
+      cursorPendiente = null;
+      if (!recuperacionPendiente) {
+        referencia = mensajesActuales.current.reduce<string | null>(
+          (ultimo, mensaje) => ultimo === null || mensaje.id > ultimo ? mensaje.id : ultimo,
+          null,
+        );
+      }
+      recuperacionPendiente = true;
+    });
+    const sincronizar = (continuar = false) => {
+      if (sincronizando) return;
+      sincronizando = true;
+      const conexionActual = ++conexion;
+      const vigente = () => activo && conexionActual === conexion &&
+        useSesionStore.getState().sesion === sesionConexion;
+      const recuperar = seConecto || recuperacionPendiente;
+      seConecto = true;
+      void socket.unirseAConversacion(conversacionId)
+        .then(async (respuesta) => {
+          if (!vigente()) return;
+          if (!recuperar) {
+            setMensajes((actuales) => respuesta.items.reduce(agregarMensajeSinDuplicados, actuales));
+            actualizarLectura.current?.();
+            return;
+          }
+          const primeraPagina = continuar && cursorPendiente
+            ? { items: [], nextCursor: cursorPendiente }
+            : respuesta;
+          const resultado = await recuperarMensajesReconexión(
+            primeraPagina,
+            referencia,
+            (cursor) => listarMensajes(accessToken, conversacionId, cursor),
+            vigente,
+          );
+          if (!vigente()) return;
+          setMensajes((actuales) => [...respuesta.items, ...resultado.mensajes].reduce(agregarMensajeSinDuplicados, actuales));
+          cursorPendiente = resultado.siguienteCursor;
+          setSincronizacionIncompleta(!resultado.completa);
+          recuperacionPendiente = !resultado.completa;
+          if (resultado.completa) actualizarLectura.current?.();
+        })
+        .catch(() => {
+          if (vigente() && recuperar) {
+            recuperacionPendiente = true;
+            setSincronizacionIncompleta(true);
+          }
+        })
+        .finally(() => {
+          if (vigente()) sincronizando = false;
+        });
+    };
+    reintentarSincronizacion.current = () => sincronizar(true);
+    const quitarConexion = socket.alConectar(() => sincronizar());
+    void socket.conectar().catch(() => {
+      // Socket.IO puede volver a conectar; el listener intentará unirse nuevamente.
+    });
 
     return () => {
+      activo = false;
+      conexion += 1;
+      reintentarSincronizacion.current = null;
+      quitarDesconexion();
+      quitarConexion();
       quitarListener();
       quitarListenerPresencia();
       socket.desconectar();
       socketRef.current = null;
     };
-  }, [accessToken, conversacionId, contraparteCuentaId]);
+  }, [accessToken, conversacionId]);
 
   const abrirEvaluacion = () => {
     setEstrellasSeleccionadas(0);
@@ -188,7 +404,7 @@ export default function ConversacionChatScreen() {
   };
 
   const confirmarVentaReal = async () => {
-    if (!accessToken || !publicacionId || !contraparteCuentaId || cerrandoVenta) {
+    if (!accessToken || !publicacionId || !contraparteCuentaId || rolActual !== 'vendedor' || cerrandoVenta) {
       setErrorCierreVenta(
         'No pudimos identificar la publicación o al comprador para cerrar la venta.',
       );
@@ -199,10 +415,25 @@ export default function ConversacionChatScreen() {
     setErrorCierreVenta(null);
 
     try {
-      await cerrarVentaPublicacion(publicacionId, contraparteCuentaId, accessToken);
-      await activarCalificacionPublicacion(publicacionId, accessToken);
-      setVentaConfirmada(true);
-      setModalConfirmarVentaAbierto(false);
+      const sesionActual = useSesionStore.getState().sesion;
+      const resultado = await cerrarVentaYActivarCalificacion(contraparteCuentaId, {
+        cerrar: () => cerrarVentaPublicacion(publicacionId, contraparteCuentaId, accessToken),
+        consultar: () => obtenerTransaccionPublicacion(publicacionId, accessToken),
+        activar: () => activarCalificacionPublicacion(publicacionId, accessToken),
+        sesionVigente: () => sesionActual !== null && useSesionStore.getState().sesion === sesionActual,
+      });
+      if (resultado.estado === 'sesion_cambiada') return;
+      if (resultado.estado === 'completada') {
+        generacionTransaccion.current += 1;
+        setVentaConfirmada(true);
+        setModalConfirmarVentaAbierto(false);
+      } else if (resultado.estado === 'otro_comprador') {
+        setErrorCierreVenta('La venta ya está registrada para otra persona compradora.');
+      } else if (resultado.estado === 'activacion_pendiente') {
+        setErrorCierreVenta('La venta quedó registrada, pero no se pudo confirmar la activación de la calificación. Puedes reintentar.');
+      } else {
+        setErrorCierreVenta('No pudimos confirmar si se registró la venta. Revisa tu conexión y vuelve a consultar antes de reintentar.');
+      }
     } catch (causa: unknown) {
       setErrorCierreVenta(
         causa instanceof Error
@@ -306,7 +537,7 @@ export default function ConversacionChatScreen() {
         <MaterialCommunityIcons name="dots-vertical" size={22} color={colors.gold} />
       </Pressable>
 
-      {idPublicacion ? (
+      {idPublicacion && rolActual ? (
         <View style={styles.tarjetaCierreVenta}>
           <View style={styles.iconoCierreVenta}>
             <MaterialCommunityIcons
@@ -353,7 +584,13 @@ export default function ConversacionChatScreen() {
           ref={scrollRef}
           contentContainerStyle={styles.mensajes}
           keyboardShouldPersistTaps="handled"
-          onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
+          onContentSizeChange={() => {
+            if (conservarPosicion.current) {
+              conservarPosicion.current = false;
+              return;
+            }
+            scrollRef.current?.scrollToEnd({ animated: false });
+          }}
           showsVerticalScrollIndicator={false}>
           <View style={styles.avisoSeguridad}>
             <MaterialCommunityIcons name="shield-check-outline" size={16} color={colors.navy} />
@@ -361,6 +598,24 @@ export default function ConversacionChatScreen() {
               Mantén la conversación dentro de la app y evita compartir datos sensibles.
             </Text>
           </View>
+
+          {errorLectura ? (
+            <View style={styles.error}>
+              <Text style={styles.errorTexto}>No se pudo confirmar la lectura de los mensajes.</Text>
+              <Pressable accessibilityRole="button" onPress={() => actualizarLectura.current?.()} style={styles.reintentar}>
+                <Text style={styles.reintentarTexto}>Reintentar lectura</Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          {sincronizacionIncompleta ? (
+            <View style={styles.error}>
+              <Text style={styles.errorTexto}>No se pudo recuperar todo el historial tras la desconexión.</Text>
+              <Pressable accessibilityRole="button" onPress={() => reintentarSincronizacion.current?.()} style={styles.reintentar}>
+                <Text style={styles.reintentarTexto}>Reintentar sincronización</Text>
+              </Pressable>
+            </View>
+          ) : null}
 
           {cargando ? (
             <View style={styles.estado}>
@@ -382,6 +637,14 @@ export default function ConversacionChatScreen() {
 
           {!cargando && !error && !mensajes.length ? (
             <Text style={styles.sinMensajes}>Aún no hay mensajes. Inicia la conversación.</Text>
+          ) : null}
+
+          {cursorAnterior && !cargando ? (
+            <Pressable accessibilityRole="button" disabled={cargandoAnteriores} onPress={() => void cargarAnteriores()} style={styles.reintentar}>
+              <Text style={styles.reintentarTexto}>
+                {cargandoAnteriores ? 'Cargando…' : errorAnteriores ? 'Reintentar mensajes anteriores' : 'Cargar mensajes anteriores'}
+              </Text>
+            </Pressable>
           ) : null}
 
           {mensajes.map((mensaje) => {
@@ -486,6 +749,8 @@ export default function ConversacionChatScreen() {
 
             <Pressable
               accessibilityRole="button"
+              accessibilityState={{ disabled: !contraparteCuentaId }}
+              disabled={!contraparteCuentaId}
               onPress={() => {
                 setModalAccionesAbierto(false);
 

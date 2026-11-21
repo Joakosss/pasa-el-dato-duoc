@@ -26,7 +26,7 @@ const CONFIGURACION_ESTADO = {
     color: '#15803d',
     fondo: '#f0fdf4',
     icono: 'check-decagram-outline' as const,
-    titulo: 'Apta para publicar',
+    titulo: 'Sin riesgos detectados',
   },
   REQUIERE_AJUSTES: {
     color: '#a16207',
@@ -69,7 +69,7 @@ export function AsistenteIaPublicacion({
       </View>
 
       <Text style={styles.privacidad}>
-        Gemini analiza temporalmente tu texto e imágenes para entregarte sugerencias. Tú decides si las aplicas.
+        Al analizar, se envían el texto y las imágenes a Google Gemini. Su tratamiento depende de las condiciones del servicio. Evita incluir datos personales. La IA puede equivocarse y sus sugerencias son opcionales.
       </Text>
 
       {analisis && configuracion ? (
@@ -138,12 +138,12 @@ export function AsistenteIaPublicacion({
 
       <Pressable
         accessibilityRole="button"
-        accessibilityState={{ disabled: deshabilitado || !puedeAnalizar, busy: cargando }}
-        disabled={deshabilitado || !puedeAnalizar}
+        accessibilityState={{ disabled: deshabilitado || !puedeAnalizar || cargando, busy: cargando }}
+        disabled={deshabilitado || !puedeAnalizar || cargando}
         onPress={onAnalizar}
         style={({ pressed }) => [
           styles.accion,
-          (deshabilitado || !puedeAnalizar) && styles.deshabilitado,
+          (deshabilitado || !puedeAnalizar || cargando) && styles.deshabilitado,
           pressed && styles.pressed,
         ]}>
         {cargando ? (

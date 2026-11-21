@@ -154,7 +154,7 @@ export default function MapaCercanasScreen() {
       if (numeroSolicitud !== solicitudActualRef.current) return;
       if (!permiso.granted) {
         setError(
-          'Necesitamos tu ubicación para mostrar las sedes dentro del rango seleccionado. Tu ubicación no se guarda.',
+          'Necesitamos tu ubicación para mostrar las sedes dentro del rango seleccionado. Tus coordenadas se envían al servidor para realizar la búsqueda.',
         );
         return;
       }

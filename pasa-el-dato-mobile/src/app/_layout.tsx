@@ -4,8 +4,8 @@ import { NavigationBar } from 'expo-navigation-bar';
 import { useEffect } from 'react';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import { ApiError } from '@/lib/api';
-import { consultarSesion, renovarSesion } from '@/lib/api/auth';
+import { AvisoProvider } from '@/components/ui/AvisoProvider';
+import { consultarSesion } from '@/lib/api/auth';
 import { crearSocketChat } from '@/lib/chat/chat-socket';
 import {
   selectAccessToken,
@@ -26,40 +26,11 @@ export default function RootLayout() {
   useEffect(() => {
     if (!hasHydrated || !sesion) return;
 
-    let cancelado = false;
+    const tokens = useSesionStore.getState().tokens;
+    if (!tokens) return;
 
-    const validarSesion = async () => {
-      const estado = useSesionStore.getState();
-      const tokens = estado.tokens;
-      if (!tokens) {
-        estado.cerrarSesion();
-        return;
-      }
-
-      try {
-        await consultarSesion(tokens.accessToken);
-      } catch (error) {
-        if (!(error instanceof ApiError) || error.status !== 401) return;
-
-        try {
-          const renovada = await renovarSesion(tokens.refreshToken);
-          if (cancelado) return;
-
-          useSesionStore.getState().renovarTokens(renovada);
-          await consultarSesion(renovada.accessToken);
-        } catch {
-          if (!cancelado) {
-            useSesionStore.getState().cerrarSesion();
-          }
-        }
-      }
-    };
-
-    void validarSesion();
-
-    return () => {
-      cancelado = true;
-    };
+    // El cliente coordina la renovación. Los fallos de red no cierran la sesión.
+    void consultarSesion(tokens.accessToken).catch(() => undefined);
   }, [hasHydrated, sesion]);
 
   useEffect(() => {
@@ -74,7 +45,7 @@ export default function RootLayout() {
   }, [accessToken, hasHydrated]);
 
   return (
-    <>
+    <AvisoProvider>
       <AnimatedSplashOverlay />
       {/* Solo Android: botones oscuros sobre fondos claros (app siempre clara). */}
       <NavigationBar style="dark" />
@@ -84,6 +55,6 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="producto/[id]" />
       </Stack>
-    </>
+    </AvisoProvider>
   );
 }

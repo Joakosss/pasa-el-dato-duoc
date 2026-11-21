@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -20,7 +20,7 @@ import {
   type NotificacionUsuario,
 } from '@/lib/api/notificaciones';
 import { ApiError } from '@/lib/api';
-import { listarConversaciones } from '@/lib/chat/chat-api';
+import { obtenerConversacion } from '@/lib/chat/chat-api';
 import { selectAccessToken, useSesionStore } from '@/stores/sesion-store';
 import { colors, spacing } from '@/theme';
 
@@ -74,6 +74,12 @@ export default function NotificacionesScreen() {
   const [actualizando, setActualizando] = useState(false);
   const [actualizandoPreferencia, setActualizandoPreferencia] = useState(false);
   const [error, setError] = useState<string | undefined>();
+  const [siguientePagina, setSiguientePagina] = useState<number | null>(null);
+  const [cargandoMas, setCargandoMas] = useState(false);
+  const [errorMas, setErrorMas] = useState(false);
+  const generacion = useRef(0);
+  const cargaAdicional = useRef(false);
+  const sesionLista = useRef(useSesionStore.getState().sesion);
 
   const noLeidas = useMemo(
     () => notificaciones.filter((notificacion) => !notificacion.leida).length,
@@ -81,9 +87,21 @@ export default function NotificacionesScreen() {
   );
 
   const cargar = useCallback(async (esActualizacion = false) => {
+    const solicitud = ++generacion.current;
+    const sesion = useSesionStore.getState().sesion;
+    if (sesionLista.current !== sesion) {
+      sesionLista.current = sesion;
+      setNotificaciones([]);
+    }
+    cargaAdicional.current = false;
+    setCargandoMas(false);
+    setErrorMas(false);
+    setSiguientePagina(null);
     if (!accessToken) {
+      setNotificaciones([]);
       setError('Tu sesión no está disponible. Inicia sesión nuevamente.');
       setCargando(false);
+      setActualizando(false);
       return;
     }
 
@@ -96,23 +114,56 @@ export default function NotificacionesScreen() {
         listarNotificaciones(accessToken),
         obtenerPreferenciasNotificaciones(accessToken),
       ]);
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
       setNotificaciones(historial.items);
+      setSiguientePagina(historial.nextPage);
       setPushHabilitado(preferencias.pushHabilitado);
     } catch (causa: unknown) {
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
       setError(
         causa instanceof ApiError
           ? causa.message
           : 'No pudimos cargar tus notificaciones. Reintenta.',
       );
     } finally {
-      setCargando(false);
-      setActualizando(false);
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
+        setCargando(false);
+        setActualizando(false);
+      }
     }
   }, [accessToken]);
+
+  const cargarMas = useCallback(async () => {
+    if (!accessToken || siguientePagina === null || cargaAdicional.current) return;
+    const solicitud = generacion.current;
+    const sesion = useSesionStore.getState().sesion;
+    cargaAdicional.current = true;
+    setCargandoMas(true);
+    setErrorMas(false);
+    try {
+      const respuesta = await listarNotificaciones(accessToken, siguientePagina);
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
+      setNotificaciones((actuales) => {
+        const ids = new Set(actuales.map((item) => item.id));
+        return [...actuales, ...respuesta.items.filter((item) => !ids.has(item.id))];
+      });
+      setSiguientePagina(respuesta.nextPage);
+    } catch {
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
+        setErrorMas(true);
+      }
+    } finally {
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
+        cargaAdicional.current = false;
+        setCargandoMas(false);
+      }
+    }
+  }, [accessToken, siguientePagina]);
 
   useFocusEffect(
     useCallback(() => {
       void cargar();
+      return () => { generacion.current += 1; };
     }, [cargar]),
   );
 
@@ -138,19 +189,14 @@ export default function NotificacionesScreen() {
     const conversacionId = obtenerConversacionId(notificacion.dataJson);
     if (notificacion.tipo === 'CHAT_NUEVO_MENSAJE' && conversacionId) {
       try {
-        const conversaciones = await listarConversaciones(accessToken);
-        const conversacion = conversaciones.items.find(
-          (item) => item.conversacionId === conversacionId,
-        );
+        const conversacion = await obtenerConversacion(accessToken, conversacionId);
 
         router.push({
           pathname: '/chat/[id]',
           params: conversacion
             ? {
                 id: conversacion.conversacionId,
-                titulo:
-                  conversacion.publicacion.titulo ??
-                  'Publicación no disponible',
+                titulo: 'Conversación',
                 contraparteNombre: [
                   conversacion.contraparte.primerNombre,
                   conversacion.contraparte.primerApellido,
@@ -216,7 +262,11 @@ export default function NotificacionesScreen() {
         <View style={styles.barraTexto}>
           <Text style={styles.titulo}>Notificaciones</Text>
           <Text style={styles.subtitulo}>
-            {noLeidas ? `${noLeidas} sin leer` : 'Todo al día'}
+            {cargando || error
+              ? 'Estado no disponible'
+              : siguientePagina !== null
+                ? `${noLeidas} sin leer en las notificaciones cargadas`
+                : noLeidas ? `${noLeidas} sin leer` : 'Todo al día'}
           </Text>
         </View>
       </View>
@@ -316,6 +366,18 @@ export default function NotificacionesScreen() {
             })}
           </View>
         )}
+
+        {siguientePagina !== null && !cargando && !error ? (
+          <Pressable
+            accessibilityRole="button"
+            disabled={cargandoMas}
+            onPress={() => void cargarMas()}
+            style={styles.botonReintentar}>
+            <Text style={styles.botonReintentarTexto}>
+              {cargandoMas ? 'Cargando…' : errorMas ? 'Reintentar carga' : 'Cargar más'}
+            </Text>
+          </Pressable>
+        ) : null}
 
         <Text style={styles.avisoPush}>
           Los avisos aparecen dentro de la aplicación. Las notificaciones del

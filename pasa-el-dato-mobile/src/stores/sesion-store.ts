@@ -28,8 +28,8 @@ interface SesionState {
   // Hasta entonces no se sabe si hay sesión guardada.
   hasHydrated: boolean;
   marcarHidratado: () => void;
-  iniciarSesion: (dto: LoginResponseDTO) => void;
-  renovarTokens: (tokens: TokensSesion) => void;
+  iniciarSesion: (dto: LoginResponseDTO) => Promise<void>;
+  renovarTokens: (tokens: TokensSesion) => Promise<void>;
   cerrarSesion: () => void;
 }
 
@@ -41,6 +41,21 @@ function construirNombreCompleto(
     .join(' ');
 }
 
+const CLAVE_SESION = 'pasaeldato.sesion.v1';
+let escrituraConfirmada: string | null = null;
+let generacionCierre = 0;
+
+const almacenamientoSesion = {
+  ...almacenamientoSeguro,
+  setItem: (nombre: string, valor: string) => {
+    if (nombre === CLAVE_SESION && valor === escrituraConfirmada) {
+      escrituraConfirmada = null;
+      return Promise.resolve();
+    }
+    return almacenamientoSeguro.setItem(nombre, valor);
+  },
+};
+
 // Declarada como función para poder referenciar el store ya inicializado
 // desde la acción cerrarSesion (se ejecuta en runtime, nunca al importar).
 function borrarPersistencia(): void {
@@ -49,29 +64,43 @@ function borrarPersistencia(): void {
 
 export const useSesionStore = create<SesionState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       sesion: null,
       tokens: null,
       hasHydrated: false,
       marcarHidratado: () => set({ hasHydrated: true }),
-      iniciarSesion: (dto) =>
-        set({
-          sesion: {
-            idCuenta: dto.idCuenta,
-            correo: dto.correo,
-            nombreCompleto: construirNombreCompleto(dto.usuario),
-            rol: {
-              id: dto.usuario.rol.id,
-              descripcion: dto.usuario.rol.descripcion,
-            },
+      iniciarSesion: async (dto) => {
+        const cierreInicial = generacionCierre;
+        const { sesion: sesionAnterior, tokens: tokensAnteriores } = get();
+        const sesion = {
+          idCuenta: dto.idCuenta,
+          correo: dto.correo,
+          nombreCompleto: construirNombreCompleto(dto.usuario),
+          rol: {
+            id: dto.usuario.rol.id,
+            descripcion: dto.usuario.rol.descripcion,
           },
-          tokens: {
-            accessToken: dto.accessToken,
-            refreshToken: dto.refreshToken,
-          },
-        }),
-      renovarTokens: (tokens) => set({ tokens }),
+        };
+        const tokens = { accessToken: dto.accessToken, refreshToken: dto.refreshToken };
+        const valorConfirmado = JSON.stringify({ state: { sesion, tokens }, version: 0 });
+        await almacenamientoSeguro.setItem(CLAVE_SESION, valorConfirmado);
+        if (generacionCierre !== cierreInicial ||
+            get().sesion !== sesionAnterior || get().tokens !== tokensAnteriores) {
+          await (set({}) as unknown as Promise<void>);
+          throw new Error('La sesión cambió durante el ingreso.');
+        }
+        // La escritura anterior ya confirmó exactamente este estado.
+        escrituraConfirmada = valorConfirmado;
+        try {
+          set({ sesion, tokens });
+        } finally {
+          escrituraConfirmada = null;
+        }
+      },
+      // persist devuelve la operación de escritura, aunque el tipo de set sea void.
+      renovarTokens: (tokens) => set({ tokens }) as unknown as Promise<void>,
       cerrarSesion: () => {
+        generacionCierre += 1;
         // Deja el estado en memoria vacío (sin tokens ni identidad)...
         set({ sesion: null, tokens: null });
         // ...y además elimina la entrada persistida en SecureStore.
@@ -81,8 +110,8 @@ export const useSesionStore = create<SesionState>()(
     {
       // La clave evita ":" porque SecureStore solo admite alfanuméricos,
       // ".", "-" y "_" (el front usa localStorage y puede permitírselo).
-      name: 'pasaeldato.sesion.v1',
-      storage: createJSONStorage(() => almacenamientoSeguro),
+      name: CLAVE_SESION,
+      storage: createJSONStorage(() => almacenamientoSesion),
       // Persiste solo el slice de datos; acciones y hasHydrated no se serializan.
       partialize: (estado) => ({
         sesion: estado.sesion,

@@ -43,6 +43,6 @@ export async function analizarPublicacionConIa(
   return apiClient.postFormData<AnalisisIaPublicacion>(
     '/mobile/ia/publicaciones/analizar',
     formData,
-    { accessToken },
+    { accessToken, timeoutMs: 200_000 },
   );
 }

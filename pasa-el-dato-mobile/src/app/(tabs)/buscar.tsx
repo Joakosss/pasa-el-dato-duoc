@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -18,7 +18,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
-import { ApiError } from '@/lib/api';
+import { ApiError, ErrorConexion } from '@/lib/api';
 import {
   listarCategorias,
   listarSedes,
@@ -75,9 +75,18 @@ function formatoPrecio(valor: string): string {
 export default function BuscarScreen() {
   const parametros = useLocalSearchParams<{ categoriaId?: string; q?: string; filtros?: string }>();
   const accessToken = useSesionStore(selectAccessToken);
-  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
+  const categoriaParametro = Number(parametros.categoriaId);
+  const categoriaInicial =
+    Number.isInteger(categoriaParametro) && categoriaParametro > 0 ? categoriaParametro : null;
+  const [parametrosAnteriores, setParametrosAnteriores] = useState({
+    q: parametros.q,
+    categoriaId: parametros.categoriaId,
+  });
   const [texto, setTexto] = useState(parametros.q ?? '');
-  const [filtros, setFiltros] = useState<FiltrosPublicacion>(FILTROS_VACIOS);
+  const [filtros, setFiltros] = useState<FiltrosPublicacion>({
+    ...FILTROS_VACIOS,
+    categoriaId: categoriaInicial,
+  });
   const [borradorFiltros, setBorradorFiltros] = useState<FiltrosPublicacion>(FILTROS_VACIOS);
   const [modalFiltrosAbierto, setModalFiltrosAbierto] = useState(false);
   const [publicaciones, setPublicaciones] = useState<PublicacionParaBusqueda[]>([]);
@@ -88,15 +97,14 @@ export default function BuscarScreen() {
   const [actualizando, setActualizando] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
-  useEffect(() => {
-    const categoriaId = Number(parametros.categoriaId);
-    const categoriaValida =
-      Number.isInteger(categoriaId) && categoriaId > 0 ? categoriaId : null;
-
+  if (
+    parametrosAnteriores.q !== parametros.q ||
+    parametrosAnteriores.categoriaId !== parametros.categoriaId
+  ) {
+    setParametrosAnteriores({ q: parametros.q, categoriaId: parametros.categoriaId });
     setTexto(parametros.q ?? '');
-    setFiltros((actual) => ({ ...actual, categoriaId: categoriaValida }));
-
-  }, [parametros.categoriaId, parametros.q]);
+    setFiltros((actual) => ({ ...actual, categoriaId: categoriaInicial }));
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -138,14 +146,8 @@ export default function BuscarScreen() {
       setSedes(sedesRespuesta);
       setTiposVenta(tiposRespuesta);
     } catch (causa: unknown) {
-      if (causa instanceof ApiError && causa.status === 401) {
-        setPublicaciones([]);
-        cerrarSesion();
-        router.replace('/auth/login');
-        return;
-      }
       setError(
-        causa instanceof ApiError
+        causa instanceof ApiError || causa instanceof ErrorConexion
           ? causa.message
           : 'No pudimos cargar las publicaciones. Reintenta.',
       );
@@ -153,7 +155,7 @@ export default function BuscarScreen() {
       setCargando(false);
       setActualizando(false);
     }
-  }, [accessToken, cerrarSesion]);
+  }, [accessToken]);
 
   useFocusEffect(
     useCallback(() => {
@@ -464,7 +466,7 @@ function SeccionOpciones({
   onSeleccionar,
 }: {
   titulo: string;
-  opciones: Array<{ id: number; nombre: string }>;
+  opciones: { id: number; nombre: string }[];
   seleccionadoId: number | null;
   onSeleccionar: (id: number | null) => void;
 }) {

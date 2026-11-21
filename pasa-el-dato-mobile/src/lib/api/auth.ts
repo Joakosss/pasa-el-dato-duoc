@@ -50,6 +50,6 @@ export function cerrarSesionRemota(
   return apiClient.post<void>(
     '/mobile/auth/logout',
     { refreshToken },
-    { accessToken },
+    { accessToken, omitirRenovacion: true },
   );
 }

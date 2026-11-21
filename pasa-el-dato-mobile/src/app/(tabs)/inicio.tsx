@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -29,7 +29,9 @@ import {
 } from '@/lib/api/publicidad';
 import {
   listarPublicaciones,
+  listarRecomendaciones,
   type PublicacionPublica,
+  type RecomendacionesPublicaciones,
 } from '@/lib/api/publicaciones';
 import { PUBLICACIONES_DEMOSTRACION_MOMENTANEO } from '@/lib/feed/publicaciones-demostracion-momentaneo';
 import {
@@ -53,6 +55,9 @@ export default function InicioScreen() {
   const accessToken = useSesionStore(selectAccessToken);
   const nombre = sesion?.nombreCompleto.trim().split(/\s+/)[0] ?? 'estudiante';
   const [publicaciones, setPublicaciones] = useState<PublicacionPublica[]>([]);
+  const [recomendaciones, setRecomendaciones] = useState<RecomendacionesPublicaciones | null>(null);
+  const [estadoRecomendaciones, setEstadoRecomendaciones] = useState<'cargando' | 'error' | 'listo'>('cargando');
+  const generacionRecomendaciones = useRef(0);
   const [categorias, setCategorias] = useState<CategoriaCatalogo[]>([]);
   const [bannersPublicidad, setBannersPublicidad] = useState<BannerPublicidadActivo[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -95,10 +100,34 @@ export default function InicioScreen() {
     }
   }, [accessToken]);
 
+  const cargarRecomendaciones = useCallback(() => {
+    const generacion = ++generacionRecomendaciones.current;
+    setRecomendaciones(null);
+    if (!accessToken) {
+      setEstadoRecomendaciones('listo');
+      return;
+    }
+    setEstadoRecomendaciones('cargando');
+    void listarRecomendaciones(accessToken)
+      .then((resultado) => {
+        if (generacionRecomendaciones.current !== generacion) return;
+        setRecomendaciones(resultado);
+        setEstadoRecomendaciones('listo');
+      })
+      .catch(() => {
+        if (generacionRecomendaciones.current !== generacion) return;
+        setEstadoRecomendaciones('error');
+      });
+  }, [accessToken]);
+
   useFocusEffect(
     useCallback(() => {
       void cargarPublicaciones();
-    }, [cargarPublicaciones]),
+      cargarRecomendaciones();
+      return () => {
+        generacionRecomendaciones.current += 1;
+      };
+    }, [cargarPublicaciones, cargarRecomendaciones]),
   );
 
   const abrirSolicitudUbicacion = () => setModalUbicacionAbierto(true);
@@ -122,7 +151,10 @@ export default function InicioScreen() {
         refreshControl={
           <RefreshControl
             refreshing={actualizando}
-            onRefresh={() => void cargarPublicaciones(true)}
+            onRefresh={() => {
+              void cargarPublicaciones(true);
+              cargarRecomendaciones();
+            }}
             tintColor={colors.navy}
           />
         }
@@ -130,6 +162,9 @@ export default function InicioScreen() {
           <CabeceraFeed
             categorias={categorias}
             bannersPublicidad={bannersPublicidad}
+            recomendaciones={recomendaciones}
+            estadoRecomendaciones={estadoRecomendaciones}
+            onReintentarRecomendaciones={cargarRecomendaciones}
             errorUbicacion={undefined}
             onCargarCercanas={abrirSolicitudUbicacion}
           />
@@ -180,7 +215,7 @@ export default function InicioScreen() {
             <View style={styles.privacidadUbicacion}>
               <MaterialCommunityIcons name="shield-check-outline" size={17} color={colors.navy} />
               <Text style={styles.privacidadUbicacionTexto}>
-                Tu ubicación no se guarda ni se comparte.
+                Tus coordenadas se envían al servidor para buscar publicaciones cercanas. El mapa utiliza Mapbox.
               </Text>
             </View>
             <View style={styles.accionesModalUbicacion}>
@@ -215,29 +250,32 @@ function BarraSuperior({
   nombre: string;
   accessToken: string | null;
 }) {
-  const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0);
-
-  const cargarNoLeidas = useCallback(async () => {
-    if (!accessToken) {
-      setNotificacionesNoLeidas(0);
-      return;
-    }
-
-    try {
-      const respuesta = await listarNotificaciones(accessToken);
-      setNotificacionesNoLeidas(
-        respuesta.items.filter((notificacion) => !notificacion.leida).length,
-      );
-    } catch {
-      // Conserva el contador ante un error temporal de red.
-    }
-  }, [accessToken]);
+  const [contador, setContador] = useState<{ token: string; cantidad: number } | null>(null);
+  const notificacionesNoLeidas = contador?.token === accessToken ? contador.cantidad : 0;
 
   useEffect(() => {
+    if (!accessToken) return;
+    let vigente = true;
+    const cargarNoLeidas = async () => {
+      try {
+        const respuesta = await listarNotificaciones(accessToken);
+        if (vigente) {
+          setContador({
+            token: accessToken,
+            cantidad: respuesta.items.filter((notificacion) => !notificacion.leida).length,
+          });
+        }
+      } catch {
+        // Conserva el contador ante un error temporal de red.
+      }
+    };
     void cargarNoLeidas();
     const intervalo = setInterval(() => void cargarNoLeidas(), 10_000);
-    return () => clearInterval(intervalo);
-  }, [cargarNoLeidas]);
+    return () => {
+      vigente = false;
+      clearInterval(intervalo);
+    };
+  }, [accessToken]);
 
   return (
     <View style={styles.barra}>
@@ -290,11 +328,17 @@ function BarraSuperior({
 function CabeceraFeed({
   categorias,
   bannersPublicidad,
+  recomendaciones,
+  estadoRecomendaciones,
+  onReintentarRecomendaciones,
   errorUbicacion,
   onCargarCercanas,
 }: {
   categorias: CategoriaCatalogo[];
   bannersPublicidad: BannerPublicidadActivo[];
+  recomendaciones: RecomendacionesPublicaciones | null;
+  estadoRecomendaciones: 'cargando' | 'error' | 'listo';
+  onReintentarRecomendaciones: () => void;
   errorUbicacion?: string;
   onCargarCercanas: () => void;
 }) {
@@ -382,6 +426,43 @@ function CabeceraFeed({
           </Pressable>
         ))}
       </ScrollView>
+
+      <View style={styles.recomendaciones}>
+        <Text style={styles.seccionTitulo}>Recomendaciones para ti</Text>
+        {estadoRecomendaciones === 'cargando' ? (
+          <Text style={styles.recomendacionesTexto}>Cargando recomendaciones…</Text>
+        ) : estadoRecomendaciones === 'error' ? (
+          <>
+            <Text accessibilityRole="alert" style={styles.recomendacionesTexto}>
+              No pudimos cargar las recomendaciones.
+            </Text>
+            <Pressable accessibilityRole="button" onPress={onReintentarRecomendaciones} style={styles.reintentar}>
+              <Text style={styles.reintentarTexto}>Reintentar</Text>
+            </Pressable>
+          </>
+        ) : recomendaciones && recomendaciones.items.length > 0 ? (
+          <>
+            <Text style={styles.recomendacionesTexto}>
+              {recomendaciones.basadasEnIa
+                ? 'Ordenadas por similitud con publicaciones favoritas autorizadas para IA.'
+                : recomendaciones.basadasEnFavoritos
+                  ? 'Según las categorías de tus favoritos y publicaciones recientes.'
+                  : 'Publicaciones recientes. Agrega favoritos para personalizar esta sección.'}
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.listaRecomendaciones}>
+              {recomendaciones.items.map((publicacion) => (
+                <View key={publicacion.id} style={styles.recomendacion}>
+                  <PublicacionCard publicacion={publicacion} />
+                </View>
+              ))}
+            </ScrollView>
+          </>
+        ) : (
+          <Text style={styles.recomendacionesTexto}>
+            Aún no hay publicaciones disponibles para recomendarte.
+          </Text>
+        )}
+      </View>
 
       {errorUbicacion ? (
         <View style={styles.avisoUbicacion}>
@@ -513,6 +594,10 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.padLg,
     gap: spacing.padMd,
   },
+  recomendaciones: { gap: spacing.padSm, marginVertical: spacing.padMd },
+  recomendacionesTexto: { color: colors.muted, fontSize: 12 },
+  listaRecomendaciones: { gap: spacing.padSm },
+  recomendacion: { width: 170 },
   fila: {
     gap: spacing.padSm,
   },

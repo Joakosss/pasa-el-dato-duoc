@@ -140,9 +140,10 @@ export default function PublicarScreen() {
   const { origen } = useLocalSearchParams<{ origen?: string }>();
   const accessToken = useSesionStore(selectAccessToken);
   const sesion = useSesionStore(selectSesion);
-  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
   const scroll = useRef<ScrollView>(null);
   const campoActivoRef = useRef<'titulo' | 'precio' | 'descripcion' | undefined>(undefined);
+  const versionAnalisisRef = useRef(0);
+  const solicitudIaEnCursoRef = useRef(false);
 
   const [imagenes, setImagenes] = useState<ImagenFormulario[]>([]);
   const [titulo, setTitulo] = useState('');
@@ -167,6 +168,7 @@ export default function PublicarScreen() {
   const [errorIa, setErrorIa] = useState<string | undefined>();
 
   const invalidarAnalisisIa = () => {
+    versionAnalisisRef.current += 1;
     setAnalisisIa(undefined);
     setErrorIa(undefined);
   };
@@ -327,12 +329,14 @@ export default function PublicarScreen() {
       return;
     }
 
+    if (solicitudIaEnCursoRef.current) return;
+    solicitudIaEnCursoRef.current = true;
+    const version = versionAnalisisRef.current;
     setAnalizandoIa(true);
     setErrorIa(undefined);
 
     try {
-      setAnalisisIa(
-        await analizarPublicacionConIa(
+      const resultado = await analizarPublicacionConIa(
           {
             titulo,
             descripcion,
@@ -344,17 +348,13 @@ export default function PublicarScreen() {
             })),
           },
           accessToken,
-        ),
-      );
+        );
+      if (version === versionAnalisisRef.current) setAnalisisIa(resultado);
     } catch (error: unknown) {
-      if (error instanceof ApiError && error.status === 401) {
-        cerrarSesion();
-        router.replace('/auth/login');
-        return;
-      }
-
+      if (version !== versionAnalisisRef.current) return;
       setErrorIa(mensajeError(error, 'No pudimos analizar la publicación. Reintenta.'));
     } finally {
+      solicitudIaEnCursoRef.current = false;
       setAnalizandoIa(false);
     }
   };
@@ -394,14 +394,6 @@ export default function PublicarScreen() {
       return;
     }
 
-    if (analisisIa?.estadoModeracion === 'BLOQUEADA') {
-      setErrorEnvio(
-        'El asistente IA detectó contenido de alto riesgo. Corrige la publicación antes de enviarla.',
-      );
-      scroll.current?.scrollTo({ y: 0, animated: true });
-      return;
-    }
-
     const imagenesParaApi: ImagenSeleccionadaPublicacion[] = imagenes.map((imagen) => ({
       uri: imagen.uri,
       nombre: imagen.nombre,
@@ -429,12 +421,6 @@ export default function PublicarScreen() {
       setPublicacionCreadaId(publicacionCreada.id);
       setPublicacionExitosa(true);
     } catch (error: unknown) {
-      if (error instanceof ApiError && error.status === 401) {
-        cerrarSesion();
-        router.replace('/auth/login');
-        return;
-      }
-
       setErrorEnvio(mensajeError(error, 'No pudimos publicar el producto. Reintenta.'));
       scroll.current?.scrollTo({ y: 0, animated: true });
     } finally {
@@ -577,22 +563,12 @@ export default function PublicarScreen() {
             onAplicarTitulo={() => {
               if (!analisisIa?.tituloSugerido) return;
               setTitulo(analisisIa.tituloSugerido);
-              setAnalisisIa((analisisActual) =>
-                analisisActual
-                  ? { ...analisisActual, tituloSugerido: undefined }
-                  : undefined,
-              );
-              setErrorIa(undefined);
+              invalidarAnalisisIa();
             }}
             onAplicarDescripcion={() => {
               if (!analisisIa?.descripcionSugerida) return;
               setDescripcion(analisisIa.descripcionSugerida);
-              setAnalisisIa((analisisActual) =>
-                analisisActual
-                  ? { ...analisisActual, descripcionSugerida: undefined }
-                  : undefined,
-              );
-              setErrorIa(undefined);
+              invalidarAnalisisIa();
             }}
           />
 

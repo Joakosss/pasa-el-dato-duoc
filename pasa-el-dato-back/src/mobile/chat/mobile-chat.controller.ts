@@ -20,6 +20,8 @@ import { ChatService } from '../../chat/chat.service.js';
 import { EnviarMensajeMobileDto } from './dto/enviar-mensaje-mobile.dto.js';
 import { IniciarConversacionMobileDto } from './dto/iniciar-conversacion-mobile.dto.js';
 import { MobileChatService } from './mobile-chat.service.js';
+import { MobileNoLeidosService } from './mobile-no-leidos.service.js';
+import { MobileLecturaService } from './mobile-lectura.service.js';
 
 type SolicitudAutenticada = Request & { user?: SesionAutenticada };
 
@@ -30,7 +32,14 @@ export class MobileChatController {
     private readonly mobileChatService: MobileChatService,
     private readonly chatService: ChatService,
     private readonly chatGateway: ChatGateway,
+    private readonly noLeidosService: MobileNoLeidosService,
+    private readonly lecturaService: MobileLecturaService,
   ) {}
+
+  @Get('no-leidos')
+  async contarNoLeidos(@Req() solicitud: SolicitudAutenticada) {
+    return { total: await this.noLeidosService.contar(this.obtenerCuenta(solicitud)) };
+  }
 
   @Get('conversaciones')
   async listarConversaciones(
@@ -42,6 +51,17 @@ export class MobileChatController {
       cuentaId: this.obtenerCuenta(solicitud),
       cursor,
       limit: this.normalizarLimit(limitTexto),
+    });
+  }
+
+  @Get('conversaciones/:id')
+  async obtenerConversacion(
+    @Req() solicitud: SolicitudAutenticada,
+    @Param('id') conversacionId: string,
+  ) {
+    return this.mobileChatService.obtenerConversacion({
+      cuentaId: this.obtenerCuenta(solicitud),
+      conversacionId,
     });
   }
 
@@ -102,6 +122,20 @@ export class MobileChatController {
       items: resultado.items.map((mensaje) => this.mapearMensaje(mensaje)),
       nextCursor: resultado.nextCursor,
     };
+  }
+
+  @Post('conversaciones/:id/mensajes/:mensajeId/leer')
+  @HttpCode(HttpStatus.OK)
+  async confirmarMensajeLeido(
+    @Req() solicitud: SolicitudAutenticada,
+    @Param('id') conversacionId: string,
+    @Param('mensajeId') mensajeId: string,
+  ) {
+    return this.lecturaService.confirmar({
+      cuentaId: this.obtenerCuenta(solicitud),
+      conversacionId,
+      mensajeId,
+    });
   }
 
   @Post('conversaciones/:id/leer')

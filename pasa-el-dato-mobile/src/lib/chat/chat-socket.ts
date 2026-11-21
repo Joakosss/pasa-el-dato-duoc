@@ -12,6 +12,8 @@ type RespuestaSocket<T> = T | { message?: string };
 export interface SocketChat {
   conectar: () => Promise<void>;
   desconectar: () => void;
+  alConectar: (listener: () => void) => () => void;
+  alDesconectar: (listener: () => void) => () => void;
   unirseAConversacion: (
     conversacionId: string,
   ) => Promise<ListaMensajesChat>;
@@ -113,6 +115,14 @@ export function crearSocketChat(accessToken: string): SocketChat {
   return {
     conectar: () => esperarConexion(socket),
     desconectar: () => socket.disconnect(),
+    alConectar: (listener) => {
+      socket.on('connect', listener);
+      return () => socket.off('connect', listener);
+    },
+    alDesconectar: (listener) => {
+      socket.on('disconnect', listener);
+      return () => socket.off('disconnect', listener);
+    },
     unirseAConversacion: async (conversacionId) => {
       const respuesta = await emitirConRespuesta<ListaMensajesChat>(
         socket,

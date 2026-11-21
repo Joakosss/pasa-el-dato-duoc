@@ -1,57 +1,52 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
-import {
-  marcarFavorito,
-  obtenerEstadoFavorito,
-  quitarFavorito,
-} from '@/lib/api/favoritos';
+import { useAviso } from '@/components/ui/AvisoProvider';
+import { ApiError } from '@/lib/api';
+import { useFavoritosStore } from '@/stores/favoritos-store';
+import { selectSesion, useSesionStore } from '@/stores/sesion-store';
 
 export function useFavorito(publicacionId: string | undefined, accessToken: string | null) {
-  const [esFavorito, setEsFavorito] = useState(false);
-  const [cargando, setCargando] = useState(Boolean(publicacionId && accessToken));
-  const [actualizando, setActualizando] = useState(false);
-
-  const cargar = useCallback(async () => {
-    if (!publicacionId || !accessToken) {
-      setEsFavorito(false);
-      setCargando(false);
-      return;
-    }
-
-    setCargando(true);
-    try {
-      const respuesta = await obtenerEstadoFavorito(publicacionId, accessToken);
-      setEsFavorito(respuesta.esFavorito);
-    } finally {
-      setCargando(false);
-    }
-  }, [accessToken, publicacionId]);
+  const mostrarAviso = useAviso();
+  const sesion = useSesionStore(selectSesion);
+  const entrada = useFavoritosStore((estado) => publicacionId ? estado.entradas[publicacionId] : undefined);
+  const cargar = useFavoritosStore((estado) => estado.cargar);
+  const alternarCompartido = useFavoritosStore((estado) => estado.alternar);
 
   useEffect(() => {
-    void cargar().catch(() => undefined);
-  }, [cargar]);
+    if (publicacionId && accessToken && sesion) {
+      void cargar(publicacionId, accessToken, sesion);
+    }
+  }, [accessToken, cargar, publicacionId, sesion]);
+
+  const reintentar = useCallback(() => {
+    if (publicacionId && accessToken && sesion) {
+      void cargar(publicacionId, accessToken, sesion);
+    }
+  }, [accessToken, cargar, publicacionId, sesion]);
 
   const alternar = useCallback(async () => {
-    if (!publicacionId || !accessToken || actualizando) return;
+    if (!publicacionId || !accessToken || !sesion) return;
 
-    setActualizando(true);
     try {
-      if (esFavorito) {
-        await quitarFavorito(publicacionId, accessToken);
-        setEsFavorito(false);
-      } else {
-        const respuesta = await marcarFavorito(publicacionId, accessToken);
-        setEsFavorito(respuesta.esFavorito);
-      }
-    } finally {
-      setActualizando(false);
+      await alternarCompartido(publicacionId, accessToken, sesion);
+    } catch (error: unknown) {
+      const mensaje =
+        error instanceof ApiError && error.status === 400 &&
+        error.message === 'No puede guardar su propia publicación'
+          ? 'No puedes agregar tu propia publicación a favoritos.'
+          : error instanceof ApiError && error.status === 401
+            ? 'Tu sesión no está disponible. Inicia sesión nuevamente.'
+            : 'No pudimos actualizar tus favoritos. Inténtalo nuevamente.';
+      mostrarAviso('Favoritos', mensaje);
     }
-  }, [accessToken, actualizando, esFavorito, publicacionId]);
+  }, [accessToken, alternarCompartido, mostrarAviso, publicacionId, sesion]);
 
   return {
-    esFavorito,
-    cargando,
-    actualizando,
+    esFavorito: Boolean(sesion && accessToken && entrada?.esFavorito),
+    cargando: Boolean(publicacionId && accessToken && sesion && (!entrada || entrada.cargando)),
+    actualizando: Boolean(sesion && accessToken && entrada?.actualizando),
+    errorCarga: Boolean(sesion && accessToken && entrada?.errorCarga),
+    reintentar,
     alternar,
   };
 }

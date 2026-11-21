@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PublicacionCard } from '@/components/feed/PublicacionCard';
-import { ApiError } from '@/lib/api';
+import { ApiError, ErrorConexion } from '@/lib/api';
 import {
   listarMisCompras,
   type PublicacionPublica,
@@ -27,7 +27,6 @@ interface FilaGrilla {
 
 export default function MisComprasScreen() {
   const accessToken = useSesionStore(selectAccessToken);
-  const cerrarSesion = useSesionStore((estado) => estado.cerrarSesion);
   const [compras, setCompras] = useState<PublicacionPublica[]>([]);
   const [cargando, setCargando] = useState(true);
   const [actualizando, setActualizando] = useState(false);
@@ -48,14 +47,8 @@ export default function MisComprasScreen() {
       try {
         setCompras(await listarMisCompras(accessToken));
       } catch (causa: unknown) {
-        if (causa instanceof ApiError && causa.status === 401) {
-          cerrarSesion();
-          router.replace('/auth/login');
-          return;
-        }
-
         setError(
-          causa instanceof ApiError
+          causa instanceof ApiError || causa instanceof ErrorConexion
             ? causa.message
             : 'No pudimos cargar tus compras. Reintenta.',
         );
@@ -64,7 +57,7 @@ export default function MisComprasScreen() {
         setActualizando(false);
       }
     },
-    [accessToken, cerrarSesion],
+    [accessToken],
   );
 
   useFocusEffect(

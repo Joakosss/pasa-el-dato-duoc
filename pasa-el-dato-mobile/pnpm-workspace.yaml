@@ -1,2 +1,4 @@
 allowBuilds:
   unrs-resolver: true
+patchedDependencies:
+  expo-router@57.0.28: patches/expo-router@57.0.28.patch

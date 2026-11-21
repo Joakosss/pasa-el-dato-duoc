@@ -1,4 +1,4 @@
-import { Link, router } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing } from '@/theme';
 import { LogoPD } from '@/components/auth/LogoPD';
 import { ApiError } from '@/lib/api';
-import { iniciarSesion } from '@/lib/api/auth';
+import { cerrarSesionRemota, iniciarSesion } from '@/lib/api/auth';
 import { resolverDestinoPorRol } from '@/lib/auth/destino-por-rol';
 import { validarCorreoDuoc } from '@/lib/validators/correo';
 import { useSesionStore } from '@/stores/sesion-store';
@@ -24,6 +24,9 @@ import { useSesionStore } from '@/stores/sesion-store';
 // Login real contra POST /auth/login. Valida el correo institucional en el
 // dispositivo, guarda sesión y tokens en el store y redirige según el rol.
 export default function LoginScreen() {
+  const { recuperacion } = useLocalSearchParams<{ recuperacion?: string }>();
+  const [identidadInicial] = useState(() => useSesionStore.getState().sesion);
+  const esRecuperacion = recuperacion === '1' && identidadInicial !== null;
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
   const [foco, setFoco] = useState<'correo' | 'clave' | null>(null);
@@ -59,7 +62,13 @@ export default function LoginScreen() {
         correo: validacion.normalizado ?? correo.trim().toLowerCase(),
         contrasena: clave,
       });
-      useSesionStore.getState().iniciarSesion(dto);
+      if (useSesionStore.getState().sesion !== identidadInicial) {
+        void cerrarSesionRemota(dto.accessToken, dto.refreshToken).catch(() => undefined);
+        setErrorGeneral('La sesión cambió durante el ingreso. Vuelve a intentarlo.');
+        setCargando(false);
+        return;
+      }
+      await useSesionStore.getState().iniciarSesion(dto);
       router.replace(resolverDestinoPorRol(dto.usuario.rol));
     } catch (error: unknown) {
       if (error instanceof ApiError && error.status === 401) {
@@ -93,6 +102,13 @@ export default function LoginScreen() {
             <LogoPD />
             <Text style={styles.title}>Iniciar sesión</Text>
             <Text style={styles.subtitle}>Bienvenido de vuelta a Pasa el Dato Duoc</Text>
+            {esRecuperacion ? (
+              <View style={styles.errorBox}>
+                <Text accessibilityRole="alert" style={styles.errorText}>
+                  No pudimos confirmar la renovación. La sesión remota anterior podría seguir activa hasta expirar.
+                </Text>
+              </View>
+            ) : null}
 
             <Text style={styles.label}>Correo institucional</Text>
             <TextInput
@@ -175,6 +191,12 @@ export default function LoginScreen() {
               )}
             </Pressable>
 
+            {esRecuperacion ? (
+              <Pressable accessibilityRole="button" disabled={cargando}
+                onPress={() => router.replace('/perfil')} style={styles.row}>
+                <Text style={styles.link}>Volver al perfil</Text>
+              </Pressable>
+            ) : null}
             <View style={styles.row}>
               <Text style={styles.muted}>¿No tienes cuenta? </Text>
               <Link href="/auth/register" style={styles.link}>

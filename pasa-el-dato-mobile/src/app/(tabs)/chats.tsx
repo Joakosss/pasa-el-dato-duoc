@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -27,9 +27,31 @@ export default function ChatsScreen() {
   const [pestanaActiva, setPestanaActiva] = useState<PestanaChats>('ventas');
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [cargandoMas, setCargandoMas] = useState(false);
+  const [errorMas, setErrorMas] = useState(false);
+  const generacion = useRef(0);
+  const cargaAdicional = useRef(false);
+  const sondeo = useRef(false);
+  const sesionLista = useRef(useSesionStore.getState().sesion);
 
   const cargarConversaciones = useCallback(async (mostrarCarga = true) => {
+    if (!mostrarCarga && sondeo.current) return;
+    const solicitud = mostrarCarga ? ++generacion.current : generacion.current;
+    const sesion = useSesionStore.getState().sesion;
+    if (sesionLista.current !== sesion) {
+      sesionLista.current = sesion;
+      setConversaciones([]);
+    }
+    if (!mostrarCarga) sondeo.current = true;
+    if (mostrarCarga) {
+      cargaAdicional.current = false;
+      setCargandoMas(false);
+      setErrorMas(false);
+      setCursor(null);
+    }
     if (!accessToken) {
+      sondeo.current = false;
       setConversaciones([]);
       setError('Inicia sesión para ver tus conversaciones.');
       setCargando(false);
@@ -43,17 +65,56 @@ export default function ChatsScreen() {
 
     try {
       const respuesta = await listarConversaciones(accessToken);
-      setConversaciones(respuesta.items);
-    } catch {
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
       if (mostrarCarga) {
+        setConversaciones(respuesta.items);
+        setCursor(respuesta.nextCursor);
+      } else {
+        setConversaciones((actuales) => {
+          const porId = new Map(actuales.map((item) => [item.conversacionId, item]));
+          respuesta.items.forEach((item) => porId.set(item.conversacionId, item));
+          return [...porId.values()].sort((a, b) => b.actividadEn.localeCompare(a.actividadEn));
+        });
+      }
+    } catch {
+      if (mostrarCarga && solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
         setError('No pudimos cargar tus conversaciones. Revisa tu conexión e intenta nuevamente.');
       }
     } finally {
-      if (mostrarCarga) {
+      if (!mostrarCarga) sondeo.current = false;
+      if (mostrarCarga && solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
         setCargando(false);
       }
     }
   }, [accessToken]);
+
+  const cargarMas = useCallback(async () => {
+    if (!accessToken || !cursor || cargaAdicional.current) return;
+    const solicitud = generacion.current;
+    const sesion = useSesionStore.getState().sesion;
+    cargaAdicional.current = true;
+    setCargandoMas(true);
+    setErrorMas(false);
+    try {
+      const respuesta = await listarConversaciones(accessToken, cursor);
+      if (solicitud !== generacion.current || useSesionStore.getState().sesion !== sesion) return;
+      setConversaciones((actuales) => {
+        const porId = new Map(actuales.map((item) => [item.conversacionId, item]));
+        respuesta.items.forEach((item) => {
+          if (!porId.has(item.conversacionId)) porId.set(item.conversacionId, item);
+        });
+        return [...porId.values()].sort((a, b) => b.actividadEn.localeCompare(a.actividadEn));
+      });
+      setCursor(respuesta.nextCursor);
+    } catch {
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) setErrorMas(true);
+    } finally {
+      if (solicitud === generacion.current && useSesionStore.getState().sesion === sesion) {
+        cargaAdicional.current = false;
+        setCargandoMas(false);
+      }
+    }
+  }, [accessToken, cursor]);
 
   useEffect(() => {
     void Promise.resolve().then(() => cargarConversaciones());
@@ -62,7 +123,10 @@ export default function ChatsScreen() {
       void cargarConversaciones(false);
     }, 2_000);
 
-    return () => clearInterval(intervalo);
+    return () => {
+      generacion.current += 1;
+      clearInterval(intervalo);
+    };
   }, [cargarConversaciones]);
 
   const ventas = useMemo(
@@ -96,7 +160,7 @@ export default function ChatsScreen() {
             <View style={styles.cabecera}>
               <Text style={styles.titulo}>Mis chats</Text>
               <View style={styles.total}>
-                <Text style={styles.totalTexto}>{conversaciones.length}</Text>
+                <Text style={styles.totalTexto}>{conversaciones.length}{cursor ? '+' : ''}</Text>
               </View>
             </View>
 
@@ -117,12 +181,26 @@ export default function ChatsScreen() {
               />
             </View>
 
+            <Text style={styles.descripcionPestana}>Contadores de conversaciones cargadas{cursor ? '; hay más disponibles' : ''}.</Text>
             <Text style={styles.descripcionPestana}>
               {pestanaActiva === 'ventas'
                 ? 'Personas interesadas en tus publicaciones.'
                 : 'Publicaciones que te interesan o compraste.'}
             </Text>
           </>
+        }
+        ListFooterComponent={
+          cursor ? (
+            <Pressable
+              accessibilityRole="button"
+              disabled={cargandoMas}
+              onPress={() => void cargarMas()}
+              style={styles.botonReintentar}>
+              <Text style={styles.botonReintentarTexto}>
+                {cargandoMas ? 'Cargando…' : errorMas ? 'Reintentar carga' : 'Cargar más conversaciones'}
+              </Text>
+            </Pressable>
+          ) : null
         }
         ListEmptyComponent={
           cargando ? (
@@ -139,6 +217,10 @@ export default function ChatsScreen() {
                 style={styles.botonReintentar}>
                 <Text style={styles.botonReintentarTexto}>Reintentar</Text>
               </Pressable>
+            </View>
+          ) : cursor ? (
+            <View style={styles.estado}>
+              <Text style={styles.estadoTexto}>No hay conversaciones en esta página para la pestaña seleccionada. Puedes cargar más.</Text>
             </View>
           ) : conversaciones.length === 0 ? (
             <ChatEmptyState />

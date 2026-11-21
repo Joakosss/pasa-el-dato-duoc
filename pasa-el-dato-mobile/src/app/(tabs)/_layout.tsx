@@ -2,9 +2,9 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Redirect, Tabs } from 'expo-router';
 import { Pressable, type View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useCallback, useEffect, useState, type Ref } from 'react';
+import { useEffect, useRef, useState, type Ref } from 'react';
 
-import { listarConversaciones } from '@/lib/chat/chat-api';
+import { obtenerTotalNoLeidos } from '@/lib/chat/chat-api';
 import {
   selectAccessToken,
   selectEstaAutenticado,
@@ -21,35 +21,41 @@ export default function TabsLayout() {
   const estaAutenticado = useSesionStore(selectEstaAutenticado);
   const accessToken = useSesionStore(selectAccessToken);
   const [mensajesNoLeidos, setMensajesNoLeidos] = useState(0);
-
-  const cargarMensajesNoLeidos = useCallback(async () => {
-    if (!accessToken) {
-      setMensajesNoLeidos(0);
-      return;
-    }
-
-    try {
-      const respuesta = await listarConversaciones(accessToken);
-      setMensajesNoLeidos(
-        respuesta.items.reduce(
-          (total, conversacion) => total + conversacion.noLeidosCount,
-          0,
-        ),
-      );
-    } catch {
-      // Conserva el último contador visible ante un error de red temporal.
-    }
-  }, [accessToken]);
+  const sesionContador = useRef(useSesionStore.getState().sesion);
 
   useEffect(() => {
-    void Promise.resolve().then(cargarMensajesNoLeidos);
+    let activo = true;
+    let temporizador: ReturnType<typeof setTimeout> | undefined;
+    const sesion = useSesionStore.getState().sesion;
 
-    const intervalo = setInterval(() => {
-      void cargarMensajesNoLeidos();
-    }, 2_000);
+    const cargar = async () => {
+      if (!activo) return;
+      if (sesionContador.current !== sesion || !accessToken) {
+        sesionContador.current = sesion;
+        setMensajesNoLeidos(0);
+      }
+      if (!accessToken || !sesion) return;
 
-    return () => clearInterval(intervalo);
-  }, [cargarMensajesNoLeidos]);
+      try {
+        const respuesta = await obtenerTotalNoLeidos(accessToken);
+        if (activo && useSesionStore.getState().sesion === sesion) {
+          setMensajesNoLeidos(respuesta.total);
+        }
+      } catch {
+        // Conserva el último contador de la misma sesión ante errores de red.
+      } finally {
+        if (activo && useSesionStore.getState().sesion === sesion) {
+          temporizador = setTimeout(() => void cargar(), 2_000);
+        }
+      }
+    };
+
+    void Promise.resolve().then(cargar);
+    return () => {
+      activo = false;
+      if (temporizador) clearTimeout(temporizador);
+    };
+  }, [accessToken]);
 
   // Guarda de rutas: mientras no se lea el almacenamiento seguro no se decide
   // nada, para no expulsar al login a quien sí tiene sesión guardada.

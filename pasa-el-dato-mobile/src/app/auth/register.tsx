@@ -2,7 +2,6 @@ import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -21,6 +20,7 @@ import { StepCuentaGrafico } from '@/components/auth/StepCuentaGrafico';
 import { StepDatosGrafico, type DatosGrafico } from '@/components/auth/StepDatosGrafico';
 import { Stepper } from '@/components/auth/Stepper';
 import { TermsModal } from '@/components/auth/TermsModal';
+import { useAviso } from '@/components/ui/AvisoProvider';
 import { ApiError } from '@/lib/api';
 import {
   registrarUsuario,
@@ -45,6 +45,7 @@ function obtenerMensajeError(error: unknown, mensajeAlternativo: string): string
 }
 
 export default function RegisterScreen() {
+  const mostrarAviso = useAviso();
   const [paso, setPaso] = useState(0);
   const [maxVisitado, setMaxVisitado] = useState(0);
   const [run, setRun] = useState('');
@@ -146,7 +147,7 @@ export default function RegisterScreen() {
 
   const validarCarreraYAvanzar = () => {
     if (!sedeId || !escuelaId || !carreraId) {
-      Alert.alert('Datos incompletos', 'Selecciona sede, escuela y carrera para continuar.');
+      mostrarAviso('Datos incompletos', 'Selecciona sede, escuela y carrera para continuar.');
       return;
     }
 
